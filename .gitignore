@@ -1,0 +1,30 @@
+# Environment variables and secrets
+.env
+.env.local
+.env*.local
+*.env
+
+# Dependencies & Build
+node_modules/
+.next/
+dist/
+build/
+.pnpm-store/
+
+# Python Virtual Environments & Bytecode
+venv/
+.venv/
+backned/Include/
+backned/Lib/
+backned/Scripts/
+backned/pyvenv.cfg
+backned/livekit/
+__pycache__/
+*.pyc
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
