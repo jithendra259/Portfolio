@@ -13,6 +13,7 @@ import { Navbar } from '@/components/app/navbar';
 import { Footer } from '@/components/app/footer';
 import { ResumePrinter } from '@/components/ui/resume-printer';
 import { CareerEducationTimeline } from '@/components/app/career-education-timeline';
+import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
   Github,
@@ -100,7 +101,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       : PORTFOLIO_DATA.projects.filter((p) => p.category === activeCategory);
 
   return (
-    <div className="portfolioshell w-full min-h-screen bg-[#f8fafc] dark:bg-[#000000] text-slate-900 dark:text-white overflow-x-hidden relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
+    <div className="portfolioshell w-full min-h-screen bg-[#f8fafc] dark:bg-[#000000] text-slate-900 dark:text-white overflow-x-clip relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
       
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
       <Navbar onStartCall={onStartCall} />
@@ -433,68 +434,9 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       </section>
 
       {/* ============================================================ */}
-      {/* 6. TECHNICAL SKILLS & 3D ICON CLOUD */}
+      {/* 6. TECHNICAL SKILLS STACK & 3D ICON CLOUD */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto" id="skills">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Column: Numbered Skills Matrix */}
-          <div className="lg:col-span-7 space-y-6">
-            <div>
-              <span className="text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 font-bold flex items-center gap-1.5 mb-2">
-                <Cpu className="size-3.5" /> Technical Disciplines
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Technical Skills & Systems Architecture
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-              {PORTFOLIO_DATA.skillCategories.map((cat, idx) => (
-                <div
-                  key={idx}
-                  className="p-5 rounded-xl bg-white/90 dark:bg-[#1e1e1e] border border-slate-200 dark:border-[#3c3c3c] shadow-sm flex flex-col justify-between transition-colors"
-                >
-                  <div>
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-[#3c3c3c]">
-                      <Sparkles className="size-4 text-slate-900 dark:text-white" />
-                      <h4 className="font-mono text-xs font-bold uppercase text-slate-900 dark:text-white tracking-wider">
-                        {cat.category}
-                      </h4>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      {cat.skills.map((skill, sIdx) => (
-                        <div
-                          key={sIdx}
-                          className="flex items-center justify-between text-xs py-1 px-2 rounded bg-slate-100 dark:bg-[#111111]"
-                        >
-                          <span className="text-slate-700 dark:text-neutral-300">{skill.name}</span>
-                          <span className="text-[10px] font-mono text-slate-900 dark:text-neutral-400 font-semibold">{skill.level}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: 3D Interactive Tech Sphere */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-white/80 dark:bg-[#111111] border border-slate-200 dark:border-[#3c3c3c] shadow-md backdrop-blur-xl">
-            <span className="text-xs font-mono text-slate-500 dark:text-neutral-400 mb-2 uppercase tracking-wider font-bold">
-              Interactive 3D Tech Sphere
-            </span>
-            <div className="relative flex size-full max-w-md items-center justify-center overflow-hidden">
-              <IconCloud
-                images={techIcons.map(
-                  (slug) => `https://cdn.simpleicons.org/${slug}/${slug}`
-                )}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <SkillsCardsStack />
 
       {/* ============================================================ */}
       {/* 7. EXPERIENCE & EDUCATION 3D TIMELINE */}
