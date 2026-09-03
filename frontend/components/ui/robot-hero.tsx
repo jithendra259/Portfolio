@@ -44,7 +44,7 @@ function GlassCapsule({
   power,
   intensity,
 }: {
-  color: string;
+  color: string | THREE.Color;
   power: number;
   intensity: number;
 }) {
@@ -52,7 +52,7 @@ function GlassCapsule({
 
   const uniforms = useMemo(
     () => ({
-      color: { value: new THREE.Color("#ffffff") },
+      color: { value: new THREE.Color("#00ffc6") },
       power: { value: 2.5 },
       intensity: { value: 0.6 },
     }),
@@ -61,7 +61,11 @@ function GlassCapsule({
 
   useFrame(() => {
     if (materialRef.current) {
-      materialRef.current.uniforms.color.value.set(color);
+      if (typeof color === "string") {
+        materialRef.current.uniforms.color.value.set(color);
+      } else {
+        materialRef.current.uniforms.color.value.copy(color);
+      }
       materialRef.current.uniforms.power.value = power;
       materialRef.current.uniforms.intensity.value = intensity;
     }
@@ -128,7 +132,9 @@ const antennaStickMat = new THREE.MeshStandardMaterial({
   metalness: 0.2,
 });
 const antennaTipMat = new THREE.MeshStandardMaterial({
-  color: "#ff3366",
+  color: "#00ffc6",
+  emissive: new THREE.Color("#00ffc6"),
+  emissiveIntensity: 0.8,
   roughness: 0.2,
   toneMapped: false,
 });
@@ -209,10 +215,13 @@ const eyeMat = new THREE.MeshBasicMaterial({
   color: new THREE.Color(2, 2, 2),
   toneMapped: false,
   transparent: true,
+  depthTest: false,
 });
 const heartMat = new THREE.MeshBasicMaterial({
-  color: "#ff3366",
+  color: new THREE.Color(4.0, 0.2, 0.9),
   toneMapped: false,
+  transparent: true,
+  depthTest: false,
 });
 
 function RobotEye({
@@ -243,18 +252,26 @@ function RobotEye({
     normalEyesRef.current.visible = !isHeart;
     heartEyeRef.current.visible = isHeart;
 
-    const cycle = clock.getElapsedTime() % blinkCycle;
+    if (isHeart) {
+      // Animated beating heart pulse
+      const heartPulse = Math.sin(clock.getElapsedTime() * 12) * 0.18 + 1.15;
+      groupRef.current.scale.set(
+        scale * heartPulse,
+        scale * heartPulse,
+        scale * heartPulse,
+      );
+    } else {
+      const cycle = clock.getElapsedTime() % blinkCycle;
+      let targetScaleY = 1;
 
-    let targetScaleY = 1;
+      if (cycle < blinkDuration) {
+        const progress = cycle / blinkDuration;
+        const blinkClose = Math.sin(progress * Math.PI);
+        targetScaleY = Math.max(0.05, 1.0 - blinkClose);
+      }
 
-    if (cycle < blinkDuration && !isHeart) {
-      const progress = cycle / blinkDuration;
-      const blinkClose = Math.sin(progress * Math.PI);
-
-      targetScaleY = Math.max(0.05, 1.0 - blinkClose);
+      groupRef.current.scale.set(scale, scale * targetScaleY, scale);
     }
-
-    groupRef.current.scale.set(scale, scale * targetScaleY, scale);
   });
 
   const { topPath, bottomPath } = useMemo(() => {
@@ -336,11 +353,11 @@ function RobotEye({
 
   return (
     <group ref={groupRef} position={position} rotation={rotation} scale={scale}>
-      <mesh ref={heartEyeRef} visible={false} material={heartMat}>
-        <tubeGeometry args={[sharedHeartCurve, 64, 0.0035, 8, true]} />
+      <mesh ref={heartEyeRef} visible={false} material={heartMat} renderOrder={999}>
+        <tubeGeometry args={[sharedHeartCurve, 64, 0.0048, 8, true]} />
       </mesh>
 
-      <group ref={normalEyesRef}>
+      <group ref={normalEyesRef} renderOrder={998}>
         <mesh material={eyeMat}>
           <tubeGeometry args={[topPath, 20, 0.0035, 8, false]} />
         </mesh>
@@ -429,6 +446,8 @@ function RobotPrototype({
   pantallaBrillo = 1.2,
   blinkCycle = 3.0,
   metalness = 0.0,
+  continuousColor = true,
+  externalLovedRef,
 }: {
   neckParams?: Record<string, number>;
   bodyParams?: Record<string, number>;
@@ -437,12 +456,16 @@ function RobotPrototype({
   pantallaBrillo?: number;
   blinkCycle?: number;
   metalness?: number;
+  continuousColor?: boolean;
+  externalLovedRef?: React.MutableRefObject<boolean>;
 }) {
-  const isLovedRef = useRef(false);
+  const internalLovedRef = useRef(false);
+  const isLovedRef = externalLovedRef || internalLovedRef;
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const bodyRef = useRef<THREE.Group>(null);
   const headRef = useRef<THREE.Group>(null);
   const windowPointerRef = useRef({ x: 0, y: 0, active: false });
+  const currentPantallaColor = useRef(new THREE.Color(pantallaColor)).current;
 
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
@@ -475,20 +498,27 @@ function RobotPrototype({
     alturaCabeza: 0.6,
   };
 
-  const config = {
-    moveSpeed: 0.35,
-    bodyRotSpeed: 10.0,
-    headRotSpeed: 20.0,
-    bodyTiltX: 0.0,
-    bodyTiltY: 0.95,
-    headLookX: 0.3,
-    headLookY: 1.8,
-  };
-
   useFrame((state, delta) => {
     if (!bodyRef.current || !headRef.current) return;
 
     const dt = Math.min(delta, 0.1);
+
+    // Continuous dynamic color spectrum cycle
+    if (continuousColor) {
+      const cycleSpeed = 0.2; // Full smooth color spectrum loop every 5 seconds
+      const hue = (state.clock.getElapsedTime() * cycleSpeed) % 1.0;
+      const dynamicColor = new THREE.Color().setHSL(hue, 0.95, 0.55);
+
+      if (isLovedRef.current) {
+        dynamicColor.lerp(new THREE.Color("#ff1776"), 0.75);
+      }
+
+      currentPantallaColor.copy(dynamicColor);
+      antennaTipMat.color.copy(dynamicColor);
+      antennaTipMat.emissive.copy(dynamicColor);
+    } else {
+      currentPantallaColor.set(pantallaColor);
+    }
 
     // Track mouse coordinates across the entire window
     const tx = windowPointerRef.current.active
@@ -550,6 +580,17 @@ function RobotPrototype({
     );
   });
 
+  const handlePointerDown = (
+    e?: import("@react-three/fiber").ThreeEvent<PointerEvent>,
+  ) => {
+    if (e) e.stopPropagation();
+    isLovedRef.current = true;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      isLovedRef.current = false;
+    }, 3000);
+  };
+
   useEffect(() => {
     let mounted = true;
     let generatedMaps: {
@@ -577,16 +618,6 @@ function RobotPrototype({
     };
   }, []);
 
-  const handlePointerDown = (
-    e: import("@react-three/fiber").ThreeEvent<PointerEvent>,
-  ) => {
-    e.stopPropagation();
-    isLovedRef.current = true;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      isLovedRef.current = false;
-    }, 2000);
-  };
 
   const neckProfile = useMemo(() => {
     const points = [];
@@ -683,14 +714,14 @@ function RobotPrototype({
       </mesh>
 
       <group ref={headRef} position={[0, design.alturaCabeza, 0]}>
-        <mesh material={headMat} castShadow receiveShadow>
+        <mesh material={headMat} onPointerDown={handlePointerDown} castShadow receiveShadow>
           <sphereGeometry args={[0.28, 64, 64, 0, Math.PI * 2, 0, Math.PI]} />
         </mesh>
 
         <GlassCapsule
-          color={design.pantallaColor}
+          color={currentPantallaColor}
           power={design.pantallaGrosor}
-          intensity={design.pantallaBrillo}
+          intensity={isLovedRef.current ? 1.8 : design.pantallaBrillo}
         />
 
         <group position={[0, -0.02, 0.29]}>
@@ -994,7 +1025,7 @@ export function RobotCanvas({
   blinkCycle = 3.0,
   metalness = 0.0,
   className,
-  eventSource,
+  continuousColor = true,
 }: {
   scale?: number;
   color?: string;
@@ -1003,8 +1034,19 @@ export function RobotCanvas({
   blinkCycle?: number;
   metalness?: number;
   className?: string;
-  eventSource?: React.RefObject<HTMLElement | null>;
+  continuousColor?: boolean;
 }) {
+  const lovedRef = useRef(false);
+  const lovedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerLove = () => {
+    lovedRef.current = true;
+    if (lovedTimeoutRef.current) clearTimeout(lovedTimeoutRef.current);
+    lovedTimeoutRef.current = setTimeout(() => {
+      lovedRef.current = false;
+    }, 3000);
+  };
+
   const entorno = {
     luzAmbiente: 0.85,
     luzPrincipal: 0.4,
@@ -1016,7 +1058,12 @@ export function RobotCanvas({
   };
 
   return (
-    <div className={cn("relative w-full h-full min-h-[300px]", className)}>
+    <div
+      onClick={triggerLove}
+      onPointerDown={triggerLove}
+      className={cn("relative w-full h-full min-h-[300px] cursor-pointer select-none", className)}
+      title="Click me for ❤️"
+    >
       <Canvas
         shadows
         camera={{ position: [0, 0.2, 6], fov: 38 }}
@@ -1079,6 +1126,8 @@ export function RobotCanvas({
             pantallaBrillo={pantallaBrillo}
             blinkCycle={blinkCycle}
             metalness={metalness}
+            continuousColor={continuousColor}
+            externalLovedRef={lovedRef}
           />
         </ResponsiveGroup>
       </Canvas>
