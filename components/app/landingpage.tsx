@@ -5,15 +5,16 @@ import { AuroraText } from '@/components/ui/aurora-text';
 import { WordRotate } from '@/components/ui/word-rotate';
 import { TypingAnimation } from '@/components/ui/typing-animation';
 import { MagicCard } from '@/components/ui/magic-card';
-import { IconCloud } from '@/components/ui/icon-cloud';
 import { Marquee } from '@/components/ui/marquee';
 import { EmailRevealButton } from '@/components/ui/email-reveal-button';
 import { SocialTooltipIcons } from '@/components/ui/social-tooltip-icons';
 import { Navbar } from '@/components/app/navbar';
 import { Footer } from '@/components/app/footer';
 import { ResumePrinter } from '@/components/ui/resume-printer';
+import { RobotCanvas } from '@/components/ui/robot-hero';
 import { CareerEducationTimeline } from '@/components/app/career-education-timeline';
 import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
+import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
   Github,
@@ -31,38 +32,18 @@ import {
   Zap,
   CheckCircle2,
   Sparkles,
+  Bot,
+  TrendingUp,
+  Wind,
+  FileText,
+  Bell,
+  Calendar,
 } from 'lucide-react';
 
 interface LandingPageProps {
   onStartCall?: () => void;
 }
 
-const techIcons = [
-  "typescript",
-  "javascript",
-  "python",
-  "react",
-  "nextdotjs",
-  "pytorch",
-  "fastapi",
-  "docker",
-  "git",
-  "github",
-  "visualstudiocode",
-  "tailwindcss",
-  "postgresql",
-  "redis",
-  "mongodb",
-  "vercel",
-  "linux",
-  "webrtc",
-  "openai",
-  "huggingface",
-  "langchain",
-  "pandas",
-  "numpy",
-  "scipy",
-];
 
 const techLogos = [
   { name: "LangChain / LangGraph", slug: "langchain" },
@@ -81,8 +62,143 @@ const techLogos = [
   { name: "Git & GitHub", slug: "github" },
 ];
 
+function BentoFilesBackground() {
+  return (
+    <div className="absolute top-4 right-4 flex gap-3 pointer-events-none [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
+      <div className="w-44 rounded-xl bg-neutral-900/90 border border-white/10 p-3.5 text-left shadow-lg">
+        <div className="flex items-center gap-1.5 text-neutral-300 font-mono text-[11px] mb-1.5 font-bold">
+          <FileText className="size-3.5 text-neutral-400" />
+          <span>seed.txt</span>
+        </div>
+        <p className="text-[10px] text-neutral-400 leading-relaxed font-mono line-clamp-4">
+          A seed phrase, seed recovery phrase or backup seed phrase is a list of words which store all the information needed to recover Bitcoin funds.
+        </p>
+      </div>
+      <div className="w-44 rounded-xl bg-neutral-900/90 border border-white/10 p-3.5 text-left shadow-lg hidden sm:block">
+        <div className="flex items-center gap-1.5 text-neutral-300 font-mono text-[11px] mb-1.5 font-bold">
+          <FileText className="size-3.5 text-neutral-400" />
+          <span>governance.py</span>
+        </div>
+        <p className="text-[10px] text-neutral-400 leading-relaxed font-mono line-clamp-4">
+          Multi-agent LangGraph supervisor with CVXPY convex solvers, regime classification, and audit-ready verification pipelines.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function BentoNotificationsBackground() {
+  return (
+    <div className="absolute top-4 right-4 left-4 sm:left-auto sm:w-[320px] flex flex-col gap-2 pointer-events-none [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
+        <div className="size-7 rounded-full bg-blue-500 flex items-center justify-center shrink-0 text-white shadow-sm">
+          <Zap className="size-3.5" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-neutral-200">Portfolio Rebalanced</span>
+            <span className="text-[10px] text-neutral-500 font-mono">· 2m ago</span>
+          </div>
+          <span className="text-[10px] text-neutral-400 truncate">CVXPY solver converged in 42ms</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
+        <div className="size-7 rounded-full bg-pink-500 flex items-center justify-center shrink-0 text-white shadow-sm">
+          <Bot className="size-3.5" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-neutral-200">Governance Verified</span>
+            <span className="text-[10px] text-neutral-500 font-mono">· 5m ago</span>
+          </div>
+          <span className="text-[10px] text-neutral-400 truncate">Evidence grounding check passed</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
+        <div className="size-7 rounded-full bg-amber-500 flex items-center justify-center shrink-0 text-white shadow-sm">
+          <CheckCircle2 className="size-3.5" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-neutral-200">Swarm Deployed</span>
+            <span className="text-[10px] text-neutral-500 font-mono">· 10m ago</span>
+          </div>
+          <span className="text-[10px] text-neutral-400 truncate">Multi-agent LangGraph pipeline active</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BentoConnectedNodesBackground() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
+      <div className="relative w-full max-w-sm h-36 flex items-center justify-between px-8">
+        <div className="size-11 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-xl z-10">
+          <Layers className="size-5 text-neutral-300" />
+        </div>
+        
+        <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-neutral-700" fill="none">
+          <path d="M 60 72 C 110 72, 140 72, 175 72" strokeWidth="1.5" strokeDasharray="3 3" />
+          <path d="M 215 72 C 250 72, 270 36, 310 36" strokeWidth="1.5" />
+          <path d="M 215 72 C 250 72, 270 72, 310 72" strokeWidth="1.5" />
+          <path d="M 215 72 C 250 72, 270 108, 310 108" strokeWidth="1.5" />
+        </svg>
+
+        <div className="size-12 rounded-full bg-white dark:bg-neutral-900 border border-white/25 flex items-center justify-center shadow-2xl z-10">
+          <Bot className="size-6 text-emerald-500" />
+        </div>
+
+        <div className="flex flex-col gap-2 z-10">
+          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
+            AI
+          </div>
+          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
+            ML
+          </div>
+          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
+            IoT
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BentoCalendarBackground() {
+  return (
+    <div className="absolute top-4 right-4 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
+      <div className="w-40 rounded-xl bg-neutral-900/90 border border-white/10 p-3 shadow-xl text-left">
+        <div className="text-[11px] font-semibold text-neutral-200 mb-2 font-mono">
+          September 2026
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-neutral-500 mb-1">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+        <div className="grid grid-cols-7 gap-1 text-center font-mono text-[9px] text-neutral-400">
+          <span className="text-neutral-700">30</span>
+          <span className="text-neutral-700">31</span>
+          <span className="text-white font-bold bg-emerald-500/20 rounded">1</span>
+          <span className="text-white font-bold bg-emerald-500 rounded">2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+          <span>6</span>
+          <span>7</span>
+          <span>8</span>
+          <span>9</span>
+          <span>10</span>
+          <span>11</span>
+          <span>12</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function LandingPage({ onStartCall }: LandingPageProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const heroRef = React.useRef<HTMLElement>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   React.useEffect(() => {
@@ -109,7 +225,11 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       {/* 1. HERO SECTION */}
       {/* ============================================================ */}
-      <section className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden isolate bg-white dark:bg-[#000000] transition-colors duration-300" id="home">
+      <section
+        ref={heroRef}
+        className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden isolate bg-white dark:bg-[#000000] transition-colors duration-300"
+        id="home"
+      >
         
         {/* Background Video (Commented out) */}
         {/*
@@ -181,31 +301,21 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
               I design intelligent products where agents, data, and human judgment work together. Focused on reliable systems for high-stakes decisions.
             </TypingAnimation>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-6 pt-2">
-              <a
-                href="#projects"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-semibold text-sm transition-all duration-200 hover:scale-105 cursor-pointer shadow-md dark:hover:bg-neutral-200"
-              >
-                <span>Explore the approach</span>
-                <span className="text-base">↗</span>
-              </a>
 
-              {onStartCall && (
-                <button
-                  onClick={onStartCall}
-                  className="inline-flex items-center gap-2 text-sm text-slate-900 dark:text-white hover:text-neutral-400 underline underline-offset-8 transition-colors cursor-pointer group font-medium"
-                >
-                  <span>Start a conversation</span>
-                  <span className="text-base group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform">↘</span>
-                </button>
-              )}
+            {/* Interactive Thermal Resume Printer (Placed right below buttons as requested) */}
+            <div className="pt-4 sm:pt-6 w-full sm:w-auto">
+              <ResumePrinter />
             </div>
           </div>
 
-          {/* Interactive Resume Thermal Printer */}
-          <div className="flex flex-col items-center justify-center shrink-0 w-full lg:w-auto pt-6 lg:pt-0">
-            <ResumePrinter />
+          {/* Right Column: Free-Moving 3D Robot Mascot (Completely Unboxed) */}
+          <div className="w-full lg:flex-1 flex items-center justify-center relative min-h-[460px] sm:min-h-[540px] lg:min-h-[640px] select-none">
+            <RobotCanvas
+              className="w-full h-[460px] sm:h-[540px] lg:h-[640px]"
+              scale={1.18}
+              pantallaColor="#00ffc6"
+              pantallaBrillo={1.4}
+            />
           </div>
         </div>
 
@@ -373,64 +483,45 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           </div>
         </div>
 
-        {/* Projects Grid with MagicCard */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredProjects.map((project) => (
-            <MagicCard
-              key={project.id}
-              className="p-7 rounded-2xl bg-white/95 dark:bg-[#1e1e1e] backdrop-blur-xl border border-slate-200 dark:border-[#3c3c3c] shadow-md dark:shadow-none hover:border-slate-400 dark:hover:border-[#4d4d4d] transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-slate-100 dark:bg-[#111111] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3c3c3c] font-medium">
-                    {project.category}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-slate-500 dark:text-neutral-400">{project.period}</span>
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-[#111111] hover:bg-slate-200 dark:hover:bg-[#3c3c3c] text-slate-700 dark:text-neutral-300 transition-colors"
-                        title="GitHub"
-                      >
-                        <Github className="size-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
+        {/* Projects Bento Grid */}
+        <BentoGrid className="grid-cols-1 md:grid-cols-3 auto-rows-[22rem] gap-4">
+          {filteredProjects.map((project, idx) => {
+            let Icon = FileText;
+            let bgNode = <BentoFilesBackground />;
+            let colSpan = 'col-span-3 md:col-span-1';
 
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white transition-colors mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed mb-4">
-                  {project.description}
-                </p>
+            if (idx === 0) {
+              Icon = FileText;
+              bgNode = <BentoFilesBackground />;
+              colSpan = 'col-span-3 md:col-span-1';
+            } else if (idx === 1) {
+              Icon = Bell;
+              bgNode = <BentoNotificationsBackground />;
+              colSpan = 'col-span-3 md:col-span-2';
+            } else if (idx === 2) {
+              Icon = Cpu;
+              bgNode = <BentoConnectedNodesBackground />;
+              colSpan = 'col-span-3 md:col-span-2';
+            } else {
+              Icon = Calendar;
+              bgNode = <BentoCalendarBackground />;
+              colSpan = 'col-span-3 md:col-span-1';
+            }
 
-                <div className="space-y-2 mb-6">
-                  {project.highlights.map((h, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-neutral-300">
-                      <CheckCircle2 className="size-3.5 text-slate-900 dark:text-white shrink-0 mt-0.5" />
-                      <span>{h}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 pt-4 border-t border-slate-200 dark:border-[#3c3c3c]">
-                {project.techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-[#111111] text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-[#3c3c3c]"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </MagicCard>
-          ))}
-        </div>
+            return (
+              <BentoCard
+                key={project.id}
+                name={project.title}
+                className={colSpan}
+                background={bgNode}
+                Icon={Icon}
+                description={project.tagline || project.description}
+                href={project.githubUrl || '#projects'}
+                cta="Learn more"
+              />
+            );
+          })}
+        </BentoGrid>
       </section>
 
       {/* ============================================================ */}
