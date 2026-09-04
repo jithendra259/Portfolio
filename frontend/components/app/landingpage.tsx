@@ -138,7 +138,7 @@ function BentoConnectedNodesBackground() {
         <div className="size-11 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-xl z-10">
           <Layers className="size-5 text-neutral-300" />
         </div>
-        
+
         <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-neutral-700" fill="none">
           <path d="M 60 72 C 110 72, 140 72, 175 72" strokeWidth="1.5" strokeDasharray="3 3" />
           <path d="M 215 72 C 250 72, 270 36, 310 36" strokeWidth="1.5" />
@@ -206,7 +206,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
     if (videoRef.current) {
       videoRef.current.defaultMuted = true;
       videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => { });
     }
   }, []);
 
@@ -218,8 +218,8 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       : PORTFOLIO_DATA.projects.filter((p) => p.category === activeCategory);
 
   return (
-    <div className="portfolioshell w-full min-h-screen bg-[#f8fafc] dark:bg-[#000000] text-slate-900 dark:text-white overflow-x-clip relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
-      
+    <div className="portfolioshell w-full min-h-screen bg-[#f1f4f9] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 overflow-x-clip relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
+
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
       <Navbar onStartCall={onStartCall} />
 
@@ -228,39 +228,24 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       <section
         ref={heroRef}
-        className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden isolate bg-white dark:bg-[#000000] transition-colors duration-300"
+        className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden isolate bg-[#f3f6fa] dark:bg-[#0d0f14] transition-colors duration-300"
         id="home"
       >
-        
-        {/* Background Video (Commented out) */}
-        {/*
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none opacity-90 brightness-105 contrast-105"
-        >
-          <source src="/herosection.mp4" type="video/mp4" />
-        </video>
-        */}
 
         {/* Ambient Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-100/70 via-slate-50/80 to-slate-200/50 dark:from-[#111111]/60 dark:via-[#000000]/80 dark:to-[#1e1e1e]/40 z-[1] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-200/50 via-[#f1f4f9]/70 to-slate-200/40 dark:from-[#161a24]/60 dark:via-[#0d0f14]/85 dark:to-[#141822]/50 z-[1] pointer-events-none" />
 
         {/* Subtle Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,#000_70%,transparent_100%)] z-[2] pointer-events-none" />
 
         {/* Soft Vignette Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/40 to-transparent dark:from-black/90 dark:via-black/40 dark:to-transparent z-[2] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#f8fafc] via-transparent to-white/60 dark:from-[#000000] dark:via-transparent dark:to-black/40 z-[2] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f3f6fa]/90 via-[#f3f6fa]/40 to-transparent dark:from-[#0d0f14]/90 dark:via-[#0d0f14]/40 dark:to-transparent z-[2] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#f1f4f9] via-transparent to-[#f3f6fa]/60 dark:from-[#0d0f14] dark:via-transparent dark:to-[#12151d]/40 z-[2] pointer-events-none" />
 
         {/* Hero Content */}
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-32 pb-20 z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
           <div className="max-w-3xl flex flex-col items-start text-left space-y-6">
-            
+
 
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">
@@ -329,9 +314,9 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       {/* 2. INFINITE MONOCHROME TECH LOGO MARQUEE */}
       {/* ============================================================ */}
-      <section className="py-12 bg-slate-100/90 dark:bg-[#111111] border-y border-slate-200 dark:border-[#3c3c3c] overflow-hidden relative transition-colors duration-300">
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-36 bg-gradient-to-r from-slate-100 dark:from-[#111111] to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-36 bg-gradient-to-l from-slate-100 dark:from-[#111111] to-transparent z-10" />
+      <section className="py-12 bg-slate-200/50 dark:bg-[#12151d] border-y border-slate-300/80 dark:border-white/10 overflow-hidden relative transition-colors duration-300">
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-36 bg-gradient-to-r from-slate-200/60 dark:from-[#12151d] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-36 bg-gradient-to-l from-slate-200/60 dark:from-[#12151d] to-transparent z-10" />
 
         <Marquee pauseOnHover className="[--duration:28s] [--gap:4.5rem]">
           {techLogos.map((tech) => (
@@ -357,44 +342,36 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       {/* 3. ABOUT SECTION */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto relative" id="about">
-        {/* Soft Ambient Radial Lighting to lift background darkness */}
-        <div className="absolute inset-0 max-w-5xl mx-auto bg-radial from-slate-200/60 via-transparent to-transparent dark:from-slate-800/35 dark:via-emerald-950/10 dark:to-transparent blur-3xl pointer-events-none -z-10" />
+      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto" id="about">
+        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/90 dark:bg-[#111111]/90 backdrop-blur-2xl border border-slate-200 dark:border-[#3c3c3c] shadow-2xl transition-colors duration-300 overflow-hidden">
 
-        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/95 dark:bg-[#1a1d24]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/15 shadow-2xl transition-colors duration-300 overflow-hidden">
-          
           {/* Background Ambient Glow */}
-          <div className="absolute top-0 right-0 w-[28rem] h-[28rem] bg-emerald-500/15 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-[28rem] h-[28rem] bg-blue-500/15 dark:bg-sky-500/15 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
           {/* Corner Brackets */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white/70 -translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white/70 translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white/70 -translate-x-1 translate-y-1 z-10" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white/70 translate-x-1 translate-y-1 z-10" />
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 translate-y-1 z-10" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white translate-x-1 translate-y-1 z-10" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
             {/* One Side: Image */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm">
-                {/* Image Backlight Aura */}
-                <div className="absolute -inset-2 bg-gradient-to-tr from-emerald-500/25 via-sky-500/20 to-teal-500/25 rounded-3xl blur-xl opacity-80" />
-
-                <div className="relative rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/20 bg-slate-100 dark:bg-[#232733] shadow-2xl">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/avatar.png"
-                    alt={PORTFOLIO_DATA.developer.fullName}
-                    className="w-full h-auto object-cover object-top aspect-[4/5]"
-                    loading="lazy"
-                  />
-                </div>
+              <div className="relative w-full max-w-xs sm:max-w-sm rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/15 bg-slate-100 dark:bg-neutral-900 shadow-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/avatar.png"
+                  alt={PORTFOLIO_DATA.developer.fullName}
+                  className="w-full h-auto object-cover object-top aspect-[4/5]"
+                  loading="lazy"
+                />
               </div>
             </div>
 
             {/* Other Side: Matter */}
             <div className="lg:col-span-7 flex flex-col items-start text-left justify-center">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-neutral-100 leading-relaxed tracking-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
                 &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
               </h3>
             </div>
@@ -487,11 +464,10 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 cursor-pointer ${
-                  activeCategory === cat
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 cursor-pointer ${activeCategory === cat
                     ? 'bg-slate-900 text-white dark:bg-[#1e1e1e] dark:text-white font-bold border border-slate-800 dark:border-[#4d4d4d] shadow-sm'
                     : 'text-slate-600 dark:text-neutral-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1e1e1e]/60'
-                }`}
+                  }`}
               >
                 {cat}
               </button>
