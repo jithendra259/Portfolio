@@ -17,7 +17,6 @@ import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
 import { ContactSection } from '@/components/app/contact-section';
 import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
-import { CinematicIntro } from '@/components/ui/cinematic-intro';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
   Github,
@@ -221,9 +220,6 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
 
   return (
     <div className="portfolioshell w-full min-h-screen bg-[#f1f4f9] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 overflow-x-clip relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
-
-      {/* Cinematic Opening Sequence */}
-      <CinematicIntro />
 
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
       <Navbar onStartCall={onStartCall} />
