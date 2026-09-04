@@ -357,36 +357,44 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       {/* 3. ABOUT SECTION */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto" id="about">
-        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/90 dark:bg-[#111111]/90 backdrop-blur-2xl border border-slate-200 dark:border-[#3c3c3c] shadow-2xl transition-colors duration-300 overflow-hidden">
+      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto relative" id="about">
+        {/* Soft Ambient Radial Lighting to lift background darkness */}
+        <div className="absolute inset-0 max-w-5xl mx-auto bg-radial from-slate-200/60 via-transparent to-transparent dark:from-slate-800/35 dark:via-emerald-950/10 dark:to-transparent blur-3xl pointer-events-none -z-10" />
+
+        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/95 dark:bg-[#1a1d24]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/15 shadow-2xl transition-colors duration-300 overflow-hidden">
           
           {/* Background Ambient Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+          <div className="absolute top-0 right-0 w-[28rem] h-[28rem] bg-emerald-500/15 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-[28rem] h-[28rem] bg-blue-500/15 dark:bg-sky-500/15 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
           {/* Corner Brackets */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 translate-y-1 z-10" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white translate-x-1 translate-y-1 z-10" />
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white/70 -translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white/70 translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white/70 -translate-x-1 translate-y-1 z-10" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white/70 translate-x-1 translate-y-1 z-10" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
             {/* One Side: Image */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/15 bg-slate-100 dark:bg-neutral-900 shadow-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/avatar.png"
-                  alt={PORTFOLIO_DATA.developer.fullName}
-                  className="w-full h-auto object-cover object-top aspect-[4/5]"
-                  loading="lazy"
-                />
+              <div className="relative w-full max-w-xs sm:max-w-sm">
+                {/* Image Backlight Aura */}
+                <div className="absolute -inset-2 bg-gradient-to-tr from-emerald-500/25 via-sky-500/20 to-teal-500/25 rounded-3xl blur-xl opacity-80" />
+
+                <div className="relative rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/20 bg-slate-100 dark:bg-[#232733] shadow-2xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/avatar.png"
+                    alt={PORTFOLIO_DATA.developer.fullName}
+                    className="w-full h-auto object-cover object-top aspect-[4/5]"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Other Side: Matter */}
             <div className="lg:col-span-7 flex flex-col items-start text-left justify-center">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-neutral-100 leading-relaxed tracking-tight">
                 &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
               </h3>
             </div>
