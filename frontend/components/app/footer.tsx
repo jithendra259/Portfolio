@@ -17,7 +17,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#000000] text-slate-900 dark:text-white transition-colors duration-300 py-10">
       {/* Official Default MagicUI Noise Texture */}
-      <NoiseTexture />
+      <NoiseTexture id="footer-noise-texture" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 space-y-6">
         
