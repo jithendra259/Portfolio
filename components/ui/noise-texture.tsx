@@ -30,6 +30,7 @@ export interface NoiseTextureProps extends ComponentProps<"svg"> {
 }
 
 export const NoiseTexture = ({
+  id,
   className,
   frequency = 0.4,
   octaves = 6,
@@ -37,7 +38,8 @@ export const NoiseTexture = ({
   noiseOpacity = 0.6,
   ...props
 }: NoiseTextureProps) => {
-  const filterId = useId()
+  const generatedId = useId()
+  const filterId = id || generatedId
 
   return (
     <svg
