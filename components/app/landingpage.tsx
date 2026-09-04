@@ -343,47 +343,37 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       {/* 3. ABOUT SECTION */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto" id="about">
-        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/90 dark:bg-[#111111]/90 backdrop-blur-2xl border border-slate-200 dark:border-[#3c3c3c] shadow-2xl transition-colors duration-300 overflow-hidden">
-
-          {/* Background Ambient Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
-
-          {/* Corner Brackets */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white translate-x-1 -translate-y-1 z-10" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 translate-y-1 z-10" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white translate-x-1 translate-y-1 z-10" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
-            {/* One Side: Image */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/15 bg-slate-100 dark:bg-neutral-900 shadow-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/avatar.png"
-                  alt={PORTFOLIO_DATA.developer.fullName}
-                  className="w-full h-auto object-cover object-top aspect-[4/5]"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            {/* Other Side: Matter */}
-            <div className="lg:col-span-7 relative flex flex-col items-start text-left justify-center p-6 sm:p-8 rounded-2xl overflow-hidden">
-              <DotPattern
-                width={20}
-                height={20}
-                cx={1}
-                cy={1}
-                cr={1}
-                className="fill-slate-400/35 dark:fill-slate-500/35 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
+      <section className="py-20 sm:py-28 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto relative" id="about">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* One Side: Image */}
+          <div className="lg:col-span-5 flex justify-center lg:justify-start">
+            <div className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60 dark:border-white/10 bg-slate-100 dark:bg-neutral-900 group">
+              {/* Ambient soft glow behind image */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-40 group-hover:opacity-75 transition duration-500 pointer-events-none" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/avatar.png"
+                alt={PORTFOLIO_DATA.developer.fullName}
+                className="relative w-full h-auto object-cover object-top aspect-[4/5] rounded-3xl transition-transform duration-500 group-hover:scale-[1.02]"
+                loading="lazy"
               />
-              <h3 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
-                &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
-              </h3>
             </div>
+          </div>
+
+          {/* Other Side: Matter */}
+          <div className="lg:col-span-7 relative flex flex-col items-start text-left justify-center py-6 sm:py-10 px-4 sm:px-8 md:px-10 rounded-3xl overflow-hidden min-h-[320px]">
+            {/* Dot Pattern only for the intro / about section matter UI */}
+            <DotPattern
+              width={24}
+              height={24}
+              cx={1}
+              cy={1}
+              cr={1}
+              className="fill-slate-400/40 dark:fill-slate-500/40 [mask-image:radial-gradient(ellipse_at_center,white_30%,transparent_85%)]"
+            />
+            <h3 className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-[2.25rem] font-normal text-slate-900 dark:text-white leading-[1.4] tracking-tight">
+              &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
+            </h3>
           </div>
         </div>
       </section>
