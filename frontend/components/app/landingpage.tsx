@@ -344,10 +344,10 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* 3. ABOUT SECTION */}
       {/* ============================================================ */}
       <section className="py-20 sm:py-28 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto relative" id="about">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* One Side: Image */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-start">
-            <div className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden group">
+          <div className="lg:col-span-4 flex justify-center lg:justify-start">
+            <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm rounded-3xl overflow-hidden group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatar.png"
@@ -359,19 +359,19 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           </div>
 
           {/* Other Side: Matter */}
-          <div className="lg:col-span-7 relative flex flex-col items-start text-left justify-center py-6 sm:py-10 px-4 sm:px-8 md:px-10 rounded-3xl overflow-hidden min-h-[320px]">
+          <div className="lg:col-span-8 relative flex flex-col items-start text-left justify-center py-6 px-4 sm:px-6 rounded-3xl overflow-hidden">
             {/* Dot Pattern only for the intro / about section matter UI */}
             <DotPattern
-              width={24}
-              height={24}
+              width={22}
+              height={22}
               cx={1}
               cy={1}
               cr={1}
-              className="fill-slate-400/40 dark:fill-slate-500/40 [mask-image:radial-gradient(ellipse_at_center,white_30%,transparent_85%)]"
+              className="fill-slate-400/35 dark:fill-slate-500/35 [mask-image:radial-gradient(ellipse_at_center,white_35%,transparent_85%)]"
             />
-            <h3 className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-[2.25rem] font-normal text-slate-900 dark:text-white leading-[1.4] tracking-tight">
-              &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
-            </h3>
+            <p className="relative z-10 text-base sm:text-lg md:text-xl lg:text-[1.3rem] font-normal text-slate-800 dark:text-neutral-200 leading-relaxed sm:leading-[1.85] tracking-normal">
+              {PORTFOLIO_DATA.developer.bio}
+            </p>
           </div>
         </div>
       </section>
