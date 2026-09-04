@@ -16,9 +16,10 @@ export interface IconProps {
 export interface FloatingIconsHeroProps {
   title: string;
   subtitle: string;
-  ctaText: string;
-  ctaHref: string;
+  ctaText?: string;
+  ctaHref?: string;
   icons: IconProps[];
+  children?: React.ReactNode;
 }
 
 // A single icon component with its own motion logic
@@ -113,7 +114,7 @@ const Icon = ({
 const FloatingIconsHero = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & FloatingIconsHeroProps
->(({ className, title, subtitle, ctaText, ctaHref, icons, ...props }, ref) => {
+>(({ className, title, subtitle, ctaText, ctaHref, icons, children, ...props }, ref) => {
   // Refs to track the raw mouse position
   const mouseX = React.useRef(0);
   const mouseY = React.useRef(0);
@@ -147,18 +148,25 @@ const FloatingIconsHero = React.forwardRef<
       </div>
 
       {/* Container for the foreground content */}
-      <div className="relative z-10 text-center px-4">
+      <div className="relative z-10 text-center px-4 flex flex-col items-center justify-center">
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 text-transparent bg-clip-text">
           {title}
         </h1>
         <p className="mt-6 max-w-xl mx-auto text-lg text-muted-foreground">
           {subtitle}
         </p>
-        <div className="mt-10">
-          <Button asChild size="lg" className="px-8 py-6 text-base font-semibold">
-            <a href={ctaHref}>{ctaText}</a>
-          </Button>
-        </div>
+        {children && (
+          <div className="mt-6 flex flex-col items-center justify-center w-full">
+            {children}
+          </div>
+        )}
+        {ctaText && ctaHref && (
+          <div className="mt-6">
+            <Button asChild size="lg" className="px-8 py-6 text-base font-semibold">
+              <a href={ctaHref}>{ctaText}</a>
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
