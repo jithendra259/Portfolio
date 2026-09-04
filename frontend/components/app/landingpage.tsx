@@ -355,35 +355,114 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. ABOUT & PHILOSOPHY MANIFESTO FRAME */}
+      {/* 3. ABOUT & PHILOSOPHY SECTION */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-5xl mx-auto" id="about">
-        <div className="relative p-8 sm:p-12 rounded-2xl bg-white/90 dark:bg-[#111111]/90 backdrop-blur-xl border border-slate-200 dark:border-[#3c3c3c] shadow-xl dark:shadow-2xl transition-colors duration-300">
+      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-6xl mx-auto" id="about">
+        <div className="relative p-8 sm:p-12 lg:p-14 rounded-3xl bg-white/90 dark:bg-[#111111]/90 backdrop-blur-2xl border border-slate-200 dark:border-[#3c3c3c] shadow-2xl transition-colors duration-300 overflow-hidden">
           
+          {/* Background Ambient Glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+
           {/* Corner Brackets */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 -translate-y-1" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white translate-x-1 -translate-y-1" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 translate-y-1" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white translate-x-1 translate-y-1" />
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-slate-900 dark:border-white translate-x-1 -translate-y-1 z-10" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-slate-900 dark:border-white -translate-x-1 translate-y-1 z-10" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-slate-900 dark:border-white translate-x-1 translate-y-1 z-10" />
 
-          {/* Status Badge */}
-          <div className="flex items-center gap-2 mb-6">
-            <span className="size-3 rounded-full bg-slate-900 dark:bg-white animate-ping" />
-            <span className="text-xs font-mono uppercase tracking-widest text-slate-900 dark:text-neutral-300 font-bold">
-              ● AGENTIC AI & QUANTITATIVE SYSTEMS
-            </span>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+            {/* One Side: Avatar Image */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative group w-full max-w-xs sm:max-w-sm">
+                {/* Backlight Aura */}
+                <div className="absolute -inset-2 bg-gradient-to-tr from-emerald-500/20 via-blue-500/20 to-teal-500/20 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
 
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
-            &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
-          </h3>
+                {/* Avatar Frame */}
+                <div className="relative rounded-2xl overflow-hidden border border-slate-300/80 dark:border-white/15 bg-slate-100 dark:bg-neutral-900 shadow-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/avatar.png"
+                    alt={PORTFOLIO_DATA.developer.fullName}
+                    className="w-full h-auto object-cover object-top aspect-[4/5] transform transition-transform duration-500 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
 
-          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-[#3c3c3c] flex flex-wrap items-center justify-between gap-4">
-            <div className="text-xs font-mono text-slate-500 dark:text-neutral-400 uppercase font-medium">
-              {PORTFOLIO_DATA.developer.fullName} • {PORTFOLIO_DATA.developer.location}
+                  {/* Gradient bottom overlay on image */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+
+                  {/* Badges on the image */}
+                  <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-1 text-white">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base sm:text-lg font-bold tracking-tight">
+                        {PORTFOLIO_DATA.developer.shortName}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 backdrop-blur-md">
+                        <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Active
+                      </span>
+                    </div>
+                    <span className="text-xs text-neutral-300 font-mono">
+                      {PORTFOLIO_DATA.developer.headline}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-900 dark:text-neutral-300 font-bold">
-              <Zap className="size-3.5" /> SUB-500MS REACTION TIME
+
+            {/* Other Side: Matter / Bio / Manifesto */}
+            <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+              {/* Status Badge */}
+              <div className="flex items-center gap-2">
+                <span className="size-2.5 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-xs font-mono uppercase tracking-widest text-slate-800 dark:text-neutral-300 font-bold">
+                  ● ABOUT & PHILOSOPHY
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h3 className="text-2xl sm:text-3xl font-normal text-slate-950 dark:text-white tracking-tight leading-snug">
+                Building autonomous systems that bridge{" "}
+                <span className="font-semibold underline decoration-emerald-500/50 underline-offset-4">
+                  reasoning, data,
+                </span>{" "}
+                and human judgment.
+              </h3>
+
+              {/* Bio Matter */}
+              <p className="text-base sm:text-lg text-slate-700 dark:text-neutral-300 leading-relaxed font-normal">
+                {PORTFOLIO_DATA.developer.bio}
+              </p>
+
+              {/* Quick Highlight Stats Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full pt-1">
+                {PORTFOLIO_DATA.developer.stats.map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl bg-slate-100/80 dark:bg-neutral-900/80 border border-slate-200 dark:border-white/10 flex flex-col"
+                  >
+                    <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white font-mono">
+                      {stat.value}
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-neutral-400 font-mono mt-0.5">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer Meta */}
+              <div className="w-full pt-4 border-t border-slate-200 dark:border-[#3c3c3c] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-500 dark:text-neutral-400">
+                <div className="flex items-center gap-1.5 uppercase font-medium">
+                  <MapPin className="size-3.5 text-emerald-500" />
+                  <span>{PORTFOLIO_DATA.developer.location}</span>
+                  <span className="mx-1">•</span>
+                  <span>{PORTFOLIO_DATA.developer.fullName}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-900 dark:text-neutral-200 font-bold">
+                  <Zap className="size-3.5 text-amber-500" />
+                  <span>SUB-500MS REACTION TIME</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
