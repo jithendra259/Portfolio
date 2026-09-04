@@ -252,12 +252,10 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
 
       {/* Cinematic Opening Animation Effect */}
       {showOpening && (
-        <div className="fixed inset-0 z-[200]">
-          <CinematicHero
-            mode="opening"
-            onComplete={handleOpeningComplete}
-          />
-        </div>
+        <CinematicHero
+          mode="opening"
+          onComplete={handleOpeningComplete}
+        />
       )}
 
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
