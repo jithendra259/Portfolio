@@ -260,11 +260,6 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-32 pb-20 z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
           <div className="max-w-3xl flex flex-col items-start text-left space-y-6">
             
-            {/* Status Indicator */}
-            <div className="flex items-center gap-2.5 text-xs font-mono tracking-widest text-slate-600 dark:text-neutral-400 uppercase font-semibold">
-              <span className="size-2 rounded-full bg-emerald-500 dark:bg-neutral-300 shadow-[0_0_10px_rgba(255,255,255,0.4)] animate-ping" />
-              <span>AVAILABLE FOR SELECT COLLABORATIONS</span>
-            </div>
 
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">
@@ -309,7 +304,14 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           </div>
 
           {/* Right Column: Free-Moving 3D Robot Mascot (Completely Unboxed) */}
-          <div className="w-full lg:flex-1 flex items-center justify-center relative min-h-[460px] sm:min-h-[540px] lg:min-h-[640px] select-none">
+          <div
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("trigger-robot-love"));
+              }
+            }}
+            className="w-full lg:flex-1 flex items-center justify-center relative min-h-[460px] sm:min-h-[540px] lg:min-h-[640px] select-none cursor-pointer"
+          >
             <RobotCanvas
               className="w-full h-[460px] sm:h-[540px] lg:h-[640px]"
               scale={1.18}
