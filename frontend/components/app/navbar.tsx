@@ -29,7 +29,9 @@ const CollaborateButton = ({ className, onClick }: { className?: string; onClick
   <Button
     onClick={onClick}
     className={cn(
-      'relative text-xs font-semibold rounded-full h-8.5 px-4 group transition-all duration-300 hover:scale-105 overflow-hidden bg-white text-black hover:bg-neutral-200 border border-white/20 shadow-md cursor-pointer flex items-center gap-1.5',
+      'relative text-xs font-semibold rounded-full h-8.5 px-4 group transition-all duration-300 hover:scale-105 overflow-hidden',
+      'bg-slate-900 text-white dark:bg-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200',
+      'border border-slate-700 dark:border-white/20 shadow-md cursor-pointer flex items-center gap-1.5',
       className
     )}
   >
@@ -65,35 +67,39 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-[100] flex justify-center pointer-events-none">
-      {/* Top-Docked Sticky Pill Navigation Bar */}
+      {/* Top-Docked Sticky Glassmorphism Navigation Bar */}
       <nav
         className={cn(
-          'pointer-events-auto flex items-center justify-between gap-6 sm:gap-10 md:gap-14 px-6 sm:px-10 py-3 sm:py-3.5 transition-all duration-300',
-          'bg-black/95 dark:bg-[#0a0a0a]/95 text-white backdrop-blur-2xl',
-          'rounded-b-[2rem] border-b border-x border-neutral-800/80 shadow-2xl shadow-black/80',
+          'pointer-events-auto relative flex items-center justify-between gap-6 sm:gap-10 md:gap-14 px-6 sm:px-10 py-3 sm:py-3.5 transition-all duration-300',
+          'bg-white/60 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
+          'rounded-b-[2rem] border-b border-x border-slate-200/80 dark:border-white/10',
+          'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_0_rgba(0,0,0,0.65)]',
           'max-w-5xl w-auto mx-auto'
         )}
       >
+        {/* Top subtle highlight reflection line */}
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent pointer-events-none" />
+
         {/* Brand Logo & Name */}
         <a
           href="#home"
-          className="flex items-center gap-2.5 text-white group hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 border border-neutral-700/80 shadow-sm">
-            <span className="text-xs font-black tracking-widest text-white">J</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm">
+            <span className="text-xs font-black tracking-widest text-slate-900 dark:text-white">J</span>
           </div>
-          <span className="text-xs font-bold tracking-[0.2em] font-mono text-neutral-200 hidden sm:inline">
+          <span className="text-xs font-bold tracking-[0.2em] font-mono text-slate-900 dark:text-neutral-200 hidden sm:inline">
             JITHENDRA
           </span>
         </a>
 
-        {/* Center Navigation Links (Matching the user's top-docked tab layout) */}
+        {/* Center Navigation Links with Glassy Floating Feel */}
         <div className="hidden md:flex items-center gap-7 lg:gap-10 text-sm font-medium tracking-wide">
           {navigationData.map((navItem) => (
             <a
               key={navItem.title}
               href={navItem.href}
-              className="text-neutral-300 hover:text-white transition-colors duration-200 text-[13.5px] font-sans tracking-wide"
+              className="text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-colors duration-200 text-[13.5px] font-sans tracking-wide"
             >
               {navItem.title}
             </a>
@@ -110,7 +116,7 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger
                 id="navbar-mobile-menu-trigger"
-                className="flex cursor-pointer items-center justify-center rounded-full border border-neutral-700 bg-neutral-900 p-2 text-white outline-none transition hover:border-neutral-500"
+                className="flex cursor-pointer items-center justify-center rounded-full border border-slate-300/80 dark:border-white/15 bg-slate-100/80 dark:bg-white/10 p-2 text-slate-900 dark:text-white outline-none transition hover:border-slate-400 dark:hover:border-white/30"
               >
                 <TextAlignJustify size={16} />
                 <span className="sr-only">Menu</span>
@@ -118,12 +124,12 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
 
               <DropdownMenuContent
                 align="end"
-                className="mt-3 w-52 rounded-2xl border border-neutral-800 bg-[#0c0c0e] p-2 text-white backdrop-blur-2xl shadow-2xl"
+                className="mt-3 w-52 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c0c0e]/95 p-2 text-slate-900 dark:text-white backdrop-blur-2xl shadow-2xl"
               >
                 {navigationData.map((item) => (
                   <DropdownMenuItem
                     key={item.title}
-                    className="rounded-xl px-3 py-2 text-sm font-medium text-neutral-200 focus:bg-neutral-800 focus:text-white cursor-pointer"
+                    className="rounded-xl px-3 py-2 text-sm font-medium text-slate-800 dark:text-neutral-200 focus:bg-slate-100 dark:focus:bg-neutral-800 cursor-pointer"
                     onClick={() => setIsOpen(false)}
                   >
                     <a href={item.href} className="w-full">
@@ -132,7 +138,7 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuItem
-                  className="mt-1 rounded-xl bg-white text-black px-3 py-2 font-semibold text-xs cursor-pointer flex items-center justify-between"
+                  className="mt-1 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black px-3 py-2 font-semibold text-xs cursor-pointer flex items-center justify-between"
                   onClick={() => {
                     setIsOpen(false);
                     handleCollaborate();
