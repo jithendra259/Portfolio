@@ -13,26 +13,24 @@ interface DotPatternProps {
   className?: string;
   [key: string]: any;
 }
-
 export function DotPattern({
-  width = 20,
-  height = 20,
+  width = 24,
+  height = 24,
   x = 0,
   y = 0,
-  cx = 10,
-  cy = 10,
-  cr = 1.2,
+  cx = 1,
+  cy = 0.5,
+  cr = 0.5,
   className,
   ...props
 }: DotPatternProps) {
-  const rawId = useId();
-  const id = `dot-pattern-${rawId.replace(/:/g, "")}`;
+  const id = useId();
 
   return (
     <svg
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-slate-400/60 dark:fill-slate-300/40",
+        "pointer-events-none absolute inset-0 h-full w-full fill-slate-500/50 md:fill-slate-500/70",
         className,
       )}
       {...props}
