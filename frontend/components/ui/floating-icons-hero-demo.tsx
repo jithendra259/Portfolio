@@ -116,7 +116,7 @@ const IconYouTube = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 // Define the icons with their unique positions for the demo.
-const demoIcons: FloatingIconsHeroProps['icons'] = [
+export const demoIcons: FloatingIconsHeroProps['icons'] = [
   // Total 16 unique icons
   { id: 1, icon: IconGoogle, className: 'top-[10%] left-[10%]' },
   { id: 2, icon: IconApple, className: 'top-[20%] right-[8%]' },
