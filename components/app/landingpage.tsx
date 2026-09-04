@@ -347,14 +347,12 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           {/* One Side: Image */}
           <div className="lg:col-span-5 flex justify-center lg:justify-start">
-            <div className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60 dark:border-white/10 bg-slate-100 dark:bg-neutral-900 group">
-              {/* Ambient soft glow behind image */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-40 group-hover:opacity-75 transition duration-500 pointer-events-none" />
+            <div className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatar.png"
                 alt={PORTFOLIO_DATA.developer.fullName}
-                className="relative w-full h-auto object-cover object-top aspect-[4/5] rounded-3xl transition-transform duration-500 group-hover:scale-[1.02]"
+                className="w-full h-auto object-cover object-top aspect-[4/5] rounded-3xl transition-transform duration-500 group-hover:scale-[1.02]"
                 loading="lazy"
               />
             </div>
