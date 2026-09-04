@@ -80,18 +80,24 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
         {/* Top subtle highlight reflection line */}
         <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent pointer-events-none" />
 
-        {/* Brand Logo & Name */}
-        <a
-          href="#home"
-          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity"
+        {/* Brand Logo & Name (Click to Replay Opening Animation) */}
+        <button
+          type="button"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("replay-cinematic-intro"));
+            }
+          }}
+          title="Replay Opening Animation"
+          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity cursor-pointer bg-transparent border-0 p-0 text-left"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm group-hover:scale-105 transition-transform">
             <span className="text-xs font-black tracking-widest text-slate-900 dark:text-white">J</span>
           </div>
           <span className="text-xs font-bold tracking-[0.2em] font-mono text-slate-900 dark:text-neutral-200 hidden sm:inline">
             JITHENDRA
           </span>
-        </a>
+        </button>
 
         {/* Center Navigation Links with Glassy Floating Feel */}
         <div className="hidden md:flex items-center gap-7 lg:gap-10 text-sm font-medium tracking-wide">

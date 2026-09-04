@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AuroraText } from '@/components/ui/aurora-text';
 import { WordRotate } from '@/components/ui/word-rotate';
 import { TypingAnimation } from '@/components/ui/typing-animation';
@@ -17,6 +17,7 @@ import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
 import { ContactSection } from '@/components/app/contact-section';
 import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
+import { CinematicHero } from '@/components/ui/cinematic-landing-hero';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
   Github,
@@ -218,8 +219,46 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       ? PORTFOLIO_DATA.projects
       : PORTFOLIO_DATA.projects.filter((p) => p.category === activeCategory);
 
+  const [showOpening, setShowOpening] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const seen = sessionStorage.getItem("cinematic_hero_seen");
+      if (!seen) {
+        setShowOpening(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleReplay = () => {
+      setShowOpening(true);
+    };
+    window.addEventListener("replay-cinematic-intro", handleReplay);
+    return () => window.removeEventListener("replay-cinematic-intro", handleReplay);
+  }, []);
+
+  const handleOpeningComplete = useCallback(() => {
+    setShowOpening(false);
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("cinematic_hero_seen", "true");
+      } catch {}
+    }
+  }, []);
+
   return (
     <div className="portfolioshell w-full min-h-screen bg-[#f1f4f9] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 overflow-x-clip relative selection:bg-neutral-800 selection:text-white font-sans transition-colors duration-300">
+
+      {/* Cinematic Opening Animation Effect */}
+      {showOpening && (
+        <div className="fixed inset-0 z-[200]">
+          <CinematicHero
+            mode="opening"
+            onComplete={handleOpeningComplete}
+          />
+        </div>
+      )}
 
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
       <Navbar onStartCall={onStartCall} />
