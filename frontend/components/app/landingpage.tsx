@@ -359,17 +359,17 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           </div>
 
           {/* Other Side: Matter */}
-          <div className="lg:col-span-8 relative flex flex-col items-start text-left justify-center py-6 px-4 sm:px-6 rounded-3xl overflow-hidden">
+          <div className="lg:col-span-8 relative flex flex-col items-start text-left justify-center py-8 sm:py-12 px-6 sm:px-10 rounded-3xl overflow-hidden min-h-[260px]">
             {/* Dot Pattern only for the intro / about section matter UI */}
             <DotPattern
-              width={22}
-              height={22}
-              cx={1}
-              cy={1}
-              cr={1}
-              className="fill-slate-400/35 dark:fill-slate-500/35 [mask-image:radial-gradient(ellipse_at_center,white_35%,transparent_85%)]"
+              width={20}
+              height={20}
+              cx={10}
+              cy={10}
+              cr={1.2}
+              className="fill-slate-400/70 dark:fill-slate-300/40 [mask-image:radial-gradient(ellipse_at_center,white_60%,transparent_95%)]"
             />
-            <p className="relative z-10 text-base sm:text-lg md:text-xl lg:text-[1.3rem] font-normal text-slate-800 dark:text-neutral-200 leading-relaxed sm:leading-[1.85] tracking-normal">
+            <p className="relative z-10 text-base sm:text-lg md:text-xl lg:text-[1.3rem] font-normal text-slate-900 dark:text-neutral-100 leading-relaxed sm:leading-[1.85] tracking-normal">
               {PORTFOLIO_DATA.developer.bio}
             </p>
           </div>
