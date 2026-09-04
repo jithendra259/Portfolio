@@ -16,6 +16,7 @@ import { CareerEducationTimeline } from '@/components/app/career-education-timel
 import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
 import { ContactSection } from '@/components/app/contact-section';
 import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
+import { DotPattern } from '@/components/ui/dot-pattern';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
   Github,
@@ -370,8 +371,16 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
             </div>
 
             {/* Other Side: Matter */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left justify-center">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
+            <div className="lg:col-span-7 relative flex flex-col items-start text-left justify-center p-6 sm:p-8 rounded-2xl overflow-hidden">
+              <DotPattern
+                width={20}
+                height={20}
+                cx={1}
+                cy={1}
+                cr={1}
+                className="fill-slate-400/35 dark:fill-slate-500/35 [mask-image:radial-gradient(400px_circle_at_center,white,transparent)]"
+              />
+              <h3 className="relative z-10 text-xl sm:text-2xl md:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-tight">
                 &ldquo;{PORTFOLIO_DATA.developer.bio}&rdquo;
               </h3>
             </div>
