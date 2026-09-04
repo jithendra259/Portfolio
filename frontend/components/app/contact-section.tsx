@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { FloatingIconsHero } from '@/components/ui/floating-icons-hero-section';
-import { demoIcons } from '@/components/ui/floating-icons-hero-demo';
+import { contactIcons } from '@/components/ui/contact-floating-icons';
 import { EmailRevealButton } from '@/components/ui/email-reveal-button';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
@@ -12,7 +12,7 @@ export function ContactSection() {
       <FloatingIconsHero
         title="A World of Innovation"
         subtitle="Explore a universe of possibilities with our platform, connecting you to the tools and technologies that shape the future."
-        icons={demoIcons}
+        icons={contactIcons}
         className="bg-transparent h-auto min-h-[780px] py-24"
       >
         <div className="py-2 flex justify-center w-full">

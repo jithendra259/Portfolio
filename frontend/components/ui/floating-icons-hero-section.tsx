@@ -10,6 +10,8 @@ export interface IconProps {
   id: number;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
   className: string; // Used for custom positioning of the icon.
+  href?: string;
+  title?: string;
 }
 
 // Interface for the main hero component's props.
@@ -92,7 +94,7 @@ const Icon = ({
     >
       {/* Inner wrapper for the continuous floating animation */}
       <motion.div
-        className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 p-3 rounded-3xl shadow-xl bg-card/80 backdrop-blur-md border border-border/10"
+        className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 p-3 rounded-3xl shadow-xl bg-card/80 backdrop-blur-md border border-border/10 hover:border-emerald-500/40 hover:scale-105 transition-all cursor-pointer group"
         animate={{
           y: [0, -8, 0, 8, 0],
           x: [0, 6, 0, -6, 0],
@@ -104,8 +106,20 @@ const Icon = ({
           repeatType: 'mirror',
           ease: 'easeInOut',
         }}
+        title={iconData.title}
       >
-        <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground" />
+        {iconData.href ? (
+          <a
+            href={iconData.href}
+            target={iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') ? undefined : '_blank'}
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-full h-full"
+          >
+            <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110" />
+          </a>
+        ) : (
+          <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110" />
+        )}
       </motion.div>
     </motion.div>
   );
