@@ -218,10 +218,11 @@ const eyeMat = new THREE.MeshBasicMaterial({
   depthTest: false,
 });
 const heartMat = new THREE.MeshBasicMaterial({
-  color: new THREE.Color(4.0, 0.2, 0.9),
+  color: new THREE.Color("#ff0066"),
   toneMapped: false,
   transparent: true,
   depthTest: false,
+  side: THREE.DoubleSide,
 });
 
 function RobotEye({
@@ -351,10 +352,20 @@ function RobotEye({
     return { topPath: tPath, bottomPath: bPath };
   }, []);
 
+  const heartShape = useMemo(() => {
+    const s = new THREE.Shape();
+    s.moveTo(0, 0.01);
+    s.bezierCurveTo(0, 0.03, -0.03, 0.036, -0.03, 0.015);
+    s.bezierCurveTo(-0.03, -0.008, 0, -0.024, 0, -0.034);
+    s.bezierCurveTo(0, -0.024, 0.03, -0.008, 0.03, 0.015);
+    s.bezierCurveTo(0.03, 0.036, 0, 0.03, 0, 0.01);
+    return s;
+  }, []);
+
   return (
     <group ref={groupRef} position={position} rotation={rotation} scale={scale}>
-      <mesh ref={heartEyeRef} visible={false} material={heartMat} renderOrder={999}>
-        <tubeGeometry args={[sharedHeartCurve, 64, 0.0048, 8, true]} />
+      <mesh ref={heartEyeRef} visible={false} material={heartMat} renderOrder={999} position={[0, 0, 0.008]}>
+        <shapeGeometry args={[heartShape]} />
       </mesh>
 
       <group ref={normalEyesRef} renderOrder={998}>
@@ -474,9 +485,19 @@ function RobotPrototype({
       windowPointerRef.current = { x, y, active: true };
     };
 
+    const handleLoveTrigger = () => {
+      isLovedRef.current = true;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        isLovedRef.current = false;
+      }, 3500);
+    };
+
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("trigger-robot-love", handleLoveTrigger);
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("trigger-robot-love", handleLoveTrigger);
     };
   }, []);
 
@@ -503,14 +524,14 @@ function RobotPrototype({
 
     const dt = Math.min(delta, 0.1);
 
-    // Continuous dynamic color spectrum cycle
+    // Continuous dynamic color spectrum cycle on visor rim and antenna tips
     if (continuousColor) {
-      const cycleSpeed = 0.2; // Full smooth color spectrum loop every 5 seconds
+      const cycleSpeed = 0.2; // Smooth 5-second color spectrum cycle
       const hue = (state.clock.getElapsedTime() * cycleSpeed) % 1.0;
       const dynamicColor = new THREE.Color().setHSL(hue, 0.95, 0.55);
 
       if (isLovedRef.current) {
-        dynamicColor.lerp(new THREE.Color("#ff1776"), 0.75);
+        dynamicColor.set("#ff0066");
       }
 
       currentPantallaColor.copy(dynamicColor);
@@ -584,11 +605,9 @@ function RobotPrototype({
     e?: import("@react-three/fiber").ThreeEvent<PointerEvent>,
   ) => {
     if (e) e.stopPropagation();
-    isLovedRef.current = true;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      isLovedRef.current = false;
-    }, 3000);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("trigger-robot-love"));
+    }
   };
 
   useEffect(() => {
@@ -1041,10 +1060,13 @@ export function RobotCanvas({
 
   const triggerLove = () => {
     lovedRef.current = true;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("trigger-robot-love"));
+    }
     if (lovedTimeoutRef.current) clearTimeout(lovedTimeoutRef.current);
     lovedTimeoutRef.current = setTimeout(() => {
       lovedRef.current = false;
-    }, 3000);
+    }, 3500);
   };
 
   const entorno = {
@@ -1062,7 +1084,6 @@ export function RobotCanvas({
       onClick={triggerLove}
       onPointerDown={triggerLove}
       className={cn("relative w-full h-full min-h-[300px] cursor-pointer select-none", className)}
-      title="Click me for ❤️"
     >
       <Canvas
         shadows
