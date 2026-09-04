@@ -47,6 +47,18 @@ export function EmailRevealButton({
           user-select: none;
         }
 
+        :is(.dark, [data-theme='dark']) .email-reveal-wrapper .btn-wrapper {
+          --color: rgba(56, 189, 248, 0.16);
+          --txt-color: #f8fafc;
+          --txt-color-2: #38bdf8;
+          --point-color: #38bdf8;
+          --line-color: rgba(255, 255, 255, 0.25);
+        }
+
+        :is(.dark, [data-theme='dark']) .email-reveal-wrapper .txt-secondary {
+          color: rgba(255, 255, 255, 0.55);
+        }
+
         .email-reveal-wrapper .txt-sizer {
           visibility: hidden;
           pointer-events: none;

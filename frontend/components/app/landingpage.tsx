@@ -14,6 +14,7 @@ import { ResumePrinter } from '@/components/ui/resume-printer';
 import { RobotCanvas } from '@/components/ui/robot-hero';
 import { CareerEducationTimeline } from '@/components/app/career-education-timeline';
 import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
+import { ContactSection } from '@/components/app/contact-section';
 import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import {
@@ -537,43 +538,9 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       <CareerEducationTimeline />
 
       {/* ============================================================ */}
-      {/* 8. CONTACT SECTION */}
+      {/* 8. ANIMATED CONTACT SECTION */}
       {/* ============================================================ */}
-      <section className="py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-4xl mx-auto text-center space-y-8" id="contact">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 dark:bg-[#111111] border border-slate-300 dark:border-[#3c3c3c] text-xs font-mono uppercase tracking-widest text-slate-800 dark:text-neutral-300 font-bold shadow-sm">
-            <span className="size-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>CONNECT &amp; COLLABORATE</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950 dark:text-white">
-            Let&apos;s Build Next-Gen AI Together
-          </h2>
-
-          <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            Open for Agentic AI, Multi-Agent Swarms, Quantitative Research, and Full-Stack Engineering roles.
-          </p>
-        </div>
-
-        {/* Cyberpunk Email Reveal & Copy Button */}
-        <div className="py-2 flex justify-center">
-          <EmailRevealButton
-            name={PORTFOLIO_DATA.developer.fullName}
-            email={PORTFOLIO_DATA.developer.email}
-          />
-        </div>
-
-        {/* Direct Phone Call Link */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-1">
-          <a
-            href={`tel:${PORTFOLIO_DATA.developer.phone}`}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#3c3c3c] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3c3c3c] transition-all shadow-sm text-xs font-mono"
-          >
-            <Phone className="size-4 text-slate-900 dark:text-white" />
-            <span>{PORTFOLIO_DATA.developer.phone}</span>
-          </a>
-        </div>
-      </section>
+      <ContactSection />
 
       {/* ============================================================ */}
       {/* 9. FOOTER WITH NOISE TEXTURE */}
