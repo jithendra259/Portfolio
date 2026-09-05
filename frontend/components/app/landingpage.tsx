@@ -14,6 +14,7 @@ import { ResumePrinter } from '@/components/ui/resume-printer';
 import { RobotCanvas } from '@/components/ui/robot-hero';
 import { CareerEducationTimeline } from '@/components/app/career-education-timeline';
 import { SkillsCardsStack } from '@/components/app/skills-cards-stack';
+import { CertificatesSection } from '@/components/app/certificates-section';
 import { ContactSection } from '@/components/app/contact-section';
 import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
@@ -551,7 +552,12 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       <SkillsCardsStack />
 
       {/* ============================================================ */}
-      {/* 7. EXPERIENCE & EDUCATION 3D TIMELINE */}
+      {/* 7. VERIFIED CERTIFICATES & ACCREDITATIONS (INFINITE SLIDER) */}
+      {/* ============================================================ */}
+      <CertificatesSection />
+
+      {/* ============================================================ */}
+      {/* 8. EXPERIENCE & EDUCATION 3D TIMELINE */}
       {/* ============================================================ */}
       <CareerEducationTimeline />
 

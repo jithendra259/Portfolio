@@ -21,6 +21,7 @@ const navigationData: NavigationSection[] = [
   { title: 'Home', href: '#home' },
   { title: 'About', href: '#about' },
   { title: 'Projects', href: '#projects' },
+  { title: 'Certificates', href: '#certificates' },
   { title: 'Experience', href: '#experience' },
   { title: 'Contact', href: '#contact' },
 ];
