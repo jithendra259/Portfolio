@@ -8,7 +8,7 @@ export function SocialTooltipIcons() {
     {
       name: 'GitHub',
       className: 'github',
-      url: PORTFOLIO_DATA.developer.socials.github,
+      url: 'https://github.com/jithendra259',
       color: '#24292e',
       icon: (
         <svg viewBox="0 0 24 24" height="1.4em" width="1.4em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -19,7 +19,7 @@ export function SocialTooltipIcons() {
     {
       name: 'LinkedIn',
       className: 'linkedin',
-      url: PORTFOLIO_DATA.developer.socials.linkedin,
+      url: 'https://www.linkedin.com/in/kandula-jithendra-subramanyam-0311462a6/',
       color: '#0077b5',
       icon: (
         <svg viewBox="0 0 24 24" height="1.4em" width="1.4em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -30,7 +30,7 @@ export function SocialTooltipIcons() {
     {
       name: 'Email',
       className: 'email',
-      url: `mailto:${PORTFOLIO_DATA.developer.email}`,
+      url: 'mailto:kandulajithendrasubramanyam@gmail.com',
       color: '#ea4335',
       icon: (
         <svg viewBox="0 0 24 24" height="1.3em" width="1.3em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -41,7 +41,7 @@ export function SocialTooltipIcons() {
     {
       name: 'Phone',
       className: 'phone',
-      url: `tel:${PORTFOLIO_DATA.developer.phone}`,
+      url: 'tel:+919704400336',
       color: '#10b981',
       icon: (
         <svg viewBox="0 0 24 24" height="1.3em" width="1.3em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +52,7 @@ export function SocialTooltipIcons() {
     {
       name: 'ORCID',
       className: 'orcid',
-      url: 'https://orcid.org/0009-0000-8802-5355',
+      url: 'https://orcid.org/0009-0005-7593-7871',
       color: '#a6ce39',
       icon: (
         <svg viewBox="0 0 256 256" height="1.3em" width="1.3em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -96,6 +96,14 @@ export function SocialTooltipIcons() {
           cursor: pointer;
           transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
           text-decoration: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        :global(.dark) .social-tooltip-wrapper .wrapper .icon {
+          background: rgba(255, 255, 255, 0.08);
+          color: #e2e8f0;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .social-tooltip-wrapper .wrapper .tooltip {
@@ -104,7 +112,7 @@ export function SocialTooltipIcons() {
           font-size: 12px;
           font-weight: 600;
           background: #ffffff;
-          color: #ffffff;
+          color: #1e293b;
           padding: 5px 10px;
           border-radius: 6px;
           box-shadow: 0 10px 15px rgba(0, 0, 0, 0.12);
@@ -112,6 +120,13 @@ export function SocialTooltipIcons() {
           pointer-events: none;
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
           white-space: nowrap;
+        }
+
+        :global(.dark) .social-tooltip-wrapper .wrapper .tooltip {
+          background: #18181b;
+          color: #f4f4f5;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .social-tooltip-wrapper .wrapper .tooltip::before {
@@ -126,11 +141,16 @@ export function SocialTooltipIcons() {
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .social-tooltip-wrapper .wrapper .icon:hover .tooltip {
-          top: -42px;
-          opacity: 1;
-          visibility: visible;
-          pointer-events: auto;
+        :global(.dark) .social-tooltip-wrapper .wrapper .tooltip::before {
+          background: #18181b;
+        }
+
+        @media (hover: hover) {
+          .social-tooltip-wrapper .wrapper .icon:hover .tooltip {
+            top: -42px;
+            opacity: 1;
+            visibility: visible;
+          }
         }
 
         .social-tooltip-wrapper .wrapper .icon:hover span,
@@ -141,41 +161,45 @@ export function SocialTooltipIcons() {
         .social-tooltip-wrapper .wrapper .github:hover,
         .social-tooltip-wrapper .wrapper .github:hover .tooltip,
         .social-tooltip-wrapper .wrapper .github:hover .tooltip::before {
-          background: #24292e;
-          color: #ffffff;
+          background: #24292e !important;
+          color: #ffffff !important;
         }
 
         .social-tooltip-wrapper .wrapper .linkedin:hover,
         .social-tooltip-wrapper .wrapper .linkedin:hover .tooltip,
         .social-tooltip-wrapper .wrapper .linkedin:hover .tooltip::before {
-          background: #0077b5;
-          color: #ffffff;
+          background: #0077b5 !important;
+          color: #ffffff !important;
         }
 
         .social-tooltip-wrapper .wrapper .email:hover,
         .social-tooltip-wrapper .wrapper .email:hover .tooltip,
         .social-tooltip-wrapper .wrapper .email:hover .tooltip::before {
-          background: #ea4335;
-          color: #ffffff;
+          background: #ea4335 !important;
+          color: #ffffff !important;
         }
 
         .social-tooltip-wrapper .wrapper .phone:hover,
         .social-tooltip-wrapper .wrapper .phone:hover .tooltip,
         .social-tooltip-wrapper .wrapper .phone:hover .tooltip::before {
-          background: #10b981;
-          color: #ffffff;
+          background: #10b981 !important;
+          color: #ffffff !important;
         }
 
         .social-tooltip-wrapper .wrapper .orcid:hover,
         .social-tooltip-wrapper .wrapper .orcid:hover .tooltip,
         .social-tooltip-wrapper .wrapper .orcid:hover .tooltip::before {
-          background: #a6ce39;
-          color: #ffffff;
+          background: #a6ce39 !important;
+          color: #ffffff !important;
         }
 
         .social-tooltip-wrapper .wrapper .icon:hover {
           color: #ffffff;
-          transform: translateY(-2px) scale(1.05);
+          transform: translateY(-2px) scale(1.08);
+        }
+
+        .social-tooltip-wrapper .wrapper .icon:active {
+          transform: scale(0.95);
         }
       `}</style>
 
@@ -188,12 +212,24 @@ export function SocialTooltipIcons() {
             rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
             className={`icon ${item.className}`}
             aria-label={item.name}
+            onClick={(e) => {
+              if (item.url.startsWith('http')) {
+                // Ensure immediate new tab opening
+                window.open(item.url, '_blank', 'noopener,noreferrer');
+              } else {
+                window.location.href = item.url;
+              }
+            }}
           >
-            <span className="tooltip">{item.name}</span>
-            {item.icon}
+            <span className="tooltip pointer-events-none select-none">{item.name}</span>
+            <span className="pointer-events-none flex items-center justify-center">
+              {item.icon}
+            </span>
           </a>
         ))}
       </ul>
     </div>
   );
 }
+
+export default SocialTooltipIcons;

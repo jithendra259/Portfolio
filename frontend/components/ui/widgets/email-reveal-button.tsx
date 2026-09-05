@@ -22,18 +22,55 @@ export function EmailRevealButton({
     };
   }, []);
 
-  const handleInteraction = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const copyToClipboard = async (text: string): Promise<boolean> => {
+    // 1. Try modern navigator.clipboard
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.warn('navigator.clipboard failed, attempting fallback...', err);
+      }
+    }
+
+    // 2. Fallback: document.execCommand('copy')
+    if (typeof document !== 'undefined') {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-999999px';
+        textarea.style.top = '-999999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, text.length);
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (successful) return true;
+      } catch (err) {
+        console.error('execCommand copy fallback failed:', err);
+      }
+    }
+
+    return false;
+  };
+
+  const handleInteraction = async (e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsRevealed(true);
 
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(email);
-      }
+    const success = await copyToClipboard(email);
+
+    if (success) {
       setCopied(true);
-      notify('success', 'Email Copied!', email);
-    } catch (err) {
-      console.error('Failed to copy to clipboard', err);
+      notify('success', 'Email Copied to Clipboard!', email);
+    } else {
+      // Prompt user fallback
+      setCopied(true);
+      notify('info', 'Email Address', email);
     }
 
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -193,6 +230,8 @@ export function EmailRevealButton({
           color: var(--txt-color-2, #15104c);
           opacity: 0;
           animation: none;
+          user-select: text;
+          -webkit-user-select: text;
         }
 
         .email-reveal-wrapper .frame {
@@ -322,6 +361,7 @@ export function EmailRevealButton({
           type="button"
           className={`btn ${isRevealed ? 'is-revealed' : ''}`}
           onClick={handleInteraction}
+          onTouchEnd={handleInteraction}
           onMouseEnter={() => setIsRevealed(true)}
           onMouseLeave={() => {
             if (!copied) setIsRevealed(false);

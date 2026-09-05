@@ -53,18 +53,16 @@ const Icon = ({
             Math.pow(mouseY.current - (rect.top + rect.height / 2), 2)
         );
 
-        // If the cursor is close enough, repel the icon
-        if (distance < 150) {
+        // If the cursor is close enough, gently repel, but settle when hovering over so user can easily click
+        if (distance < 120 && distance > 40) {
           const angle = Math.atan2(
             mouseY.current - (rect.top + rect.height / 2),
             mouseX.current - (rect.left + rect.width / 2)
           );
-          // The closer the cursor, the stronger the repulsion
-          const force = (1 - distance / 150) * 50;
+          const force = (1 - distance / 120) * 20;
           x.set(-Math.cos(angle) * force);
           y.set(-Math.sin(angle) * force);
         } else {
-          // Return to original position when cursor is away
           x.set(0);
           y.set(0);
         }
@@ -107,18 +105,30 @@ const Icon = ({
           ease: 'easeInOut',
         }}
         title={iconData.title}
+        onClick={() => {
+          if (iconData.href) {
+            if (iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') || iconData.href.startsWith('sms:')) {
+              window.location.href = iconData.href;
+            } else {
+              window.open(iconData.href, '_blank', 'noopener,noreferrer');
+            }
+          }
+        }}
       >
         {iconData.href ? (
           <a
             href={iconData.href}
-            target={iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') ? undefined : '_blank'}
+            target={iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') || iconData.href.startsWith('sms:') ? undefined : '_blank'}
             rel="noopener noreferrer"
             className="flex items-center justify-center w-full h-full"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           >
-            <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110" />
+            <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110 pointer-events-none" />
           </a>
         ) : (
-          <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110" />
+          <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110 pointer-events-none" />
         )}
       </motion.div>
     </motion.div>
