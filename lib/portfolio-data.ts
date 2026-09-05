@@ -1,16 +1,6 @@
-export interface Project {
-  id: string;
-  title: string;
-  category: 'Agentic AI' | 'Quantitative Finance' | 'Full-Stack' | 'Robotics & IoT';
-  period: string;
-  tagline: string;
-  description: string;
-  highlights: string[];
-  techStack: string[];
-  githubUrl?: string;
-  liveUrl?: string;
-  featured?: boolean;
-}
+import { ALL_PROJECTS, Project } from '@/data/projects';
+export type { Project } from '@/data/projects';
+
 
 export interface ResearchPaper {
   title: string;
@@ -155,72 +145,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
       focusAreas: ['Multi-Agent Governance', 'Explainable Financial Intelligence', 'Compliance-Aware AI', 'Evidence Grounding', 'Audit-Ready AI'],
     },
   ],
-  projects: [
-    {
-      id: 'agentic-portfolio-chatbot',
-      title: 'Agentic AI Portfolio Governance Chatbot',
-      category: 'Agentic AI',
-      period: 'Oct 2025 – Apr 2026',
-      tagline: 'Multi-agent financial chatbot for stock portfolio management with audit-ready verification.',
-      description: 'Built a specialized multi-agent system featuring planning, data retrieval, technical analysis, regime detection, instability analysis, portfolio optimization (CVXPY/CLARABEL), governance validation, explainability, and verification agents.',
-      highlights: [
-        'Modular multi-agent architecture powered by LangChain / LangGraph & Mistral-7B via Ollama',
-        'Technical analysis modules for RSI, MACD, Bollinger Bands, trend, volatility, and CVaR drawdown',
-        'Audit logs, confidence scores, evidence tracking, source grounding, and anti-hallucination controls',
-      ],
-      techStack: ['Python', 'LangChain / LangGraph', 'CVXPY', 'CLARABEL', 'NetworkX', 'MongoDB', 'Gradio', 'Ollama', 'Mistral-7B', 'YFinance', 'NumPy', 'Pandas', 'SciPy'],
-      githubUrl: 'https://github.com/jithendra259',
-      featured: true,
-    },
-    {
-      id: 'adaptive-portfolio-governance',
-      title: 'Multi-Agent Adaptive Portfolio Governance System',
-      category: 'Quantitative Finance',
-      period: 'Jan 2026 – Apr 2026',
-      tagline: 'Financial decision-intelligence system combining risk-aware portfolio construction & governance.',
-      description: 'Designed a financial decision-intelligence architecture combining agentic orchestration, risk-aware portfolio construction, regime-aware adaptation, instability detection, optimization, and response verification.',
-      highlights: [
-        'Evidence-backed responses with governance approval checks and transparent explanations',
-        'Graph-based reasoning with NetworkX and convex optimization solvers',
-        'Published as first-author manuscript submitted to Elsevier EAAI',
-      ],
-      techStack: ['Python', 'CVXPY', 'NetworkX', 'LangGraph', 'Risk Analytics', 'Financial Datasets'],
-      githubUrl: 'https://github.com/jithendra259',
-      featured: true,
-    },
-    {
-      id: 'personalised-aqi-system',
-      title: 'Personalised AQI – Global Air Quality Forecasting',
-      category: 'Full-Stack',
-      period: 'Feb 2023 – Mar 2025',
-      tagline: 'Full-stack AQI forecasting platform using live AQICN.org data & explainable ML insights.',
-      description: 'Engineered a full-stack platform predicting city-level air quality and pollutant trends globally with explainable health risk indicators and interactive dashboard visualizations.',
-      highlights: [
-        'ML models forecasting AQI, PM2.5, O3, and NO2 with health-risk explainability',
-        'Interactive Next.js dashboard visualising real-time and predicted AQI trends across states and countries',
-        'Live streaming ingestion from AQICN API with MongoDB caching backend',
-      ],
-      techStack: ['Next.js', 'Python', 'Flask', 'MongoDB', 'Machine Learning', 'Explainable AI', 'AQICN API'],
-      githubUrl: 'https://github.com/jithendra259',
-      featured: true,
-    },
-    {
-      id: 'swarm-robots-agriculture',
-      title: 'Swarm Robots for Agriculture',
-      category: 'Robotics & IoT',
-      period: 'Aug 2022 – Jul 2023',
-      tagline: 'Autonomous swarm robotics system for crop monitoring and plant disease detection.',
-      description: 'Built a swarm robotics agriculture system using embedded hardware, IoT sensors, autonomous inter-robot coordination, and image-processing concepts for precision farming.',
-      highlights: [
-        'Computer vision and image processing for automated plant disease diagnosis',
-        'Sensor-based environmental monitoring and multi-robot autonomous coordination',
-        'B.Tech Final-Year Capstone Project at Presidency University',
-      ],
-      techStack: ['Embedded Systems', 'IoT Sensors', 'Computer Vision', 'Robotics', 'Python', 'C++'],
-      githubUrl: 'https://github.com/jithendra259',
-      featured: false,
-    },
-  ],
+  projects: ALL_PROJECTS,
+
   skillCategories: [
     {
       category: 'Agentic AI & LLM Engineering',

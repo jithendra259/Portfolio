@@ -20,6 +20,7 @@ import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
 import { DotPattern } from '@/components/ui/dot-pattern';
 import { CinematicHero } from '@/components/ui/cinematic-landing-hero';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { PROJECT_CATEGORIES } from '@/data/projects';
 import {
   Github,
   Linkedin,
@@ -213,7 +214,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
     }
   }, []);
 
-  const categories = ['All', 'Agentic AI', 'Quantitative Finance', 'Full-Stack', 'Robotics & IoT'];
+  const categories = PROJECT_CATEGORIES;
 
   const filteredProjects =
     activeCategory === 'All'
