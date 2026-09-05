@@ -41,9 +41,11 @@ import {
   TrendingUp,
   Wind,
   FileText,
+  ExternalLink,
   Bell,
   Calendar,
 } from 'lucide-react';
+
 
 interface LandingPageProps {
   onStartCall?: () => void;
@@ -418,14 +420,14 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 mb-2 font-bold">
               <BookOpen className="size-3.5" />
-              <span>Peer-Reviewed Science</span>
+              <span>Peer-Reviewed Science & Publications</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Research Papers & Publications
+              Research Papers & Manuscripts
             </h2>
           </div>
           <span className="text-xs font-mono text-slate-900 dark:text-white px-3 py-1 rounded-full bg-slate-100 dark:bg-[#1e1e1e] border border-slate-300 dark:border-[#3c3c3c] font-bold">
-            2 Manuscripts Under Review (2026)
+            1 Journal Under Review + 1 Conference Presented (2026)
           </span>
         </div>
 
@@ -436,38 +438,82 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
               className="p-7 rounded-2xl bg-white/95 dark:bg-[#1e1e1e] backdrop-blur-xl border border-slate-200 dark:border-[#3c3c3c] shadow-md dark:shadow-none hover:border-slate-400 dark:hover:border-[#4d4d4d] transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                   <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-slate-100 dark:bg-[#111111] text-slate-900 dark:text-white border border-slate-200 dark:border-[#3c3c3c] font-bold">
                     {paper.publisher}
                   </span>
-                  <span className="text-xs font-mono text-amber-700 dark:text-neutral-300 flex items-center gap-1.5 font-semibold">
+                  <span className="text-xs font-mono text-amber-700 dark:text-amber-400 flex items-center gap-1.5 font-semibold">
                     <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
                     {paper.status}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-snug">
                   {paper.title}
                 </h3>
+
+                {paper.authors && (
+                  <p className="text-[11px] font-mono text-slate-500 dark:text-neutral-400 mb-2">
+                    <span className="font-semibold text-slate-700 dark:text-neutral-300">Authors:</span> {paper.authors}
+                  </p>
+                )}
+
+                {paper.manuscriptId && (
+                  <div className="inline-block mb-3 px-2 py-0.5 rounded text-[10px] font-mono bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50 font-semibold">
+                    Manuscript ID: {paper.manuscriptId}
+                  </div>
+                )}
+
+                {paper.conferenceLocation && (
+                  <div className="inline-block mb-3 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50 font-semibold">
+                    Venue: {paper.conferenceLocation}
+                  </div>
+                )}
+
                 <p className="text-xs text-slate-600 dark:text-neutral-400 leading-relaxed mb-6">
                   {paper.description}
                 </p>
               </div>
 
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-neutral-500 block mb-2 font-bold">
-                  Focus Areas:
-                </span>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {paper.focusAreas.map((area, aIdx) => (
-                    <span
-                      key={aIdx}
-                      className="text-[10px] font-mono px-2.5 py-0.5 rounded bg-slate-100 dark:bg-[#111111] text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-[#3c3c3c]"
-                    >
-                      {area}
-                    </span>
-                  ))}
+              <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex flex-col gap-4">
+                <div>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-neutral-500 block mb-2 font-bold">
+                    Focus Areas:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {paper.focusAreas.map((area, aIdx) => (
+                      <span
+                        key={aIdx}
+                        className="text-[10px] font-mono px-2.5 py-0.5 rounded bg-slate-100 dark:bg-[#111111] text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-[#3c3c3c]"
+                      >
+                        {area}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
+                {paper.pdfUrl && (
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5">
+                    <a
+                      href={paper.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-slate-800 dark:hover:bg-neutral-200 shadow-sm transition-all group"
+                    >
+                      <FileText className="size-3.5 group-hover:scale-110 transition-transform" />
+                      <span>Read Manuscript (PDF)</span>
+                      <ExternalLink className="size-3 opacity-70" />
+                    </a>
+
+                    <a
+                      href={paper.pdfUrl}
+                      download
+                      className="text-xs font-mono text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    >
+                      Download PDF ↓
+                    </a>
+                  </div>
+                )}
               </div>
             </MagicCard>
           ))}

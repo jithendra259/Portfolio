@@ -47,6 +47,7 @@ export interface Project {
   liveUrl?: string;
   status: string;
   researchLink?: string;
+  pdfUrl?: string;
   featured?: boolean;
 }
 
