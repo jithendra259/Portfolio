@@ -26,6 +26,11 @@ export interface TechStackCategory {
   items: string[];
 }
 
+export interface ReportSection {
+  heading: string;
+  content: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -49,6 +54,7 @@ export interface Project {
   researchLink?: string;
   pdfUrl?: string;
   featured?: boolean;
+  reportSections?: ReportSection[];
 }
 
 export type ProjectDetail = Project;

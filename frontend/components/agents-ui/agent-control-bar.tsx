@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
 import { Track } from 'livekit-client';
