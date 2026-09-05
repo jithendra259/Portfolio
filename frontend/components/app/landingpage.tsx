@@ -537,8 +537,8 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
                 background={bgNode}
                 Icon={Icon}
                 description={project.tagline || project.description}
-                href={project.githubUrl || '#projects'}
-                cta="Learn more"
+                href={`/projects/${project.id}`}
+                cta="View Case Study"
               />
             );
           })}

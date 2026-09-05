@@ -1,4 +1,5 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react"
+import Link from "next/link"
 import { ArrowRightIcon } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/shadcn/utils"
@@ -46,7 +47,7 @@ const BentoCard = ({
   <div
     key={name}
     className={cn(
-      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
+      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl cursor-pointer",
       // light styles
       "bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
       // dark styles
@@ -55,6 +56,11 @@ const BentoCard = ({
     )}
     {...props}
   >
+    {/* Full card clickable overlay for instant navigation */}
+    <Link href={href} className="absolute inset-0 z-20 cursor-pointer" aria-label={name}>
+      <span className="sr-only">{name} - View Project Details</span>
+    </Link>
+
     <div>{background}</div>
     <div className="p-4">
       <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 transition-all duration-300 lg:group-hover:-translate-y-10">
@@ -74,19 +80,19 @@ const BentoCard = ({
           variant="link"
           asChild
           size="sm"
-          className="pointer-events-auto p-0"
+          className="pointer-events-auto p-0 z-30"
         >
-          <a href={href}>
+          <Link href={href}>
             {cta}
             <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180" />
-          </a>
+          </Link>
         </Button>
       </div>
     </div>
 
     <div
       className={cn(
-        "pointer-events-none absolute bottom-0 hidden w-full translate-y-10 transform-gpu flex-row items-center p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 lg:flex"
+        "pointer-events-none absolute bottom-0 hidden w-full translate-y-10 transform-gpu flex-row items-center p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 lg:flex z-30"
       )}
     >
       <Button
@@ -95,10 +101,10 @@ const BentoCard = ({
         size="sm"
         className="pointer-events-auto p-0"
       >
-        <a href={href}>
+        <Link href={href}>
           {cta}
           <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180" />
-        </a>
+        </Link>
       </Button>
     </div>
 
