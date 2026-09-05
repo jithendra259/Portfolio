@@ -20,7 +20,9 @@ export type NavigationSection = {
 const navigationData: NavigationSection[] = [
   { title: 'Home', href: '#home' },
   { title: 'About', href: '#about' },
+  { title: 'Research', href: '#research' },
   { title: 'Projects', href: '#projects' },
+  { title: 'Skills', href: '#skills' },
   { title: 'Certificates', href: '#certificates' },
   { title: 'Experience', href: '#experience' },
   { title: 'Contact', href: '#contact' },

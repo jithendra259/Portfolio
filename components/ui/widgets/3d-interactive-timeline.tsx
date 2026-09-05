@@ -83,7 +83,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
   return (
     <motion.div
       ref={ref}
-      className={`relative mb-12 md:mb-16 ${isEven ? 'md:ml-auto' : 'md:mr-auto'} md:w-1/2 flex ${
+      className={`relative mb-10 md:mb-16 w-full ${isEven ? 'md:ml-auto' : 'md:mr-auto'} md:w-1/2 flex ${
         isEven ? 'md:justify-start' : 'md:justify-end'
       }`}
       initial="hidden"
@@ -91,15 +91,13 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       variants={{
         hidden: {
           opacity: 0,
-          x: isEven ? 40 : -40,
           y: 20,
         },
         visible: {
           opacity: 1,
-          x: 0,
           y: 0,
           transition: {
-            duration: 0.6,
+            duration: 0.5,
             ease: 'easeOut',
           },
         },
@@ -107,7 +105,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
     >
       {/* Timeline node */}
       <div
-        className={`absolute left-1/2 md:left-auto ${
+        className={`absolute left-6 md:left-auto ${
           isEven ? 'md:left-0' : 'md:right-0'
         } top-0 transform -translate-x-1/2 ${
           isEven ? 'md:-translate-x-1/2' : 'md:translate-x-1/2'
@@ -141,7 +139,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
 
       {/* Content card */}
       <motion.div
-        className={`relative z-10 bg-white/95 dark:bg-[#1e1e1e] backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg hover:shadow-xl w-full md:w-[calc(100%-2.5rem)] ${
+        className={`relative z-10 bg-white/95 dark:bg-[#1e1e1e] backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg hover:shadow-xl w-[calc(100%-3.5rem)] ml-14 md:ml-0 md:w-[calc(100%-2.5rem)] ${
           isEven ? 'md:ml-8' : 'md:mr-8'
         } border border-slate-200 dark:border-[#3c3c3c] transition-colors`}
         whileHover={{
@@ -324,7 +322,7 @@ export const Timeline3D: React.FC<Timeline3DProps> = ({
 
           <div className="relative">
             {/* Central line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-[2px] bg-slate-300 dark:bg-[#3c3c3c] rounded-full" />
+            <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 h-full w-[2px] bg-slate-300 dark:bg-[#3c3c3c] rounded-full" />
 
             {/* Timeline events */}
             {events.map((event, index) => (
