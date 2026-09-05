@@ -29,6 +29,18 @@ const INJECTED_STYLES = `
       line-height: 0.85;
   }
 
+  /* Matte Silver Typography with clean drop shadow */
+  .text-hero-matte {
+      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transform: translateZ(0);
+      filter: 
+          drop-shadow(0px 10px 25px rgba(255, 255, 255, 0.2)) 
+          drop-shadow(0px 2px 5px rgba(255, 255, 255, 0.1));
+  }
+
   /* Deep Physical Card with Dynamic Mouse Lighting */
   .premium-depth-card {
       background: linear-gradient(145deg, #162C6D 0%, #0A101D 100%);
@@ -106,6 +118,10 @@ export interface CinematicHeroProps extends React.HTMLAttributes<HTMLDivElement>
   brandName?: string;
   tagline1?: string;
   tagline2?: string;
+  welcomeTag?: string;
+  welcomeTitle1?: string;
+  welcomeTitle2?: string;
+  welcomeSubtitle?: string;
   cardHeading?: string;
   cardDescription?: React.ReactNode;
   metricValue?: number;
@@ -118,6 +134,10 @@ export function CinematicHero({
   brandName = "JITHENDRA",
   tagline1 = "JITHENDRA",
   tagline2 = "SUBRAMANYAM",
+  welcomeTag = "System Online // 2025",
+  welcomeTitle1 = "Welcome to",
+  welcomeTitle2 = "My Portfolio",
+  welcomeSubtitle = "Kandula Jithendra Subramanyam • AI & Systems Engineer",
   cardHeading = "Autonomous Agentic Intelligence",
   cardDescription = <>Engineered with modular multi-agent architectures, CVXPY portfolio optimization, and real-time voice pipelines.</>,
   metricValue = 100,
@@ -133,9 +153,13 @@ export function CinematicHero({
   const mockupRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(0);
   const scrollTriggerInstanceRef = useRef<ScrollTrigger | null>(null);
+  const entranceTimelineRef = useRef<gsap.core.Timeline | null>(null);
 
   // Instant skip button / Escape key
   const handleSkip = () => {
+    if (entranceTimelineRef.current) {
+      entranceTimelineRef.current.kill();
+    }
     if (scrollTriggerInstanceRef.current) {
       scrollTriggerInstanceRef.current.kill();
     }
@@ -199,16 +223,105 @@ export function CinematicHero({
     };
   }, []);
 
-  // 2. Scroll-Driven GSAP ScrollTrigger Sequence
+  // 2. Scroll-Driven GSAP ScrollTrigger Sequence with Entrance Reveal
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
 
     const ctx = gsap.context(() => {
-      // Initial states
+      // 1. Initial states
+      // Welcome Layer (visible at start, ready for dramatic text reveal)
+      gsap.set(".welcome-layer", { autoAlpha: 1 });
+      gsap.set(".welcome-tag", { autoAlpha: 0, y: -20, scale: 0.9 });
+      gsap.set(".welcome-text-1", { autoAlpha: 0, y: 55, scale: 0.88, filter: "blur(25px)", rotationX: -20 });
+      gsap.set(".welcome-text-2", { autoAlpha: 1, clipPath: "inset(0 100% 0 0)" });
+      gsap.set(".welcome-subtext", { autoAlpha: 0, y: 20, filter: "blur(12px)" });
+
+      // Alex Kane Editorial Layer (hidden initially, revealed after welcome)
+      gsap.set(".alex-accent", { autoAlpha: 0, y: -20, scale: 0.8 });
+      gsap.set(".alex-top-title", { autoAlpha: 0, y: -45, filter: "blur(25px)", scale: 0.95 });
+      gsap.set(".alex-bottom-title", { autoAlpha: 0, y: 45, filter: "blur(25px)", scale: 0.95 });
+      gsap.set(".alex-oval-portrait", { autoAlpha: 0, scale: 0.65, filter: "blur(15px)" });
+      gsap.set([".alex-subtext", ".alex-scroll-chevron"], { autoAlpha: 0, y: 20 });
+
+      // 3D Card and Mockup (hidden below viewport)
       gsap.set(".main-card", { y: window.innerHeight + 300, autoAlpha: 1 });
       gsap.set([".card-left-text", ".card-right-text", ".mockup-scroll-wrapper", ".floating-badge", ".phone-widget"], { autoAlpha: 0 });
 
-      // The ScrollTrigger Master Timeline
+      // 2. Entrance Timeline: Plays automatically when website opens
+      const entranceTl = gsap.timeline({ delay: 0.2 });
+      entranceTimelineRef.current = entranceTl;
+
+      entranceTl
+        // Reveal Welcome Status Pill
+        .to(".welcome-tag", { autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" })
+        // Text Reveal Part 1: "Welcome to" with 3D unblur
+        .to(".welcome-text-1", {
+          duration: 1.4,
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          rotationX: 0,
+          ease: "expo.out"
+        }, "-=0.5")
+        // Text Reveal Part 2: "My Portfolio" with horizontal clip wipe
+        .to(".welcome-text-2", {
+          duration: 1.2,
+          clipPath: "inset(0 0% 0 0)",
+          ease: "power4.inOut"
+        }, "-=0.9")
+        // Reveal Subtitle
+        .to(".welcome-subtext", {
+          duration: 1.0,
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          ease: "power2.out"
+        }, "-=0.6")
+        // Let visitor absorb the welcome message
+        .to({}, { duration: 1.2 })
+        // Smoothly dissolve welcome layer
+        .to(".welcome-layer", {
+          duration: 0.8,
+          autoAlpha: 0,
+          scale: 1.06,
+          filter: "blur(18px)",
+          ease: "power2.inOut"
+        })
+        // Reveal Editorial Name ("JITHENDRA SUBRAMANYAM") and Avatar
+        .to(".alex-top-title", {
+          duration: 1.2,
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          scale: 1,
+          ease: "expo.out"
+        }, "-=0.4")
+        .to(".alex-bottom-title", {
+          duration: 1.2,
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          scale: 1,
+          ease: "expo.out"
+        }, "-=0.9")
+        .to(".alex-oval-portrait", {
+          duration: 1.2,
+          autoAlpha: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          ease: "back.out(1.25)"
+        }, "-=1.0")
+        .to([".alex-accent", ".alex-subtext", ".alex-scroll-chevron"], {
+          duration: 0.8,
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.1,
+          ease: "power2.out"
+        }, "-=0.6");
+
+      // 3. The ScrollTrigger Master Timeline
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: trackRef.current,
@@ -225,9 +338,23 @@ export function CinematicHero({
       scrollTriggerInstanceRef.current = scrollTl.scrollTrigger || null;
 
       // =========================================================================
-      // PHASE 1: Alex Kane Reference Scene Splits Apart ("Text & Photo Go Out")
+      // PHASE 1: Dismiss Welcome (if still showing) + Text & Photo Split Out
       // =========================================================================
       scrollTl
+        // Ensure welcome layer vanishes on scroll
+        .to(".welcome-layer", {
+          autoAlpha: 0,
+          scale: 1.1,
+          filter: "blur(20px)",
+          duration: 0.4,
+          ease: "power2.out"
+        }, 0)
+        // Ensure editorial elements are visible if user scrolled during entrance
+        .to([".alex-top-title", ".alex-bottom-title", ".alex-oval-portrait"], {
+          autoAlpha: 1,
+          filter: "blur(0px)",
+          duration: 0.1
+        }, 0)
         // Top text "JITHENDRA" slides out horizontally to the left
         .to(".alex-top-title", {
           x: "-85vw",
@@ -360,6 +487,33 @@ export function CinematicHero({
         <span>Skip [ESC]</span>
         <X className="size-3.5" />
       </button>
+
+      {/* ========================================================================= */}
+      {/* 0. WELCOME TO MY PORTFOLIO (Cinematic Text Reveal Entrance)               */}
+      {/* ========================================================================= */}
+      <div className="welcome-layer absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 select-none pointer-events-none">
+        {/* Modern Status Badge */}
+        <div className="welcome-tag inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 shadow-[0_0_25px_rgba(204,255,0,0.15)]">
+          <span className="w-2 h-2 rounded-full bg-[#ccff00] animate-ping" />
+          <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#ccff00] font-semibold">
+            {welcomeTag}
+          </span>
+        </div>
+
+        {/* Main Dramatic Text Reveal */}
+        <h1 className="flex flex-col items-center tracking-tight font-extrabold max-w-5xl">
+          <span className="welcome-text-1 text-hero-matte text-4xl sm:text-6xl md:text-7xl lg:text-8xl mb-2 sm:mb-4 inline-block transform-style-3d will-change-transform font-black">
+            {welcomeTitle1}
+          </span>
+          <span className="welcome-text-2 text-hero-matte text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black inline-block tracking-tighter will-change-transform bg-gradient-to-r from-white via-neutral-200 to-[#ccff00] bg-clip-text text-transparent">
+            {welcomeTitle2}
+          </span>
+        </h1>
+
+        <p className="welcome-subtext text-neutral-400 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase mt-6 max-w-lg">
+          {welcomeSubtitle}
+        </p>
+      </div>
 
       {/* ========================================================================= */}
       {/* 1. ALEX KANE REFERENCE EDITORIAL HERO (Jithendra + Giant Lime Typography)   */}
