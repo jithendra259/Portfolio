@@ -12,8 +12,8 @@ export const swarmRobotsAgriculture: Project = {
   solution: 'Constructed an autonomous swarm of ground rovers equipped with optical cameras, DHT11 environmental sensors, DC motor-based ploughing tools, seed sowing mechanisms, and NRF-based inter-robot communication to survey agricultural plots autonomously. Integrated DenseNet-121 CNN for leaf disease classification and cloud connectivity via Blynk IoT for remote monitoring.',
   status: 'B.Tech Capstone Project | Presidency University | KSCST 46th SPP Funded',
   githubUrl: 'https://github.com/jithendra259',
-  pdfUrl: '/documents/swarm-robotics-kscst-proposal.pdf',
-  researchLink: '/documents/swarm-robotics-kscst-proposal.pdf',
+  pdfUrl: '/documents/swarm-robots-agriculture/swarm-robotics-kscst-proposal.pdf',
+  researchLink: '/documents/swarm-robots-agriculture/swarm-robotics-kscst-proposal.pdf',
   featured: false,
   highlights: [
     'DenseNet-121 CNN for automated plant disease diagnosis (Healthy vs Disease classification)',
