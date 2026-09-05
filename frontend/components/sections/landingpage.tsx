@@ -1,24 +1,24 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { AuroraText } from '@/components/ui/aurora-text';
-import { WordRotate } from '@/components/ui/word-rotate';
-import { TypingAnimation } from '@/components/ui/typing-animation';
-import { MagicCard } from '@/components/ui/magic-card';
-import { Marquee } from '@/components/ui/marquee';
-import { EmailRevealButton } from '@/components/ui/email-reveal-button';
-import { SocialTooltipIcons } from '@/components/ui/social-tooltip-icons';
+import { AuroraText } from '@/components/ui/effects/aurora-text';
+import { WordRotate } from '@/components/ui/effects/word-rotate';
+import { TypingAnimation } from '@/components/ui/effects/typing-animation';
+import { MagicCard } from '@/components/ui/effects/magic-card';
+import { Marquee } from '@/components/ui/effects/marquee';
+import { DotPattern } from '@/components/ui/effects/dot-pattern';
+import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
+import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
-import { ResumePrinter } from '@/components/ui/resume-printer';
-import { RobotCanvas } from '@/components/ui/robot-hero';
+import { ResumePrinter } from '@/components/ui/widgets/resume-printer';
+import { RobotCanvas } from '@/components/ui/widgets/robot-hero';
 import { CareerEducationTimeline } from '@/components/sections/career-education-timeline';
 import { SkillsCardsStack } from '@/components/sections/skills-cards-stack';
 import { CertificatesSection } from '@/components/sections/certificates-section';
 import { ContactSection } from '@/components/sections/contact-section';
-import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
-import { DotPattern } from '@/components/ui/dot-pattern';
-import { CinematicHero } from '@/components/ui/cinematic-landing-hero';
+import { BentoGrid, BentoCard } from '@/components/ui/widgets/bento-grid';
+import { CinematicHero } from '@/components/ui/widgets/cinematic-landing-hero';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PROJECT_CATEGORIES } from '@/data/projects';
 import {

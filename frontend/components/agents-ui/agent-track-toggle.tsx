@@ -1,4 +1,4 @@
-﻿import { type ComponentProps, Fragment, useMemo, useState } from 'react';
+import { type ComponentProps, Fragment, useMemo, useState } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { Track } from 'livekit-client';
 import {
@@ -10,7 +10,7 @@ import {
   VideoIcon,
   VideoOffIcon,
 } from 'lucide-react';
-import { Toggle } from '@/components/ui/toggle';
+import { Toggle } from '@/components/ui/primitives/toggle';
 import { cn } from '@/lib/shadcn/utils';
 
 export const agentTrackToggleVariants = cva(['size-9'], {

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
 import { Track } from 'livekit-client';
@@ -11,8 +11,8 @@ import {
   AgentTrackToggle,
   agentTrackToggleVariants,
 } from '@/components/agents-ui/agent-track-toggle';
-import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { Button } from '@/components/ui/primitives/button';
+import { Toggle } from '@/components/ui/primitives/toggle';
 import {
   type UseInputControlsProps,
   useInputControls,

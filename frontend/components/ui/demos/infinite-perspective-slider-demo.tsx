@@ -1,6 +1,6 @@
 "use client";
 
-import InfinitePerspectiveSlider from "@/components/ui/infinite-perspective-slider";
+import InfinitePerspectiveSlider from "@/components/ui/widgets/infinite-perspective-slider";
 
 // Paints the theme background out of the box. Pass `images` for your own set.
 export default function InfinitePerspectiveSliderDemo() {

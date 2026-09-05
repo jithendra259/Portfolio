@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { notify } from '@/components/ui/notification-card';
+import { notify } from '@/components/ui/widgets/notification-card';
 
 interface EmailRevealButtonProps {
   name?: string;

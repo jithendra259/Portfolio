@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { FloatingIconsHero } from '@/components/ui/floating-icons-hero-section';
-import { contactIcons } from '@/components/ui/contact-floating-icons';
-import { EmailRevealButton } from '@/components/ui/email-reveal-button';
+import { FloatingIconsHero } from '@/components/ui/widgets/floating-icons-hero-section';
+import { contactIcons } from '@/components/ui/widgets/contact-floating-icons';
+import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export function ContactSection() {

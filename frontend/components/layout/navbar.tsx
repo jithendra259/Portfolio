@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/primitives/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DayNightSwitch } from '@/components/ui/day-night-switch';
+} from '@/components/ui/primitives/dropdown-menu';
+import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 import { cn } from '@/lib/utils';
 import { ArrowUpRight, TextAlignJustify } from 'lucide-react';
 

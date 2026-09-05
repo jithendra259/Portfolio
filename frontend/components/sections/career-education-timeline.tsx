@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Timeline3D, { TimelineEvent } from '@/components/ui/3d-interactive-timeline';
+import Timeline3D, { TimelineEvent } from '@/components/ui/widgets/3d-interactive-timeline';
 import { Briefcase, GraduationCap, Sparkles, Award } from 'lucide-react';
 
 export function CareerEducationTimeline() {

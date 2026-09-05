@@ -1,4 +1,4 @@
-import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
+import { CinematicHero } from "@/components/ui/widgets/cinematic-landing-hero";
 
 export default function CinematicHeroDemo() {
   return (

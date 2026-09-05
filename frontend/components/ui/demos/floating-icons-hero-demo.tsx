@@ -4,7 +4,7 @@ import * as React from 'react';
 import {
   FloatingIconsHero,
   type FloatingIconsHeroProps,
-} from '@/components/ui/floating-icons-hero-section';
+} from '@/components/ui/widgets/floating-icons-hero-section';
 
 // --- Original Stylized Company Logo SVG Components ---
 

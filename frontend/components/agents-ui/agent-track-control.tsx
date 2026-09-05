@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
@@ -15,8 +15,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { type toggleVariants } from '@/components/ui/toggle';
+} from '@/components/ui/primitives/select';
+import { type toggleVariants } from '@/components/ui/primitives/toggle';
 import { cn } from '@/lib/shadcn/utils';
 
 const selectVariants = cva(
@@ -161,7 +161,7 @@ function TrackDeviceSelect({
         )}
       </SelectTrigger>
       <SelectContent position="popper">
-        {devices.map((device) => (
+        {devices.map((device: MediaDeviceInfo) => (
           <SelectItem key={device.deviceId} value={device.deviceId} className="font-mono text-xs">
             {device.label}
           </SelectItem>

@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { ContainerScroll, CardSticky } from '@/components/ui/cards-stack';
-import { IconCloud } from '@/components/ui/icon-cloud';
+import { ContainerScroll, CardSticky } from '@/components/ui/widgets/cards-stack';
+import { IconCloud } from '@/components/ui/widgets/icon-cloud';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { Cpu, Sparkles, CheckCircle2, Bot, TrendingUp, Terminal, Code2 } from 'lucide-react';
 
