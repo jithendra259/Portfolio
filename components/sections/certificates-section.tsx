@@ -9,7 +9,6 @@ import {
   X,
   Grid,
   LayoutList,
-  CheckCircle,
 } from 'lucide-react';
 import InfinitePerspectiveSlider from '@/components/ui/widgets/infinite-perspective-slider';
 import { CERTIFICATES_DATA } from '@/lib/certificates-data';
@@ -172,10 +171,6 @@ export function CertificatesSection() {
                         <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                           {cert.number} / 11
                         </span>
-                        <span className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
-                          <CheckCircle className="size-3 text-emerald-500" />
-                          <span>Verified</span>
-                        </span>
                       </div>
                       <h3 className="font-bold text-base text-slate-900 dark:text-white line-clamp-1 leading-snug">
                         {cert.title}
@@ -293,9 +288,6 @@ export function CertificatesSection() {
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/20">
                     {CERTIFICATES_DATA[selectedCertIndex].number} / 11
-                  </span>
-                  <span className="text-xs font-mono text-neutral-400">
-                    Verified Credential
                   </span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-white truncate mt-1">
