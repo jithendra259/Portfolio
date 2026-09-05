@@ -1,8 +1,8 @@
-﻿import { Public_Sans } from 'next/font/google';
+import { Public_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
-import { ThemeProvider } from '@/components/app/theme-provider';
-import { ThemeToggle } from '@/components/app/theme-toggle';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { NetworkErrorTV } from '@/components/ui/network-error-tv';
 import { cn } from '@/lib/shadcn/utils';
 import { getAppConfig, getStyles } from '@/lib/utils';
