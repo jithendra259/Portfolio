@@ -7,9 +7,9 @@ import { CERTIFICATES_DATA } from '@/lib/certificates-data';
 
 export function CertificatesSection() {
   return (
-    <section className="relative py-16 sm:py-24 overflow-hidden" id="certificates">
+    <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20 overflow-hidden" id="certificates">
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 mb-8 pb-6 border-b border-slate-200 dark:border-[#3c3c3c] flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 mb-4 pb-4 border-b border-slate-200 dark:border-[#3c3c3c] flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 mb-2 font-bold">
             <Award className="size-3.5 text-cyan-500" />

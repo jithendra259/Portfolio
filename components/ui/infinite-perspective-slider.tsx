@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
+import { cn } from "@/lib/shadcn/utils";
 
 gsap.registerPlugin(SplitText);
 
@@ -343,6 +344,7 @@ export interface InfinitePerspectiveSliderCompProps {
   textEnterDuration?: number;
   textLeaveDuration?: number;
   textStagger?: number;
+  heightClassName?: string;
 }
 
 function InfinitePerspectiveSliderComp({
@@ -361,6 +363,7 @@ function InfinitePerspectiveSliderComp({
   textEnterDuration = 0.35,
   textLeaveDuration = 0.35,
   textStagger = 0.06,
+  heightClassName,
 }: InfinitePerspectiveSliderCompProps) {
   const stripRef = useRef<HTMLDivElement | null>(null);
   const settersRef = useRef<CardSetter[]>([]);
@@ -905,8 +908,8 @@ function InfinitePerspectiveSliderComp({
   }, [images]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <div className="pointer-events-none relative flex h-full items-center overflow-hidden max-[1025px]:items-center" style={{ perspective }}>
+    <div className={cn("w-full overflow-hidden relative", heightClassName || "h-[540px] sm:h-[600px] lg:h-[640px]")}>
+      <div className="pointer-events-none relative flex h-full items-start pt-2 sm:pt-4 overflow-hidden" style={{ perspective }}>
         <div
           ref={stripRef}
           className="transform-3d relative w-full"
@@ -977,7 +980,7 @@ function InfinitePerspectiveSliderComp({
         </div>
       </div>
 
-      <div className="absolute bottom-[5%] left-1/2 flex -translate-x-1/2 flex-col items-center justify-center gap-[1vw] text-foreground">
+      <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 flex-col items-center justify-center gap-[1vw] text-foreground">
         scroll
 
         <svg
@@ -1051,11 +1054,16 @@ export interface InfinitePerspectiveSliderProps {
   textEnterDuration?: number;
   textLeaveDuration?: number;
   textStagger?: number;
+  className?: string;
+  heightClassName?: string;
 }
 
-export default function InfinitePerspectiveSlider(props: InfinitePerspectiveSliderProps) {
+export default function InfinitePerspectiveSlider({
+  className,
+  ...props
+}: InfinitePerspectiveSliderProps) {
   return (
-    <div className="flex w-full flex-col justify-center gap-20 bg-background">
+    <div className={cn("flex w-full flex-col justify-center bg-transparent", className)}>
       <InfinitePerspectiveSliderComp {...props} />
     </div>
   );
