@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LandingPage } from './landingpage';
+import { LandingPage } from '@/components/sections/landingpage';
 
 interface WelcomeViewProps {
   startButtonText?: string;

@@ -1,5 +1,5 @@
-﻿import { headers } from 'next/headers';
-import { App } from '@/components/app/app';
+import { headers } from 'next/headers';
+import { App } from '@/components/voice-agent/app';
 import { getAppConfig } from '@/lib/utils';
 
 export default async function Page() {
