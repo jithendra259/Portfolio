@@ -1,8 +1,8 @@
-import { useId } from "react";
-
+import React from "react";
 import { cn } from "@/lib/utils";
 
 interface DotPatternProps {
+  id?: string;
   width?: any;
   height?: any;
   x?: any;
@@ -14,6 +14,7 @@ interface DotPatternProps {
   [key: string]: any;
 }
 export function DotPattern({
+  id: customId,
   width = 24,
   height = 24,
   x = 0,
@@ -24,7 +25,7 @@ export function DotPattern({
   className,
   ...props
 }: DotPatternProps) {
-  const id = useId();
+  const patternId = customId || "portfolio-dot-pattern";
 
   return (
     <svg
@@ -37,7 +38,7 @@ export function DotPattern({
     >
       <defs>
         <pattern
-          id={id}
+          id={patternId}
           width={width}
           height={height}
           patternUnits="userSpaceOnUse"
@@ -48,7 +49,7 @@ export function DotPattern({
           <circle id="pattern-circle" cx={cx} cy={cy} r={cr} />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${id})`} />
+      <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${patternId})`} />
     </svg>
   );
 }
