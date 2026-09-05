@@ -204,6 +204,19 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </a>
           )}
 
+          {project.researchLink && (
+            <a
+              href={project.researchLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-all duration-300 shadow-md hover:scale-105 cursor-pointer"
+            >
+              <BookOpen className="size-4" />
+              <span>Read Research Manuscript (PDF)</span>
+              <ExternalLink className="size-3.5 opacity-70" />
+            </a>
+          )}
+
           <Link
             href="/#projects"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-200/70 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all cursor-pointer"
@@ -211,6 +224,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <span>All Selected Work</span>
           </Link>
         </div>
+
 
         {/* ============================================================ */}
         {/* 3. PERFORMANCE & SYSTEM METRICS */}

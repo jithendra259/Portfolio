@@ -7,9 +7,14 @@ export interface ResearchPaper {
   publisher: string;
   status: string;
   year: string;
+  authors?: string;
+  manuscriptId?: string;
+  conferenceLocation?: string;
   description: string;
   focusAreas: string[];
+  pdfUrl?: string;
 }
+
 
 export interface SkillCategory {
   category: string;
@@ -82,7 +87,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     email: 'kandulajithendrasubramanyam@gmail.com',
     status: 'Open for AI Engineering & Research Roles',
     stats: [
-      { label: 'Research Papers', value: '2 Under Review' },
+      { label: 'Research Papers', value: '2 Publications' },
       { label: 'M.Tech CGPA', value: '8.06' },
       { label: 'Agent Roles', value: '10+ Agents' },
       { label: 'Voice Latency', value: '<500ms' },
@@ -91,7 +96,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       github: 'https://github.com/jithendra259',
       linkedin: 'https://linkedin.com',
       email: 'mailto:kandulajithendrasubramanyam@gmail.com',
-      orcid: 'https://orcid.org',
+      orcid: 'https://orcid.org/0009-0005-7593-7871',
       resumeUrl: '#',
     },
     languages: [
@@ -113,7 +118,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     },
     {
       title: '📚 Research Papers',
-      prompt: 'Tell me about your research papers submitted to Elsevier EAAI and Springer.',
+      prompt: 'Tell me about your research papers submitted to Elsevier EAAI and presented at IJCACI (Springer).',
       category: 'research',
     },
     {
@@ -129,20 +134,26 @@ export const PORTFOLIO_DATA: PortfolioData = {
   ],
   researchPapers: [
     {
-      title: 'Multi-Agent Adaptive Portfolio Governance System',
+      title: 'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization',
       publisher: 'Elsevier – Engineering Applications of Artificial Intelligence (EAAI)',
       status: 'Under Review, 2026',
       year: '2026',
-      description: 'Pioneered an adaptive financial intelligence system integrating agentic orchestration, convex portfolio optimization (CVXPY/CLARABEL), market-regime adaptation, instability detection, anti-hallucination controls, and explainable governance validation.',
-      focusAreas: ['Agentic Orchestration', 'Portfolio Optimization', 'Market-Regime Adaptation', 'Instability Detection', 'Anti-Hallucination Safeguards', 'Auditable Decision Support'],
+      authors: 'Jithendra Subramanyam Kandula (First & Corresponding Author), Sunayana Vilas Jadhav, Dr. Ashwini Dalvi',
+      manuscriptId: 'EAAI-26-14280',
+      description: 'Formulates a five-agent blackboard architecture for institutional portfolio optimization addressing fire-sale contagion and cross-sector spillovers via bipartite co-holding graphs. Integrates graph-regularized Conditional Value-at-Risk (CVaR) with adaptive Laplacian penalty, explainability, and human-in-the-loop governance auditing.',
+      focusAreas: ['Multi-Agent Blackboard Architecture', 'Graph-Regularized CVaR', 'Institutional Contagion Networks', 'Laplacian Penalty', 'Human-in-the-Loop Governance', 'Systemic Risk Mitigation'],
+      pdfUrl: '/documents/multi-agent-governance-graph-cvar-eaai.pdf',
     },
     {
-      title: 'Agentic AI Portfolio Governance / Financial Intelligence',
-      publisher: 'Springer Conference Proceedings',
-      status: 'Under Review, 2026',
+      title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
+      publisher: '10th Int. Joint Conf. on Advances in Computational Intelligence (IJCACI 2026) / Springer LNCS',
+      status: 'Presented & Accepted, 2026',
       year: '2026',
-      description: 'Formulated a modular multi-agent framework delivering compliance-aware portfolio decision support, source grounding, evidence tracking, and audit-ready financial reasoning workflows.',
-      focusAreas: ['Multi-Agent Governance', 'Explainable Financial Intelligence', 'Compliance-Aware AI', 'Evidence Grounding', 'Audit-Ready AI'],
+      authors: 'K. J. Subramanyam (First & Corresponding Author), Sunayana Vilas Jadhav, Ashwini Dalvi',
+      conferenceLocation: 'Washington University of Science and Technology (WUST), Alexandria, USA',
+      description: 'Proposes an interpretable regime-adaptive supervisory governance framework integrating covariance drift, rolling volatility, and correlation stress into an instability index. Dynamically adjusts concentration limits and regularization strength over 18 U.S. equities across 2005–2025.',
+      focusAreas: ['Supervisory Governance', 'Covariance Instability Index', 'Regime Adaptation', 'Concentration Limits', 'MAS-Compatible Architecture', '20-Year Empirical Study (2005–2025)'],
+      pdfUrl: '/documents/regime-adaptive-supervisory-governance-ijcaci-2026.pdf',
     },
   ],
   projects: ALL_PROJECTS,
