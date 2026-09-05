@@ -945,12 +945,12 @@ function InfinitePerspectiveSliderComp({
                   ref={(element) => {
                     imageRefs.current[index] = element;
                   }}
-                  className="relative h-[50vh] w-full overflow-hidden bg-muted max-[1025px]:h-[45vh] max-md:h-[40vh]"
+                  className="relative h-[50vh] w-full overflow-hidden bg-slate-950/90 rounded-2xl border border-slate-800/40 p-2 max-[1025px]:h-[45vh] max-md:h-[40vh] shadow-xl"
                 >
                   <img
                     src={src}
                     alt={`slide-${index}`}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="h-full w-full object-contain rounded-xl"
                     draggable={false}
                   />
                 </div>

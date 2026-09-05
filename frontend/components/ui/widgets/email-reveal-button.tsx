@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { notify } from '@/components/ui/widgets/notification-card';
 
 interface EmailRevealButtonProps {
@@ -12,19 +12,41 @@ export function EmailRevealButton({
   name = 'Kandula Jithendra Subramanyam',
   email = 'kandulajithendrasubramanyam@gmail.com',
 }: EmailRevealButtonProps) {
+  const [isRevealed, setIsRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(email);
-    setCopied(true);
-    notify('success', 'Address copied!', email);
-    setTimeout(() => setCopied(false), 2500);
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  const handleInteraction = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsRevealed(true);
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        navigator.clipboard.writeText(email);
+      }
+      setCopied(true);
+      notify('success', 'Email Copied!', email);
+    } catch (err) {
+      console.error('Failed to copy to clipboard', err);
+    }
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setIsRevealed(false);
+      setCopied(false);
+    }, 4500);
   };
 
   const longestText = name.length > email.length ? name : email;
 
   return (
-    <div className="email-reveal-wrapper my-8 flex justify-center w-full px-4">
+    <div className="email-reveal-wrapper my-8 pb-4 flex justify-center w-full px-4">
       <style>{`
         .email-reveal-wrapper .btn-wrapper {
           --color: #b5faff31;
@@ -41,9 +63,9 @@ export function EmailRevealButton({
           display: grid;
           place-items: center;
           width: fit-content;
-          max-width: 92vw;
+          max-width: calc(100vw - 2rem);
           min-height: 48px;
-
+          touch-action: manipulation;
           user-select: none;
         }
 
@@ -55,29 +77,42 @@ export function EmailRevealButton({
           --line-color: rgba(255, 255, 255, 0.25);
         }
 
-        :is(.dark, [data-theme='dark']) .email-reveal-wrapper .txt-secondary {
-          color: rgba(255, 255, 255, 0.55);
-        }
-
         .email-reveal-wrapper .txt-sizer {
           visibility: hidden;
           pointer-events: none;
           user-select: none;
-          padding: 1.25rem 3.5rem;
-          font: 500 1.25em "Inter", sans-serif;
+          padding: 0.75rem 1rem;
+          font-family: "Inter", sans-serif;
+          font-weight: 500;
+          font-size: clamp(0.72rem, 3.2vw, 0.875rem);
           white-space: nowrap;
           opacity: 0;
+        }
+
+        @media (min-width: 640px) {
+          .email-reveal-wrapper .txt-sizer {
+            padding: 1.25rem 3.5rem;
+            font-size: 1.25rem;
+          }
         }
 
         .email-reveal-wrapper .txt-secondary {
           position: absolute;
           bottom: -2rem;
-          font: 400 0.75em "Inter", sans-serif;
-          color: #0006;
+          font-family: "Inter", sans-serif;
+          font-size: clamp(0.7rem, 2.8vw, 0.8rem);
+          font-weight: 400;
+          color: rgba(0, 0, 0, 0.6);
           font-style: italic;
           will-change: opacity;
           transition: opacity calc(var(--anim-speed, 1s) * 0.5) ease;
           opacity: 1;
+          white-space: nowrap;
+          pointer-events: none;
+        }
+
+        :is(.dark, [data-theme='dark']) .email-reveal-wrapper .txt-secondary {
+          color: rgba(255, 255, 255, 0.65);
         }
 
         .email-reveal-wrapper #hint2 {
@@ -97,6 +132,8 @@ export function EmailRevealButton({
           background: none;
           width: 100%;
           height: 100%;
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
 
         .email-reveal-wrapper .txt-box {
@@ -126,10 +163,12 @@ export function EmailRevealButton({
 
         .email-reveal-wrapper .txt {
           position: absolute;
-          padding: 1rem 2rem;
+          padding: 0.75rem 1rem;
 
           z-index: 2;
-          font: 500 1.25em "Inter", sans-serif;
+          font-family: "Inter", sans-serif;
+          font-weight: 500;
+          font-size: clamp(0.72rem, 3.2vw, 0.875rem);
           color: var(--txt-color, #15104c);
 
           will-change: opacity, display, text-shadow;
@@ -141,6 +180,13 @@ export function EmailRevealButton({
             0 8px 4px #00000015,
             0 16px 8px #00000015;
           white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+          .email-reveal-wrapper .txt {
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+          }
         }
 
         .email-reveal-wrapper .txt:last-child {
@@ -185,28 +231,36 @@ export function EmailRevealButton({
           right: calc(var(--point-size, 8px) * -0.5);
         }
 
-        .email-reveal-wrapper .btn:hover .txt {
+        /* Hover and mobile revealed animations */
+        .email-reveal-wrapper .btn:hover .txt,
+        .email-reveal-wrapper .btn.is-revealed .txt {
           animation: txt-out calc(var(--anim-speed, 1s) * 0.5) forwards;
         }
-        .email-reveal-wrapper .btn:hover .txt:last-child {
+        .email-reveal-wrapper .btn:hover .txt:last-child,
+        .email-reveal-wrapper .btn.is-revealed .txt:last-child {
           animation: txt-in calc(var(--anim-speed, 1s) * 0.5) forwards;
         }
 
-        .email-reveal-wrapper .btn:hover .txt-box {
+        .email-reveal-wrapper .btn:hover .txt-box,
+        .email-reveal-wrapper .btn.is-revealed .txt-box {
           animation: frame var(--anim-speed, 1s) ease;
         }
-        .email-reveal-wrapper .btn:hover .txt-box::after {
+        .email-reveal-wrapper .btn:hover .txt-box::after,
+        .email-reveal-wrapper .btn.is-revealed .txt-box::after {
           background-size: 700%;
         }
 
-        .email-reveal-wrapper .btn:hover .frame {
+        .email-reveal-wrapper .btn:hover .frame,
+        .email-reveal-wrapper .btn.is-revealed .frame {
           animation: frame var(--anim-speed, 1s) ease;
         }
 
-        .email-reveal-wrapper .btn:hover ~ #hint1 {
+        .email-reveal-wrapper .btn:hover ~ #hint1,
+        .email-reveal-wrapper .btn.is-revealed ~ #hint1 {
           opacity: 0;
         }
-        .email-reveal-wrapper .btn:hover ~ #hint2 {
+        .email-reveal-wrapper .btn:hover ~ #hint2,
+        .email-reveal-wrapper .btn.is-revealed ~ #hint2 {
           opacity: 1;
         }
 
@@ -255,43 +309,25 @@ export function EmailRevealButton({
           }
         }
 
-        .email-reveal-wrapper .btn::before {
-          content: "Address copied";
-          position: absolute;
-          inset: 0;
-          font: 400 1em "Inter", sans-serif;
-          letter-spacing: 0.03em;
-          color: #000a;
-          z-index: -1;
-          filter: blur(16px);
-          opacity: 0;
-        }
-
         .email-reveal-wrapper .btn:active .txt-box {
           filter: contrast(1.4) brightness(1.4);
-        }
-
-        .email-reveal-wrapper .btn:focus::before {
-          animation: appear calc(var(--anim-speed, 1s) * 1.5)
-            cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes appear {
-          70% {
-            opacity: 0.75;
-            filter: blur(0px);
-          }
-          100% {
-            transform: translateY(-24px);
-          }
         }
       `}</style>
 
       <div className="btn-wrapper">
-        {/* Dynamic Width Sizer to fit any text length perfectly */}
+        {/* Dynamic Width Sizer to fit text comfortably */}
         <span className="txt-sizer">{longestText}</span>
 
-        <button className="btn" onClick={handleCopy}>
+        <button
+          type="button"
+          className={`btn ${isRevealed ? 'is-revealed' : ''}`}
+          onClick={handleInteraction}
+          onMouseEnter={() => setIsRevealed(true)}
+          onMouseLeave={() => {
+            if (!copied) setIsRevealed(false);
+          }}
+          aria-label={`Copy email address: ${email}`}
+        >
           <span className="frame">
             <span className="point top left"></span>
             <span className="point top right"></span>
@@ -303,8 +339,12 @@ export function EmailRevealButton({
             <span className="txt">{email}</span>
           </span>
         </button>
-        <div className="txt-secondary" id="hint1">Hover to reveal address</div>
-        <div className="txt-secondary" id="hint2">Click to copy</div>
+        <div className="txt-secondary" id="hint1">
+          Hover or tap to reveal address
+        </div>
+        <div className="txt-secondary" id="hint2">
+          {copied ? 'Address copied to clipboard!' : 'Click or tap to copy'}
+        </div>
       </div>
     </div>
   );

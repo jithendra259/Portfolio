@@ -7,7 +7,6 @@ import { TypingAnimation } from '@/components/ui/effects/typing-animation';
 import { MagicCard } from '@/components/ui/effects/magic-card';
 import { Marquee } from '@/components/ui/effects/marquee';
 import { DotPattern } from '@/components/ui/effects/dot-pattern';
-import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
 import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
@@ -96,7 +95,7 @@ function BentoFilesBackground() {
 
 function BentoNotificationsBackground() {
   return (
-    <div className="absolute top-4 right-4 left-4 sm:left-auto sm:w-[320px] flex flex-col gap-2 pointer-events-none [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
+    <div className="absolute top-4 right-4 left-4 sm:left-auto sm:w-[320px] hidden sm:flex flex-col gap-2 pointer-events-none [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
       <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
         <div className="size-7 rounded-full bg-blue-500 flex items-center justify-center shrink-0 text-white shadow-sm">
           <Zap className="size-3.5" />
