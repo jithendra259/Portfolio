@@ -474,7 +474,75 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </section>
 
         {/* ============================================================ */}
-        {/* 9. NEXT & PREVIOUS PROJECT SWITCHER */}
+        {/* 9. FULL RESEARCH CASE STUDY — REPORT SECTIONS */}
+        {/* ============================================================ */}
+        {project.reportSections && project.reportSections.length > 0 && (
+          <section className="py-12 sm:py-16">
+            <div className="mb-10 pb-4 border-b border-slate-200 dark:border-white/10">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 mb-2 font-bold tracking-widest">
+                <BookOpen className="size-3.5" />
+                <span>Full Research Manuscript</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
+                Case Study — Academic Research Content
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-neutral-400 mt-2 max-w-2xl">
+                Full content extracted from the research manuscripts — from abstract through references — as submitted for peer review.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {project.reportSections.map((section, idx) => (
+                <div
+                  key={idx}
+                  className="group rounded-2xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 overflow-hidden hover:border-cyan-500/30 transition-all duration-300"
+                >
+                  {/* Section Header */}
+                  <div className="flex items-center gap-3 px-6 sm:px-8 py-4 bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200 dark:border-white/10">
+                    <span className="size-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
+                      {section.heading}
+                    </h3>
+                  </div>
+
+                  {/* Section Content */}
+                  <div className="px-6 sm:px-8 py-6">
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700 dark:text-neutral-300 leading-relaxed m-0 bg-transparent border-0 p-0">
+                        {section.content}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Download Full PDF CTA */}
+            {project.pdfUrl && (
+              <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/20">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Read the Full Manuscript</p>
+                  <p className="text-xs text-slate-600 dark:text-neutral-400">Download the complete research paper including all figures, tables, and supplementary materials.</p>
+                </div>
+                <a
+                  href={project.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-all shrink-0"
+                >
+                  <BookOpen className="size-3.5" />
+                  <span>Download PDF</span>
+                  <ExternalLink className="size-3.5 opacity-70" />
+                </a>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ============================================================ */}
+        {/* 10. NEXT & PREVIOUS PROJECT SWITCHER */}
         {/* ============================================================ */}
         <section className="pt-12 sm:pt-16 pb-8 border-t border-slate-200 dark:border-white/10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

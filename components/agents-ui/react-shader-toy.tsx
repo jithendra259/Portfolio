@@ -1,4 +1,4 @@
-import React, { type ComponentPropsWithoutRef, useEffect, useRef } from 'react';
+﻿import React, { type ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 
 const PRECISIONS = ['lowp', 'mediump', 'highp'];
 const FS_MAIN_SHADER = `\nvoid main(void){
