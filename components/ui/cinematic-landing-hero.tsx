@@ -134,10 +134,8 @@ export function CinematicHero({
   brandName = "JITHENDRA",
   tagline1 = "JITHENDRA",
   tagline2 = "SUBRAMANYAM",
-  welcomeTag = "System Online // 2025",
   welcomeTitle1 = "Welcome to",
-  welcomeTitle2 = "My Portfolio",
-  welcomeSubtitle = "Kandula Jithendra Subramanyam • AI & Systems Engineer",
+  welcomeTitle2 = "Portfolio",
   cardHeading = "Autonomous Agentic Intelligence",
   cardDescription = <>Engineered with modular multi-agent architectures, CVXPY portfolio optimization, and real-time voice pipelines.</>,
   metricValue = 100,
@@ -229,12 +227,10 @@ export function CinematicHero({
 
     const ctx = gsap.context(() => {
       // 1. Initial states
-      // Welcome Layer (visible at start, ready for dramatic text reveal)
+      // Welcome Layer (visible at start, ready for clean dramatic text reveal)
       gsap.set(".welcome-layer", { autoAlpha: 1 });
-      gsap.set(".welcome-tag", { autoAlpha: 0, y: -20, scale: 0.9 });
       gsap.set(".welcome-text-1", { autoAlpha: 0, y: 55, scale: 0.88, filter: "blur(25px)", rotationX: -20 });
       gsap.set(".welcome-text-2", { autoAlpha: 1, clipPath: "inset(0 100% 0 0)" });
-      gsap.set(".welcome-subtext", { autoAlpha: 0, y: 20, filter: "blur(12px)" });
 
       // Alex Kane Editorial Layer (hidden initially, revealed after welcome)
       gsap.set(".alex-accent", { autoAlpha: 0, y: -20, scale: 0.8 });
@@ -252,40 +248,30 @@ export function CinematicHero({
       entranceTimelineRef.current = entranceTl;
 
       entranceTl
-        // Reveal Welcome Status Pill
-        .to(".welcome-tag", { autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" })
         // Text Reveal Part 1: "Welcome to" with 3D unblur
         .to(".welcome-text-1", {
-          duration: 1.4,
+          duration: 1.3,
           autoAlpha: 1,
           y: 0,
           scale: 1,
           filter: "blur(0px)",
           rotationX: 0,
           ease: "expo.out"
-        }, "-=0.5")
-        // Text Reveal Part 2: "My Portfolio" with horizontal clip wipe
+        })
+        // Text Reveal Part 2: "Portfolio" with horizontal clip wipe
         .to(".welcome-text-2", {
-          duration: 1.2,
+          duration: 1.1,
           clipPath: "inset(0 0% 0 0)",
           ease: "power4.inOut"
-        }, "-=0.9")
-        // Reveal Subtitle
-        .to(".welcome-subtext", {
-          duration: 1.0,
-          autoAlpha: 1,
-          y: 0,
-          filter: "blur(0px)",
-          ease: "power2.out"
-        }, "-=0.6")
+        }, "-=0.7")
         // Let visitor absorb the welcome message
-        .to({}, { duration: 1.2 })
+        .to({}, { duration: 1.1 })
         // Smoothly dissolve welcome layer
         .to(".welcome-layer", {
-          duration: 0.8,
+          duration: 0.75,
           autoAlpha: 0,
-          scale: 1.06,
-          filter: "blur(18px)",
+          scale: 1.05,
+          filter: "blur(16px)",
           ease: "power2.inOut"
         })
         // Reveal Editorial Name ("JITHENDRA SUBRAMANYAM") and Avatar
@@ -489,18 +475,9 @@ export function CinematicHero({
       </button>
 
       {/* ========================================================================= */}
-      {/* 0. WELCOME TO MY PORTFOLIO (Cinematic Text Reveal Entrance)               */}
+      {/* 0. WELCOME TO PORTFOLIO (Clean Dramatic Text Reveal Entrance)             */}
       {/* ========================================================================= */}
       <div className="welcome-layer absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 select-none pointer-events-none">
-        {/* Modern Status Badge */}
-        <div className="welcome-tag inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 shadow-[0_0_25px_rgba(204,255,0,0.15)]">
-          <span className="w-2 h-2 rounded-full bg-[#ccff00] animate-ping" />
-          <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#ccff00] font-semibold">
-            {welcomeTag}
-          </span>
-        </div>
-
-        {/* Main Dramatic Text Reveal */}
         <h1 className="flex flex-col items-center tracking-tight font-extrabold max-w-5xl">
           <span className="welcome-text-1 text-hero-matte text-4xl sm:text-6xl md:text-7xl lg:text-8xl mb-2 sm:mb-4 inline-block transform-style-3d will-change-transform font-black">
             {welcomeTitle1}
@@ -509,30 +486,26 @@ export function CinematicHero({
             {welcomeTitle2}
           </span>
         </h1>
-
-        <p className="welcome-subtext text-neutral-400 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase mt-6 max-w-lg">
-          {welcomeSubtitle}
-        </p>
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. ALEX KANE REFERENCE EDITORIAL HERO (Jithendra + Giant Lime Typography)   */}
+      {/* 1. ALEX KANE REFERENCE EDITORIAL HERO (Jithendra + Proportional Layout)     */}
       {/* ========================================================================= */}
       <div className="alex-editorial-layer absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4 sm:px-8">
         
         {/* Script Accent Floating Above */}
-        <span className="alex-accent absolute top-[12vh] sm:top-[14vh] font-serif italic text-3xl sm:text-5xl md:text-6xl text-white/90 z-20 select-none">
+        <span className="alex-accent absolute top-[13vh] sm:top-[15vh] font-serif italic text-2xl sm:text-4xl md:text-5xl text-white/90 z-20 select-none">
           A
         </span>
 
-        {/* Top Giant Neon Title: JITHENDRA */}
-        <h1 className="alex-top-title editorial-neon-text font-black text-[18vw] sm:text-[19vw] md:text-[20vw] tracking-tighter text-center uppercase will-change-transform z-10">
+        {/* Top Giant Neon Title: JITHENDRA (Balanced & fitted) */}
+        <h1 className="alex-top-title editorial-neon-text font-black text-[13vw] sm:text-[12vw] md:text-[10.5vw] lg:text-[9.5vw] tracking-[0.02em] text-center uppercase will-change-transform z-10">
           JITHENDRA
         </h1>
 
-        {/* Centered Vertical Oval Cutout with Jithendra's Photo */}
+        {/* Centered Vertical Oval Cutout with Jithendra's Photo (Slender & proportional) */}
         <div className="alex-oval-portrait absolute z-20 flex items-center justify-center will-change-transform">
-          <div className="relative w-[180px] sm:w-[250px] md:w-[290px] h-[250px] sm:h-[350px] md:h-[410px] rounded-[100px] sm:rounded-[140px] md:rounded-[160px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.95)] border-2 border-black bg-black">
+          <div className="relative w-[120px] sm:w-[145px] md:w-[170px] lg:w-[190px] h-[165px] sm:h-[200px] md:h-[240px] lg:h-[270px] rounded-[60px] sm:rounded-[75px] md:rounded-[90px] lg:rounded-[100px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.98)] border-2 border-black bg-black">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/jithendra.jpeg"
@@ -544,14 +517,14 @@ export function CinematicHero({
           </div>
         </div>
 
-        {/* Bottom Giant Neon Title: SUBRAMANYAM */}
-        <h1 className="alex-bottom-title editorial-neon-text font-black text-[13.5vw] sm:text-[14.5vw] md:text-[15.5vw] tracking-tighter text-center uppercase will-change-transform z-10 -mt-2 sm:-mt-6">
+        {/* Bottom Giant Neon Title: SUBRAMANYAM (Balanced & fitted) */}
+        <h1 className="alex-bottom-title editorial-neon-text font-black text-[10.5vw] sm:text-[9.5vw] md:text-[8.5vw] lg:text-[7.6vw] tracking-[0.02em] text-center uppercase will-change-transform z-10 -mt-1 sm:-mt-2 md:-mt-3">
           SUBRAMANYAM
         </h1>
 
         {/* Editorial Subtitle running horizontally across lower section */}
-        <div className="alex-subtext absolute bottom-[14vh] sm:bottom-[15vh] z-30 flex items-center justify-center text-center px-6">
-          <p className="text-sm sm:text-lg md:text-xl font-normal tracking-wide text-white/80 font-sans drop-shadow-md">
+        <div className="alex-subtext absolute bottom-[10vh] sm:bottom-[12vh] z-30 flex items-center justify-center text-center px-6">
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg font-normal tracking-wide text-white/80 font-sans drop-shadow-md">
             Designing human experiences in code.
           </p>
         </div>
