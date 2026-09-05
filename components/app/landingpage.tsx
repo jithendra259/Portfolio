@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { AuroraText } from '@/components/ui/aurora-text';
@@ -426,9 +426,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
               Research Papers & Manuscripts
             </h2>
           </div>
-          <span className="text-xs font-mono text-slate-900 dark:text-white px-3 py-1 rounded-full bg-slate-100 dark:bg-[#1e1e1e] border border-slate-300 dark:border-[#3c3c3c] font-bold">
-            1 Journal Under Review + 1 Conference Presented (2026)
-          </span>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
