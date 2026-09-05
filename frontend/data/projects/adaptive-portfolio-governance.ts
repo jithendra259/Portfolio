@@ -13,8 +13,8 @@ export const adaptivePortfolioGovernance: Project = {
   status: 'Under Review (Elsevier EAAI-26-14280) | Presented at IJCACI 2026 (Springer)',
   githubUrl: 'https://github.com/jithendra259',
   featured: true,
-  researchLink: '/documents/multi-agent-governance-graph-cvar-eaai.pdf',
-  pdfUrl: '/documents/multi-agent-governance-graph-cvar-eaai.pdf',
+  researchLink: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
+  pdfUrl: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
   highlights: [
     'Five-agent blackboard architecture: Data Ingestion, Instability Analysis, Contagion Graph, G-CVaR Optimization, XAI Explainability & Auditing',
     'Graph-regularized CVaR with adaptive sigmoid-gated Laplacian penalty preventing institutional fire-sale contagion spillovers',

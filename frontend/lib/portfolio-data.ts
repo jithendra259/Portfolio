@@ -142,7 +142,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       manuscriptId: 'EAAI-26-14280',
       description: 'Formulates a five-agent blackboard architecture for institutional portfolio optimization addressing fire-sale contagion and cross-sector spillovers via bipartite co-holding graphs. Integrates graph-regularized Conditional Value-at-Risk (CVaR) with adaptive Laplacian penalty, explainability, and human-in-the-loop governance auditing.',
       focusAreas: ['Multi-Agent Blackboard Architecture', 'Graph-Regularized CVaR', 'Institutional Contagion Networks', 'Laplacian Penalty', 'Human-in-the-Loop Governance', 'Systemic Risk Mitigation'],
-      pdfUrl: '/documents/multi-agent-governance-graph-cvar-eaai.pdf',
+      pdfUrl: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
     },
     {
       title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
@@ -153,7 +153,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       conferenceLocation: 'Washington University of Science and Technology (WUST), Alexandria, USA',
       description: 'Proposes an interpretable regime-adaptive supervisory governance framework integrating covariance drift, rolling volatility, and correlation stress into an instability index. Dynamically adjusts concentration limits and regularization strength over 18 U.S. equities across 2005–2025.',
       focusAreas: ['Supervisory Governance', 'Covariance Instability Index', 'Regime Adaptation', 'Concentration Limits', 'MAS-Compatible Architecture', '20-Year Empirical Study (2005–2025)'],
-      pdfUrl: '/documents/regime-adaptive-supervisory-governance-ijcaci-2026.pdf',
+      pdfUrl: '/documents/adaptive-portfolio-governance/regime-adaptive-supervisory-governance-ijcaci-2026.pdf',
     },
   ],
   projects: ALL_PROJECTS,

@@ -13,8 +13,8 @@ export const personalisedAqiSystem: Project = {
   status: 'M.Tech Mini Project (Batch 2024–2026)',
   githubUrl: 'https://github.com/jithendra259',
   liveUrl: 'https://aqicn.org',
-  researchLink: '/documents/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
-  pdfUrl: '/documents/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
+  researchLink: '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
+  pdfUrl: '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
   featured: true,
   highlights: [
     'Hourly automated ingestion for PM2.5, PM10, CO, SO2, NO2, and O3 covering 14,107 cities worldwide from AQICN.org',
