@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { NoiseTexture } from '@/components/ui/noise-texture';
-import { SocialTooltipIcons } from '@/components/ui/social-tooltip-icons';
+import { NoiseTexture } from '@/components/ui/effects/noise-texture';
+import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export function Footer() {

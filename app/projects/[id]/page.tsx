@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { PROJECT_DETAILS, ProjectDetail } from '@/lib/project-details';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import { DayNightSwitch } from '@/components/ui/day-night-switch';
+import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 
 interface PageProps {
   params: Promise<{ id: string }>;

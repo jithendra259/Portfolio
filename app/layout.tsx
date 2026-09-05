@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { NetworkErrorTV } from '@/components/ui/network-error-tv';
+import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
 import { cn } from '@/lib/shadcn/utils';
 import { getAppConfig, getStyles } from '@/lib/utils';
 import '@/styles/globals.css';

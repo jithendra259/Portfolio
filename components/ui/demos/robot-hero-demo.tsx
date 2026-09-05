@@ -1,4 +1,4 @@
-import { RobotHero } from "@/components/ui/robot-hero";
+import { RobotHero } from "@/components/ui/widgets/robot-hero";
 
 const settings = {
   color: "#c4c4c4",

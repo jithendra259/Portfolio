@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ContainerScroll, CardSticky } from "@/components/ui/cards-stack"
+import { ContainerScroll, CardSticky } from "@/components/ui/widgets/cards-stack"
 
 const PROCESS_PHASES = [
   {

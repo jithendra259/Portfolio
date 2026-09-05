@@ -1,12 +1,12 @@
-﻿'use client';
+'use client';
 
 import { type ComponentProps } from 'react';
 import { Streamdown } from 'streamdown';
 import { type AgentState, type ReceivedMessage } from '@livekit/components-react';
 import { AgentChatIndicator } from '@/components/agents-ui/agent-chat-indicator';
-import { Bubble, BubbleContent } from '@/components/ui/bubble';
-import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker';
-import { Message, MessageContent } from '@/components/ui/message';
+import { Bubble, BubbleContent } from '@/components/ui/chat/bubble';
+import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/effects/marker';
+import { Message, MessageContent } from '@/components/ui/chat/message';
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -14,7 +14,7 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from '@/components/ui/message-scroller';
+} from '@/components/ui/chat/message-scroller';
 
 /**
  * Props for the AgentChatTranscript component.

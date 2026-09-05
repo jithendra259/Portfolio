@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Award } from 'lucide-react';
-import InfinitePerspectiveSlider from '@/components/ui/infinite-perspective-slider';
+import InfinitePerspectiveSlider from '@/components/ui/widgets/infinite-perspective-slider';
 import { CERTIFICATES_DATA } from '@/lib/certificates-data';
 
 export function CertificatesSection() {

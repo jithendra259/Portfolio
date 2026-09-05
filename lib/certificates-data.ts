@@ -1,4 +1,4 @@
-import { InfinitePerspectiveSliderItemData } from '@/components/ui/infinite-perspective-slider';
+import { InfinitePerspectiveSliderItemData } from '@/components/ui/widgets/infinite-perspective-slider';
 
 export const CERTIFICATES_DATA: InfinitePerspectiveSliderItemData[] = [
   {
