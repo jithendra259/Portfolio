@@ -83,7 +83,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     subheadline: 'M.Tech AI & Data Science | Quantitative Finance | Explainable AI | Full-Stack Dev',
     bio: 'M.Tech Artificial Intelligence & Data Science researcher and developer specialized in agentic AI, multi-agent portfolio governance, quantitative finance risk analytics, explainable AI, and full-stack systems. Built modular multi-agent architectures with task planning, CVXPY portfolio optimization, market-regime adaptation, audit logging, and compliance-aware verification. Research manuscripts under review at Elsevier EAAI and Springer.',
     location: 'Mumbai, India',
-    phone: '+91-9704400336',
+    phone: '+91 9704400336',
     email: 'kandulajithendrasubramanyam@gmail.com',
     status: 'Open for AI Engineering & Research Roles',
     stats: [
@@ -94,7 +94,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     ],
     socials: {
       github: 'https://github.com/jithendra259',
-      linkedin: 'https://linkedin.com',
+      linkedin: 'https://www.linkedin.com/in/kandula-jithendra-subramanyam-0311462a6/',
       email: 'mailto:kandulajithendrasubramanyam@gmail.com',
       orcid: 'https://orcid.org/0009-0005-7593-7871',
       resumeUrl: '#',

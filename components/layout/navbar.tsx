@@ -73,11 +73,11 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
       {/* Top-Docked Sticky Glassmorphism Navigation Bar */}
       <nav
         className={cn(
-          'pointer-events-auto relative flex items-center justify-between gap-6 sm:gap-10 md:gap-14 px-6 sm:px-10 py-3 sm:py-3.5 transition-all duration-300',
+          'pointer-events-auto relative flex items-center justify-between gap-4 sm:gap-6 lg:gap-8 px-6 sm:px-8 py-3 sm:py-3.5 transition-all duration-300',
           'bg-white/60 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
           'rounded-b-[2rem] border-b border-x border-slate-200/80 dark:border-white/10',
           'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_0_rgba(0,0,0,0.65)]',
-          'max-w-5xl w-auto mx-auto'
+          'max-w-[95vw] xl:max-w-6xl w-auto mx-auto'
         )}
       >
         {/* Top subtle highlight reflection line */}
@@ -92,7 +92,7 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
             }
           }}
           title="Replay Opening Animation"
-          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity cursor-pointer bg-transparent border-0 p-0 text-left"
+          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity cursor-pointer bg-transparent border-0 p-0 text-left shrink-0"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm group-hover:scale-105 transition-transform">
             <span className="text-xs font-black tracking-widest text-slate-900 dark:text-white">J</span>
@@ -103,12 +103,12 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
         </button>
 
         {/* Center Navigation Links with Glassy Floating Feel */}
-        <div className="hidden md:flex items-center gap-7 lg:gap-10 text-sm font-medium tracking-wide">
+        <div className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium tracking-wide">
           {navigationData.map((navItem) => (
             <a
               key={navItem.title}
               href={navItem.href}
-              className="text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-colors duration-200 text-[13.5px] font-sans tracking-wide"
+              className="text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-colors duration-200 text-[13.5px] font-sans tracking-wide shrink-0"
             >
               {navItem.title}
             </a>

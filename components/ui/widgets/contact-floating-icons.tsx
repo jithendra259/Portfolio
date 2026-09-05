@@ -194,7 +194,7 @@ export const contactIcons: IconProps[] = [
     icon: IconLinkedIn,
     className: 'top-[10%] right-[4%] sm:top-[16%] sm:right-[8%]',
     title: 'LinkedIn Network',
-    href: PORTFOLIO_DATA.developer.socials.linkedin,
+    href: 'https://www.linkedin.com/in/kandula-jithendra-subramanyam-0311462a6/',
   },
   {
     id: 3,
