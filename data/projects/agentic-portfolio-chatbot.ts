@@ -115,4 +115,54 @@ export const agenticPortfolioChatbot: Project = {
     { category: 'Quantitative & Solvers', items: ['Python', 'CVXPY', 'CLARABEL', 'NumPy', 'Pandas', 'SciPy', 'YFinance'] },
     { category: 'Data & Infrastructure', items: ['MongoDB', 'Gradio', 'Docker', 'Linux', 'Git'] },
   ],
+  ieeePaper: {
+    venue: 'Elsevier EAAI / Financial Agentic AI Systems',
+    paperTitle: 'Conversational Financial AI: An Agentic Portfolio Governance Chatbot Decoupling Natural Language from Mathematical Solvers',
+    authors: [
+      { name: 'Kandula Jithendra Subramanyam', affiliationIndex: 1, isCorresponding: true, email: 'jithendrasubramanyam@gmail.com' },
+    ],
+    affiliations: [
+      { index: 1, institution: 'Faculty of Engineering & Technology', department: 'Dept. of Artificial Intelligence & Machine Learning', location: 'Bengaluru, India' },
+    ],
+    abstract: 'Financial conversational assistants based on monolithic large language models suffer from severe mathematical hallucinations, arithmetic drift, and opaque decision pathways. In this paper, we present an agentic governance chatbot architecture that completely decouples natural language intent parsing from quantitative portfolio optimization. Utilizing a structured blackboard topology, user inquiries are mapped into formal convex optimization specifications solved by deterministic mathematical engines (CVXPY/CLARABEL). An autonomous compliance verifier evaluates solutions against regulatory constraints (MiFID II and EU AI Act) before generating auditable, human-interpretable natural language justifications.',
+    keywords: [
+      'Agentic AI',
+      'Financial Chatbots',
+      'Blackboard Architecture',
+      'Convex Optimization',
+      'Hallucination Elimination',
+      'Regulatory Governance',
+    ],
+    figures: [
+      {
+        id: 'fig1-architecture',
+        figureNumber: 'Fig. 1',
+        title: 'Agentic Blackboard Routing Architecture',
+        caption: 'Architecture of the conversational agent pipeline decoupling intent parsing, deterministic constraint solving, and audit trail generation.',
+        src: '/images/projects/agentic-portfolio-chatbot/fig1-agentic-blackboard-architecture.png',
+        alt: 'Agentic Blackboard Architecture',
+      },
+      {
+        id: 'fig2-trustworthiness',
+        figureNumber: 'Fig. 2',
+        title: 'Mathematical Trustworthiness & Verification Radar',
+        caption: 'Radar evaluation comparing the proposed agentic framework against standard Chain-of-Thought prompting across arithmetic fidelity and compliance accuracy.',
+        src: '/images/projects/agentic-portfolio-chatbot/fig2-trustworthiness-radar.png',
+        alt: 'Mathematical Trustworthiness Radar',
+      },
+      {
+        id: 'fig3-latency',
+        figureNumber: 'Fig. 3',
+        title: 'Inference Latency & Audit Trail Generation',
+        caption: 'Sub-second response latency distribution across the solver pipeline ensuring real-time client interaction without sacrificing verification depth.',
+        src: '/images/projects/agentic-portfolio-chatbot/fig3-latency-and-auditability.png',
+        alt: 'Inference Latency and Verification Distribution',
+      },
+    ],
+    references: [
+      { index: 1, citation: 'Z. Ji et al., "Survey of hallucination in natural language generation," ACM Computing Surveys, vol. 55, no. 12, pp. 1–38, 2023.' },
+      { index: 2, citation: 'B. Hayes-Roth, "A blackboard architecture for control," Artificial Intelligence, vol. 26, no. 3, pp. 251–321, 1985.' },
+      { index: 3, citation: 'S. Diamond and S. Boyd, "CVXPY: A Python-embedded modeling language for convex optimization," JMLR, vol. 17, no. 83, pp. 1–5, 2016.' },
+    ],
+  },
 };
