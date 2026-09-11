@@ -87,7 +87,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
       </div>
 
       {/* 2. ACADEMIC TOOLBAR */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-white/80 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm text-xs">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-border/40 text-xs">
         <div className="flex items-center gap-2 text-slate-600 dark:text-neutral-400">
           <span className="font-mono uppercase font-bold text-cyan-600 dark:text-cyan-400">
             IEEE Single-Column Case Study
@@ -141,9 +141,9 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
         </div>
       </div>
 
-      {/* 3. IEEE PAPER CONTAINER */}
+      {/* 3. IEEE PAPER CONTAINER - UNBOXED & FREE FLOWING */}
       <div
-        className={`p-6 sm:p-12 sm:pb-16 rounded-3xl bg-white dark:bg-[#0e1117] border border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all ${
+        className={`w-full transition-colors ${
           fontFamily === 'serif' ? 'font-serif' : 'font-sans'
         }`}
       >
@@ -211,7 +211,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
         </div>
 
         {/* ABSTRACT & INDEX TERMS (CLASSICAL IEEE STYLE) */}
-        <div id="sec-abstract" className="my-8 p-6 rounded-2xl bg-slate-50/90 dark:bg-[#131722]/80 border border-slate-200 dark:border-white/10 text-sm leading-relaxed">
+        <div id="sec-abstract" className="my-8 py-2 pl-4 sm:pl-6 border-l-2 border-[#f12e54]/70 dark:border-[#f12e54]/80 text-sm leading-relaxed">
           <p className="text-slate-800 dark:text-neutral-200 text-justify">
             <span className="font-bold italic text-slate-950 dark:text-white mr-1.5">
               Abstract—
@@ -264,7 +264,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             </p>
 
             {/* LaTeX Display Equation 1 */}
-            <div id="subsec-math-cvar" className="my-6 scroll-mt-24 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
+            <div id="subsec-math-cvar" className="my-6 scroll-mt-24 py-3 px-2 flex items-center justify-between font-sans overflow-x-auto">
               <div className="grow overflow-x-auto text-center font-normal">
                 <FormattedLatexText text="$\text{CVaR}_\alpha(w) = \min_{\gamma \in \mathbb{R}} \left\{ \gamma + \frac{1}{1-\alpha} \mathbb{E}\left[ \left( -w^\top r_t - \gamma \right)^+ \right] \right\}$" />
               </div>
@@ -278,7 +278,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             </p>
 
             {/* LaTeX Display Equation 2 */}
-            <div id="subsec-math-graph" className="my-6 scroll-mt-24 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
+            <div id="subsec-math-graph" className="my-6 scroll-mt-24 py-3 px-2 flex items-center justify-between font-sans overflow-x-auto">
               <div className="grow overflow-x-auto text-center font-normal">
                 <FormattedLatexText text="$\min_{w \in \Delta} \; \text{CVaR}_\alpha(w) + \lambda_t \cdot w^\top \mathcal{L}_{\text{network}} w + \kappa \|w - w_{\text{prev}}\|_1$" />
               </div>
@@ -338,11 +338,11 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             )}
 
             {/* Architecture Stages / Workflow */}
-            <div id="subsec-arch-stages" className="mt-6 scroll-mt-24 space-y-3 font-sans">
+            <div id="subsec-arch-stages" className="mt-6 scroll-mt-24 space-y-4 font-sans">
               {project.architectureSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10"
+                  className="pl-4 border-l-2 border-border/70 dark:border-white/10 py-1.5"
                 >
                   <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 mb-1">
                     <span>STAGE {step.step}</span>
@@ -376,9 +376,9 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
               <div className="text-center font-bold text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider mb-2 font-mono">
                 TABLE I: EMPIRICAL PERFORMANCE &amp; STRESS BENCHMARKS
               </div>
-              <div className="rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-xs">
+              <div className="overflow-x-auto my-4 border-y border-border/60">
                 <Table className="w-full">
-                  <TableHeader className="bg-slate-100 dark:bg-white/5 border-b-2 border-slate-900 dark:border-white/20">
+                  <TableHeader className="border-b-2 border-slate-900 dark:border-white/20">
                     <TableRow>
                       <TableHead className="font-mono text-xs uppercase font-bold text-slate-900 dark:text-white">
                         Evaluation Dimension
