@@ -310,58 +310,58 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* ============================================================ */}
       {/* 2. MAIN IEEE SINGLE-COLUMN RESEARCH CASE STUDY WITH TOC */}
       {/* ============================================================ */}
-      <main className="relative z-10 w-full py-6 sm:py-10">
+      <main className="relative z-10 w-full bg-background">
         <CaseStudyLayout hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}>
           <IeeePaperView project={project} />
-        </CaseStudyLayout>
 
-        {/* Carousel Navigation Between Projects */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-          <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 mb-4 font-bold tracking-widest">
-            <span>Explore Other Case Studies</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            
-            {/* Previous Project Link */}
-            <Link
-              href={`/projects/${prevProject.id}`}
-              className="group p-5 sm:p-6 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 hover:border-cyan-500/40 transition-all flex items-center justify-between shadow-xs"
-            >
-              <div className="flex items-center gap-3">
-                <span className="size-9 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-neutral-300 group-hover:-translate-x-1 transition-transform">
-                  <ArrowLeft className="size-4" />
-                </span>
-                <div>
-                  <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-400 block font-bold">
-                    Previous Case Study
+          {/* Carousel Navigation Between Projects */}
+          <div className="max-w-4xl mx-auto mt-12 sm:mt-16">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#f12e54] mb-4 font-bold tracking-widest">
+              <span>Explore Other Case Studies</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              
+              {/* Previous Project Link */}
+              <Link
+                href={`/projects/${prevProject.id}`}
+                className="group p-5 sm:p-6 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10 hover:border-[#f12e54]/40 transition-all flex items-center justify-between shadow-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="size-9 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-neutral-300 group-hover:-translate-x-1 transition-transform">
+                    <ArrowLeft className="size-4" />
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                    {prevProject.title}
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-400 block font-bold">
+                      Previous Case Study
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#f12e54] transition-colors">
+                      {prevProject.title}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Next Project Link */}
+              <Link
+                href={`/projects/${nextProject.id}`}
+                className="group p-5 sm:p-6 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10 hover:border-[#f12e54]/40 transition-all flex items-center justify-between text-right shadow-xs"
+              >
+                <div className="flex-1 pr-3">
+                  <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-400 block font-bold">
+                    Next Case Study
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#f12e54] transition-colors">
+                    {nextProject.title}
                   </span>
                 </div>
-              </div>
-            </Link>
-
-            {/* Next Project Link */}
-            <Link
-              href={`/projects/${nextProject.id}`}
-              className="group p-5 sm:p-6 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 hover:border-cyan-500/40 transition-all flex items-center justify-between text-right shadow-xs"
-            >
-              <div className="flex-1 pr-3">
-                <span className="text-[10px] font-mono uppercase text-slate-500 dark:text-neutral-400 block font-bold">
-                  Next Case Study
+                <span className="size-9 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-neutral-300 group-hover:translate-x-1 transition-transform shrink-0">
+                  <ArrowRight className="size-4" />
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                  {nextProject.title}
-                </span>
-              </div>
-              <span className="size-9 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-700 dark:text-neutral-300 group-hover:translate-x-1 transition-transform shrink-0">
-                <ArrowRight className="size-4" />
-              </span>
-            </Link>
+              </Link>
 
+            </div>
           </div>
-        </div>
+        </CaseStudyLayout>
       </main>
 
       {/* ============================================================ */}

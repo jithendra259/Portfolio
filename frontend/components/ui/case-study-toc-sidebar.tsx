@@ -11,8 +11,7 @@ import {
   Sidebar001Item,
   Sidebar001Section,
 } from '@/components/ui/sidebar-001';
-import { BookMarked, Layers, Bell, PanelLeft, PanelLeftClose, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { BookMarked, Layers, Bell, PanelLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ─── Sidebar Context for Navbar Toggle ──────────────────────────────────────
@@ -70,25 +69,22 @@ export function CaseStudySidebarToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggle}
       className={cn(
-        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all duration-200 shrink-0 cursor-pointer select-none',
+        'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all duration-200 shrink-0 cursor-pointer select-none',
         isOpen
-          ? 'bg-[#f12e54]/10 text-[#f12e54] border border-[#f12e54]/30 hover:bg-[#f12e54]/20'
+          ? 'bg-[#f12e54]/15 text-[#f12e54] border border-[#f12e54]/40 hover:bg-[#f12e54]/25'
           : 'text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10',
         className
       )}
-      title={isOpen ? 'Collapse Table of Contents' : 'Open Table of Contents'}
+      title={isOpen ? 'Hide Table of Contents' : 'Show Table of Contents'}
       aria-label="Toggle Table of Contents Sidebar"
     >
       <PanelLeft className="size-3.5 shrink-0" />
-      <span className="hidden xs:inline sm:inline">
-        {isOpen ? 'Hide TOC' : 'Table of Contents'}
-      </span>
-      <span className="inline xs:hidden sm:hidden">TOC</span>
+      <span>{isOpen ? 'Hide TOC' : 'Show TOC'}</span>
     </button>
   );
 }
 
-// ─── NAV Data (Exact UI Structure from prompt) ──────────────────────────────
+// ─── NAV Data (Structured identically to demo.tsx) ─────────────────────────
 
 interface NavItem {
   href: string;
@@ -112,47 +108,41 @@ interface NavSection {
 function getCaseStudyNav(hasAblation: boolean): NavSection[] {
   return [
     {
-      label: 'Case Study',
+      label: 'Getting Started',
       items: [
-        { href: '#sec-abstract', label: 'Abstract & Index Terms' },
+        { href: '#sec-abstract', label: 'Abstract & Terms' },
+        { href: '#sec-intro', label: 'Introduction' },
+        { href: '#subsec-intro-problem', label: 'Problem Statement' },
+        { href: '#subsec-intro-solution', label: 'Engineered Solution', isNew: true },
       ],
     },
     {
-      label: 'Sections',
-      items: [],
+      label: 'Paper Sections',
+      items: [
+        { href: '#sec-math', label: 'Formulation' },
+      ],
       groups: [
         {
-          label: 'I. Introduction',
+          label: 'Formulation Equations',
           defaultOpen: true,
           icon: <Layers />,
           items: [
-            { href: '#sec-intro', label: 'Overview' },
-            { href: '#subsec-intro-problem', label: 'Problem Statement' },
-            { href: '#subsec-intro-solution', label: 'Engineered Solution' },
-          ],
-        },
-        {
-          label: 'II. Formulation',
-          defaultOpen: true,
-          icon: <Layers />,
-          items: [
-            { href: '#sec-math', label: 'Mathematical Framework' },
             { href: '#subsec-math-cvar', label: 'Equation (1): CVaR' },
             { href: '#subsec-math-graph', label: 'Equation (2): Graph Risk' },
           ],
         },
         {
-          label: 'III. Architecture',
+          label: 'System Architecture',
           defaultOpen: true,
           icon: <Layers />,
           items: [
-            { href: '#sec-arch', label: 'System Overview' },
+            { href: '#sec-arch', label: 'Pipeline Overview' },
             { href: '#subsec-arch-fig1', label: 'Fig. 1 Schematic', isNew: true },
             { href: '#subsec-arch-stages', label: 'Modular Pipeline' },
           ],
         },
         {
-          label: 'IV. Evaluation',
+          label: 'Empirical Evaluation',
           defaultOpen: true,
           icon: <Bell />,
           items: [
@@ -165,7 +155,7 @@ function getCaseStudyNav(hasAblation: boolean): NavSection[] {
         ...(hasAblation
           ? [
               {
-                label: 'V. Ablations',
+                label: 'Ablations & Analysis',
                 defaultOpen: false,
                 icon: <Layers />,
                 items: [
@@ -175,11 +165,11 @@ function getCaseStudyNav(hasAblation: boolean): NavSection[] {
             ]
           : []),
         {
-          label: 'VI. Conclusion',
+          label: 'Conclusion',
           defaultOpen: false,
           icon: <Layers />,
           items: [
-            { href: '#sec-conclusion', label: 'Conclusion & Directions' },
+            { href: '#sec-conclusion', label: 'Directions & Outlook' },
           ],
         },
       ],
@@ -207,7 +197,14 @@ export function CaseStudyTocSidebar({
   onNavigate,
 }: CaseStudyTocSidebarProps) {
   const [active, setActive] = useState<string>('#sec-abstract');
+  const [defaultW, setDefaultW] = useState(240);
   const NAV = React.useMemo(() => getCaseStudyNav(hasAblation), [hasAblation]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      setDefaultW(170);
+    }
+  }, []);
 
   // Track active section on scroll
   useEffect(() => {
@@ -254,14 +251,14 @@ export function CaseStudyTocSidebar({
 
   return (
     <Sidebar001
-      defaultWidth={240}
-      minWidth={180}
-      maxWidth={360}
-      className={cn('border-r border-border/50 h-full', className)}
+      defaultWidth={defaultW}
+      minWidth={140}
+      maxWidth={380}
+      className={cn('bg-background h-full shrink-0', className)}
     >
       <Sidebar001Header>
         <div className="flex items-center gap-2">
-          <BookMarked size={18} className="text-foreground" />
+          <BookMarked size={18} className="text-foreground shrink-0" />
           <span className="text-base font-semibold text-foreground">
             Docs
           </span>
@@ -312,6 +309,7 @@ export function CaseStudyTocSidebar({
 }
 
 // ─── CaseStudyLayout Client Component ───────────────────────────────────────
+// TOC and Matter side by side directly, visible on mobile & desktop, no blur.
 
 export function CaseStudyLayout({
   hasAblation = true,
@@ -320,87 +318,23 @@ export function CaseStudyLayout({
   hasAblation?: boolean;
   children: React.ReactNode;
 }) {
-  const { isOpen, close } = useCaseStudySidebar();
+  const { isOpen } = useCaseStudySidebar();
 
   return (
-    <div className="relative w-full">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-center items-start gap-8 lg:gap-10 relative">
-          
-          {/* DESKTOP SIDEBAR (Controlled by Navbar Toggle) */}
-          <AnimatePresence initial={false}>
-            {isOpen && (
-              <motion.aside
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 'auto', opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-                className="hidden xl:block sticky top-24 self-start h-[calc(100vh-8rem)] shrink-0 z-20 overflow-hidden"
-              >
-                <div className="h-full rounded-2xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-xs overflow-hidden">
-                  <CaseStudyTocSidebar hasAblation={hasAblation} />
-                </div>
-              </motion.aside>
-            )}
-          </AnimatePresence>
+    <div className="flex w-full min-h-[calc(100vh-4rem)] bg-background">
+      {/* TOC SIDEBAR - SIDE BY SIDE ON BOTH DESKTOP AND MOBILE (NO BLUR) */}
+      {isOpen && (
+        <aside className="sticky top-16 self-start h-[calc(100vh-4rem)] shrink-0 z-20 bg-background">
+          <CaseStudyTocSidebar
+            hasAblation={hasAblation}
+            className="h-full bg-background"
+          />
+        </aside>
+      )}
 
-          {/* MOBILE / TABLET OVERLAY DRAWER (Toggled by Navbar Button on <xl) */}
-          <div className="xl:hidden">
-            <AnimatePresence>
-              {isOpen && (
-                <>
-                  {/* Backdrop */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={close}
-                    className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs"
-                  />
-
-                  {/* Drawer Content */}
-                  <motion.div
-                    initial={{ x: '-100%' }}
-                    animate={{ x: 0 }}
-                    exit={{ x: '-100%' }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 36 }}
-                    className="fixed top-0 left-0 bottom-0 z-50 w-[280px] sm:w-[320px] bg-background border-r border-border/50 shadow-2xl flex flex-col"
-                  >
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <BookMarked size={18} className="text-foreground" />
-                        <span className="text-base font-semibold text-foreground">
-                          Docs
-                        </span>
-                      </div>
-                      <button
-                        onClick={close}
-                        className="p-1 rounded-md text-foreground/50 hover:text-foreground cursor-pointer"
-                        aria-label="Close sidebar"
-                      >
-                        <X size={18} />
-                      </button>
-                    </div>
-
-                    <div className="flex-1 overflow-hidden">
-                      <CaseStudyTocSidebar
-                        hasAblation={hasAblation}
-                        onNavigate={close}
-                        className="border-0 w-full h-full"
-                      />
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Main Case Study Article */}
-          <div className="flex-1 min-w-0 max-w-4xl transition-all duration-300">
-            {children}
-          </div>
-
-        </div>
+      {/* MATTER / MAIN CONTENT - SIDE BY SIDE SEPARATED BY BORDER-L */}
+      <div className="flex-1 min-w-0 border-l border-border/50 bg-background py-6 sm:py-10 px-2 sm:px-6 lg:px-8">
+        {children}
       </div>
     </div>
   );
