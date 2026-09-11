@@ -138,7 +138,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
     return (
       <div className="mt-10 space-y-6">
         {/* Header with Switcher Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50/80 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
               <TrendingUp className="size-3.5" />
@@ -176,7 +176,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         </div>
 
         {/* Chart View */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
               <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-4">
@@ -265,7 +265,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   if (projectId === 'personalised-aqi-system') {
     return (
       <div className="mt-10 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50/80 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold tracking-wider">
               <Activity className="size-3.5" />
@@ -302,7 +302,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
           </div>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
               <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
@@ -360,7 +360,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   if (projectId === 'swarm-robots-agriculture') {
     return (
       <div className="mt-10 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50/80 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold tracking-wider">
               <Zap className="size-3.5" />
@@ -397,7 +397,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
           </div>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
               <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
@@ -454,7 +454,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   // DEFAULT / CHATBOT PROJECT
   return (
     <div className="mt-10 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-50/80 dark:bg-[#12151d]/90 border border-slate-200 dark:border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
             <Cpu className="size-3.5" />
@@ -466,7 +466,7 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         </div>
       </div>
 
-      <div className="p-6 sm:p-8 rounded-3xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-sm">
+      <div className="py-4">
         <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
           <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
             Arithmetic Precision, Constraint Enforcing, and Audit Reliability
