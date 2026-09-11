@@ -94,9 +94,11 @@ export function MathInline({ math, className = '' }: MathInlineProps) {
 export function FormattedLatexText({
   text,
   className = '',
+  as: Component = 'span',
 }: {
   text: string;
   className?: string;
+  as?: 'span' | 'div' | 'p';
 }) {
   // If the text is purely a $$...$$ block
   const trimmed = text.trim();
@@ -109,7 +111,7 @@ export function FormattedLatexText({
   const blockParts = text.split(/(\$\$[\s\S]*?\$\$)/g);
 
   return (
-    <div className={`leading-relaxed ${className}`}>
+    <Component className={`leading-relaxed ${className}`}>
       {blockParts.map((bPart, bIdx) => {
         if (bPart.startsWith('$$') && bPart.endsWith('$$') && bPart.length > 4) {
           const formula = bPart.slice(2, -2).trim();
@@ -131,6 +133,6 @@ export function FormattedLatexText({
           </span>
         );
       })}
-    </div>
+    </Component>
   );
 }

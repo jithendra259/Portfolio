@@ -212,12 +212,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
         {/* ABSTRACT & INDEX TERMS (CLASSICAL IEEE STYLE) */}
         <div id="sec-abstract" className="my-8 py-2 pl-4 sm:pl-6 border-l-2 border-[#f12e54]/70 dark:border-[#f12e54]/80 text-sm leading-relaxed">
-          <p className="text-slate-800 dark:text-neutral-200 text-justify">
+          <div className="text-slate-800 dark:text-neutral-200 text-justify">
             <span className="font-bold italic text-slate-950 dark:text-white mr-1.5">
               Abstract—
             </span>
             <FormattedLatexText text={paper?.abstract || project.overview} />
-          </p>
+          </div>
 
           {paper?.keywords && paper.keywords.length > 0 && (
             <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-white/10 text-xs">
@@ -239,15 +239,15 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             I. Introduction &amp; Problem Motivation
           </h2>
           <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
-            <p id="subsec-intro-problem" className="scroll-mt-24">
+            <div id="subsec-intro-problem" className="scroll-mt-24">
               <span className="text-3xl font-bold font-serif float-left mr-2 leading-none text-slate-950 dark:text-white">
                 T
               </span>
               <FormattedLatexText text={project.problemStatement} />
-            </p>
-            <p id="subsec-intro-solution" className="scroll-mt-24">
+            </div>
+            <div id="subsec-intro-solution" className="scroll-mt-24">
               <FormattedLatexText text={project.solution} />
-            </p>
+            </div>
           </div>
         </section>
 
