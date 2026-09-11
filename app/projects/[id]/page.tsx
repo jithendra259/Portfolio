@@ -36,9 +36,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { FormattedLatexText } from '@/components/ui/math-display';
-import { ProjectCharts } from '@/components/ui/project-charts';
 import { IeeePaperView } from '@/components/ui/ieee-paper-view';
-import { CaseStudyToc } from '@/components/ui/case-study-toc-sidebar';
+import {
+  CaseStudySidebarProvider,
+  CaseStudySidebarToggle,
+  CaseStudyLayout,
+} from '@/components/ui/case-study-toc-sidebar';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -233,7 +236,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const pdfUrl = project.pdfUrl || (project.researchLink && (project.researchLink.startsWith('/') || project.researchLink.startsWith('http')) ? project.researchLink : undefined);
 
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 font-sans selection:bg-neutral-800 selection:text-white transition-colors duration-300">
+    <CaseStudySidebarProvider defaultOpen={true}>
+      <div className="min-h-screen w-full bg-[#f8fafc] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 font-sans selection:bg-neutral-800 selection:text-white transition-colors duration-300">
       
       {/* Ambient background glows */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -249,8 +253,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#0d0f14]/80 backdrop-blur-xl transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
           
-          {/* Back button & Breadcrumb */}
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          {/* Back button, Sidebar toggle & Breadcrumb */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <Link
               href="/#projects"
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono font-semibold text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all duration-200 shrink-0"
@@ -258,6 +262,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <ArrowLeft className="size-3.5" />
               <span>Back to Portfolio</span>
             </Link>
+
+            {/* Sidebar toggle button on the nav bar */}
+            <CaseStudySidebarToggle />
 
             <span className="text-slate-300 dark:text-neutral-700 hidden sm:inline">/</span>
             
@@ -304,20 +311,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* 2. MAIN IEEE SINGLE-COLUMN RESEARCH CASE STUDY WITH TOC */}
       {/* ============================================================ */}
       <main className="relative z-10 w-full py-6 sm:py-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center items-start gap-8 lg:gap-12 relative">
-            {/* Table of Contents: Desktop sticky sidebar + Mobile drawer */}
-            <CaseStudyToc
-              hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}
-              paperTitle={project.title}
-            />
-
-            {/* IEEE Single-Column Academic Paper View with Authentic Extracted PDF Figures */}
-            <div className="flex-1 min-w-0 max-w-4xl">
-              <IeeePaperView project={project} />
-            </div>
-          </div>
-        </div>
+        <CaseStudyLayout hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}>
+          <IeeePaperView project={project} />
+        </CaseStudyLayout>
 
         {/* Carousel Navigation Between Projects */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
@@ -391,5 +387,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </footer>
 
     </div>
+    </CaseStudySidebarProvider>
   );
 }

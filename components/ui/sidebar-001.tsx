@@ -421,10 +421,7 @@ export function Sidebar001Content({
 
   return (
     <div
-      className={cn(
-        "flex-1 overflow-y-auto overflow-x-hidden py-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-        className
-      )}
+      className={cn("flex-1 overflow-y-auto py-4 no-scrollbar", className)}
       data-scroll-viewport
     >
       <div ref={containerRef} className="relative px-1">

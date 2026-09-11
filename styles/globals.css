@@ -24,7 +24,7 @@
   --border: #cbd5e1;
   --input: #cbd5e1;
   --ring: #059669;
-  --accent-pro: #06b6d4;
+  --accent-pro: #f12e54;
 }
 
 .dark {
@@ -46,7 +46,7 @@
   --border: #232838;
   --input: #232838;
   --ring: #3b4255;
-  --accent-pro: #22d3ee;
+  --accent-pro: #f12e54;
 }
 
 @theme inline {
@@ -122,4 +122,12 @@
 
 .animate-marquee-vertical {
   animation: marquee-vertical var(--duration) linear infinite;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
