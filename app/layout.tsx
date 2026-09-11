@@ -7,6 +7,7 @@ import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
 import { cn } from '@/lib/shadcn/utils';
 import { getAppConfig, getStyles } from '@/lib/utils';
 import '@/styles/globals.css';
+import 'katex/dist/katex.min.css';
 
 
 const publicSans = Public_Sans({

@@ -324,15 +324,16 @@ When temperature or humidity exceeds programmed thresholds, the irrigation water
 
 In a standard feed-forward convolutional neural network (CNN), each convolutional layer receives only the output of the layer immediately preceding it. The vanishing gradient problem emerges when the CNN has more layers — as the channel for information from input to output lengthens, gradients become negligibly small, making training increasingly difficult.
 
-By altering the typical CNN architecture and streamlining connectivity between layers, DenseNets alleviate this issue. Each layer in a DenseNet architecture is connected to every other layer directly in a feed-forward fashion. For an L-layer network, there are L(L+1)/2 connections — one from each layer to every subsequent layer.
+By altering the typical CNN architecture and streamlining connectivity between layers, DenseNets alleviate this issue. Each layer in a DenseNet architecture is connected to every other layer directly in a feed-forward fashion. For an $L$-layer network, there are $\frac{L(L+1)}{2}$ connections — one from each layer to every subsequent layer.
 
 5.2 DenseNet Architecture & Components
 
 Connectivity:
 The feature maps from all preceding layers are concatenated and utilized as inputs to each layer:
-H_l = F_l([x_0, x_1, ..., x_{l-1}])
 
-where [x_0, x_1, ..., x_{l-1}] represents the concatenation of feature maps from all layers prior to l. This eliminates redundant feature mappings, allowing DenseNets to require fewer parameters than traditional CNNs.
+$$H_l = F_l([x_0, x_1, \dots, x_{l-1}])$$
+
+where $[x_0, x_1, \dots, x_{l-1}]$ represents the concatenation of feature maps from all layers prior to $l$. This eliminates redundant feature mappings, allowing DenseNets to require fewer parameters than traditional CNNs.
 
 Dense Blocks:
 When the size of feature maps varies, direct concatenation is not possible. DenseNets are divided into DenseBlocks where the size of feature maps within a block is kept constant. Transition Layers (1×1 Conv + Average Pool) connect blocks, reducing feature map dimensions between blocks.

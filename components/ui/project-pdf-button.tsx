@@ -9,11 +9,16 @@ export function ProjectPdfButton({
   title,
   subtitle,
 }: {
-  url: string;
+  url?: string;
   title: string;
   subtitle?: string;
 }) {
   const [open, setOpen] = useState(false);
+
+  const isValidUrl = Boolean(url && (url.startsWith('/') || url.startsWith('http')));
+  if (!isValidUrl || !url) {
+    return null;
+  }
 
   return (
     <>

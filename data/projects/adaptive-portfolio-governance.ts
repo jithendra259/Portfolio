@@ -52,19 +52,19 @@ export const adaptivePortfolioGovernance: Project = {
     {
       step: '02',
       title: 'Agent 1 – Time-Series Sentinel (Instability Index)',
-      description: 'Calculates the composite instability index λ_t = 0.4·σ_spike + 0.3·ρ_spike + 0.3·MDD_t, where each component is bounded in [0,1]. Regime classification: Calm (λ < 0.50), Elevated (0.50 ≤ λ < 0.85), Crisis (λ ≥ 0.85). For Universe U1 over 51 windows, λ ranges from 0.0 (Window W23, mid-2010 calm) to 1.0 (Window W09, GFC peak late 2008), with mean 0.3594.',
+      description: 'Calculates the composite instability index $\\lambda_t = 0.4\\sigma_{\\text{spike}} + 0.3\\rho_{\\text{spike}} + 0.3\\text{MDD}_t$, bounded in $[0, 1]$. Regime classification: Calm ($\\lambda_t < 0.50$), Elevated ($0.50 \\le \\lambda_t < 0.85$), Crisis ($\\lambda_t \\ge 0.85$). For Universe U1 over 51 windows, $\\lambda_t$ ranges from $0.0$ (Window W23 calm) to $1.0$ (Window W09 GFC peak), with mean $0.3594$.',
       tech: 'NumPy, SciPy, Rolling Window Statistics',
     },
     {
       step: '03',
       title: 'Agent 2 – Graph of Contagion (Bipartite Holdings Graph)',
-      description: 'Computes eigenvector centrality via power iteration over the bipartite co-ownership network (Bonacich, 1987). For U1, centrality scores range from 0.201 (ORCL) to 0.258 (LRCX). The sigmoid-gated adaptive penalty γ_t = γ_max / (1 + exp(−k(λ_t − λ_thresh))) scales the graph penalty by instability, keeping it dormant during calm periods and amplifying it in Crisis regime.',
+      description: 'Computes eigenvector centrality $c_i$ via power iteration over the bipartite co-ownership network (Bonacich, 1987). Centrality scores range from $0.201$ (ORCL) to $0.258$ (LRCX). The sigmoid-gated adaptive penalty $\\gamma_t = \\frac{\\gamma_{\\max}}{1 + e^{-k(\\lambda_t - \\lambda_{\\text{thresh}})}}$ keeps contagion penalty dormant in calm markets and activates it in Crisis regime.',
       tech: 'NetworkX, Eigenvector Centrality, Bonacich Centrality',
     },
     {
       step: '04',
       title: 'Agent 3 – Optimizer G-CVaR (Graph-Regularized CVaR)',
-      description: 'Solves the graph-regularized CVaR objective per window: min_{w,ζ} CVaR_α(w) + γ_t · Σ_i c_i · w_i subject to Σw_i = 1, w_i ≥ 0. Benchmarks against Standard CVaR, Mean-Variance, Equal Weight, HRP, and Risk Parity. Flags human-in-the-loop review when λ ≥ 0.85 or turnover > 0.40. Walk-forward grid search over λ ∈ {5,10,15,20} and λ_thresh ∈ {0.75,0.80,0.85,0.90} selects λ* = 10, λ*_thresh = 0.90.',
+      description: 'Solves the graph-regularized CVaR objective per window: $\\min_{w, \\zeta} \\text{CVaR}_\\alpha(w) + \\gamma_t \\sum_i c_i w_i$ subject to $\\sum_i w_i = 1, w_i \\ge 0$. Benchmarks against Standard CVaR, Mean-Variance, Equal Weight, HRP, and Risk Parity. Flags human-in-the-loop review when $\\lambda_t \\ge 0.85$ or turnover $> 0.40$.',
       tech: 'CVXPY, CLARABEL, ECOS, Convex Optimization',
     },
     {
@@ -169,31 +169,32 @@ LIME (Ribeiro, Singh and Guestrin, 2016) and SHAP (Lundberg and Lee, 2017) are n
       heading: '3. Mathematical Formulation',
       content: `3.1. Composite Instability Index
 
-The instability index is computed from the daily log-return matrix R ∈ ℝ^{T×N} for N assets over a rolling window of T = 252 trading days:
+The instability index is computed from the daily log-return matrix $R \\in \\mathbb{R}^{T \\times N}$ for $N$ assets over a rolling window of $T = 252$ trading days:
 
-λ_t = 0.4 · σ_spike_t + 0.3 · ρ_spike_t + 0.3 · MDD_t                    (1)
+$$\\lambda_t = 0.4 \\cdot \\sigma_{\\text{spike},t} + 0.3 \\cdot \\rho_{\\text{spike},t} + 0.3 \\cdot \\text{MDD}_t \\tag{1}$$
 
-The three components are: σ_spike_t, the 20-day realized volatility normalized to its 252-day trailing history (Engle, 1982; Bollerslev, 1986); ρ_spike_t, the mean pairwise Pearson correlation normalized to [0, 1] (Longin and Solnik, 2001); and MDD_t ∈ [0, 1], the rolling maximum drawdown (Bailey and Lopez de Prado, 2012). Since all three components are bounded in [0, 1], so is λ_t.
+The three components are: $\\sigma_{\\text{spike},t}$, the 20-day realized volatility normalized to its 252-day trailing history (Engle, 1982; Bollerslev, 1986); $\\rho_{\\text{spike},t}$, the mean pairwise Pearson correlation normalized to $[0, 1]$ (Longin and Solnik, 2001); and $\\text{MDD}_t \\in [0, 1]$, the rolling maximum drawdown (Bailey and Lopez de Prado, 2012). Since all three components are bounded in $[0, 1]$, so is $\\lambda_t$.
 
 The regime classification rule is deterministic:
-  Calm:    λ_t < 0.50
-  Elevated: 0.50 ≤ λ_t < 0.85
-  Crisis:  λ_t ≥ 0.85
+  Calm:    $\\lambda_t < 0.50$
+  Elevated: $0.50 \\le \\lambda_t < 0.85$
+  Crisis:  $\\lambda_t \\ge 0.85$
 
 3.2. Holdings Graph, Adaptive Contagion Penalization, and Graph-Regularized CVaR
 
-In the bipartite co-ownership network, each asset is represented as a node connected to institutional investor nodes. The asset co-occurrence matrix A_ij counts the number of common institutional holders between assets i and j. Eigenvector centrality c_i is computed via power iteration (Bonacich, 1987), producing a score that reflects how broadly and interconnectedly each security is held.
+In the bipartite co-ownership network, each asset is represented as a node connected to institutional investor nodes. The asset co-occurrence matrix $A_{ij}$ counts the number of common institutional holders between assets $i$ and $j$. Eigenvector centrality $c_i$ is computed via power iteration (Bonacich, 1987), producing a score that reflects how broadly and interconnectedly each security is held.
 
 The sigmoid-gated adaptive penalty scales the graph penalty by instability:
-γ_t = γ_max / (1 + exp(−k(λ_t − λ_thresh)))
 
-Below λ_thresh = 0.85, the penalty is mostly dormant (affecting only the 4% of windows that cross the crisis threshold). Above it, the penalty rises toward γ_max = 1.0.
+$$\\gamma_t = \\frac{\\gamma_{\\max}}{1 + e^{-k(\\lambda_t - \\lambda_{\\text{thresh}})}} \\tag{2}$$
+
+Below $\\lambda_{\\text{thresh}} = 0.85$, the penalty is mostly dormant (affecting only the 4% of windows that cross the crisis threshold). Above it, the penalty rises toward $\\gamma_{\\max} = 1.0$.
 
 The G-CVaR optimization problem per window:
-min_{w, ζ} CVaR_α(w) + γ_t · Σ_i c_i · w_i
-subject to: Σ w_i = 1, w_i ≥ 0
 
-Walk-forward grid search over λ ∈ {5, 10, 15, 20} and λ_thresh ∈ {0.75, 0.80, 0.85, 0.90} (416 total optimizations) finds λ* = 10 and λ*_thresh = 0.90 as the optimal in-sample configuration (IS Sharpe = 0.6495). Results employ the operationally fixed value λ_thresh = 0.85 (IS Sharpe = 0.6399).`,
+$$\\min_{w, \\zeta} \\text{CVaR}_\\alpha(w) + \\gamma_t \\sum_{i=1}^N c_i w_i \\quad \\text{subject to } \\sum_{i=1}^N w_i = 1, \\; w_i \\ge 0 \\tag{3}$$
+
+Walk-forward grid search over $\\lambda \\in \\{5, 10, 15, 20\\}$ and $\\lambda_{\\text{thresh}} \\in \\{0.75, 0.80, 0.85, 0.90\\}$ (416 total optimizations) finds $\\lambda^* = 10$ and $\\lambda^*_{\\text{thresh}} = 0.90$ as the optimal in-sample configuration (IS Sharpe = 0.6495). Results employ the operationally fixed value $\\lambda_{\\text{thresh}} = 0.85$ (IS Sharpe = 0.6399).`,
     },
     {
       heading: '4. Agent Architecture',
@@ -310,38 +311,51 @@ Abstract: This paper proposes a regime-adaptive supervisory governance framework
       content: `3.1 Asset Universe and Returns
 
 The empirical universe comprises 18 liquid U.S. stocks across technology, finance, healthcare, consumer goods, industrials, energy, internet, retail, semiconductors, and utility sectors. Daily adjusted close prices are recorded from 1 January 2005 to 1 January 2025. The daily log returns are calculated as:
-r_{i,t} = log(P_{i,t} / P_{i,t-1})                                                    (1)
+
+$$r_{i,t} = \\ln\\left(\\frac{P_{i,t}}{P_{i,t-1}}\\right) \\tag{1}$$
 
 3.2 Instability Monitoring
 
 The supervisory monitor is constructed from three instability channels:
 
-Channel 1 — Covariance Drift: D_t = ‖Σ_t − Σ_{t-1}‖_F                             (2)
-where ‖·‖_F is the Frobenius norm and Σ_t is the rolling covariance matrix. Measures period-to-period change in estimated covariance structure.
+Channel 1 — Covariance Drift:
+
+$$D_t = \\|\\Sigma_t - \\Sigma_{t-1}\\|_F \\tag{2}$$
+
+where $\\|\\cdot\\|_F$ is the Frobenius norm and $\\Sigma_t$ is the rolling covariance matrix. Measures period-to-period change in estimated covariance structure.
 
 Channel 2 — Rolling Volatility: measures volatility pressure on cross-assets and idiosyncratic risk shifts.
 
 Channel 3 — Correlation Stress: captured by average pairwise correlation level, showing the tendency of disappearing diversification effects under stress.
 
 Normalized signals via expanding mean and standard deviation (lagged to prevent data leakage):
-Z_{k,t} = (X_{k,t} − μ^exp_{k,t-1}) / σ^exp_{k,t-1}                                (3)
+
+$$Z_{k,t} = \\frac{X_{k,t} - \\mu_{k,t-1}^{\\text{exp}}}{\\sigma_{k,t-1}^{\\text{exp}}} \\tag{3}$$
 
 Composite instability index:
-I_t = α·Z_{D,t} + β·Z_{V,t} + γ·Z_{C,t}                                            (4)
-with α = 0.4, β = 0.3, γ = 0.3. Regime classified as unstable when I_t > θ, with θ = 1.0 in the main experiment.
+
+$$I_t = \\alpha \\cdot Z_{D,t} + \\beta \\cdot Z_{V,t} + \\gamma \\cdot Z_{C,t} \\tag{4}$$
+
+with $\\alpha = 0.4$, $\\beta = 0.3$, $\\gamma = 0.3$. Regime classified as unstable when $I_t > \\theta$, with $\\theta = 1.0$ in the main experiment.
 
 3.3 Governance-Adaptive Optimization
 
 Portfolio optimized using Ledoit-Wolf covariance estimate, solving for each rebalance date:
-min_w   w^T Σ w + λ_g Σ_i w_i²                                                      (5)
-subject to Σ w_i = 1, 0 ≤ w_i ≤ u_g                                                  (6)
 
-Stable regime:   u_g = 0.35, λ_g = 1
-Unstable regime: u_g = 0.20, λ_g = 10
+$$\\min_w w^T \\Sigma w + \\lambda_g \\sum_{i=1}^N w_i^2 \\tag{5}$$
+
+$$\\text{subject to } \\sum_{i=1}^N w_i = 1, \\quad 0 \\le w_i \\le u_g \\tag{6}$$
+
+Stable regime: $u_g = 0.35$, $\\lambda_g = 1$  
+Unstable regime: $u_g = 0.20$, $\\lambda_g = 10$
 
 3.4 Backtesting Protocol
 
-Uses 252-day training window with 21-day rebalancing. Out-of-sample period: 2015–2025. Transaction costs: 0.1% proportional. Measures reported: annual returns, volatility, Sharpe ratio, maximum drawdown, CVaR(95%), HHI, turnover, threshold sensitivity, and ablation analysis. HHI = Σ_i w²_{i,t} (lower = broader diversification).`,
+Uses 252-day training window with 21-day rebalancing. Out-of-sample period: 2015–2025. Transaction costs: 0.1% proportional. Measures reported: annual returns, volatility, Sharpe ratio, maximum drawdown, CVaR(95%), HHI, turnover, threshold sensitivity, and ablation analysis.
+
+$$\\text{HHI}_t = \\sum_{i=1}^N w_{i,t}^2$$
+
+(lower $\\text{HHI}$ indicates broader diversification).`,
     },
     {
       heading: 'Conference Paper — Results & Conclusion (IJCACI 2026)',
