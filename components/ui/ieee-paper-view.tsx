@@ -311,19 +311,19 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
               <figure id="subsec-arch-fig1" className="my-8 scroll-mt-24 group">
                 <div
                   onClick={() => setSelectedFigure(figures[0])}
-                  className="relative cursor-pointer overflow-hidden rounded-2xl bg-white p-3 sm:p-5 border border-slate-200 dark:border-white/15 shadow-md hover:shadow-xl transition-all duration-300"
+                  className="relative cursor-pointer w-full flex items-center justify-center py-2"
                 >
-                  <div className="relative w-full aspect-video sm:aspect-[16/9] flex items-center justify-center bg-white rounded-xl overflow-hidden">
+                  <div className="relative w-full aspect-video sm:aspect-[16/9] flex items-center justify-center">
                     <Image
                       src={figures[0].src}
                       alt={figures[0].alt || figures[0].title}
                       fill
-                      className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                      className="object-contain transition-transform duration-200 group-hover:scale-[1.01]"
                       sizes="(max-width: 896px) 100vw, 896px"
                       priority
                     />
                   </div>
-                  <div className="absolute top-4 right-4 bg-slate-900/80 dark:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
+                  <div className="absolute top-2 right-2 bg-slate-900/80 dark:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
                     <ZoomIn className="size-3" />
                     <span>Click to Zoom</span>
                   </div>
@@ -420,18 +420,18 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   <figure key={idx} className="group flex flex-col justify-between">
                     <div
                       onClick={() => setSelectedFigure(fig)}
-                      className="relative cursor-pointer overflow-hidden rounded-2xl bg-white p-3 border border-slate-200 dark:border-white/15 shadow-sm hover:shadow-md transition-all"
+                      className="relative cursor-pointer w-full flex items-center justify-center py-2"
                     >
-                      <div className="relative w-full aspect-[4/3] flex items-center justify-center bg-white rounded-xl overflow-hidden">
+                      <div className="relative w-full aspect-[4/3] flex items-center justify-center">
                         <Image
                           src={fig.src}
                           alt={fig.alt || fig.title}
                           fill
-                          className="object-contain group-hover:scale-105 transition-transform duration-200"
+                          className="object-contain transition-transform duration-200 group-hover:scale-[1.02]"
                           sizes="(max-width: 768px) 100vw, 400px"
                         />
                       </div>
-                      <div className="absolute top-3 right-3 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <ZoomIn className="size-3" />
                         <span>Enlarge</span>
                       </div>
@@ -473,18 +473,18 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   <figure key={idx} className="group flex flex-col justify-between">
                     <div
                       onClick={() => setSelectedFigure(fig)}
-                      className="relative cursor-pointer overflow-hidden rounded-2xl bg-white p-3 border border-slate-200 dark:border-white/15 shadow-sm hover:shadow-md transition-all"
+                      className="relative cursor-pointer w-full flex items-center justify-center py-2"
                     >
-                      <div className="relative w-full aspect-[4/3] flex items-center justify-center bg-white rounded-xl overflow-hidden">
+                      <div className="relative w-full aspect-[4/3] flex items-center justify-center">
                         <Image
                           src={fig.src}
                           alt={fig.alt || fig.title}
                           fill
-                          className="object-contain group-hover:scale-105 transition-transform duration-200"
+                          className="object-contain transition-transform duration-200 group-hover:scale-[1.02]"
                           sizes="(max-width: 768px) 100vw, 400px"
                         />
                       </div>
-                      <div className="absolute top-3 right-3 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <ZoomIn className="size-3" />
                         <span>Enlarge</span>
                       </div>
@@ -602,7 +602,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             </div>
 
             {/* Modal Image Area */}
-            <div className="relative grow p-6 bg-white flex items-center justify-center min-h-[400px] overflow-auto">
+            <div className="relative grow p-6 bg-transparent flex items-center justify-center min-h-[400px] overflow-auto">
               <Image
                 src={selectedFigure.src}
                 alt={selectedFigure.alt || selectedFigure.title}
