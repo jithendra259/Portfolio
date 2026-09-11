@@ -160,7 +160,7 @@ export function CareerEducationTimeline() {
     filter === 'All' ? allEvents : allEvents.filter((ev) => ev.category === filter);
 
   return (
-    <section className="py-20 px-4 sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto" id="experience">
+    <section className="pt-20 pb-10 px-4 sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto" id="experience">
       <div className="flex flex-col items-center text-center mb-12">
         <span className="text-xs font-mono uppercase text-slate-600 dark:text-neutral-400 font-bold tracking-widest flex items-center gap-1.5 mb-2">
           <Sparkles className="size-3.5" /> Chronological Journey

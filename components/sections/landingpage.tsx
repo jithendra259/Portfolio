@@ -10,14 +10,15 @@ import { DotPattern } from '@/components/ui/effects/dot-pattern';
 import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
-import { ResumePrinter } from '@/components/ui/widgets/resume-printer';
 import { RobotCanvas } from '@/components/ui/widgets/robot-hero';
 import { CareerEducationTimeline } from '@/components/sections/career-education-timeline';
 import { SkillsCardsStack } from '@/components/sections/skills-cards-stack';
 import { CertificatesSection } from '@/components/sections/certificates-section';
 import { ContactSection } from '@/components/sections/contact-section';
+import { ResumeSection } from '@/components/sections/resume-section';
 import { BentoGrid, BentoCard } from '@/components/ui/widgets/bento-grid';
 import { CinematicHero } from '@/components/ui/widgets/cinematic-landing-hero';
+import { PdfViewerDialog } from '@/components/ui/pdf-viewer-dialog';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PROJECT_CATEGORIES } from '@/data/projects';
 import {
@@ -43,6 +44,7 @@ import {
   ExternalLink,
   Bell,
   Calendar,
+  Download,
 } from 'lucide-react';
 
 
@@ -204,6 +206,7 @@ function BentoCalendarBackground() {
 
 export function LandingPage({ onStartCall }: LandingPageProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [viewerPdf, setViewerPdf] = useState<{ url: string; title: string; subtitle?: string } | null>(null);
   const heroRef = React.useRef<HTMLElement>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
@@ -269,7 +272,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       {/* ============================================================ */}
       <section
         ref={heroRef}
-        className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden isolate bg-[#f3f6fa] dark:bg-[#0d0f14] transition-colors duration-300"
+        className="relative min-h-[calc(100vh-2rem)] lg:min-h-screen w-full flex flex-col justify-center overflow-hidden isolate bg-[#f3f6fa] dark:bg-[#0d0f14] transition-colors duration-300"
         id="home"
       >
 
@@ -284,9 +287,8 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-[#f1f4f9] via-transparent to-[#f3f6fa]/60 dark:from-[#0d0f14] dark:via-transparent dark:to-[#12151d]/40 z-[2] pointer-events-none" />
 
         {/* Hero Content */}
-        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-32 pb-20 z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
-          <div className="max-w-3xl flex flex-col items-start text-left space-y-6">
-
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-24 sm:pt-28 pb-10 sm:pb-12 z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+          <div className="max-w-2xl lg:max-w-3xl flex flex-col items-start text-left space-y-4 sm:space-y-5">
 
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">
@@ -304,7 +306,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-slate-950 dark:text-white leading-[1.05]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-slate-950 dark:text-white leading-[1.08]">
               Systems that <br />
               <AuroraText
                 colors={["#ffffff", "#e4e4e7", "#a1a1aa", "#71717a"]}
@@ -318,16 +320,30 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
             {/* Description Subtext with TypingAnimation */}
             <TypingAnimation
               duration={22}
-              className="text-base sm:text-lg text-slate-700 dark:text-neutral-400 max-w-xl leading-relaxed font-normal text-left"
+              className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-neutral-400 max-w-xl leading-relaxed font-normal text-left"
             >
               I design intelligent products where agents, data, and human judgment work together. Focused on reliable systems for high-stakes decisions.
             </TypingAnimation>
 
+            {/* Hero Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <a
+                href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
+                download="Kandula_Jithendra_Subramanyam_Resume.pdf"
+                className="group inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-slate-950 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black font-semibold text-xs sm:text-sm transition-all duration-300 hover:scale-105 shadow-xl shadow-black/10 dark:shadow-white/10 cursor-pointer"
+              >
+                <Download className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <span>Download Resume</span>
+              </a>
 
-            {/* Interactive Thermal Resume Printer (Placed right below buttons as requested) */}
-            <div className="pt-4 sm:pt-6 w-full sm:w-auto">
-              <ResumePrinter />
+              <a
+                href="#projects"
+                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full border border-slate-300 dark:border-white/15 bg-white/60 dark:bg-neutral-900/60 hover:bg-white/90 dark:hover:bg-neutral-800 text-slate-800 dark:text-neutral-200 font-medium text-xs sm:text-sm transition-all duration-200 backdrop-blur-sm hover:scale-105 cursor-pointer shadow-sm"
+              >
+                <span>Explore Projects</span>
+              </a>
             </div>
+
           </div>
 
           {/* Right Column: Free-Moving 3D Robot Mascot (Completely Unboxed) */}
@@ -337,19 +353,16 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
                 window.dispatchEvent(new CustomEvent("trigger-robot-love"));
               }
             }}
-            className="w-full lg:flex-1 flex items-center justify-center relative min-h-[460px] sm:min-h-[540px] lg:min-h-[640px] select-none cursor-pointer"
+            className="w-full lg:flex-1 flex items-center justify-center relative min-h-[340px] sm:min-h-[420px] lg:min-h-[500px] select-none cursor-pointer"
           >
             <RobotCanvas
-              className="w-full h-[460px] sm:h-[540px] lg:h-[640px]"
-              scale={1.18}
+              className="w-full h-[340px] sm:h-[420px] lg:h-[500px]"
+              scale={1.12}
               pantallaColor="#00ffc6"
               pantallaBrillo={1.4}
             />
           </div>
         </div>
-
-        {/* Bottom space padding */}
-        <div className="h-6" />
       </section>
 
       {/* ============================================================ */}
@@ -491,24 +504,25 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
 
                 {paper.pdfUrl && (
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5">
-                    <a
-                      href={paper.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-slate-800 dark:hover:bg-neutral-200 shadow-sm transition-all group"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setViewerPdf({
+                          url: paper.pdfUrl!,
+                          title: paper.title,
+                          subtitle: `${paper.publisher} · ${paper.status}`,
+                        })
+                      }
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-slate-800 dark:hover:bg-neutral-200 shadow-sm transition-all group cursor-pointer"
                     >
                       <FileText className="size-3.5 group-hover:scale-110 transition-transform" />
                       <span>Read Manuscript (PDF)</span>
-                      <ExternalLink className="size-3 opacity-70" />
-                    </a>
+                      <Sparkles className="size-3 opacity-70" />
+                    </button>
 
-                    <a
-                      href={paper.pdfUrl}
-                      download
-                      className="text-xs font-mono text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                    >
-                      Download PDF ↓
-                    </a>
+                    <span className="text-[11px] font-mono text-slate-400 dark:text-neutral-500">
+                      View Only
+                    </span>
                   </div>
                 )}
               </div>
@@ -606,7 +620,12 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       <CareerEducationTimeline />
 
       {/* ============================================================ */}
-      {/* 8. ANIMATED CONTACT SECTION */}
+      {/* 9. RESUME SECTION */}
+      {/* ============================================================ */}
+      <ResumeSection />
+
+      {/* ============================================================ */}
+      {/* 10. ANIMATED CONTACT SECTION */}
       {/* ============================================================ */}
       <ContactSection />
 
@@ -630,6 +649,14 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
           </button>
         </div>
       )}
+      {/* Interactive PDF Document Viewer Modal */}
+      <PdfViewerDialog
+        open={!!viewerPdf}
+        onOpenChange={(open) => !open && setViewerPdf(null)}
+        url={viewerPdf?.url || null}
+        title={viewerPdf?.title}
+        subtitle={viewerPdf?.subtitle}
+      />
     </div>
   );
 }

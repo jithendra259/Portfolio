@@ -25,6 +25,16 @@ import {
 import { PROJECT_DETAILS, ProjectDetail } from '@/lib/project-details';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
+import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -55,6 +65,149 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
     },
   };
+}
+
+interface ParsedReportTable {
+  title?: string;
+  headers: string[];
+  rows: string[][];
+}
+
+function tryParseReportTable(block: string): ParsedReportTable | null {
+  let lines = block.split('\n').map((l) => l.trimEnd()).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) return null;
+
+  let title: string | undefined = undefined;
+  if (lines[0].trim().endsWith(':') && lines.length >= 3) {
+    const candidate = lines[0].trim().replace(/:$/, '');
+    if (/submitted by|under the guidance|under guidance|author|references|supervision|project submitted/i.test(candidate)) {
+      return null;
+    }
+    title = candidate;
+    lines = lines.slice(1);
+  }
+
+  if (lines.length < 2) return null;
+
+  // Exclude narrative lists, bullet points, equations, credentials
+  const firstLine = lines[0].trim();
+  if (firstLine.startsWith('•') || firstLine.startsWith('-') || firstLine.startsWith('*') || /^\d+\./.test(firstLine)) return null;
+  if (firstLine.includes('min_w') || firstLine.includes('min_{') || firstLine.includes('λ_t') || firstLine.includes('H_l =') || firstLine.includes('Z_{') || firstLine.includes('D_t =') || firstLine.includes('σ_spike')) return null;
+  if (firstLine.includes('Author:') || firstLine.includes('Submitted by:') || firstLine.includes('In partial fulfillment')) return null;
+  if (lines.some((l) => /— 20191ECE/i.test(l))) return null;
+
+  // Multi-space (>=2) or tab separated columns
+  const parsedRows = lines.map((line) => line.trim().split(/\s{2,}|\t+/).filter(Boolean));
+
+  // Check column consistency
+  const colCounts = parsedRows.map((r) => r.length);
+  const minCols = Math.min(...colCounts);
+  const maxCols = Math.max(...colCounts);
+
+  if (minCols >= 2 && maxCols <= 9 && maxCols - minCols <= 1) {
+    const dataRows = parsedRows.slice(1);
+    const hasNumbersOrMetrics = dataRows.some((r) => r.some((c) => /[\d%−\-]/.test(c)));
+    if (hasNumbersOrMetrics) {
+      const firstRowHasOnlyText = !parsedRows[0].some((c) => /^\d+(\.\d+)?%?$/.test(c));
+      const avgHeaderLen = parsedRows[0].reduce((sum, c) => sum + c.length, 0) / parsedRows[0].length;
+      if (firstRowHasOnlyText && avgHeaderLen <= 32) {
+        return {
+          title,
+          headers: parsedRows[0],
+          rows: dataRows,
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+function renderReportMatter(content: string) {
+  const blocks = content.split(/\n\s*\n/).filter((b) => b.trim().length > 0);
+
+  return (
+    <div className="space-y-4">
+      {blocks.map((block, bIdx) => {
+        const table = tryParseReportTable(block);
+        if (table) {
+          return (
+            <div
+              key={bIdx}
+              className="my-5 overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02] shadow-sm"
+            >
+              {table.title && (
+                <div className="px-4 py-2.5 bg-slate-100/80 dark:bg-white/[0.05] border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-neutral-200">
+                    {table.title}
+                  </span>
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
+                    {table.rows.length} {table.rows.length === 1 ? 'row' : 'rows'}
+                  </span>
+                </div>
+              )}
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-slate-100/60 dark:bg-white/[0.04]">
+                    <TableRow className="border-b border-slate-200 dark:border-white/10">
+                      {table.headers.map((header, hIdx) => {
+                        const isNumeric = table.rows.some((row) =>
+                          row[hIdx] && /^[\d$€£¥%−\-.,\s]+$/.test(row[hIdx].trim())
+                        );
+                        return (
+                          <TableHead
+                            key={hIdx}
+                            className={`text-xs font-bold text-slate-900 dark:text-white py-2.5 px-3 sm:px-4 ${
+                              isNumeric && hIdx > 0 ? 'text-right' : 'text-left'
+                            }`}
+                          >
+                            {header}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {table.rows.map((row, rIdx) => (
+                      <TableRow
+                        key={rIdx}
+                        className="border-b border-slate-200/70 dark:border-white/5 hover:bg-cyan-500/[0.04] transition-colors"
+                      >
+                        {row.map((cell, cIdx) => {
+                          const isNumeric = /^[\d$€£¥%−\-.,\s]+$/.test(cell.trim());
+                          return (
+                            <TableCell
+                              key={cIdx}
+                              className={`py-2.5 px-3 sm:px-4 text-xs font-mono text-slate-700 dark:text-neutral-300 ${
+                                isNumeric && cIdx > 0
+                                  ? 'text-right font-semibold text-slate-900 dark:text-white'
+                                  : 'text-left'
+                              }`}
+                            >
+                              {cell}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <p
+            key={bIdx}
+            className="text-sm text-slate-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line m-0"
+          >
+            {block}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
@@ -127,16 +280,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             )}
 
             {project.researchLink && (
-              <a
-                href={project.researchLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all"
-              >
-                <BookOpen className="size-3.5" />
-                <span>Paper</span>
-                <ExternalLink className="size-3 opacity-60" />
-              </a>
+              <ProjectPdfButton
+                url={project.researchLink}
+                title={project.title}
+                subtitle={project.tagline || project.description}
+              />
             )}
 
             <div className="pl-1">
@@ -259,6 +407,45 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </div>
             ))}
           </div>
+
+          {/* Metrics Breakdown Table */}
+          <div className="mt-8 w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#12151d]/90 backdrop-blur-xl shadow-sm">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent bg-slate-100/90 dark:bg-[#161a24] border-b border-slate-200 dark:border-white/10">
+                    <TableHead className="w-1/4 font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Metric Indicator
+                    </TableHead>
+                    <TableHead className="w-1/4 font-mono text-xs uppercase tracking-wider font-bold text-cyan-600 dark:text-cyan-400">
+                      Evaluated Benchmark
+                    </TableHead>
+                    <TableHead className="w-1/2 font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Architectural Impact &amp; Verification Scope
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {project.metrics.map((metric, idx) => (
+                    <TableRow
+                      key={idx}
+                      className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors border-b border-slate-100 dark:border-white/5"
+                    >
+                      <TableCell className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
+                        {metric.label}
+                      </TableCell>
+                      <TableCell className="font-mono font-bold text-cyan-600 dark:text-cyan-400 text-xs sm:text-sm">
+                        {metric.value}
+                      </TableCell>
+                      <TableCell className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal">
+                        {metric.detail}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </section>
 
         {/* ============================================================ */}
@@ -321,37 +508,64 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          <div className="space-y-4">
-            {project.architectureSteps.map((step, idx) => (
-              <div
-                key={idx}
-                className="group p-6 sm:p-7 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 hover:border-cyan-500/40 transition-all duration-300 flex flex-col md:flex-row md:items-start justify-between gap-6"
-              >
-                <div className="flex items-start gap-4 sm:gap-6 flex-1">
-                  {/* Step Number Badge */}
-                  <span className="size-11 sm:size-12 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-cyan-600 dark:text-cyan-400 font-mono font-bold text-lg flex items-center justify-center shrink-0 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 transition-all">
-                    {step.step}
-                  </span>
-
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal max-w-3xl">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Tech Badge */}
-                <div className="shrink-0 md:pt-1">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-slate-700 dark:text-neutral-300 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                    <Terminal className="size-3 text-cyan-500" />
-                    {step.tech}
-                  </span>
-                </div>
-              </div>
-            ))}
+          {/* Sticky Header Architecture Pipeline Table */}
+          <div className="w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#12151d]/90 backdrop-blur-xl shadow-sm">
+            <div className="max-h-[520px] overflow-y-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-slate-100/95 dark:hover:bg-[#161a24] bg-slate-100/90 dark:bg-[#161a24] sticky top-0 z-10 border-b border-slate-200 dark:border-white/10 backdrop-blur-md">
+                    <TableHead className="w-20 font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Stage
+                    </TableHead>
+                    <TableHead className="w-60 font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Subsystem &amp; Agent Role
+                    </TableHead>
+                    <TableHead className="min-w-[300px] font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Execution Logic &amp; Protocol
+                    </TableHead>
+                    <TableHead className="w-52 text-right font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      Technology Interface
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {project.architectureSteps.map((step, idx) => (
+                    <TableRow
+                      key={idx}
+                      className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors border-b border-slate-100 dark:border-white/5"
+                    >
+                      <TableCell className="font-mono font-bold text-cyan-600 dark:text-cyan-400 align-top py-4">
+                        <span className="inline-flex size-8 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs">
+                          {step.step}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm align-top py-4">
+                        {step.title}
+                      </TableCell>
+                      <TableCell className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal align-top py-4">
+                        {step.description}
+                      </TableCell>
+                      <TableCell className="text-right align-top py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-slate-700 dark:text-neutral-300 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                          <Terminal className="size-3 text-cyan-500" />
+                          {step.tech}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow className="bg-slate-50/80 dark:bg-white/[0.02]">
+                    <TableCell colSpan={3} className="text-xs font-mono text-slate-500 dark:text-neutral-400 py-3">
+                      Total Pipeline Stages: {project.architectureSteps.length} Verified Micro-Services
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-mono text-cyan-600 dark:text-cyan-400 font-bold py-3">
+                      Deterministic Flow ✓
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
           </div>
         </section>
 
@@ -392,7 +606,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </section>
 
         {/* ============================================================ */}
-        {/* 7. PRODUCTION CHALLENGES & HOW THEY WERE OVERCOME */}
+        {/* 7. PRODUCTION CHALLENGES & HOW THEY WERE OVERCOME (TABLE REPRESENTATION) */}
         {/* ============================================================ */}
         <section className="py-12 sm:py-16">
           <div className="mb-10 pb-4 border-b border-slate-200 dark:border-white/10">
@@ -401,35 +615,73 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <span>Engineering Rigor</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-950 dark:text-white tracking-tight">
-              Engineering Challenges & Solutions
+              Engineering Challenges &amp; Solutions Matrix
             </h2>
+            <p className="text-sm text-slate-600 dark:text-neutral-400 mt-2 max-w-2xl">
+              Systematic resolution of production vulnerabilities, concurrency bottlenecks, and mathematical guarantees.
+            </p>
           </div>
 
-          <div className="space-y-4">
-            {project.challenges.map((item, idx) => (
-              <div
-                key={idx}
-                className="p-6 sm:p-7 rounded-2xl bg-white/90 dark:bg-[#12151d]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 space-y-3"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shrink-0 mt-0.5">
-                    Challenge
-                  </span>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {item.challenge}
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3 pl-0 sm:pl-2">
-                  <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0 mt-0.5">
-                    Engineered Solution
-                  </span>
-                  <p className="text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal">
-                    {item.solution}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#12151d]/90 backdrop-blur-xl shadow-sm">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent bg-slate-100/90 dark:bg-[#161a24] border-b border-slate-200 dark:border-white/10">
+                    <TableHead className="w-16 font-mono text-xs uppercase tracking-wider font-bold text-slate-900 dark:text-white">
+                      #
+                    </TableHead>
+                    <TableHead className="w-2/5 min-w-[240px] font-mono text-xs uppercase tracking-wider font-bold text-rose-600 dark:text-rose-400">
+                      Technical Challenge / Failure Mode
+                    </TableHead>
+                    <TableHead className="w-3/5 min-w-[320px] font-mono text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400">
+                      Engineered Solution &amp; Architectural Guarantees
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {project.challenges.map((item, idx) => (
+                    <TableRow
+                      key={idx}
+                      className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors border-b border-slate-100 dark:border-white/5"
+                    >
+                      <TableCell className="font-mono text-xs text-slate-400 dark:text-neutral-500 align-top py-4">
+                        {String(idx + 1).padStart(2, '0')}
+                      </TableCell>
+                      <TableCell className="align-top py-4">
+                        <div className="flex items-start gap-2.5">
+                          <span className="p-1 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5">
+                            <AlertTriangle className="size-3.5" />
+                          </span>
+                          <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-neutral-200 leading-snug">
+                            {item.challenge}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="align-top py-4">
+                        <div className="flex items-start gap-2.5">
+                          <span className="p-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5">
+                            <CheckCircle2 className="size-3.5" />
+                          </span>
+                          <span className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal">
+                            {item.solution}
+                          </span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow className="bg-slate-50/80 dark:bg-white/[0.02]">
+                    <TableCell colSpan={2} className="text-xs font-mono text-slate-500 dark:text-neutral-400 py-3">
+                      Failure Modes Addressed: {project.challenges.length} Production Hazards
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold py-3">
+                      100% Mitigated ✓
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
           </div>
         </section>
 
@@ -510,32 +762,25 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   {/* Section Content */}
                   <div className="px-6 sm:px-8 py-6">
                     <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700 dark:text-neutral-300 leading-relaxed m-0 bg-transparent border-0 p-0">
-                        {section.content}
-                      </pre>
+                      {renderReportMatter(section.content)}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Download Full PDF CTA */}
+            {/* Read Full Manuscript CTA */}
             {project.pdfUrl && (
               <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/20">
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Read the Full Manuscript</p>
-                  <p className="text-xs text-slate-600 dark:text-neutral-400">Download the complete research paper including all figures, tables, and supplementary materials.</p>
+                  <p className="text-xs text-slate-600 dark:text-neutral-400">View the complete research paper and supplementary materials directly in the protected viewer.</p>
                 </div>
-                <a
-                  href={project.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-500 transition-all shrink-0"
-                >
-                  <BookOpen className="size-3.5" />
-                  <span>Download PDF</span>
-                  <ExternalLink className="size-3.5 opacity-70" />
-                </a>
+                <ProjectPdfButton
+                  url={project.pdfUrl}
+                  title={project.title}
+                  subtitle={project.tagline || project.description}
+                />
               </div>
             )}
           </section>

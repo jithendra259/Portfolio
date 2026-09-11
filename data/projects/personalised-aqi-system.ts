@@ -178,13 +178,14 @@ AQI values are typically computed based on concentrations of six key pollutants:
 - CO (Carbon Monoxide): from incomplete combustion, reduces oxygen delivery to organs.
 - O3 (Ground-level Ozone): formed photochemically, damages lung tissue.
 
-AQI Breakpoint Table (EPA Standard):
-  AQI 0–50:    PM2.5: 0.0–12.0 μg/m³, Category: Good
-  AQI 51–100:  PM2.5: 12.1–35.4 μg/m³, Category: Moderate
-  AQI 101–150: PM2.5: 35.5–55.4 μg/m³, Category: Unhealthy for Sensitive Groups
-  AQI 151–200: PM2.5: 55.5–150.4 μg/m³, Category: Unhealthy
-  AQI 201–300: PM2.5: 150.5–250.4 μg/m³, Category: Very Unhealthy
-  AQI 301–500: PM2.5: 250.5–500.4 μg/m³, Category: Hazardous
+AQI Breakpoint Standards (EPA Standard):
+  AQI Band    PM2.5 Threshold    Health Category
+  0–50        0.0–12.0 μg/m³     Good
+  51–100      12.1–35.4 μg/m³    Moderate
+  101–150     35.5–55.4 μg/m³    Unhealthy for Sensitive Groups
+  151–200     55.5–150.4 μg/m³   Unhealthy
+  201–300     150.5–250.4 μg/m³  Very Unhealthy
+  301–500     250.5–500.4 μg/m³  Hazardous
 
 2.3 Machine Learning for AQI Prediction
 

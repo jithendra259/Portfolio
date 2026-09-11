@@ -3,17 +3,11 @@
 import React, { useState } from 'react';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { Download } from 'lucide-react';
-
 export function ResumePrinter({ className }: { className?: string }) {
   const [isPrinting, setIsPrinting] = useState(false);
 
   const handlePrintTrigger = () => {
     setIsPrinting((prev) => !prev);
-  };
-
-  const handleDownloadPDF = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.print();
   };
 
   return (
@@ -27,7 +21,7 @@ export function ResumePrinter({ className }: { className?: string }) {
           font-size: 14px;
           position: relative;
           user-select: none;
-          margin-top: 35px;
+          margin-top: 15px;
           z-index: 10;
         }
 
@@ -422,16 +416,17 @@ export function ResumePrinter({ className }: { className?: string }) {
               </tbody>
             </table>
 
-            {/* Receipt Footer with Download */}
+            {/* Receipt Footer */}
             <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1">
-              <button
-                onClick={handleDownloadPDF}
-                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer"
+              <a
+                href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
+                download="Kandula_Jithendra_Subramanyam_Resume.pdf"
+                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center"
               >
-                <Download className="size-3" /> Save / Print PDF
-              </button>
-              <div className="text-[8px] text-stone-500">
-                THANK YOU!
+                <Download className="size-3" /> Download Official PDF
+              </a>
+              <div className="text-[8px] text-stone-500 font-mono">
+                VERIFIED CANDIDATE PROFILE
               </div>
             </div>
           </div>
