@@ -12,8 +12,8 @@ export const agenticPortfolioChatbot: Project = {
   solution: 'Engineered a specialized LangGraph multi-agent swarm separating generative language understanding from deterministic convex optimization solvers (CVXPY/CLARABEL), backed by continuous governance validation and anti-hallucination guardrails.',
   status: 'Research Prototype / Active Development',
   githubUrl: 'https://github.com/jithendra259',
-  featured: true,
-  researchLink: 'Elsevier – Engineering Applications of Artificial Intelligence (EAAI), Under Review 2026',
+  researchLink: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
+  pdfUrl: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
   highlights: [
     'Modular multi-agent architecture powered by LangChain / LangGraph & Mistral-7B via Ollama',
     'Technical analysis modules for RSI, MACD, Bollinger Bands, trend, volatility, and CVaR drawdown',

@@ -231,10 +231,11 @@ Missing Data Handling:
 
 3.3.2 Final AQI Calculation:
 
-Individual pollutant AQI (IAQI) calculated using EPA linear interpolation:
-IAQI_p = ((I_high - I_low) / (BP_high - BP_low)) × (C_p - BP_low) + I_low
+Individual pollutant AQI ($\text{IAQI}_p$) calculated using EPA linear interpolation:
 
-where C_p is the pollutant concentration, BP_high and BP_low are the breakpoint concentrations, and I_high and I_low are the corresponding AQI values.
+$$\text{IAQI}_p = \frac{I_{\text{high}} - I_{\text{low}}}{\text{BP}_{\text{high}} - \text{BP}_{\text{low}}} (C_p - \text{BP}_{\text{low}}) + I_{\text{low}}$$
+
+where $C_p$ is the pollutant concentration, $\text{BP}_{\text{high}}$ and $\text{BP}_{\text{low}}$ are the breakpoint concentrations, and $I_{\text{high}}$ and $I_{\text{low}}$ are the corresponding AQI values.
 
 Final AQI: maximum of all individual IAQI values at that time.
 Dominant Pollutant: the pollutant with the highest individual AQI.

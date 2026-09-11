@@ -35,6 +35,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { FormattedLatexText } from '@/components/ui/math-display';
+import { ProjectCharts } from '@/components/ui/project-charts';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -198,12 +200,12 @@ function renderReportMatter(content: string) {
         }
 
         return (
-          <p
+          <div
             key={bIdx}
-            className="text-sm text-slate-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line m-0"
+            className="text-sm text-slate-700 dark:text-neutral-300 leading-relaxed m-0"
           >
-            {block}
-          </p>
+            <FormattedLatexText text={block} />
+          </div>
         );
       })}
     </div>
@@ -225,6 +227,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const nextProjectKey = currentIndex < projectKeys.length - 1 ? projectKeys[currentIndex + 1] : projectKeys[0];
   const prevProject = PROJECT_DETAILS[prevProjectKey];
   const nextProject = PROJECT_DETAILS[nextProjectKey];
+
+  const pdfUrl = project.pdfUrl || (project.researchLink && (project.researchLink.startsWith('/') || project.researchLink.startsWith('http')) ? project.researchLink : undefined);
 
   return (
     <div className="min-h-screen w-full bg-[#f8fafc] dark:bg-[#0d0f14] text-slate-900 dark:text-neutral-100 font-sans selection:bg-neutral-800 selection:text-white transition-colors duration-300">
@@ -279,9 +283,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </a>
             )}
 
-            {project.researchLink && (
+            {pdfUrl && (
               <ProjectPdfButton
-                url={project.researchLink}
+                url={pdfUrl}
                 title={project.title}
                 subtitle={project.tagline || project.description}
               />
@@ -352,9 +356,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </a>
           )}
 
-          {project.researchLink && (
+          {pdfUrl && (
             <a
-              href={project.researchLink}
+              href={pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-all duration-300 shadow-md hover:scale-105 cursor-pointer"
@@ -445,6 +449,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Empirical Graphs & Performance Analytics (shadcn/ui charts) */}
+            <ProjectCharts projectId={id} />
           </div>
         </section>
 
@@ -465,9 +472,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white mb-4">
                   Why Existing Paradigms Fall Short
                 </h3>
-                <p className="text-sm sm:text-base text-slate-700 dark:text-neutral-300 leading-relaxed">
-                  {project.problemStatement}
-                </p>
+                <div className="text-sm sm:text-base text-slate-700 dark:text-neutral-300 leading-relaxed">
+                  <FormattedLatexText text={project.problemStatement} />
+                </div>
               </div>
             </div>
 
@@ -482,9 +489,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white mb-4">
                   Engineered Solution & Guarantees
                 </h3>
-                <p className="text-sm sm:text-base text-slate-700 dark:text-neutral-300 leading-relaxed">
-                  {project.solution}
-                </p>
+                <div className="text-sm sm:text-base text-slate-700 dark:text-neutral-300 leading-relaxed">
+                  <FormattedLatexText text={project.solution} />
+                </div>
               </div>
             </div>
 
@@ -543,7 +550,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                         {step.title}
                       </TableCell>
                       <TableCell className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal align-top py-4">
-                        {step.description}
+                        <FormattedLatexText text={step.description} />
                       </TableCell>
                       <TableCell className="text-right align-top py-4">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-slate-700 dark:text-neutral-300 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
@@ -770,14 +777,14 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </div>
 
             {/* Read Full Manuscript CTA */}
-            {project.pdfUrl && (
+            {pdfUrl && (
               <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-6 rounded-2xl bg-cyan-500/5 border border-cyan-500/20">
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">Read the Full Manuscript</p>
                   <p className="text-xs text-slate-600 dark:text-neutral-400">View the complete research paper and supplementary materials directly in the protected viewer.</p>
                 </div>
                 <ProjectPdfButton
-                  url={project.pdfUrl}
+                  url={pdfUrl}
                   title={project.title}
                   subtitle={project.tagline || project.description}
                 />

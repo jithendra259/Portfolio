@@ -52,5 +52,9 @@ export * from './calendar-1';
 export * from './calendar-appointment-booking';
 export * from './card';
 
+// Math & LaTeX
+export * from './math-display';
 
-
+// Charts & Visualizations
+export * from './chart';
+export * from './project-charts';
