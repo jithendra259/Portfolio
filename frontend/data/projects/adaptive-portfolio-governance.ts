@@ -214,17 +214,18 @@ Human-in-the-loop governance. The Gradio interface shows the trigger explanation
 The sample consists of 218 US-listed equities in 11 Global Industry Classification Standard (GICS) sector universes (Table 3). Daily adjusted closing price data for the period 2005-01-01 to 2025-12-31 are downloaded using yfinance (Fama and French, 1993). This 20-year period covers three crisis episodes: the 2008 Global Financial Crisis (Allen and Gale, 2000; Billio et al., 2012), the 2020 COVID shock (Haddad, Moreira and Muir, 2021; Longin and Solnik, 2001), and the 2022 period of rate hikes (Hamilton, 1989).
 
 Dataset summary (11 sector universes, 218 equities, 552 windows):
-  U1  Technology           20 tickers, 51 windows, 2005–2025
-  U2  Financial Services   18 tickers, 51 windows, 2005–2025
-  U3  Healthcare           16 tickers, 50 windows, 2005–2025
-  U4  Energy               19 tickers, 49 windows, 2005–2025
-  U5  Consumer Staples     20 tickers, 51 windows, 2005–2025
-  U6  Consumer Discretionary 12 tickers, 51 windows, 2005–2025
-  U7  Industrials          20 tickers, 49 windows, 2005–2025
-  U8  Materials            18 tickers, 49 windows, 2005–2025
-  U9  Utilities            16 tickers, 51 windows, 2005–2025
-  U10 Real Estate          19 tickers, 49 windows, 2005–2025
-  U11 Communication Svcs  12 tickers, 51 windows, 2005–2025
+  Universe    Sector                    Coverage & Windows
+  U1          Technology                20 tickers, 51 windows, 2005–2025
+  U2          Financial Services        18 tickers, 51 windows, 2005–2025
+  U3          Healthcare                16 tickers, 50 windows, 2005–2025
+  U4          Energy                    19 tickers, 49 windows, 2005–2025
+  U5          Consumer Staples          20 tickers, 51 windows, 2005–2025
+  U6          Consumer Discretionary    12 tickers, 51 windows, 2005–2025
+  U7          Industrials               20 tickers, 49 windows, 2005–2025
+  U8          Materials                 18 tickers, 49 windows, 2005–2025
+  U9          Utilities                 16 tickers, 51 windows, 2005–2025
+  U10         Real Estate               19 tickers, 49 windows, 2005–2025
+  U11         Communication Svcs        12 tickers, 51 windows, 2005–2025
 
 Each universe is partitioned using trading windows of T = 252 days with a step size of 100 days, leading to 49 to 51 windows per universe. The five benchmark strategies are: Standard CVaR (γ = 0), Mean-Variance (Markowitz, 1952), Equal Weight (DeMiguel, Garlappi and Uppal, 2009), Hierarchical Risk Parity (Lopez de Prado, 2016), and Risk Parity (Maillard et al., 2010). Transaction costs are set to 10 bp per unit of turnover. The main statistical test is the Wilcoxon signed-rank test, as the Shapiro–Wilk test rejects normality for all 11 universes.
 
@@ -237,40 +238,42 @@ A 2016-01-01 date cut-off distinguishes 26 in-sample windows from 25 out-of-samp
       content: `6.1. Core Performance Results
 
 Six-strategy comparison across 11 universes and 552 windows:
-  G-CVaR (ours):   Ann. Return 12.818%, Vol 16.101%, Sharpe 0.6098, Sortino 0.8364, Calmar 0.1460, MDD 87.774%, CVaR 2.388%
-  Standard CVaR:   Ann. Return 12.869%, Vol 15.997%, Sharpe 0.6169
-  Mean-Variance:   Sharpe 0.5986
-  Equal Weight:    CVaR 3.223% (baseline for comparison)
-  HRP:             Sharpe 0.6143
-  Risk Parity:     Sharpe 0.5971
+  Strategy         Ann. Return    Volatility    Sharpe    Sortino    Calmar    Max DD     CVaR (95%)
+  G-CVaR (ours)    12.818%        16.101%       0.6098    0.8364     0.1460    87.774%    2.388%
+  Standard CVaR    12.869%        15.997%       0.6169    —          —         —          —
+  Mean-Variance    —              —             0.5986    —          —         —          —
+  Equal Weight     —              —             —         —          —         —          3.223%
+  HRP              —              —             0.6143    —          —         —          —
+  Risk Parity      —              —             0.5971    —          —         —          —
 
 The primary result: a 25.9% reduction in mean CVaR at the 95% confidence level compared to equal weight, across all 11 universes and 552 windows.
 
 6.2. Crisis-Period Performance (Universe U1)
 
-2008 GFC (λ = 1.0):
-  G-CVaR:      MDD 66.321%, CVaR 4.983%, MDD vs EW = −13.0%
-  Standard CVaR: MDD 65.931%, CVaR 4.983%
-  Equal Weight: MDD 76.162%, CVaR 6.123%
+2008 Global Financial Crisis Performance (λ = 1.0):
+  Strategy         Max Drawdown    CVaR (95%)    MDD vs Equal Weight
+  G-CVaR (ours)    66.321%         4.983%        −13.0%
+  Standard CVaR    65.931%         4.983%        —
+  Equal Weight     76.162%         6.123%        Baseline
 
-2020 COVID (λ ≈ 0.15–0.22):
-  G-CVaR:      MDD 41.419%, CVaR 5.055%, MDD vs EW = +5.5%
-  Equal Weight: MDD 39.258%, CVaR 4.814%
+2020 COVID Shock Performance (λ ≈ 0.15–0.22):
+  Strategy         Max Drawdown    CVaR (95%)    MDD vs Equal Weight
+  G-CVaR (ours)    41.419%         5.055%        +5.5%
+  Equal Weight     39.258%         4.814%        Baseline
 
 The COVID shock did not cross the Crisis threshold (λ < 0.85), so the graph penalty was not activated. The small underperformance relative to Equal Weight in 2020 is consistent with theoretical expectations: when the instability index does not flag a crisis, the contagion penalty does not fire, and G-CVaR behaves similarly to Standard CVaR.
 
-6.3. System Trustworthiness (160 Governance Scenarios)
+6.3. System Trustworthiness (160 Governance Scenarios):
+  Governance Dimension    Score     Operational Result
+  Trigger Accuracy        100%      Correctly flags Crisis regime and excess turnover windows
+  Weight Conservatism     100%      Position constraints enforced in all Constrain actions
+  Narrative Accuracy      96.9%     LLM narrative claims traceable to deterministic blackboard values
 
-  Trigger Accuracy:    100% (correctly flags Crisis regime and excess turnover windows)
-  Weight Conservatism: 100% (position constraints enforced in all Constrain actions)
-  Narrative Accuracy:  96.9% (LLM narrative claims traceable to blackboard values)
-
-6.4. Statistical Significance
-
-Pooled cross-universe tests (139,104 paired daily observations, 11 universes):
-  G-CVaR vs Equal Weight on ΔSharpe: Wilcoxon p = 0.0065 (statistically significant)
-  G-CVaR vs Equal Weight on ΔCVaR:   p < 0.001 (highly significant)
-  G-CVaR vs Std CVaR on ΔSharpe:     Wilcoxon p = 0.0517 (ns — graph penalty does not hurt Sharpe)
+6.4. Statistical Significance (139,104 paired daily observations across 11 universes):
+  Strategy Comparison          Metric Tested    p-value      Statistical Interpretation
+  G-CVaR vs Equal Weight       ΔSharpe          0.0065       Statistically significant improvement
+  G-CVaR vs Equal Weight       ΔCVaR            < 0.001      Highly significant tail-risk reduction
+  G-CVaR vs Standard CVaR      ΔSharpe          0.0517       Non-significant (no degradation on Sharpe)
 
 The statistical evidence confirms that G-CVaR meaningfully changes the tail-risk distribution without sacrificing return performance.`,
     },

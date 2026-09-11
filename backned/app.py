@@ -1,6 +1,8 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
+from livekit.agents.inference import TurnDetector
+from livekit.agents import llm, stt, tts, inference, vad
 from livekit.plugins import cartesia, deepgram, google, silero, ai_coustics
 from livekit.plugins import openai
 from livekit.agents import (
@@ -70,7 +72,6 @@ Voice Response Style:
 
 server = AgentServer()
 
-
 # ============================================================
 # VOICE AGENT
 # ============================================================
@@ -83,8 +84,12 @@ async def my_agent(ctx: agents.JobContext):
         # ====================================================
         # SPEECH TO TEXT (Deepgram Plugin)
         # ====================================================
-        stt=deepgram.STT(
-            model="nova-3",
+        stt=stt.FallbackAdapter(
+            [
+                inference.STT.from_model_string("assemblyai/universal-streaming:en"),
+                inference.STT.from_model_string("deepgram/nova-3"),
+            ]
+
         ),
 
         # ====================================================
@@ -95,11 +100,14 @@ async def my_agent(ctx: agents.JobContext):
         # ====================================================
         # LLM (Google Gemini)
         # ====================================================
-        llm=openai.LLM.with_ollama(
-        model="qwen3:1.7b",
-        base_url="http://localhost:11434/v1",
-    ),
-
+        llm=llm.FallbackAdapter(
+            [
+                inference.LLM(model="qwen3:1.7b", base_url="http://localhost:11434/v1"),
+                inference.LLM(model="google/gemini-2.5-flash")
+            ]
+        ),
+       
+        turn_detection=TurnDetector(),
 
         # ====================================================
         # TEXT TO SPEECH (Cartesia Plugin)
