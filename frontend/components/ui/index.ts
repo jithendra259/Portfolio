@@ -58,3 +58,6 @@ export * from './math-display';
 // Charts & Visualizations
 export * from './chart';
 export * from './project-charts';
+
+// IEEE Academic Paper View
+export * from './ieee-paper-view';

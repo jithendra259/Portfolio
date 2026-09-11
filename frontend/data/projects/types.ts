@@ -31,6 +31,51 @@ export interface ReportSection {
   content: string;
 }
 
+export interface PaperAuthor {
+  name: string;
+  affiliationIndex: number;
+  isCorresponding?: boolean;
+  email?: string;
+}
+
+export interface PaperAffiliation {
+  index: number;
+  institution: string;
+  department: string;
+  location: string;
+}
+
+export interface PaperFigure {
+  id: string;
+  figureNumber: string; // e.g. "Fig. 1"
+  title: string;
+  caption: string;
+  src: string;
+  alt: string;
+  aspectRatio?: string;
+}
+
+export interface PaperReference {
+  index: number;
+  citation: string;
+  doi?: string;
+  url?: string;
+}
+
+export interface IeeePaperData {
+  venue: string;
+  paperTitle?: string;
+  authors: PaperAuthor[];
+  affiliations: PaperAffiliation[];
+  abstract: string;
+  keywords: string[];
+  publicationDate?: string;
+  doi?: string;
+  bibtex?: string;
+  figures: PaperFigure[];
+  references?: PaperReference[];
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -55,6 +100,7 @@ export interface Project {
   pdfUrl?: string;
   featured?: boolean;
   reportSections?: ReportSection[];
+  ieeePaper?: IeeePaperData;
 }
 
 export type ProjectDetail = Project;
