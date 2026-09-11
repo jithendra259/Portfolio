@@ -61,3 +61,6 @@ export * from './project-charts';
 
 // IEEE Academic Paper View
 export * from './ieee-paper-view';
+
+// Sidebar Navigation
+export * from './sidebar-001';

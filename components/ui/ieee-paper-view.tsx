@@ -30,11 +30,14 @@ import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ProjectCharts } from '@/components/ui/project-charts';
 
+import { cn } from '@/lib/utils';
+
 interface IeeePaperViewProps {
   project: Project;
+  className?: string;
 }
 
-export function IeeePaperView({ project }: IeeePaperViewProps) {
+export function IeeePaperView({ project, className }: IeeePaperViewProps) {
   const [selectedFigure, setSelectedFigure] = useState<PaperFigure | null>(null);
   const [copiedBibtex, setCopiedBibtex] = useState(false);
   const [showBibtexModal, setShowBibtexModal] = useState(false);
@@ -43,15 +46,14 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
 
   // Track reading scroll progress
   useEffect(() => {
-    const handleScroll = () => {
+    const updateReadingProgress = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (totalHeight > 0) {
-        const currentProgress = (window.scrollY / totalHeight) * 100;
-        setReadingProgress(Math.min(100, Math.max(0, currentProgress)));
+        setReadingProgress(Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100)));
       }
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
+    return () => window.removeEventListener('scroll', updateReadingProgress);
   }, []);
 
   const paper = project.ieeePaper;
@@ -75,7 +77,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
   };
 
   return (
-    <article className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+    <article className={cn("relative w-full max-w-4xl mx-auto py-2 sm:py-6", className)}>
       {/* 1. TOP READING PROGRESS BAR */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-slate-200/50 dark:bg-neutral-800/50 z-50">
         <div
@@ -209,7 +211,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         </div>
 
         {/* ABSTRACT & INDEX TERMS (CLASSICAL IEEE STYLE) */}
-        <div className="my-8 p-6 rounded-2xl bg-slate-50/90 dark:bg-[#131722]/80 border border-slate-200 dark:border-white/10 text-sm leading-relaxed">
+        <div id="sec-abstract" className="my-8 p-6 rounded-2xl bg-slate-50/90 dark:bg-[#131722]/80 border border-slate-200 dark:border-white/10 text-sm leading-relaxed">
           <p className="text-slate-800 dark:text-neutral-200 text-justify">
             <span className="font-bold italic text-slate-950 dark:text-white mr-1.5">
               Abstract—
@@ -232,18 +234,18 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* =================================================================== */}
         {/* I. INTRODUCTION & PROBLEM MOTIVATION */}
         {/* =================================================================== */}
-        <section className="mb-12">
+        <section id="sec-intro" className="mb-12 scroll-mt-24">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
             I. Introduction &amp; Problem Motivation
           </h2>
           <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
-            <p>
+            <p id="subsec-intro-problem" className="scroll-mt-24">
               <span className="text-3xl font-bold font-serif float-left mr-2 leading-none text-slate-950 dark:text-white">
                 T
               </span>
               <FormattedLatexText text={project.problemStatement} />
             </p>
-            <p>
+            <p id="subsec-intro-solution" className="scroll-mt-24">
               <FormattedLatexText text={project.solution} />
             </p>
           </div>
@@ -252,7 +254,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* =================================================================== */}
         {/* II. MATHEMATICAL FORMULATION & THEORETICAL FRAMEWORK */}
         {/* =================================================================== */}
-        <section className="mb-12">
+        <section id="sec-math" className="mb-12 scroll-mt-24">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
             II. Mathematical Formulation &amp; Theoretical Framework
           </h2>
@@ -262,7 +264,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
             </p>
 
             {/* LaTeX Display Equation 1 */}
-            <div className="my-6 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
+            <div id="subsec-math-cvar" className="my-6 scroll-mt-24 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
               <div className="grow overflow-x-auto text-center font-normal">
                 <FormattedLatexText text="$\text{CVaR}_\alpha(w) = \min_{\gamma \in \mathbb{R}} \left\{ \gamma + \frac{1}{1-\alpha} \mathbb{E}\left[ \left( -w^\top r_t - \gamma \right)^+ \right] \right\}$" />
               </div>
@@ -276,7 +278,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
             </p>
 
             {/* LaTeX Display Equation 2 */}
-            <div className="my-6 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
+            <div id="subsec-math-graph" className="my-6 scroll-mt-24 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 flex items-center justify-between font-sans">
               <div className="grow overflow-x-auto text-center font-normal">
                 <FormattedLatexText text="$\min_{w \in \Delta} \; \text{CVaR}_\alpha(w) + \lambda_t \cdot w^\top \mathcal{L}_{\text{network}} w + \kappa \|w - w_{\text{prev}}\|_1$" />
               </div>
@@ -294,7 +296,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* =================================================================== */}
         {/* III. SYSTEM ARCHITECTURE & RESEARCH FIGURES */}
         {/* =================================================================== */}
-        <section className="mb-12">
+        <section id="sec-arch" className="mb-12 scroll-mt-24">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
             III. System Architecture &amp; Experimental Pipeline
           </h2>
@@ -306,7 +308,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
 
             {/* PRIMARY ARCHITECTURE FIGURE (Extracted from authentic PDF) */}
             {figures.length > 0 && (
-              <figure className="my-8 group">
+              <figure id="subsec-arch-fig1" className="my-8 scroll-mt-24 group">
                 <div
                   onClick={() => setSelectedFigure(figures[0])}
                   className="relative cursor-pointer overflow-hidden rounded-2xl bg-white p-3 sm:p-5 border border-slate-200 dark:border-white/15 shadow-md hover:shadow-xl transition-all duration-300"
@@ -336,7 +338,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
             )}
 
             {/* Architecture Stages / Workflow */}
-            <div className="mt-6 space-y-3 font-sans">
+            <div id="subsec-arch-stages" className="mt-6 scroll-mt-24 space-y-3 font-sans">
               {project.architectureSteps.map((step, idx) => (
                 <div
                   key={idx}
@@ -359,7 +361,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* =================================================================== */}
         {/* IV. EMPIRICAL EVALUATION & RESULTS */}
         {/* =================================================================== */}
-        <section className="mb-12">
+        <section id="sec-eval" className="mb-12 scroll-mt-24">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
             IV. Empirical Benchmark Evaluation &amp; Results
           </h2>
@@ -370,7 +372,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
             </p>
 
             {/* ACADEMIC TABLE (IEEE BOOKTABS STYLE) */}
-            <div className="my-6 font-sans">
+            <div id="subsec-eval-table" className="my-6 scroll-mt-24 font-sans">
               <div className="text-center font-bold text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider mb-2 font-mono">
                 TABLE I: EMPIRICAL PERFORMANCE &amp; STRESS BENCHMARKS
               </div>
@@ -413,7 +415,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
 
             {/* RESEARCH RESULT FIGURES (Extracted from authentic PDF) */}
             {figures.length > 1 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
+              <div id="subsec-eval-figures" className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8 scroll-mt-24">
                 {figures.slice(1, 5).map((fig, idx) => (
                   <figure key={idx} className="group flex flex-col justify-between">
                     <div
@@ -446,7 +448,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
             )}
 
             {/* SUPPLEMENTARY INTERACTIVE ANALYTICAL CHARTS */}
-            <div className="pt-6 font-sans">
+            <div id="subsec-eval-charts" className="pt-6 scroll-mt-24 font-sans">
               <ProjectCharts projectId={project.id} />
             </div>
           </div>
@@ -456,7 +458,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* V. ABLATION STUDIES & SENSITIVITY ANALYSIS */}
         {/* =================================================================== */}
         {figures.length > 5 && (
-          <section className="mb-12">
+          <section id="sec-ablation" className="mb-12 scroll-mt-24">
             <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
               V. Ablation Studies &amp; Sensitivity Analysis
             </h2>
@@ -503,7 +505,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         {/* =================================================================== */}
         {/* VI. CONCLUSION & FUTURE DIRECTIONS */}
         {/* =================================================================== */}
-        <section className="mb-12">
+        <section id="sec-conclusion" className="mb-12 scroll-mt-24">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
             VI. Conclusion &amp; Future Directions
           </h2>
@@ -517,7 +519,7 @@ export function IeeePaperView({ project }: IeeePaperViewProps) {
         </section>
 
         {/* REFERENCES (IEEE FORMAT) */}
-        <section className="pt-8 border-t-2 border-slate-900 dark:border-white/20">
+        <section id="sec-references" className="pt-8 scroll-mt-24 border-t-2 border-slate-900 dark:border-white/20">
           <h2 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 font-mono">
             References
           </h2>

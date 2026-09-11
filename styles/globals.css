@@ -24,6 +24,7 @@
   --border: #cbd5e1;
   --input: #cbd5e1;
   --ring: #059669;
+  --accent-pro: #06b6d4;
 }
 
 .dark {
@@ -45,6 +46,7 @@
   --border: #232838;
   --input: #232838;
   --ring: #3b4255;
+  --accent-pro: #22d3ee;
 }
 
 @theme inline {
@@ -73,6 +75,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-accent-pro: var(--accent-pro);
 }
 
 @layer base {
