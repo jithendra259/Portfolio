@@ -38,6 +38,7 @@ import {
 import { FormattedLatexText } from '@/components/ui/math-display';
 import { ProjectCharts } from '@/components/ui/project-charts';
 import { IeeePaperView } from '@/components/ui/ieee-paper-view';
+import { CaseStudyToc } from '@/components/ui/case-study-toc-sidebar';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -300,11 +301,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </header>
 
       {/* ============================================================ */}
-      {/* 2. MAIN IEEE SINGLE-COLUMN RESEARCH CASE STUDY */}
+      {/* 2. MAIN IEEE SINGLE-COLUMN RESEARCH CASE STUDY WITH TOC */}
       {/* ============================================================ */}
       <main className="relative z-10 w-full py-6 sm:py-10">
-        {/* IEEE Single-Column Academic Paper View with Authentic Extracted PDF Figures */}
-        <IeeePaperView project={project} />
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-start gap-8 lg:gap-12 relative">
+            {/* Table of Contents: Desktop sticky sidebar + Mobile drawer */}
+            <CaseStudyToc
+              hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}
+              paperTitle={project.title}
+            />
+
+            {/* IEEE Single-Column Academic Paper View with Authentic Extracted PDF Figures */}
+            <div className="flex-1 min-w-0 max-w-4xl">
+              <IeeePaperView project={project} />
+            </div>
+          </div>
+        </div>
 
         {/* Carousel Navigation Between Projects */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
