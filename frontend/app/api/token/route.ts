@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
 import { RoomConfiguration } from '@livekit/protocol';
 
@@ -18,11 +18,10 @@ const LIVEKIT_URL = process.env.LIVEKIT_URL;
 export const revalidate = 0;
 
 export async function POST(req: Request) {
-  // make an exception for the vercel preview environment
-  if (process.env.NODE_ENV !== 'development' && process.env.IS_VERCEL_PREVIEW !== 'true') {
-    throw new Error(
-      'THIS API ROUTE IS INSECURE. DO NOT USE THIS ROUTE IN PRODUCTION WITHOUT AN AUTHENTICATION LAYER.'
-    );
+  // Allow public token generation for portfolio voice assistant
+  // If you ever wish to restrict access, set LIVEKIT_RESTRICT_ACCESS="true" in environment variables
+  if (process.env.LIVEKIT_RESTRICT_ACCESS === 'true' && process.env.NODE_ENV === 'production') {
+    throw new Error('Access to voice agent token endpoint is currently restricted.');
   }
 
   try {

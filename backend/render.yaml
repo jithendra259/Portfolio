@@ -1,0 +1,21 @@
+services:
+  - type: worker
+    name: livekit-voice-agent
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python -m livekit.agents.cli download-files
+    startCommand: python app.py start
+    autoDeploy: true
+    envVars:
+      - key: LIVEKIT_URL
+        sync: false
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: DEEPGRAM_API_KEY
+        sync: false
+      - key: CARTESIA_API_KEY
+        sync: false
