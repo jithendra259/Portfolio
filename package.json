@@ -1,0 +1,13 @@
+{
+  "name": "jithendra-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "pnpm --filter agent-starter-react build",
+    "dev": "pnpm --filter agent-starter-react dev"
+  }
+}
