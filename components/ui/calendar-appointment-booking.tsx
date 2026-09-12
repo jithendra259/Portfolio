@@ -400,11 +400,13 @@ export const CalendarAppointmentBooking = ({ onSuccess, className }: Appointment
             {/* Middle Row: Guest Name & Purpose */}
             <div className="p-4 border-t border-border/50 bg-muted/20 grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
+                <label htmlFor="guest-name-input" className="text-[11px] font-mono text-muted-foreground flex items-center gap-1 cursor-pointer">
                   <User className="size-3 text-cyan-400" />
                   <span>Your Name (Optional)</span>
                 </label>
                 <Input
+                  id="guest-name-input"
+                  name="guestName"
                   type="text"
                   placeholder="e.g. Alex Smith"
                   value={name}
@@ -414,11 +416,13 @@ export const CalendarAppointmentBooking = ({ onSuccess, className }: Appointment
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
+                <label htmlFor="guest-email-input" className="text-[11px] font-mono text-muted-foreground flex items-center gap-1 cursor-pointer">
                   <Mail className="size-3 text-cyan-400" />
                   <span>Your Email (Optional)</span>
                 </label>
                 <Input
+                  id="guest-email-input"
+                  name="guestEmail"
                   type="email"
                   placeholder="alex@company.com"
                   value={email}
@@ -428,11 +432,13 @@ export const CalendarAppointmentBooking = ({ onSuccess, className }: Appointment
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
+                <label htmlFor="discussion-topic-select" className="text-[11px] font-mono text-muted-foreground flex items-center gap-1 cursor-pointer">
                   <MessageSquare className="size-3 text-cyan-400" />
                   <span>Discussion Topic</span>
                 </label>
                 <select
+                  id="discussion-topic-select"
+                  name="discussionTopic"
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
                   className="h-8 w-full rounded-md border border-input bg-background/60 px-2.5 py-1 text-xs font-mono text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
