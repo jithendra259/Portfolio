@@ -1,11 +1,15 @@
 'use client';
 
+import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext } from '@livekit/components-react';
+import { Minimize2 } from 'lucide-react';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
 import { WelcomeView } from '@/components/voice-agent/welcome-view';
+import { DockedVoiceHUD } from '@/components/voice-agent/docked-voice-hud';
+import { useVoiceAutoNavigation } from '@/hooks/useVoiceAutoNavigation';
 
 const MotionWelcomeView = motion.create(WelcomeView);
 const MotionSessionView = motion.create(AgentSessionView_01);
@@ -23,8 +27,8 @@ const VIEW_MOTION_PROPS = {
   animate: 'visible',
   exit: 'hidden',
   transition: {
-    duration: 0.5,
-    ease: 'linear',
+    duration: 0.3,
+    ease: 'easeInOut',
   },
 };
 
@@ -33,45 +37,81 @@ interface ViewControllerProps {
 }
 
 export function ViewController({ appConfig }: ViewControllerProps) {
-  const { isConnected, start } = useSessionContext();
+  const session = useSessionContext();
+  const { isConnected, start } = session;
   const { resolvedTheme } = useTheme();
 
+  // Mode: 'docked' keeps the portfolio page fully visible and auto-navigating.
+  // 'full' expands into the immersive full-screen audio visualizer tile.
+  const [viewMode, setViewMode] = useState<'docked' | 'full'>('docked');
+
+  // Activate real-time voice-driven auto navigation
+  const { activeTarget, navigateTo } = useVoiceAutoNavigation(session);
+
   return (
-    <AnimatePresence mode="wait">
-      {/* Welcome view */}
-      {!isConnected && (
-        <MotionWelcomeView
-          key="welcome"
-          {...VIEW_MOTION_PROPS}
-          startButtonText={appConfig.startButtonText}
-          onStartCall={start}
-        />
-      )}
-      {/* Session view */}
-      {isConnected && (
-        <MotionSessionView
-          key="session-view"
-          {...VIEW_MOTION_PROPS}
-          supportsChatInput={appConfig.supportsChatInput}
-          supportsVideoInput={appConfig.supportsVideoInput}
-          supportsScreenShare={appConfig.supportsScreenShare}
-          isPreConnectBufferEnabled={appConfig.isPreConnectBufferEnabled}
-          audioVisualizerType={appConfig.audioVisualizerType}
-          audioVisualizerColor={
-            resolvedTheme === 'dark'
-              ? appConfig.audioVisualizerColorDark
-              : appConfig.audioVisualizerColor
-          }
-          audioVisualizerColorShift={appConfig.audioVisualizerColorShift}
-          audioVisualizerBarCount={appConfig.audioVisualizerBarCount}
-          audioVisualizerGridRowCount={appConfig.audioVisualizerGridRowCount}
-          audioVisualizerGridColumnCount={appConfig.audioVisualizerGridColumnCount}
-          audioVisualizerRadialBarCount={appConfig.audioVisualizerRadialBarCount}
-          audioVisualizerRadialRadius={appConfig.audioVisualizerRadialRadius}
-          audioVisualizerWaveLineWidth={appConfig.audioVisualizerWaveLineWidth}
-          className="fixed inset-0"
-        />
-      )}
-    </AnimatePresence>
+    <div className="relative w-full min-h-screen">
+      {/* Portfolio page: Always rendered and interactive */}
+      <WelcomeView
+        startButtonText={appConfig.startButtonText}
+        onStartCall={start}
+      />
+
+      {/* When Connected & in Docked Mode: Floating Live Voice HUD */}
+      <AnimatePresence>
+        {isConnected && viewMode === 'docked' && (
+          <DockedVoiceHUD
+            key="docked-hud"
+            onExpand={() => setViewMode('full')}
+            activeTarget={activeTarget}
+            onManualNavigate={(target) => navigateTo(target, 'data_channel')}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* When Connected & in Full Immersion Mode: Fullscreen Visualizer Tile */}
+      <AnimatePresence>
+        {isConnected && viewMode === 'full' && (
+          <motion.div
+            key="full-session-view"
+            {...VIEW_MOTION_PROPS}
+            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl"
+          >
+            {/* Minimize to Dock button */}
+            <div className="absolute top-4 right-4 z-60">
+              <button
+                type="button"
+                onClick={() => setViewMode('docked')}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs border border-white/20 backdrop-blur-xl shadow-lg transition-all cursor-pointer"
+                title="Minimize to Dock (View Portfolio Page)"
+              >
+                <Minimize2 className="size-3.5" />
+                <span>Dock / View Page</span>
+              </button>
+            </div>
+
+            <MotionSessionView
+              supportsChatInput={appConfig.supportsChatInput}
+              supportsVideoInput={appConfig.supportsVideoInput}
+              supportsScreenShare={appConfig.supportsScreenShare}
+              isPreConnectBufferEnabled={appConfig.isPreConnectBufferEnabled}
+              audioVisualizerType={appConfig.audioVisualizerType}
+              audioVisualizerColor={
+                resolvedTheme === 'dark'
+                  ? appConfig.audioVisualizerColorDark
+                  : appConfig.audioVisualizerColor
+              }
+              audioVisualizerColorShift={appConfig.audioVisualizerColorShift}
+              audioVisualizerBarCount={appConfig.audioVisualizerBarCount}
+              audioVisualizerGridRowCount={appConfig.audioVisualizerGridRowCount}
+              audioVisualizerGridColumnCount={appConfig.audioVisualizerGridColumnCount}
+              audioVisualizerRadialBarCount={appConfig.audioVisualizerRadialBarCount}
+              audioVisualizerRadialRadius={appConfig.audioVisualizerRadialRadius}
+              audioVisualizerWaveLineWidth={appConfig.audioVisualizerWaveLineWidth}
+              className="w-full h-full"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
