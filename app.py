@@ -27,9 +27,13 @@ load_dotenv(BASE_DIR / ".env.local")
 # ASSISTANT
 # ============================================================
 
+import json
+from typing import Annotated
+
 class Assistant(Agent):
 
-    def __init__(self) -> None:
+    def __init__(self, room=None) -> None:
+        self.room = room
 
         super().__init__(
             instructions="""
@@ -41,20 +45,20 @@ About Jithendra:
 - Core Specialization: Agentic AI, Multi-Agent Systems, Portfolio Governance, Quantitative Finance, Explainable AI, and Full-Stack Development.
 - Contact: kandulajithendrasubramanyam@gmail.com, +91-9704400336, based in Mumbai, India.
 
-Key Research Papers (Under Review, 2026):
-1. 'Multi-Agent Adaptive Portfolio Governance System' submitted to Elsevier Engineering Applications of Artificial Intelligence (EAAI). Focuses on agentic orchestration, convex portfolio optimization (CVXPY), regime adaptation, instability detection, and governance validation.
-2. 'Agentic AI Portfolio Governance / Financial Intelligence' submitted to Springer Conference Proceedings. Focuses on compliance-aware financial AI, anti-hallucination controls, and audit logging.
+Key Research Papers (2026):
+1. 'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization' (Elsevier EAAI, Under Review 2026). Formulates 5-agent blackboard architecture, SEC 13-F bipartite graph, and G-CVaR with 25.9% risk reduction.
+2. 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization' (Presented & Accepted at IJCACI 2026 / Springer Nature LNCS). Integrates instability index I_t, Ledoit-Wolf shrinkage, and 32.5% max drawdown containment over 2005-2025.
+3. 'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching & Conversational Explainability' (Elsevier Computers & Operations Research / CAS Journal, Under Review 2026). Features 7-agent DAG with 100% numerical grounding (0% hallucination) under MiFID II & EU AI Act.
 
 Key Projects:
-1. Agentic AI Portfolio Governance Chatbot: Multi-agent system using LangChain/LangGraph, CVXPY, CLARABEL, NetworkX, Mistral-7B via Ollama, YFinance, and MongoDB. Includes 10+ specialized agents (planning, technical analysis, regime detection, optimization, explainability, and verification).
+1. Agentic AI Portfolio Governance Chatbot: Multi-agent system using LangChain/LangGraph, CVXPY, CLARABEL, NetworkX, Mistral-7B via Ollama, YFinance, and MongoDB. Includes 10+ specialized agents.
 2. Multi-Agent Adaptive Portfolio Governance System: Financial decision intelligence combining risk-aware portfolio construction and governance checks.
 3. Personalised AQI Global Air Quality Forecasting: Next.js and Flask platform with ML forecasting for PM2.5, O3, NO2 using live AQICN data.
 4. Swarm Robots for Agriculture: IoT sensors, embedded systems, and computer vision for crop disease detection.
 
-Work Experience:
-- Thesis Researcher at K J Somaiya College of Engineering (Oct 2025 - Apr 2026).
-- Full-Stack Developer Intern at ScholarRankAI (May 2025 - Aug 2025).
-- UI/UX Developer Intern at MNJ Software (Mar 2024 - May 2024).
+Auto-Navigation Capability:
+- You have the ability to automatically navigate and scroll the visitor's screen in real time using your `navigate_portfolio` tool.
+- When the visitor asks to see, view, scroll, or go to any section, paper, or case study (e.g. 'show me your projects', 'take me to research', 'open your resume', 'how can I contact you', 'open the EAAI case study'), ALWAYS call `navigate_portfolio` with the appropriate target and tell the visitor you are navigating their screen there.
 
 Voice Response Style:
 - Answer naturally, conversationally, concisely, and confidently.
@@ -63,6 +67,26 @@ Voice Response Style:
 - Represent Jithendra accurately and highlight his strong expertise in Agentic AI and Quantitative Finance.
 """
         )
+
+    @llm.ai_callable(description="Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study.")
+    async def navigate_portfolio(
+        self,
+        target: Annotated[
+            str,
+            llm.TypeInfo(
+                description="Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'"
+            ),
+        ],
+    ) -> str:
+        """Navigates the user's browser to the requested section or case study."""
+        if self.room and hasattr(self.room, "local_participant") and self.room.local_participant:
+            try:
+                payload = json.dumps({"type": "navigate", "target": target})
+                await self.room.local_participant.publish_data(payload.encode("utf-8"), topic="navigation")
+                return f"Successfully navigated screen to {target}."
+            except Exception as e:
+                return f"Attempted navigation to {target}: {e}"
+        return f"Navigation requested for {target}."
 
 
 
@@ -137,7 +161,7 @@ async def my_agent(ctx: agents.JobContext):
 
         room=ctx.room,
 
-        agent=Assistant(),
+        agent=Assistant(room=ctx.room),
 
         room_options=room_io.RoomOptions(
 
