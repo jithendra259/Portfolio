@@ -311,7 +311,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* 2. MAIN IEEE SINGLE-COLUMN RESEARCH CASE STUDY WITH TOC */}
       {/* ============================================================ */}
       <main className="relative z-10 w-full bg-background">
-        <CaseStudyLayout hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}>
+        <CaseStudyLayout
+          hasAblation={Boolean(project.ieeePaper?.figures && project.ieeePaper.figures.length > 5)}
+          sections={project.ieeePaper?.sections}
+        >
           <IeeePaperView project={project} />
 
           {/* Carousel Navigation Between Projects */}

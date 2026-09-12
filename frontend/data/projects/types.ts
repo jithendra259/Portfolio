@@ -62,6 +62,47 @@ export interface PaperReference {
   url?: string;
 }
 
+export interface PaperEquation {
+  id?: string;
+  latex: string;
+  number?: string; // e.g. "(1)"
+  label?: string;
+}
+
+export interface PaperTable {
+  id?: string;
+  number?: string; // e.g. "TABLE I"
+  tableNumber?: string; // e.g. "Table I"
+  title: string;
+  caption?: string;
+  headers: string[];
+  rows: (string | number)[][];
+  note?: string;
+}
+
+export interface PaperSubsection {
+  id: string;
+  number?: string; // e.g. "A." or "3.1"
+  title: string;
+  paragraphs: string[];
+  equations?: PaperEquation[];
+  figures?: PaperFigure[];
+  tables?: PaperTable[];
+  paragraphsAfter?: string[];
+}
+
+export interface PaperSection {
+  id: string;
+  number?: string; // e.g. "I." or "1."
+  title: string;
+  paragraphs?: string[];
+  equations?: PaperEquation[];
+  figures?: PaperFigure[];
+  tables?: PaperTable[];
+  paragraphsAfter?: string[];
+  subsections?: PaperSubsection[];
+}
+
 export interface IeeePaperData {
   venue: string;
   paperTitle?: string;
@@ -74,6 +115,7 @@ export interface IeeePaperData {
   bibtex?: string;
   figures: PaperFigure[];
   references?: PaperReference[];
+  sections?: PaperSection[];
 }
 
 export interface Project {
