@@ -18,6 +18,8 @@ interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
   description: string
   href: string
   cta: string
+  venue?: string
+  tags?: string[]
 }
 
 const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
@@ -42,6 +44,8 @@ const BentoCard = ({
   description,
   href,
   cta,
+  venue,
+  tags,
   ...props
 }: BentoCardProps) => (
   <div
@@ -64,11 +68,28 @@ const BentoCard = ({
     <div>{background}</div>
     <div className="p-4">
       <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 transition-all duration-300 lg:group-hover:-translate-y-10">
-        <Icon className="h-12 w-12 origin-left transform-gpu text-neutral-700 transition-all duration-300 ease-in-out group-hover:scale-75" />
+        {venue && (
+          <span className="inline-block self-start text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-neutral-200 border border-slate-300 dark:border-white/10 font-bold mb-1">
+            {venue}
+          </span>
+        )}
+        <Icon className="h-10 w-10 origin-left transform-gpu text-neutral-700 transition-all duration-300 ease-in-out group-hover:scale-75" />
         <h3 className="text-xl font-semibold text-neutral-700 dark:text-neutral-300">
           {name}
         </h3>
-        <p className="max-w-lg text-neutral-400">{description}</p>
+        <p className="max-w-lg text-neutral-400 text-xs sm:text-sm line-clamp-2">{description}</p>
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tags.slice(0, 4).map((tag, tIdx) => (
+              <span
+                key={tIdx}
+                className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-neutral-400 border border-slate-200 dark:border-white/10"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div

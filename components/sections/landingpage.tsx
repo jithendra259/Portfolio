@@ -21,6 +21,7 @@ import { CinematicHero } from '@/components/ui/widgets/cinematic-landing-hero';
 import { PdfViewerDialog } from '@/components/ui/pdf-viewer-dialog';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PROJECT_CATEGORIES } from '@/data/projects';
+import Link from 'next/link';
 import {
   Github,
   Linkedin,
@@ -45,13 +46,16 @@ import {
   Bell,
   Calendar,
   Download,
+  ArrowRight,
+  ShieldCheck,
+  Activity,
+  Network,
+  GitBranch,
 } from 'lucide-react';
-
 
 interface LandingPageProps {
   onStartCall?: () => void;
 }
-
 
 const techLogos = [
   { name: "LangChain / LangGraph", slug: "langchain" },
@@ -70,102 +74,28 @@ const techLogos = [
   { name: "Git & GitHub", slug: "github" },
 ];
 
-function BentoFilesBackground() {
+function BentoGraphRiskBackground() {
   return (
-    <div className="absolute top-4 right-4 flex gap-3 pointer-events-none [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
-      <div className="w-44 rounded-xl bg-neutral-900/90 border border-white/10 p-3.5 text-left shadow-lg">
-        <div className="flex items-center gap-1.5 text-neutral-300 font-mono text-[11px] mb-1.5 font-bold">
-          <FileText className="size-3.5 text-neutral-400" />
-          <span>seed.txt</span>
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Network className="size-3" /> SEC 13-F Holdings
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">G-CVaR</span>
         </div>
-        <p className="text-[10px] text-neutral-400 leading-relaxed font-mono line-clamp-4">
-          A seed phrase, seed recovery phrase or backup seed phrase is a list of words which store all the information needed to recover Bitcoin funds.
-        </p>
-      </div>
-      <div className="w-44 rounded-xl bg-neutral-900/90 border border-white/10 p-3.5 text-left shadow-lg hidden sm:block">
-        <div className="flex items-center gap-1.5 text-neutral-300 font-mono text-[11px] mb-1.5 font-bold">
-          <FileText className="size-3.5 text-neutral-400" />
-          <span>governance.py</span>
-        </div>
-        <p className="text-[10px] text-neutral-400 leading-relaxed font-mono line-clamp-4">
-          Multi-agent LangGraph supervisor with CVXPY convex solvers, regime classification, and audit-ready verification pipelines.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function BentoNotificationsBackground() {
-  return (
-    <div className="absolute top-4 right-4 left-4 sm:left-auto sm:w-[320px] hidden sm:flex flex-col gap-2 pointer-events-none [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
-      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
-        <div className="size-7 rounded-full bg-blue-500 flex items-center justify-center shrink-0 text-white shadow-sm">
-          <Zap className="size-3.5" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-neutral-200">Portfolio Rebalanced</span>
-            <span className="text-[10px] text-neutral-500 font-mono">· 2m ago</span>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Contagion Penalty γ:</span>
+            <span className="font-bold text-white">0.28</span>
           </div>
-          <span className="text-[10px] text-neutral-400 truncate">CVXPY solver converged in 42ms</span>
-        </div>
-      </div>
-      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
-        <div className="size-7 rounded-full bg-pink-500 flex items-center justify-center shrink-0 text-white shadow-sm">
-          <Bot className="size-3.5" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-neutral-200">Governance Verified</span>
-            <span className="text-[10px] text-neutral-500 font-mono">· 5m ago</span>
+          <div className="flex justify-between">
+            <span>CVaR @ 95% Cut:</span>
+            <span className="font-bold text-emerald-400">-25.9%</span>
           </div>
-          <span className="text-[10px] text-neutral-400 truncate">Evidence grounding check passed</span>
-        </div>
-      </div>
-      <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-900/90 border border-white/10 shadow-lg">
-        <div className="size-7 rounded-full bg-amber-500 flex items-center justify-center shrink-0 text-white shadow-sm">
-          <CheckCircle2 className="size-3.5" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-neutral-200">Swarm Deployed</span>
-            <span className="text-[10px] text-neutral-500 font-mono">· 10m ago</span>
-          </div>
-          <span className="text-[10px] text-neutral-400 truncate">Multi-agent LangGraph pipeline active</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BentoConnectedNodesBackground() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
-      <div className="relative w-full max-w-sm h-36 flex items-center justify-between px-8">
-        <div className="size-11 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-xl z-10">
-          <Layers className="size-5 text-neutral-300" />
-        </div>
-
-        <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-neutral-700" fill="none">
-          <path d="M 60 72 C 110 72, 140 72, 175 72" strokeWidth="1.5" strokeDasharray="3 3" />
-          <path d="M 215 72 C 250 72, 270 36, 310 36" strokeWidth="1.5" />
-          <path d="M 215 72 C 250 72, 270 72, 310 72" strokeWidth="1.5" />
-          <path d="M 215 72 C 250 72, 270 108, 310 108" strokeWidth="1.5" />
-        </svg>
-
-        <div className="size-12 rounded-full bg-white dark:bg-neutral-900 border border-white/25 flex items-center justify-center shadow-2xl z-10">
-          <Bot className="size-6 text-emerald-500" />
-        </div>
-
-        <div className="flex flex-col gap-2 z-10">
-          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
-            AI
-          </div>
-          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
-            ML
-          </div>
-          <div className="size-8 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow-lg text-[10px] font-bold text-neutral-200">
-            IoT
+          <div className="flex justify-between">
+            <span>Crisis Windows:</span>
+            <span className="font-bold text-white">552 Sub-periods</span>
           </div>
         </div>
       </div>
@@ -173,36 +103,210 @@ function BentoConnectedNodesBackground() {
   );
 }
 
-function BentoCalendarBackground() {
+function BentoInstabilityBackground() {
   return (
-    <div className="absolute top-4 right-4 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-85 group-hover:opacity-100 transition-opacity">
-      <div className="w-40 rounded-xl bg-neutral-900/90 border border-white/10 p-3 shadow-xl text-left">
-        <div className="text-[11px] font-semibold text-neutral-200 mb-2 font-mono">
-          September 2026
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-amber-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Activity className="size-3" /> Instability Index I_t
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Crisis Mode</span>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-neutral-500 mb-1">
-          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-        </div>
-        <div className="grid grid-cols-7 gap-1 text-center font-mono text-[9px] text-neutral-400">
-          <span className="text-neutral-700">30</span>
-          <span className="text-neutral-700">31</span>
-          <span className="text-white font-bold bg-emerald-500/20 rounded">1</span>
-          <span className="text-white font-bold bg-emerald-500 rounded">2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
-          <span>6</span>
-          <span>7</span>
-          <span>8</span>
-          <span>9</span>
-          <span>10</span>
-          <span>11</span>
-          <span>12</span>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Regime Shift:</span>
+            <span className="font-bold text-amber-400">λ_t = 0.85</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Ledoit-Wolf Shrinkage:</span>
+            <span className="font-bold text-white">α = 0.42</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Max Drawdown Cut:</span>
+            <span className="font-bold text-emerald-400">-32.5%</span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+function BentoXaiDagBackground() {
+  return (
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-purple-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <GitBranch className="size-3" /> 7-Agent DAG
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Mistral-7B</span>
+        </div>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Grounding Ratio:</span>
+            <span className="font-bold text-emerald-400">100% (0% Hallucination)</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Blackboard Sync:</span>
+            <span className="font-bold text-white">Verified Vector</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Audit Standard:</span>
+            <span className="font-bold text-cyan-400">MiFID II &amp; EU AI Act</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BentoVoicePipelineBackground() {
+  return (
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-pink-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Mic className="size-3" /> LiveKit WebRTC
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300">Live Agent</span>
+        </div>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Voice Response TTFT:</span>
+            <span className="font-bold text-emerald-400">&lt;500ms</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Supervisor Model:</span>
+            <span className="font-bold text-white">LangGraph Graph</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Convex Solver:</span>
+            <span className="font-bold text-cyan-400">CLARABEL (38ms)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BentoAqiModelBackground() {
+  return (
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-blue-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Wind className="size-3" /> Delhi AQI Network
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">XGBoost</span>
+        </div>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Test Accuracy R²:</span>
+            <span className="font-bold text-emerald-400">0.912</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Sensor Array:</span>
+            <span className="font-bold text-white">10 CPCB Stations</span>
+          </div>
+          <div className="flex justify-between">
+            <span>RMSE Loss:</span>
+            <span className="font-bold text-cyan-400">18.4 μg/m³</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BentoSwarmRobotsBackground() {
+  return (
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-emerald-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Bot className="size-3" /> Swarm Robotics
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">ESP32 Mesh</span>
+        </div>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Coverage Efficiency:</span>
+            <span className="font-bold text-emerald-400">98.4%</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Disease Classifier:</span>
+            <span className="font-bold text-white">Edge CNN</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Mesh Latency:</span>
+            <span className="font-bold text-cyan-400">&lt;15ms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const projectMetaMap: Record<
+  string,
+  {
+    venue: string;
+    tags: string[];
+    colSpan: string;
+    bg: React.ReactNode;
+    Icon: React.ComponentType<{ className?: string }>;
+  }
+> = {
+  'regime-adaptive-supervisory-governance': {
+    venue: 'Springer Nature LNCS / IJCACI 2026',
+    tags: ['Composite Instability I_t', 'Ledoit-Wolf Shrinkage', 'Regime Switching', '2005–2025 Dataset'],
+    colSpan: 'col-span-3 md:col-span-1',
+    bg: <BentoInstabilityBackground />,
+    Icon: Activity,
+  },
+  'adaptive-portfolio-governance': {
+    venue: 'Elsevier EAAI (EAAI-26-14280, Under Review)',
+    tags: ['5-Agent Blackboard', 'Graph-Regularized CVaR', 'SEC 13-F Graph', '25.9% Risk Reduction'],
+    colSpan: 'col-span-3 md:col-span-2',
+    bg: <BentoGraphRiskBackground />,
+    Icon: Network,
+  },
+  'supervisory-portfolio-xai-governance': {
+    venue: 'Elsevier Computers & Operations Research / CAS Journal',
+    tags: ['7-Agent DAG Pipeline', 'Mistral-7B (Ollama)', '0% Hallucination', 'MiFID II Compliance'],
+    colSpan: 'col-span-3 md:col-span-2',
+    bg: <BentoXaiDagBackground />,
+    Icon: GitBranch,
+  },
+  'agentic-portfolio-chatbot': {
+    venue: 'M.Tech Thesis & Real-Time Production System',
+    tags: ['LiveKit WebRTC', '<500ms Latency', 'LangGraph Supervisor', 'CLARABEL Convex Solver'],
+    colSpan: 'col-span-3 md:col-span-1',
+    bg: <BentoVoicePipelineBackground />,
+    Icon: Mic,
+  },
+  'personalised-aqi-system': {
+    venue: 'Machine Learning & Environmental AI',
+    tags: ['XGBoost Ensemble', 'R² = 0.912', '10 CPCB Delhi Stations', 'FastAPI & Next.js'],
+    colSpan: 'col-span-3 md:col-span-1',
+    bg: <BentoAqiModelBackground />,
+    Icon: Wind,
+  },
+  'swarm-robots-agriculture': {
+    venue: 'Autonomous Hardware & IoT Systems',
+    tags: ['ESP32 Mesh Network', 'Decentralized Swarm', 'Edge CNN Vision', 'Precision Agriculture'],
+    colSpan: 'col-span-3 md:col-span-2',
+    bg: <BentoSwarmRobotsBackground />,
+    Icon: Bot,
+  },
+};
+
+const paperCaseStudyMap: Record<number, string> = {
+  0: '/projects/adaptive-portfolio-governance',
+  1: '/projects/regime-adaptive-supervisory-governance',
+  2: '/projects/supervisory-portfolio-xai-governance',
+};
 
 export function LandingPage({ onStartCall }: LandingPageProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -290,15 +394,23 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-24 sm:pt-28 pb-10 sm:pb-12 z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
           <div className="max-w-2xl lg:max-w-3xl flex flex-col items-start text-left space-y-4 sm:space-y-5">
 
+            {/* Developer Identity Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 text-slate-900 dark:text-neutral-200 font-mono text-xs font-bold backdrop-blur-md shadow-xs">
+              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Kandula Jithendra Subramanyam</span>
+              <span className="text-slate-400 dark:text-neutral-500">•</span>
+              <span className="text-cyan-600 dark:text-cyan-400">M.Tech AI &amp; Data Science</span>
+            </div>
+
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">
               <WordRotate
                 words={[
-                  "AI ENGINEER / FULL-STACK BUILDER",
                   "AGENTIC AI & MULTI-AGENT SWARMS",
                   "QUANTITATIVE PORTFOLIO GOVERNANCE",
-                  "EXPLAINABLE AI RESEARCHER",
-                  "REAL-TIME WEBRTC VOICE PIPELINES",
+                  "EXPLAINABLE AI RESEARCHER (0% HALLUCINATION)",
+                  "CONVEX OPTIMIZATION (CVXPY & CLARABEL)",
+                  "REAL-TIME WEBRTC VOICE PIPELINES (<500MS)",
                 ]}
                 className="text-xs sm:text-sm font-mono tracking-widest uppercase text-slate-800 dark:text-neutral-300 font-bold"
                 duration={2600}
@@ -306,23 +418,22 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-slate-950 dark:text-white leading-[1.08]">
-              Systems that <br />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
+              Autonomous Systems <br />
               <AuroraText
-                colors={["#ffffff", "#e4e4e7", "#a1a1aa", "#71717a"]}
-                className="font-semibold text-slate-900 dark:text-white"
+                colors={["#00ffc6", "#3b82f6", "#a855f7", "#ec4899"]}
+                className="font-extrabold text-slate-950 dark:text-white"
               >
-                think,
-              </AuroraText>{" "}
-              then act.
+                governed by proof.
+              </AuroraText>
             </h1>
 
             {/* Description Subtext with TypingAnimation */}
             <TypingAnimation
-              duration={22}
-              className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-neutral-400 max-w-xl leading-relaxed font-normal text-left"
+              duration={16}
+              className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-neutral-300 max-w-xl leading-relaxed font-normal text-left"
             >
-              I design intelligent products where agents, data, and human judgment work together. Focused on reliable systems for high-stakes decisions.
+              I architect multi-agent systems and quantitative financial frameworks where LangGraph swarms, convex optimization (CVXPY), and explainable AI converge for verifiable, audit-compliant decisions.
             </TypingAnimation>
 
             {/* Hero Action Buttons */}
@@ -342,6 +453,22 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
               >
                 <span>Explore Projects</span>
               </a>
+            </div>
+
+            {/* Verified Quick Credential Chips */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-mono text-slate-600 dark:text-neutral-400">
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                <CheckCircle2 className="size-3 text-emerald-500" />
+                <span>3 Publications (Elsevier &amp; Springer)</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                <CheckCircle2 className="size-3 text-emerald-500" />
+                <span>Somaiya Vidyavihar • CGPA 8.06</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                <CheckCircle2 className="size-3 text-emerald-500" />
+                <span>Sub-500ms WebRTC Voice Pipelines</span>
+              </span>
             </div>
 
           </div>
@@ -400,7 +527,7 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* One Side: Image */}
           <div className="lg:col-span-4 flex justify-center lg:justify-start">
-            <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm rounded-3xl overflow-hidden group">
+            <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm rounded-3xl overflow-hidden group border border-slate-200 dark:border-white/10 shadow-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatar.png"
@@ -417,9 +544,74 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
             <DotPattern
               className="[mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
             />
-            <p className="relative z-10 text-base sm:text-lg md:text-xl lg:text-[1.3rem] font-normal text-slate-900 dark:text-neutral-100 leading-relaxed sm:leading-[1.85] tracking-normal">
-              {PORTFOLIO_DATA.developer.bio}
-            </p>
+            <div className="relative z-10 space-y-5">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 mb-2 font-bold">
+                  <Sparkles className="size-3.5 text-cyan-500" />
+                  <span>Engineering &amp; Research Profile</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  About Kandula Jithendra Subramanyam
+                </h2>
+              </div>
+
+              <p className="text-base sm:text-lg text-slate-800 dark:text-neutral-200 leading-relaxed sm:leading-[1.8]">
+                I am an M.Tech Artificial Intelligence &amp; Data Science researcher at <strong className="text-slate-950 dark:text-white">K J Somaiya College of Engineering (Somaiya Vidyavihar University, Mumbai)</strong>. My work focuses on bridging autonomous agentic swarms with convex mathematical optimization for high-stakes decision domains.
+              </p>
+
+              <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 leading-relaxed">
+                As first and corresponding author of three research manuscripts spanning <strong className="text-slate-900 dark:text-neutral-200">Elsevier EAAI</strong>, <strong className="text-slate-900 dark:text-neutral-200">Elsevier Computers &amp; Operations Research</strong>, and <strong className="text-slate-900 dark:text-neutral-200">Springer Nature LNCS</strong>, I formulate systems where probabilistic language models do not hallucinate, but instead collaborate with convex solvers (CVXPY/CLARABEL), bipartite institutional co-holding graphs, and deterministic regime-switching engines over 20-year empirical universes.
+              </p>
+
+              {/* Three Core Competency Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
+                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
+                    <Bot className="size-4 text-indigo-500" />
+                    <span>Agentic Swarms</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
+                    10+ decoupled LangGraph agents coordinating over auditable blackboards with zero hallucination.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
+                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
+                    <TrendingUp className="size-4 text-emerald-500" />
+                    <span>Convex Solvers</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
+                    Graph-regularized CVaR, Ledoit-Wolf shrinkage, and crisis drawdown containment via CVXPY.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
+                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
+                    <Mic className="size-4 text-cyan-500" />
+                    <span>Voice &amp; Full-Stack</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
+                    Real-time sub-500ms WebRTC voice agents (LiveKit), Next.js 15, TypeScript, and MongoDB.
+                  </p>
+                </div>
+              </div>
+
+              {/* Verified Credentials Bar */}
+              <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono text-slate-600 dark:text-neutral-400">
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
+                  🎓 M.Tech CGPA: 8.06
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
+                  📄 3 Research Papers
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
+                  🎯 GATE 2024 (AI &amp; CS Qualified)
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
+                  📍 Mumbai, India
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -502,8 +694,19 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
                   </div>
                 </div>
 
-                {paper.pdfUrl && (
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5">
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-white/5">
+                  {paperCaseStudyMap[idx] && (
+                    <Link
+                      href={paperCaseStudyMap[idx]}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[#f12e54] hover:bg-[#d92244] text-white shadow-sm transition-all group cursor-pointer"
+                    >
+                      <Layers className="size-3.5" />
+                      <span>Explore Case Study</span>
+                      <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  )}
+
+                  {paper.pdfUrl && (
                     <button
                       type="button"
                       onClick={() =>
@@ -513,18 +716,13 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
                           subtitle: `${paper.publisher} · ${paper.status}`,
                         })
                       }
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-slate-800 dark:hover:bg-neutral-200 shadow-sm transition-all group cursor-pointer"
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-neutral-200 border border-slate-300 dark:border-white/10 shadow-xs transition-all group cursor-pointer"
                     >
                       <FileText className="size-3.5 group-hover:scale-110 transition-transform" />
                       <span>Read Manuscript (PDF)</span>
-                      <Sparkles className="size-3 opacity-70" />
                     </button>
-
-                    <span className="text-[11px] font-mono text-slate-400 dark:text-neutral-500">
-                      View Only
-                    </span>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </MagicCard>
           ))}
@@ -566,38 +764,26 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         {/* Projects Bento Grid */}
         <BentoGrid className="grid-cols-1 md:grid-cols-3 auto-rows-[22rem] gap-4">
           {filteredProjects.map((project, idx) => {
-            let Icon = FileText;
-            let bgNode = <BentoFilesBackground />;
-            let colSpan = 'col-span-3 md:col-span-1';
-
-            if (idx === 0) {
-              Icon = FileText;
-              bgNode = <BentoFilesBackground />;
-              colSpan = 'col-span-3 md:col-span-1';
-            } else if (idx === 1) {
-              Icon = Bell;
-              bgNode = <BentoNotificationsBackground />;
-              colSpan = 'col-span-3 md:col-span-2';
-            } else if (idx === 2) {
-              Icon = Cpu;
-              bgNode = <BentoConnectedNodesBackground />;
-              colSpan = 'col-span-3 md:col-span-2';
-            } else {
-              Icon = Calendar;
-              bgNode = <BentoCalendarBackground />;
-              colSpan = 'col-span-3 md:col-span-1';
-            }
+            const meta = projectMetaMap[project.id] || {
+              venue: project.category,
+              tags: [project.category],
+              colSpan: idx % 3 === 1 ? 'col-span-3 md:col-span-2' : 'col-span-3 md:col-span-1',
+              bg: <BentoGraphRiskBackground />,
+              Icon: FileText,
+            };
 
             return (
               <BentoCard
                 key={project.id}
                 name={project.title}
-                className={colSpan}
-                background={bgNode}
-                Icon={Icon}
+                className={meta.colSpan}
+                background={meta.bg}
+                Icon={meta.Icon}
+                venue={meta.venue}
+                tags={meta.tags}
                 description={project.tagline || project.description}
                 href={`/projects/${project.id}`}
-                cta="View Case Study"
+                cta="View Case Study & Data"
               />
             );
           })}
