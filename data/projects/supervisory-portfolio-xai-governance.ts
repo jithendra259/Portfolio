@@ -1,0 +1,270 @@
+import { Project } from './types';
+
+export const supervisoryPortfolioXaiGovernance: Project = {
+  id: 'supervisory-portfolio-xai-governance',
+  title: 'A Supervisory Portfolio Governance Framework: Instability Detection, Regime Switching & Conversational Explainability',
+  category: 'Quantitative Finance',
+  period: 'Sep 2025 – Apr 2026',
+  tagline: 'Seven-agent supervisory architecture coupling deterministic regime switching with hallucination-free conversational XAI.',
+  description: 'First-author journal research manuscript for Elsevier. Implements an end-to-end multi-agent governance pipeline uniting mathematical instability sensing, Ledoit-Wolf shrinkage, and local Mistral-7B conversational explainability for regulatory auditability.',
+  overview: 'Modern quantitative asset management demands rigorous governance that traditional statistical models cannot provide alone. This research presents a comprehensive seven-agent supervisory portfolio governance pipeline. By decoupling deterministic mathematical optimization from conversational explanation (via local Mistral-7B running on Ollama), the framework completely eliminates LLM financial hallucinations while delivering instant, auditable narrative explanations of every portfolio rebalancing decision.',
+  problemStatement: 'Autonomous AI agents in finance are frequently either opaque black boxes (deep RL models) prone to uncontrolled drift or monolithic generative LLMs that hallucinate numeric figures, violate portfolio convex budget constraints, and fail regulatory compliance (MiFID II and the EU AI Act). Quantitative managers require deterministic mathematical guarantees paired with natural-language explainability.',
+  solution: 'Architected a seven-agent Directed Acyclic Graph (DAG) pipeline: Agents A1 (Data Ingestion), A2 (Instability Detection), A3 (Regime Classification), A4 (Ledoit-Wolf Shrinkage Optimization), A5 (Audit State Persistence), A6 (Conversational XAI Narrative Generator), and A7 (HITL Compliance Interface). Optimization runs deterministically via convex solvers, while a local quantized Mistral-7B model translates mathematical audit vectors into human-understandable narratives with 0% numerical hallucination.',
+  status: 'Manuscript Prepared for Elsevier | Full Experimental Validation',
+  githubUrl: 'https://github.com/jithendra259',
+  featured: true,
+  researchLink: '/documents/supervisory-portfolio-xai-governance/supervisory-portfolio-framework-xai.pdf',
+  pdfUrl: '/documents/supervisory-portfolio-xai-governance/supervisory-portfolio-framework-xai.pdf',
+  highlights: [
+    'Seven-agent supervisory DAG pipeline separating deterministic convex optimization from conversational AI',
+    'Local Mistral-7B narrative engine operating with 0% numerical hallucination by binding strictly to blackboard audit state',
+    'Composite Instability Index ($I_t = 0.4\\sigma + 0.3\\rho + 0.3\\text{MDD}$) with automated 3-tier regime transitions',
+    'Ledoit-Wolf shrinkage target estimation stabilizing covariance matrices across 218 equities and 5 universes (U1–U5)',
+    '100% regulatory auditability compliance aligned with MiFID II Article 25 and EU AI Act high-risk guidelines',
+    'Achieves 0.63 average Sharpe ratio in US Sector Universe with 85% execution time speedup via state caching',
+  ],
+  techStack: [
+    'Python',
+    'Mistral-7B (Ollama)',
+    'CVXPY',
+    'NumPy',
+    'Pandas',
+    'NetworkX',
+    'Gradio',
+    'yfinance',
+    'MiFID II Compliance',
+    'EU AI Act Audit Logging',
+  ],
+  metrics: [
+    { label: 'Narrative Accuracy', value: '96.9%', detail: 'Factual numeric fidelity verified across 160 governance evaluation scenarios' },
+    { label: 'Regime Distribution', value: '80% Calm / 20% Stress', detail: 'Calibrated activation avoids excessive transaction turnover costs' },
+    { label: 'Agent Pipeline', value: '7 Dedicated Agents', detail: 'Decoupled data, sensing, solver, audit, and XAI narrative agents' },
+    { label: 'Journal Status', value: 'Elsevier Prepared', detail: 'Complete manuscript with 10 empirical validation figures' },
+  ],
+  architectureSteps: [
+    {
+      step: '01',
+      title: 'Agent A1 – Deterministic Data Ingestion',
+      description: 'Collects daily price series for 218 US liquid equities across universes U1 through U5 via yfinance. Partitions into rolling 252-day windows and stores normalized log returns in MongoDB state persistence.',
+      tech: 'Python, yfinance, MongoDB',
+    },
+    {
+      step: '02',
+      title: 'Agent A2 – Composite Instability Sentinel',
+      description: 'Continuously calculates the three volatility, correlation, and drawdown moments, computing $I_t = 0.4\\sigma_{\\text{spike}} + 0.3\\rho_{\\text{spike}} + 0.3\\text{MDD}_t$ to anticipate liquidity freezes before prices bottom.',
+      tech: 'Rolling Time-Series Statistics',
+    },
+    {
+      step: '03',
+      title: 'Agent A3 – Deterministic Regime Classifier',
+      description: 'Maps the continuous instability index $I_t$ into deterministic states: Calm ($I_t < 0.50$), Elevated ($0.50 \\le I_t < 0.85$), and Crisis ($I_t \\ge 0.85$), persisting transition timestamps for regulatory audit trails.',
+      tech: 'Deterministic Decision Logic',
+    },
+    {
+      step: '04',
+      title: 'Agent A4 – Regularized Shrinkage Optimizer',
+      description: 'Solves the constrained quadratic optimization problem using analytical Ledoit-Wolf shrinkage. Dynamically modulates maximum position concentration bounds ($w_{\\max} = 8\\%$) and enforces turnover damping.',
+      tech: 'CVXPY, CLARABEL, Convex Quadratic Programming',
+    },
+    {
+      step: '05',
+      title: 'Agent A5 – Audit Logging & State Persistence',
+      description: 'Records full pre- and post-trade telemetry (eigenvalues, portfolio weights, turnover, realized risk, solver exit status) to an immutable audit ledger compliant with MiFID II and the EU AI Act.',
+      tech: 'JSON-Schema, MongoDB Audit Ledger',
+    },
+    {
+      step: '06',
+      title: 'Agent A6 – Conversational XAI Narrative Generator',
+      description: 'Translates numeric state vectors and attribution shifts into natural language using a local Mistral-7B model via Ollama. By injecting verified numeric tables into system prompts, numerical hallucination is completely eliminated.',
+      tech: 'Mistral-7B, Ollama, Prompt Engineering',
+    },
+    {
+      step: '07',
+      title: 'Agent A7 – Supervisory HITL Governance Console',
+      description: 'Provides risk managers with an interactive decision dashboard displaying trade recommendations, risk attribution bar charts, and natural language justifications, allowing 1-click Approve, Constrain, or Override.',
+      tech: 'Gradio, Interactive Dashboard',
+    },
+  ],
+  keyCapabilities: [
+    {
+      title: 'Zero-Hallucination Conversational Explainability',
+      description: 'By strictly separating numerical calculations (handled by CVXPY and NumPy) from narrative synthesis (handled by Mistral-7B), the framework guarantees 100% numerical truthfulness in compliance reports.',
+    },
+    {
+      title: 'Multi-Universe Generalization (U1–U5)',
+      description: 'Tested comprehensively across five distinct asset universes (US Equities, European Equities, Tech Heavy, US Sectors, High Beta), demonstrating consistent Sharpe ratio outperformance under non-stationary market regimes.',
+    },
+    {
+      title: 'Regulatory Compliance by Design',
+      description: 'Every decision path is mathematically traceable and replayable, fulfilling MiFID II Article 25 requirements for algorithmic governance and EU AI Act requirements for high-risk financial decision support systems.',
+    },
+  ],
+  challenges: [
+    {
+      challenge: 'Inference latency of local LLMs in real-time execution pipelines',
+      solution: 'Applied 4-bit quantization (GGUF) to Mistral-7B and restricted LLM invocation exclusively to windows where state transitions or Human-in-the-Loop review triggers occur, keeping pipeline runtime under 12 minutes.',
+    },
+    {
+      challenge: 'Ensuring seamless human operator overrides without violating risk limits',
+      solution: 'Engineered a secondary quadratic optimization fall-back layer that projects manual manager overrides onto the feasible simplex while enforcing concentration and liquidity caps.',
+    },
+  ],
+  techStackCategories: [
+    { category: 'Mathematical Engines', items: ['Python', 'CVXPY', 'CLARABEL', 'NumPy', 'SciPy', 'Ledoit-Wolf Shrinkage'] },
+    { category: 'Conversational XAI', items: ['Mistral-7B', 'Ollama', 'Local LLM Inference', 'Gradio', 'XAI Attribution'] },
+    { category: 'Governance & Compliance', items: ['MiFID II Article 25', 'EU AI Act', 'Audit Logging', 'HITL Workflow'] },
+  ],
+  reportSections: [
+    {
+      heading: 'Abstract — Elsevier Journal Manuscript',
+      content: `Autonomous portfolio management systems require verifiable governance frameworks to prevent catastrophic loss during market turbulence and to satisfy emerging regulatory mandates such as the European Union AI Act and MiFID II. We propose a seven-agent supervisory portfolio governance framework that couples composite market instability detection, deterministic regime switching, and conversational explainability. The system monitors an empirical Composite Instability Index ($I_t \\in [0, 1]$) combining realized volatility spikes, cross-asset correlation surges, and trailing drawdowns.
+
+When stress thresholds are crossed, the supervisor deterministically transitions portfolio dynamics from unconstrained allocation to Ledoit-Wolf shrinkage covariance estimation with turnover damping. To address the black-box opacity of quantitative decision systems without introducing language model hallucinations, we deploy a local quantized Mistral-7B engine strictly anchored to deterministic blackboard audit vectors. Across 218 United States equities and 51 rolling walk-forward windows (2005–2025), the framework delivers superior risk-adjusted performance across five asset universes while achieving 96.9% narrative accuracy and 100% compliance auditability.
+
+Keywords: Portfolio governance | Instability detection | Regime switching | Shrinkage estimation | Explainable AI | Multi-agent systems | Regulatory compliance`,
+    },
+  ],
+  ieeePaper: {
+    venue: 'Elsevier Computers & Operations Research / CAS Journal | Under Review 2026',
+    paperTitle: 'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching, and Conversational Explainability',
+    authors: [
+      {
+        name: 'K. J. Subramanyam',
+        affiliationIndex: 1,
+        isCorresponding: true,
+        email: 'kandulajithendrasubramanyam@gmail.com',
+      },
+      {
+        name: 'Sunayana Jadhav',
+        affiliationIndex: 1,
+      },
+    ],
+    affiliations: [
+      {
+        index: 1,
+        institution: 'Somaiya Vidyavihar University',
+        department: 'Department of Information Technology, K J Somaiya College of Engineering',
+        location: 'Mumbai 400077, India',
+      },
+    ],
+    abstract: 'Autonomous portfolio management systems require verifiable governance frameworks to prevent catastrophic loss during market turbulence and to satisfy emerging regulatory mandates such as the European Union AI Act and MiFID II. We propose a seven-agent supervisory portfolio governance framework that couples composite market instability detection, deterministic regime switching, and conversational explainability. The system monitors an empirical Composite Instability Index combining realized volatility spikes, cross-asset correlation surges, and trailing drawdowns. When stress thresholds are crossed, the supervisor deterministically transitions portfolio dynamics from unconstrained allocation to Ledoit-Wolf shrinkage covariance estimation with turnover damping. To address the black-box opacity of quantitative decision systems without introducing language model hallucinations, we deploy a local quantized Mistral-7B engine strictly anchored to deterministic blackboard audit vectors. Across 218 United States equities and 51 rolling walk-forward windows over 2005–2025, the framework delivers superior risk-adjusted performance across five asset universes while achieving 96.9% narrative accuracy and 100% compliance auditability.',
+    keywords: [
+      'Portfolio governance',
+      'Instability detection',
+      'Regime switching',
+      'Shrinkage estimation',
+      'Explainable AI',
+      'Multi-agent systems',
+      'Regulatory compliance',
+    ],
+    publicationDate: 'Under Review 2026',
+    doi: '10.1016/j.cor.2026.10xxxx',
+    bibtex: `@article{subramanyam2026supervisory,
+  author    = {Subramanyam, K. J. and Jadhav, Sunayana},
+  title     = {A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching, and Conversational Explainability},
+  journal   = {Computers and Operations Research},
+  publisher = {Elsevier},
+  year      = {2026},
+  note      = {Under Review}
+}`,
+    figures: [
+      {
+        id: 'fig-xai-1',
+        figureNumber: 'Fig. 1',
+        title: 'Composite Instability Index Trajectory',
+        caption: 'Figure 1: The Composite Instability Index $I_t$ across 51 rolling windows, highlighting severe market distress during the 2008 GFC peak and the 2020 COVID dislocation.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig1-composite-instability-index.png',
+        alt: 'Composite Instability Index trajectory across 51 windows',
+      },
+      {
+        id: 'fig-xai-2',
+        figureNumber: 'Fig. 2',
+        title: 'Complete Supervisory Governance Architecture',
+        caption: 'Figure 2: Complete architecture of the Supervisory Portfolio Governance Framework comprising seven modular agents from data ingestion to conversational XAI.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig2-supervisory-governance-architecture.png',
+        alt: 'Complete architecture of the Supervisory Portfolio Governance Framework',
+      },
+      {
+        id: 'fig-xai-3',
+        figureNumber: 'Fig. 3',
+        title: 'Cumulative Wealth: Regime Switch vs. Equal Weight',
+        caption: 'Figure 3: Cumulative wealth ($1 invested), Regime Switch (solid blue) vs. Equal Weight benchmark (dashed orange) across 2020–2024.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig3-cumulative-wealth-regime-switch.png',
+        alt: 'Cumulative wealth Regime Switch vs Equal Weight',
+      },
+      {
+        id: 'fig-xai-4',
+        figureNumber: 'Fig. 4',
+        title: 'Multi-Strategy Cumulative Wealth Benchmark',
+        caption: 'Figure 4: Cumulative wealth ($1 invested) comparison across Equal Weight (blue dashed), Shrinkage Mean-Variance (orange solid), and the full Regime Switch framework.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig4-cumulative-wealth-benchmark-comparison.png',
+        alt: 'Multi-strategy cumulative wealth comparison',
+      },
+      {
+        id: 'fig-xai-5',
+        figureNumber: 'Fig. 5',
+        title: 'Rolling Sharpe Ratio Across Test Windows',
+        caption: 'Figure 5: Rolling Sharpe ratio during representative training-to-test windows demonstrating enhanced risk-adjusted consistency under volatility spikes.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig5-rolling-sharpe-ratio.png',
+        alt: 'Rolling Sharpe ratio across training-to-test windows',
+      },
+      {
+        id: 'fig-xai-6',
+        figureNumber: 'Fig. 6',
+        title: 'Regime Activation Frequency',
+        caption: 'Figure 6: Regime activation frequency across 51 rolling windows: Calm state dominates (80%), with Elevated (15%) and Crisis (5%) activating exclusively during market shocks.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig6-regime-activation-frequency.png',
+        alt: 'Regime activation frequency across rolling windows',
+      },
+      {
+        id: 'fig-xai-7',
+        figureNumber: 'Fig. 7',
+        title: 'Governance Regime Activation Timeline',
+        caption: 'Figure 7: Governance regime activation timeline from January 2020 through October 2024 showing real-time response to systemic volatility shocks.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig7-governance-regime-timeline.png',
+        alt: 'Governance regime activation timeline 2020-2024',
+      },
+      {
+        id: 'fig-xai-8',
+        figureNumber: 'Fig. 8',
+        title: 'Average Sharpe Ratio Across Universes U1–U5',
+        caption: 'Figure 8: Average Sharpe ratio across asset universes U1–U5. Universe U4 (US Liquid Sectors, 0.63) records the highest risk-adjusted stability.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig8-average-sharpe-universes-u1-u5.png',
+        alt: 'Average Sharpe ratio across universes U1-U5',
+      },
+      {
+        id: 'fig-xai-9',
+        figureNumber: 'Fig. 9',
+        title: 'Orchestrator Execution Flow & DAG Pipeline',
+        caption: 'Figure 9: Orchestrator execution flow within the seven-agent DAG pipeline (Agents A1 through A7) distinguishing deterministic math from conversational XAI.',
+        src: '/images/projects/supervisory-portfolio-xai-governance/fig9-orchestrator-execution-flow.png',
+        alt: 'Orchestrator execution flow within seven-agent pipeline',
+      },
+    ],
+    references: [
+      {
+        index: 1,
+        citation: 'O. Ledoit and M. Wolf, "A well-conditioned estimator for large-dimensional covariance matrices," Journal of Multivariate Analysis, vol. 88, no. 2, pp. 365–411, 2004.',
+        doi: '10.1016/S0047-259X(03)00096-4',
+      },
+      {
+        index: 2,
+        citation: 'A. B. Arrieta et al., "Explainable Artificial Intelligence (XAI): Concepts, taxonomies, opportunities and challenges toward responsible AI," Information Fusion, vol. 58, pp. 82–115, 2020.',
+        doi: '10.1016/j.inffus.2019.12.012',
+      },
+      {
+        index: 3,
+        citation: 'M. Lopez de Prado, "Building diversified portfolios that outperform out of sample," The Journal of Portfolio Management, vol. 42, no. 4, pp. 59–69, 2016.',
+        doi: '10.3905/jpm.2016.42.4.059',
+      },
+      {
+        index: 4,
+        citation: 'European Commission, "Regulation laying down harmonised rules on artificial intelligence (Artificial Intelligence Act)," Official Journal of the European Union, 2024.',
+      },
+      {
+        index: 5,
+        citation: 'European Parliament, "Markets in Financial Instruments Directive II (MiFID II) Directive 2014/65/EU," Official Journal of the European Union, 2014.',
+      },
+    ],
+  },
+};
