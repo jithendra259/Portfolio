@@ -11,8 +11,9 @@ import {
   Sidebar001Item,
   Sidebar001Section,
 } from '@/components/ui/sidebar-001';
-import { BookMarked, Layers, Bell, PanelLeft } from 'lucide-react';
+import { BookMarked, BookOpen, Layers, Bell, PanelLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PaperSection } from '@/data/projects/types';
 
 // ─── Sidebar Context for Navbar Toggle ──────────────────────────────────────
 
@@ -84,7 +85,7 @@ export function CaseStudySidebarToggle({ className }: { className?: string }) {
   );
 }
 
-// ─── NAV Data (Structured identically to demo.tsx) ─────────────────────────
+// ─── Dynamic NAV Data Generation ──────────────────────────────────────────
 
 interface NavItem {
   href: string;
@@ -105,7 +106,55 @@ interface NavSection {
   groups?: NavGroup[];
 }
 
-function getCaseStudyNav(hasAblation: boolean): NavSection[] {
+function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSection[] {
+  if (sections && sections.length > 0) {
+    const paperGroups: NavGroup[] = [];
+    const topItems: NavItem[] = [];
+
+    sections.forEach((sec) => {
+      const secLabel = `${sec.number ? sec.number + ' ' : ''}${sec.title}`;
+      if (sec.subsections && sec.subsections.length > 0) {
+        paperGroups.push({
+          label: secLabel,
+          defaultOpen: true,
+          icon: <Layers />,
+          items: [
+            { href: `#${sec.id}`, label: 'Overview' },
+            ...sec.subsections.map((sub) => ({
+              href: `#${sub.id}`,
+              label: `${sub.number ? sub.number + ' ' : ''}${sub.title}`,
+            })),
+          ],
+        });
+      } else {
+        topItems.push({
+          href: `#${sec.id}`,
+          label: secLabel,
+        });
+      }
+    });
+
+    return [
+      {
+        label: 'Getting Started',
+        items: [
+          { href: '#sec-abstract', label: 'Abstract & Terms' },
+          ...topItems,
+        ],
+      },
+      {
+        label: 'Paper Sections',
+        items: [],
+        groups: paperGroups,
+      },
+      {
+        label: 'Resources',
+        items: [
+          { href: '#sec-references', label: 'Scholarly References' },
+        ],
+      },
+    ];
+  }
   return [
     {
       label: 'Getting Started',
@@ -187,18 +236,20 @@ function getCaseStudyNav(hasAblation: boolean): NavSection[] {
 
 export interface CaseStudyTocSidebarProps {
   hasAblation?: boolean;
+  sections?: PaperSection[];
   className?: string;
   onNavigate?: () => void;
 }
 
 export function CaseStudyTocSidebar({
   hasAblation = true,
+  sections,
   className,
   onNavigate,
 }: CaseStudyTocSidebarProps) {
   const [active, setActive] = useState<string>('#sec-abstract');
   const [defaultW, setDefaultW] = useState(240);
-  const NAV = React.useMemo(() => getCaseStudyNav(hasAblation), [hasAblation]);
+  const NAV = React.useMemo(() => getCaseStudyNav(hasAblation, sections), [hasAblation, sections]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 640) {
@@ -252,15 +303,13 @@ export function CaseStudyTocSidebar({
   return (
     <Sidebar001
       defaultWidth={defaultW}
-      minWidth={140}
-      maxWidth={380}
-      className={cn('bg-background h-full shrink-0', className)}
+      className={cn('border-r border-border/40 font-mono select-none overflow-y-auto', className)}
     >
-      <Sidebar001Header>
-        <div className="flex items-center gap-2">
-          <BookMarked size={18} className="text-foreground shrink-0" />
-          <span className="text-base font-semibold text-foreground">
-            Docs
+      <Sidebar001Header className="pb-2 border-b border-border/30">
+        <div className="flex items-center gap-2 px-2 py-1">
+          <BookOpen className="size-4 text-[#f12e54]" />
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+            Table of Contents
           </span>
         </div>
       </Sidebar001Header>
@@ -313,9 +362,11 @@ export function CaseStudyTocSidebar({
 
 export function CaseStudyLayout({
   hasAblation = true,
+  sections,
   children,
 }: {
   hasAblation?: boolean;
+  sections?: PaperSection[];
   children: React.ReactNode;
 }) {
   const { isOpen } = useCaseStudySidebar();
@@ -327,6 +378,7 @@ export function CaseStudyLayout({
         <aside className="sticky top-16 self-start h-[calc(100vh-4rem)] shrink-0 z-20 bg-background">
           <CaseStudyTocSidebar
             hasAblation={hasAblation}
+            sections={sections}
             className="h-full bg-background"
           />
         </aside>
