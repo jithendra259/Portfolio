@@ -30,7 +30,7 @@ const VIEW_MOTION_PROPS = {
     duration: 0.3,
     ease: 'easeInOut',
   },
-};
+} as const;
 
 interface ViewControllerProps {
   appConfig: AppConfig;
