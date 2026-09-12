@@ -15,8 +15,8 @@ export function ContactSection() {
   return (
     <section id="contact" className="relative w-full overflow-hidden">
       <FloatingIconsHero
-        title="A World of Innovation"
-        subtitle="Explore a universe of possibilities with our platform, connecting you to the tools and technologies that shape the future."
+        title="Let's Build Intelligent Systems Together"
+        subtitle="Open for AI Engineering & Quantitative Research roles, thesis collaborations, and technical discussions in multi-agent swarms, convex portfolio risk, and real-time voice architectures."
         icons={contactIcons}
         className="bg-transparent h-auto min-h-[780px] py-24"
       >

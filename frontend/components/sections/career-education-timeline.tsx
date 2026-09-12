@@ -20,7 +20,7 @@ export function CareerEducationTimeline() {
       description:
         'Thesis research on Agentic AI Framework for Stock Portfolio Management. Specialized in Multi-Agent Swarms, Convex Portfolio Optimization (CVXPY/CLARABEL), Market Regime Adaptation, and Explainable AI.',
       highlights: [
-        'Authored 2 research papers submitted to Elsevier EAAI and Springer conference proceedings.',
+        'Authored 3 research manuscripts across Elsevier EAAI, Elsevier CAS, and Springer Nature LNCS.',
         'Engineered 10+ collaborative agent roles with auditable reasoning and anti-hallucination guardrails.',
       ],
       icon: <GraduationCap className="size-4 text-white dark:text-black" />,
