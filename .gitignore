@@ -14,11 +14,11 @@ build/
 # Python Virtual Environments & Bytecode
 venv/
 .venv/
-backned/Include/
-backned/Lib/
-backned/Scripts/
-backned/pyvenv.cfg
-backned/livekit/
+backend/Include/
+backend/Lib/
+backend/Scripts/
+backend/pyvenv.cfg
+backend/livekit/
 __pycache__/
 *.pyc
 

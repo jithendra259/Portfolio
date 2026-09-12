@@ -16,10 +16,10 @@ A full-stack interactive Voice AI assistant for a developer portfolio powered by
 ### 1. Backend Setup
 
 ```powershell
-cd backned
+cd backend
 
 # Activate virtual environment
-.\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 
 # Install dependencies
 pip install -r requirements.txt
