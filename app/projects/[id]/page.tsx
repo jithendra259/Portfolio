@@ -251,24 +251,25 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* 1. TOP STICKY BAR */}
       {/* ============================================================ */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#0d0f14]/80 backdrop-blur-xl transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Back button, Sidebar toggle & Breadcrumb */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-3.5 min-w-0">
             <Link
               href="/#projects"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono font-semibold text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all duration-200 shrink-0"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono font-semibold text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all duration-200 shrink-0"
             >
               <ArrowLeft className="size-3.5" />
-              <span>Back to Portfolio</span>
+              <span className="hidden sm:inline">Back to Portfolio</span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
             {/* Sidebar toggle button on the nav bar */}
             <CaseStudySidebarToggle />
 
-            <span className="text-slate-300 dark:text-neutral-700 hidden sm:inline">/</span>
+            <span className="text-slate-300 dark:text-neutral-700 hidden md:inline">/</span>
             
-            <div className="hidden sm:flex items-center gap-2 text-xs font-mono truncate text-slate-500 dark:text-neutral-400">
+            <div className="hidden md:flex items-center gap-2 text-xs font-mono truncate text-slate-500 dark:text-neutral-400">
               <span>Projects</span>
               <span>/</span>
               <span className="text-slate-900 dark:text-neutral-200 font-semibold truncate">
