@@ -1,0 +1,8 @@
+livekit>=1.1.15
+livekit-agents>=1.7.1
+livekit-plugins-cartesia>=1.7.1
+livekit-plugins-deepgram>=1.7.1
+livekit-plugins-google>=1.7.1
+livekit-plugins-silero>=1.7.1
+livekit-plugins-ai-coustics>=0.3.1
+python-dotenv>=1.0.0
