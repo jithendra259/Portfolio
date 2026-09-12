@@ -12,6 +12,12 @@ import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 export function ContactSection() {
   const [isBookingOpen, setIsBookingOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    const handleOpenBooking = () => setIsBookingOpen(true);
+    window.addEventListener('open-appointment-booking', handleOpenBooking);
+    return () => window.removeEventListener('open-appointment-booking', handleOpenBooking);
+  }, []);
+
   return (
     <section id="contact" className="relative w-full overflow-hidden">
       <FloatingIconsHero
@@ -31,11 +37,7 @@ export function ContactSection() {
               <DialogDescription className="sr-only">
                 Choose an available date and time slot to book an engineering or research discussion with Kandula Jithendra Subramanyam.
               </DialogDescription>
-              <CalendarAppointmentBooking
-                onSuccess={() => {
-                  setTimeout(() => setIsBookingOpen(false), 1600);
-                }}
-              />
+              <CalendarAppointmentBooking />
             </DialogContent>
           </Dialog>
 

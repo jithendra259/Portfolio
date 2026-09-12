@@ -262,6 +262,13 @@ export function useVoiceAutoNavigation(session?: any) {
             setTimeout(() => {
               el.classList.remove('ring-2', 'ring-cyan-400/40', 'rounded-2xl', 'transition-all');
             }, 2500);
+
+            // Open appointment booking modal automatically when navigating to contact
+            if (targetKey === 'contact') {
+              setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('open-appointment-booking'));
+              }, 700);
+            }
           }
         }
       } else if (target.type === 'route') {
