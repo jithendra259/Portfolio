@@ -1,6 +1,8 @@
 import { Project } from './types';
-import { agenticPortfolioChatbot } from './agentic-portfolio-chatbot';
+import { regimeAdaptiveSupervisoryGovernance } from './regime-adaptive-supervisory-governance';
 import { adaptivePortfolioGovernance } from './adaptive-portfolio-governance';
+import { supervisoryPortfolioXaiGovernance } from './supervisory-portfolio-xai-governance';
+import { agenticPortfolioChatbot } from './agentic-portfolio-chatbot';
 import { personalisedAqiSystem } from './personalised-aqi-system';
 import { swarmRobotsAgriculture } from './swarm-robots-agriculture';
 
@@ -14,8 +16,10 @@ export * from './types';
  * Everything else (landing page, BentoGrid, categories, dynamic /projects/[id] routing) updates automatically!
  */
 export const ALL_PROJECTS: Project[] = [
-  agenticPortfolioChatbot,
+  regimeAdaptiveSupervisoryGovernance,
   adaptivePortfolioGovernance,
+  supervisoryPortfolioXaiGovernance,
+  agenticPortfolioChatbot,
   personalisedAqiSystem,
   swarmRobotsAgriculture,
 ];

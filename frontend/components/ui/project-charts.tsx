@@ -130,11 +130,25 @@ const chatbotConfig: ChartConfig = {
   rawLLM: { label: 'Monolithic LLM Baseline', color: 'hsl(340, 82%, 52%)' },
 };
 
+// 5. SUPERVISORY XAI UNIVERSE SHARPE DATA
+const universeSharpeData = [
+  { universe: 'U1 (Tech)', baseline: 0.52, supervisory: 0.58 },
+  { universe: 'U2 (Europe)', baseline: 0.45, supervisory: 0.52 },
+  { universe: 'U3 (High Beta)', baseline: 0.54, supervisory: 0.61 },
+  { universe: 'U4 (US Sectors)', baseline: 0.56, supervisory: 0.63 },
+  { universe: 'U5 (Multi-Asset)', baseline: 0.51, supervisory: 0.59 },
+];
+
+const supervisoryConfig: ChartConfig = {
+  supervisory: { label: 'Supervisory Governance (Ours)', color: 'hsl(199, 89%, 48%)' },
+  baseline: { label: 'Static Benchmark', color: 'hsl(215, 16%, 47%)' },
+};
+
 export function ProjectCharts({ projectId }: ProjectChartsProps) {
   const [activeTab, setActiveTab] = useState<'primary' | 'secondary'>('primary');
 
-  // Render chart based on project
-  if (projectId === 'adaptive-portfolio-governance') {
+  // 1. ADAPTIVE PORTFOLIO GOVERNANCE / REGIME ADAPTIVE SUPERVISORY
+  if (projectId === 'adaptive-portfolio-governance' || projectId === 'regime-adaptive-supervisory-governance') {
     return (
       <div className="mt-10 space-y-6">
         {/* Header with Switcher Tabs */}
@@ -253,6 +267,105 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar dataKey="gcvar" fill="var(--color-gcvar)" radius={[6, 6, 0, 0]} />
                   <Bar dataKey="equalWeight" fill="var(--color-equalWeight)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (projectId === 'supervisory-portfolio-xai-governance') {
+    return (
+      <div className="mt-10 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
+              <Cpu className="size-3.5" />
+              <span>Supervisory Governance &amp; XAI Fidelity (shadcn/ui)</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+              Multi-Universe Risk-Adjusted Sharpe (U1–U5) &amp; Deterministic Accuracy
+            </h3>
+          </div>
+
+          <div className="flex items-center rounded-xl bg-slate-200/80 dark:bg-white/5 p-1 border border-slate-300 dark:border-white/10 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setActiveTab('primary')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+                activeTab === 'primary'
+                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
+                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Universe Sharpe (U1–U5)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('secondary')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+                activeTab === 'secondary'
+                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
+                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              XAI Zero-Hallucination (%)
+            </button>
+          </div>
+        </div>
+
+        <div className="py-4">
+          {activeTab === 'primary' ? (
+            <div>
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-4">
+                <div>
+                  <h4 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white">
+                    Average Sharpe Ratio Across Asset Universes U1–U5 (2005–2025)
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                    Supervisory Ledoit-Wolf shrinkage consistently stabilizes risk-adjusted returns across sector and global universes.
+                  </p>
+                </div>
+                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-medium">
+                  U4 US Sectors: 0.63 Sharpe
+                </span>
+              </div>
+
+              <ChartContainer config={supervisoryConfig} className="h-[340px] w-full">
+                <BarChart data={universeSharpeData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
+                  <XAxis dataKey="universe" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                  <YAxis domain={[0, 0.8]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar dataKey="supervisory" fill="var(--color-supervisory)" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="baseline" fill="var(--color-baseline)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+          ) : (
+            <div>
+              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
+                <h4 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white">
+                  Regulatory Compliance &amp; Zero-Hallucination Rate (Ours vs. Prompted LLMs)
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                  Decoupling numerical calculation from local Mistral-7B narrative synthesis ensures 100% mathematical auditability.
+                </p>
+              </div>
+
+              <ChartContainer config={chatbotConfig} className="h-[340px] w-full">
+                <BarChart data={chatbotComparisonData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
+                  <XAxis dataKey="metric" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                  <YAxis domain={[0, 100]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" unit="%" />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar dataKey="agentic" fill="var(--color-agentic)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="cotPrompt" fill="var(--color-cotPrompt)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="rawLLM" fill="var(--color-rawLLM)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             </div>
