@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import {
   Sidebar001,
   Sidebar001Content,
@@ -12,7 +11,7 @@ import {
   Sidebar001Item,
   Sidebar001Section,
 } from '@/components/ui/sidebar-001';
-import { BookMarked, BookOpen, Layers, Bell, PanelLeft, X } from 'lucide-react';
+import { BookMarked, BookOpen, Layers, Bell, PanelLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PaperSection } from '@/data/projects/types';
 
@@ -77,7 +76,7 @@ export function CaseStudySidebarToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggle}
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all duration-200 shrink-0 cursor-pointer select-none',
+        'hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all duration-200 shrink-0 cursor-pointer select-none',
         isOpen
           ? 'bg-[#f12e54]/15 text-[#f12e54] border border-[#f12e54]/40 hover:bg-[#f12e54]/25'
           : 'text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10',
@@ -87,8 +86,7 @@ export function CaseStudySidebarToggle({ className }: { className?: string }) {
       aria-label="Toggle Table of Contents Sidebar"
     >
       <PanelLeft className="size-3.5 shrink-0" />
-      <span className="hidden sm:inline">{isOpen ? 'Hide TOC' : 'Show TOC'}</span>
-      <span className="sm:hidden">TOC</span>
+      <span>{isOpen ? 'Hide TOC' : 'Show TOC'}</span>
     </button>
   );
 }
@@ -370,8 +368,8 @@ export function CaseStudyTocSidebar({
 }
 
 // ─── CaseStudyLayout Client Component ───────────────────────────────────────
-// Desktop: TOC and Matter side by side with border-l (no blur).
-// Mobile: Full-width matter, with an elegant slide-out TOC drawer and floating quick-access button.
+// Desktop (>= 768px): TOC and Matter side by side with border-l.
+// Mobile (< 768px): Clean, full-width distraction-free reading experience without sidebar/drawer clutter.
 
 export function CaseStudyLayout({
   hasAblation = true,
@@ -382,16 +380,11 @@ export function CaseStudyLayout({
   sections?: PaperSection[];
   children: React.ReactNode;
 }) {
-  const { isOpen, close, toggle } = useCaseStudySidebar();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { isOpen } = useCaseStudySidebar();
 
   return (
     <div className="relative flex w-full min-h-[calc(100vh-4rem)] bg-background">
-      {/* DESKTOP TOC SIDEBAR - SIDE BY SIDE ON >= 768px (md) */}
+      {/* DESKTOP TOC SIDEBAR - SIDE BY SIDE ON >= 768px (md) ONLY */}
       {isOpen && (
         <aside className="hidden md:block sticky top-16 self-start h-[calc(100vh-4rem)] shrink-0 z-20 bg-background">
           <CaseStudyTocSidebar
@@ -401,64 +394,6 @@ export function CaseStudyLayout({
           />
         </aside>
       )}
-
-      {/* MOBILE TOC DRAWER (PORTALED TO BODY TO OVERLAY HEADER CLEANLY) */}
-      {mounted &&
-        isOpen &&
-        createPortal(
-          <div className="fixed inset-0 z-[100] md:hidden flex">
-            {/* Semi-transparent backdrop */}
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-              onClick={close}
-              aria-hidden="true"
-            />
-            {/* Slide-out drawer panel */}
-            <div className="relative z-10 w-72 max-w-[85vw] h-full bg-background border-r border-border/50 shadow-2xl flex flex-col">
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-border/40 bg-background/90 backdrop-blur-md shrink-0">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="size-4 text-[#f12e54]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
-                    Table of Contents
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={close}
-                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
-                  aria-label="Close Table of Contents"
-                >
-                  <X className="size-4" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                <CaseStudyTocSidebar
-                  hasAblation={hasAblation}
-                  sections={sections}
-                  onNavigate={close}
-                  hideHeader={true}
-                  className="!w-full h-full border-r-0"
-                />
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-
-      {/* MOBILE FLOATING QUICK ACCESS TOC PILL */}
-      {mounted &&
-        createPortal(
-          <button
-            type="button"
-            onClick={toggle}
-            className="fixed bottom-6 right-6 z-50 md:hidden inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#f12e54] text-white font-mono text-xs font-bold shadow-lg shadow-[#f12e54]/30 hover:bg-[#d92244] active:scale-95 transition-all cursor-pointer select-none"
-            aria-label="Toggle Table of Contents"
-          >
-            <BookOpen className="size-4" />
-            <span>TOC</span>
-          </button>,
-          document.body
-        )}
 
       {/* MATTER / MAIN CONTENT - FULL WIDTH ON MOBILE, SIDE BY SIDE WITH BORDER-L ON DESKTOP */}
       <div className="flex-1 min-w-0 md:border-l border-border/50 bg-background py-4 sm:py-8 lg:py-10 px-3 sm:px-6 lg:px-8">
