@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  distDir: process.env.VERCEL ? 'frontend/.next' : '.next',
   eslint: {
     // Prevent ESLint/Prettier style checks from blocking production builds on Vercel
     ignoreDuringBuilds: true,

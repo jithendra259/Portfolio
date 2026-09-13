@@ -7,10 +7,10 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "pnpm --dir .. dev",
-    "build": "pnpm --dir .. build",
-    "start": "pnpm --dir .. start",
-    "lint": "pnpm --dir .. lint",
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "shadcn:install": "pnpm dlx shadcn@latest add --yes @agents-ui/all && pnpm format"
