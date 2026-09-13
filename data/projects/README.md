@@ -4,7 +4,7 @@ Each project in this directory is defined in its own standalone file, exporting 
 
 ## How to Add a New Project
 
-1. **Create a new file**: e.g. `frontend/data/projects/my-new-project.ts`.
+1. **Create a new file**: e.g. `data/projects/my-new-project.ts`.
 2. **Define your project**:
 ```ts
 import { Project } from './types';
@@ -50,7 +50,7 @@ export const myNewProject: Project = {
   ],
 };
 ```
-3. **Register it in `frontend/data/projects/index.ts`**:
+3. **Register it in `data/projects/index.ts`**:
 ```ts
 import { myNewProject } from './my-new-project';
 

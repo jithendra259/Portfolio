@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build && node -e \"const fs=require('fs'); if(fs.existsSync('frontend/.next')&&!fs.existsSync('.next')){fs.cpSync('frontend/.next','.next',{recursive:true})}else if(fs.existsSync('.next')&&!fs.existsSync('frontend/.next')){fs.mkdirSync('frontend',{recursive:true});fs.cpSync('.next','frontend/.next',{recursive:true})}\"",
     "start": "next start",
     "lint": "next lint"
   },
