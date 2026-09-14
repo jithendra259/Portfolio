@@ -1,10 +1,10 @@
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents.inference import TurnDetector
 from livekit.agents import llm, stt, tts, inference, vad
 from livekit.plugins import cartesia, deepgram, google, silero, ai_coustics
-from livekit.plugins import openai
+from livekit.plugins.google.beta import GeminiSTT, GeminiTTS
 from livekit.agents import (
     Agent,
     AgentServer,
@@ -129,14 +129,12 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 """
         )
 
-    @llm.ai_callable(description="Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study.")
+    @llm.function_tool(description="Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study.")
     async def navigate_portfolio(
         self,
         target: Annotated[
             str,
-            llm.TypeInfo(
-                description="Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'"
-            ),
+            "Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'",
         ],
     ) -> str:
         """Navigates the user's browser to the requested section or case study."""
@@ -164,50 +162,31 @@ server = AgentServer()
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: agents.JobContext):
 
-    session = AgentSession(
+    # STT: Use Deepgram if DEEPGRAM_API_KEY is present, otherwise fallback to GeminiSTT
+    if os.getenv("DEEPGRAM_API_KEY"):
+        selected_stt = deepgram.STT(model="nova-3")
+    else:
+        selected_stt = GeminiSTT()
 
-        # ====================================================
-        # SPEECH TO TEXT (Deepgram Plugin)
-        # ====================================================
-        stt=stt.FallbackAdapter(
-            [
-                inference.STT.from_model_string("assemblyai/universal-streaming:en"),
-                inference.STT.from_model_string("deepgram/nova-3"),
-            ]
-
-        ),
-
-        # ====================================================
-        # VOICE ACTIVITY DETECTION (Silero VAD)
-        # ====================================================
-        vad=silero.VAD.load(),
-
-        # ====================================================
-        # LLM (Google Gemini)
-        # ====================================================
-        llm=llm.FallbackAdapter(
-            [
-                inference.LLM(model="qwen3:1.7b", base_url="http://localhost:11434/v1"),
-                inference.LLM(model="google/gemini-2.5-flash")
-            ]
-        ),
-       
-        turn_detection=TurnDetector(),
-
-        # ====================================================
-        # TEXT TO SPEECH (Cartesia Plugin)
-        # ====================================================
-        tts=cartesia.TTS(
+    # TTS: Use Cartesia if CARTESIA_API_KEY is present, otherwise fallback to GeminiTTS
+    if os.getenv("CARTESIA_API_KEY"):
+        selected_tts = cartesia.TTS(
             model="sonic-3",
             voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
             language="en",
             speed=1.05,
-        ),
+        )
+    else:
+        selected_tts = GeminiTTS()
 
-        # ====================================================
-        # TURN HANDLING & QUOTA MANAGEMENT
-        # ====================================================
-        preemptive_generation=False,
+    # LLM: Google Gemini 2.5 Flash
+    selected_llm = google.LLM(model="gemini-2.5-flash")
+
+    session = AgentSession(
+        stt=selected_stt,
+        vad=silero.VAD.load(),
+        llm=selected_llm,
+        tts=selected_tts,
         turn_handling=TurnHandlingOptions(
             allow_interruptions=True,
         ),
