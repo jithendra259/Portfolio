@@ -66,16 +66,9 @@ export function ViewController({ appConfig }: ViewControllerProps) {
       return;
     }
 
-    // Immediately start the Vercel-native Gemini voice assistant
+    // Start in-browser voice assistant (runs cleanly on Vercel & mobile without LiveKit mic lock)
     webVoice.startSession();
-
-    // Attempt LiveKit in background (if user has active Python worker running)
-    try {
-      start();
-    } catch {
-      // ignore
-    }
-  }, [start, webVoice]);
+  }, [webVoice]);
 
   const isHUDVisible = (isConnected || webVoice.isActive) && viewMode === 'docked';
 
