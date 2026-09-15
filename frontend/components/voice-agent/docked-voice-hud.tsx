@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useAgent, useSessionContext, useSessionMessages } from '@livekit/components-react';
+import { useAgent, useSessionContext } from '@livekit/components-react';
 import { Mic, MicOff, PhoneOff, Maximize2, Compass, Sparkles, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NAVIGATION_TARGETS, type NavigationTarget } from '@/hooks/useVoiceAutoNavigation';
@@ -12,6 +12,7 @@ interface DockedVoiceHUDProps {
   activeTarget: NavigationTarget | null;
   onManualNavigate: (target: NavigationTarget) => void;
   className?: string;
+  messages?: any[];
   webVoice?: {
     isActive: boolean;
     isListening: boolean;
@@ -31,11 +32,11 @@ export function DockedVoiceHUD({
   activeTarget,
   onManualNavigate,
   className,
+  messages,
   webVoice,
 }: DockedVoiceHUDProps) {
   const session = useSessionContext();
   const { state: agentState } = useAgent();
-  const { messages } = useSessionMessages(session);
   const [isMuted, setIsMuted] = useState(false);
 
   const isWebMode = !!webVoice?.isActive;
@@ -75,7 +76,8 @@ export function DockedVoiceHUD({
 
   const isMutedEffective = isWebMode && webVoice ? webVoice.isMuted : isMuted;
 
-  const latestMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const msgList = messages ?? [];
+  const latestMessage = msgList.length > 0 ? msgList[msgList.length - 1] : null;
   const latestLiveKitText = latestMessage
     ? (latestMessage as any).message || (latestMessage as any).text || ''
     : '';
