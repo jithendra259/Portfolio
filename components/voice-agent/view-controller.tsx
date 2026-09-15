@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
-import { useSessionContext } from '@livekit/components-react';
+import { useSessionContext, useSessionMessages } from '@livekit/components-react';
 import { Minimize2 } from 'lucide-react';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
@@ -42,6 +42,7 @@ interface ViewControllerProps {
 export function ViewController({ appConfig }: ViewControllerProps) {
   const session = useSessionContext();
   const { isConnected, start } = session;
+  const { messages } = useSessionMessages(session);
   const { resolvedTheme } = useTheme();
 
   // Direct Vercel Gemini in-browser voice assistant
@@ -57,7 +58,7 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   const [viewMode, setViewMode] = useState<'docked' | 'full'>('docked');
 
   // Activate real-time voice-driven auto navigation
-  const { activeTarget, navigateTo } = useVoiceAutoNavigation(session);
+  const { activeTarget, navigateTo } = useVoiceAutoNavigation(session, messages);
 
   const handleStartCall = React.useCallback(() => {
     if (webVoice.isActive) {
@@ -93,6 +94,7 @@ export function ViewController({ appConfig }: ViewControllerProps) {
             key="docked-hud"
             onExpand={() => setViewMode('full')}
             activeTarget={webVoice.isActive ? webVoice.activeTarget : activeTarget}
+            messages={messages}
             onManualNavigate={(target) => {
               if (webVoice.isActive) {
                 webVoice.navigateTo(target);

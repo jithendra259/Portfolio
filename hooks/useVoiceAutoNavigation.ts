@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useRoomContext, useSessionMessages } from '@livekit/components-react';
+import { useRoomContext } from '@livekit/components-react';
 import { RoomEvent } from 'livekit-client';
 import { toast } from 'sonner';
 
@@ -212,11 +212,10 @@ function matchSpeechIntent(text: string): NavigationTarget | null {
   return null;
 }
 
-export function useVoiceAutoNavigation(session?: any) {
+export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
   const router = useRouter();
   const pathname = usePathname();
   const room = useRoomContext();
-  const { messages } = useSessionMessages(session);
   const [activeTarget, setActiveTarget] = useState<NavigationTarget | null>(null);
   const [lastNavigatedAt, setLastNavigatedAt] = useState<number | null>(null);
   const lastProcessedMsgId = useRef<string | null>(null);
