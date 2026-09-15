@@ -261,10 +261,10 @@ export async function POST(req: Request) {
       });
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+    const apiKey = (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || '').trim();
 
-    // 1. If an API key is available, try Gemini live LLM first
-    if (apiKey && apiKey.startsWith('AIza') && apiKey !== 'AIzaSyCckETmHaywxn9RpRm1zDF14oL5eRnF8K0') {
+    // 1. If an API key is configured in environment variables, try Gemini live LLM
+    if (apiKey) {
       const contents = [
         ...history.map((item: { role: string; text: string }) => ({
           role: item.role === 'agent' || item.role === 'model' ? 'model' : 'user',
