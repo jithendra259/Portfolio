@@ -3,7 +3,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
 from livekit.agents import llm, stt, tts, inference, vad
-from livekit.plugins import cartesia, deepgram, google, silero, ai_coustics
+from livekit.plugins import cartesia, deepgram, google, silero
+try:
+    from livekit.plugins import ai_coustics
+    HAS_AI_COUSTICS = True
+except Exception as e:
+    ai_coustics = None
+    HAS_AI_COUSTICS = False
+
 from livekit.plugins.google.beta import GeminiSTT, GeminiTTS
 from livekit.agents import (
     Agent,
@@ -197,23 +204,28 @@ async def my_agent(ctx: agents.JobContext):
     # START SESSION
     # ========================================================
 
-    await session.start(
-
-        room=ctx.room,
-
-        agent=Assistant(room=ctx.room),
-
-        room_options=room_io.RoomOptions(
-
-            audio_input=room_io.AudioInputOptions(
-
-                noise_cancellation=ai_coustics.audio_enhancement(
-                    model=ai_coustics.EnhancerModel.QUAIL_VF_S,
+    # Audio input options (noise cancellation if ai_coustics available)
+    room_opts = None
+    if HAS_AI_COUSTICS and ai_coustics:
+        try:
+            room_opts = room_io.RoomOptions(
+                audio_input=room_io.AudioInputOptions(
+                    noise_cancellation=ai_coustics.audio_enhancement(
+                        model=ai_coustics.EnhancerModel.QUAIL_VF_S,
+                    ),
                 ),
+            )
+        except Exception:
+            room_opts = None
 
-            ),
-        ),
-    )
+    start_kwargs = {
+        "room": ctx.room,
+        "agent": Assistant(room=ctx.room),
+    }
+    if room_opts:
+        start_kwargs["room_options"] = room_opts
+
+    await session.start(**start_kwargs)
 
 
     # ========================================================

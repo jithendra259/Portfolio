@@ -1,50 +1,94 @@
 import { NextResponse } from 'next/server';
 import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
-import { RoomConfiguration } from '@livekit/protocol';
+import { RoomConfiguration, RoomAgentDispatch } from '@livekit/protocol';
 
-type ConnectionDetails = {
-  serverUrl: string;
-  roomName: string;
-  participantName: string;
-  participantToken: string;
-};
+// Default LiveKit Cloud credentials for Jithendra's Portfolio
+const DEFAULT_LIVEKIT_URL = 'wss://portfolio-jezy7ize.livekit.cloud';
+const DEFAULT_API_KEY = 'APIbRAUawrxisqw';
+const DEFAULT_API_SECRET = 'a01GgmepPJPK0jCRgArGfJGQ8gNf6kExPCKyfvE4GlUC';
+const DEFAULT_AGENT_NAME = 'my-agent';
 
-// NOTE: you are expected to define the following environment variables in `.env.local`:
-const API_KEY = process.env.LIVEKIT_API_KEY;
-const API_SECRET = process.env.LIVEKIT_API_SECRET;
-const LIVEKIT_URL = process.env.LIVEKIT_URL;
+// LiveKit credentials from environment or fallbacks
+const API_KEY = process.env.LIVEKIT_API_KEY || DEFAULT_API_KEY;
+const API_SECRET = process.env.LIVEKIT_API_SECRET || DEFAULT_API_SECRET;
+const LIVEKIT_URL = process.env.LIVEKIT_URL || DEFAULT_LIVEKIT_URL;
+const AGENT_NAME = process.env.NEXT_PUBLIC_AGENT_NAME || process.env.AGENT_NAME || DEFAULT_AGENT_NAME;
 
 // don't cache the results
 export const revalidate = 0;
 
-export async function POST(req: Request) {
+async function handleTokenRequest(req: Request) {
   // Allow public token generation for portfolio voice assistant
-  // If you ever wish to restrict access, set LIVEKIT_RESTRICT_ACCESS="true" in environment variables
   if (process.env.LIVEKIT_RESTRICT_ACCESS === 'true' && process.env.NODE_ENV === 'production') {
-    throw new Error('Access to voice agent token endpoint is currently restricted.');
+    return new NextResponse('Access to voice agent token endpoint is currently restricted.', {
+      status: 403,
+    });
   }
 
   try {
-    if (LIVEKIT_URL === undefined) {
+    if (!LIVEKIT_URL) {
       throw new Error('LIVEKIT_URL is not defined');
     }
-    if (API_KEY === undefined) {
+    if (!API_KEY) {
       throw new Error('LIVEKIT_API_KEY is not defined');
     }
-    if (API_SECRET === undefined) {
+    if (!API_SECRET) {
       throw new Error('LIVEKIT_API_SECRET is not defined');
     }
 
-    // Parse room config from request body.
-    const body = await req.json();
-    const roomConfig = body?.room_config
-      ? RoomConfiguration.fromJson(body.room_config, { ignoreUnknownFields: true })
-      : new RoomConfiguration();
+    // Parse body safely (supports empty body, GET, or malformed JSON)
+    let body: any = {};
+    if (req.method === 'POST') {
+      try {
+        const text = await req.text();
+        if (text && text.trim().length > 0) {
+          body = JSON.parse(text);
+        }
+      } catch {
+        body = {};
+      }
+    }
 
-    // Generate participant token
-    const participantName = 'user';
-    const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10_000)}`;
-    const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
+    // Parse query params if available
+    let requestedRoom = body?.room_name || body?.roomName;
+    let requestedParticipant = body?.participant_name || body?.participantName;
+    let requestedAgent = body?.agent_name || body?.agentName || AGENT_NAME;
+
+    try {
+      const url = new URL(req.url);
+      if (!requestedRoom && url.searchParams.get('room')) {
+        requestedRoom = url.searchParams.get('room');
+      }
+      if (!requestedParticipant && url.searchParams.get('name')) {
+        requestedParticipant = url.searchParams.get('name');
+      }
+      if (url.searchParams.get('agent')) {
+        requestedAgent = url.searchParams.get('agent');
+      }
+    } catch {
+      // ignore url parsing error
+    }
+
+    // Parse room config from request body
+    let roomConfig: RoomConfiguration;
+    if (body?.room_config) {
+      roomConfig = RoomConfiguration.fromJson(body.room_config, { ignoreUnknownFields: true });
+    } else {
+      roomConfig = new RoomConfiguration();
+    }
+
+    // Ensure agent dispatch is present if an agent name is configured
+    if (requestedAgent && roomConfig.agents.length === 0) {
+      const agentDispatch = new RoomAgentDispatch({
+        agentName: requestedAgent,
+      });
+      roomConfig.agents.push(agentDispatch);
+    }
+
+    // Generate participant identity and room name
+    const participantName = requestedParticipant || 'Guest User';
+    const participantIdentity = `voice_user_${Math.floor(1000 + Math.random() * 9000)}`;
+    const roomName = requestedRoom || `portfolio_voice_${Math.floor(1000 + Math.random() * 9000)}`;
 
     const participantToken = await createParticipantToken(
       { identity: participantIdentity, name: participantName },
@@ -52,23 +96,52 @@ export async function POST(req: Request) {
       roomConfig
     );
 
-    // Return connection details
-    const data: ConnectionDetails = {
+    // Return connection details with both camelCase and snake_case for full compatibility
+    const data = {
       serverUrl: LIVEKIT_URL,
+      server_url: LIVEKIT_URL,
       roomName,
+      room_name: roomName,
       participantName,
+      participant_name: participantName,
       participantToken,
+      participant_token: participantToken,
+      agentName: requestedAgent,
+      status: 'ready',
     };
+
     const headers = new Headers({
-      'Cache-Control': 'no-store',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     });
+
     return NextResponse.json(data, { headers });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error);
-      return new NextResponse(error.message, { status: 500 });
-    }
+    console.error('Error in /api/token:', error);
+    const message = error instanceof Error ? error.message : 'Failed to generate token';
+    return new NextResponse(message, { status: 500 });
   }
+}
+
+export async function POST(req: Request) {
+  return handleTokenRequest(req);
+}
+
+export async function GET(req: Request) {
+  return handleTokenRequest(req);
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
 }
 
 function createParticipantToken(
@@ -78,7 +151,7 @@ function createParticipantToken(
 ): Promise<string> {
   const at = new AccessToken(API_KEY, API_SECRET, {
     ...userInfo,
-    ttl: '15m',
+    ttl: '30m',
   });
   const grant: VideoGrant = {
     room: roomName,
