@@ -186,8 +186,9 @@ async def my_agent(ctx: agents.JobContext):
     else:
         selected_tts = GeminiTTS()
 
-    # LLM: Google Gemini 2.5 Flash
-    selected_llm = google.LLM(model="gemini-2.5-flash")
+    # LLM: Google Gemini
+    gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+    selected_llm = google.LLM(model=gemini_model)
 
     session = AgentSession(
         stt=selected_stt,
