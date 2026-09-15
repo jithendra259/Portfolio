@@ -17,7 +17,6 @@ const IN_DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 function AppSetup() {
   useDebugMode({ enabled: IN_DEVELOPMENT });
-  useAgentErrors();
 
   return null;
 }

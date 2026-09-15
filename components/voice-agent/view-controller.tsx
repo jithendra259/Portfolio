@@ -32,6 +32,9 @@ const VIEW_MOTION_PROPS = {
   },
 } as const;
 
+import { useWebVoiceAgent } from '@/hooks/useWebVoiceAgent';
+import { useAgentErrors } from '@/hooks/useAgentErrors';
+
 interface ViewControllerProps {
   appConfig: AppConfig;
 }
@@ -41,6 +44,14 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   const { isConnected, start } = session;
   const { resolvedTheme } = useTheme();
 
+  // Direct Vercel Gemini in-browser voice assistant
+  const webVoice = useWebVoiceAgent();
+
+  // If LiveKit worker is offline ("Agent did not join the room"), automatically fall back to Vercel Gemini voice assistant
+  useAgentErrors(() => {
+    webVoice.startSession();
+  });
+
   // Mode: 'docked' keeps the portfolio page fully visible and auto-navigating.
   // 'full' expands into the immersive full-screen audio visualizer tile.
   const [viewMode, setViewMode] = useState<'docked' | 'full'>('docked');
@@ -48,22 +59,49 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   // Activate real-time voice-driven auto navigation
   const { activeTarget, navigateTo } = useVoiceAutoNavigation(session);
 
+  const handleStartCall = React.useCallback(() => {
+    if (webVoice.isActive) {
+      webVoice.stopSession();
+      return;
+    }
+
+    // Immediately start the Vercel-native Gemini voice assistant
+    webVoice.startSession();
+
+    // Attempt LiveKit in background (if user has active Python worker running)
+    try {
+      start();
+    } catch {
+      // ignore
+    }
+  }, [start, webVoice]);
+
+  const isHUDVisible = (isConnected || webVoice.isActive) && viewMode === 'docked';
+
   return (
     <div className="relative w-full min-h-screen">
       {/* Portfolio page: Always rendered and interactive */}
       <WelcomeView
         startButtonText={appConfig.startButtonText}
-        onStartCall={start}
+        onStartCall={handleStartCall}
       />
 
-      {/* When Connected & in Docked Mode: Floating Live Voice HUD */}
+      {/* Floating Live Voice HUD */}
       <AnimatePresence>
-        {isConnected && viewMode === 'docked' && (
+        {isHUDVisible && (
           <DockedVoiceHUD
             key="docked-hud"
             onExpand={() => setViewMode('full')}
-            activeTarget={activeTarget}
-            onManualNavigate={(target) => navigateTo(target, 'data_channel')}
+            activeTarget={webVoice.isActive ? webVoice.activeTarget : activeTarget}
+            onManualNavigate={(target) => {
+              if (webVoice.isActive) {
+                webVoice.navigateTo(target);
+                webVoice.sendUserMessage(`Guiding screen to ${target.replace(/_/g, ' ')}`);
+              } else {
+                navigateTo(target, 'data_channel');
+              }
+            }}
+            webVoice={webVoice}
           />
         )}
       </AnimatePresence>
