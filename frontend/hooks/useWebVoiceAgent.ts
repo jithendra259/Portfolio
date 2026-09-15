@@ -35,11 +35,14 @@ export function useWebVoiceAgent(): UseWebVoiceAgentReturn {
   const [activeTarget, setActiveTarget] = useState<NavigationTarget | null>(null);
 
   const recognitionRef = useRef<any>(null);
+  const utteranceRef = useRef<any>(null);
   const historyRef = useRef<Array<{ role: string; text: string }>>([]);
   const hasGreetedRef = useRef(false);
   const isSpeakingRef = useRef(false);
   const isMutedRef = useRef(false);
+  const isActiveRef = useRef(false);
 
+  isActiveRef.current = isActive;
   isSpeakingRef.current = isSpeaking;
   isMutedRef.current = isMuted;
 
@@ -104,19 +107,29 @@ export function useWebVoiceAgent(): UseWebVoiceAgentReturn {
       };
 
       utterance.onend = () => {
+        utteranceRef.current = null;
         setIsSpeaking(false);
         if (onDone) onDone();
       };
 
       utterance.onerror = () => {
+        utteranceRef.current = null;
         setIsSpeaking(false);
         if (onDone) onDone();
       };
 
+      // Keep reference to prevent garbage collection cut-off in Chrome
+      utteranceRef.current = utterance;
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       window.speechSynthesis.speak(utterance);
     },
     []
   );
+
+  // Forward declaration for mutual calling
+  const startListeningRef = useRef<() => void>(() => {});
 
   // Send message to /api/voice-chat
   const sendUserMessage = useCallback(
@@ -165,18 +178,25 @@ export function useWebVoiceAgent(): UseWebVoiceAgentReturn {
         // Speak reply
         speakText(replyText, () => {
           // Resume listening after speaking finishes
-          if (!isMutedRef.current && recognitionRef.current) {
-            try {
-              recognitionRef.current.start();
-            } catch {
-              // already started
+          setTimeout(() => {
+            if (!isMutedRef.current && isActiveRef.current) {
+              startListeningRef.current();
             }
-          }
+          }, 300);
         });
       } catch (err) {
         console.error('Error contacting voice assistant:', err);
         setIsThinking(false);
-        speakText("I'm having trouble connecting right now, but feel free to explore Jithendra's research papers and projects below.");
+        speakText(
+          "I'm here to help you navigate Jithendra's research publications and projects. What would you like to see?",
+          () => {
+            setTimeout(() => {
+              if (!isMutedRef.current && isActiveRef.current) {
+                startListeningRef.current();
+              }
+            }, 300);
+          }
+        );
       }
     },
     [isThinking, navigateTo, speakText]
@@ -260,12 +280,16 @@ export function useWebVoiceAgent(): UseWebVoiceAgentReturn {
     recognition.onend = () => {
       setIsListening(false);
       // Automatically restart listening if session is still active and not speaking
-      if (!isSpeakingRef.current && !isMutedRef.current && isActive) {
-        try {
-          recognition.start();
-        } catch {
-          // ignore
-        }
+      if (!isSpeakingRef.current && !isMutedRef.current && isActiveRef.current) {
+        setTimeout(() => {
+          if (!isSpeakingRef.current && !isMutedRef.current && isActiveRef.current) {
+            try {
+              recognition.start();
+            } catch {
+              // ignore
+            }
+          }
+        }, 250);
       }
     };
 
@@ -275,7 +299,9 @@ export function useWebVoiceAgent(): UseWebVoiceAgentReturn {
     } catch {
       // ignore
     }
-  }, [isActive, sendUserMessage]);
+  }, [sendUserMessage]);
+
+  startListeningRef.current = startRecognition;
 
   // Start voice session
   const startSession = useCallback(() => {
