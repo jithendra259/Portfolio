@@ -74,13 +74,13 @@ export function DockedVoiceHUD({
               <div
                 className={cn(
                   'absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-slate-950',
-                  agentStateEffective === 'speaking'
+                  agentState === 'speaking'
                     ? 'bg-emerald-400 animate-ping'
-                    : agentStateEffective === 'thinking'
+                    : agentState === 'thinking'
                     ? 'bg-amber-400 animate-pulse'
-                    : agentStateEffective === 'listening'
+                    : agentState === 'listening'
                     ? 'bg-cyan-400'
-                    : agentStateEffective === 'failed'
+                    : agentState === 'failed'
                     ? 'bg-rose-500'
                     : 'bg-indigo-400 animate-pulse'
                 )}
@@ -90,7 +90,7 @@ export function DockedVoiceHUD({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold tracking-wider text-slate-200">
-                  VOICE AGENT
+                  BACKEND AI
                 </span>
                 <span
                   className={cn(
@@ -117,7 +117,7 @@ export function DockedVoiceHUD({
                     : 'Connecting...'}
                 </span>
                 <span className="hidden xs:inline-block text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
-                  LIVEKIT LIVE
+                  RENDER LIVE
                 </span>
               </div>
 
@@ -192,7 +192,7 @@ export function DockedVoiceHUD({
         </div>
 
         {/* Bottom Subtitle / Transcript Banner */}
-        {latestText && (
+        {latestText ? (
           <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/10 text-xs font-mono text-slate-300 truncate flex items-center gap-2">
             <Volume2 className="size-3 text-cyan-400 shrink-0" />
             <span className="text-slate-400 shrink-0">
@@ -200,7 +200,12 @@ export function DockedVoiceHUD({
             </span>
             <span className="truncate text-slate-200">{latestText}</span>
           </div>
-        )}
+        ) : !session.isConnected ? (
+          <div className="px-3 py-1.5 rounded-2xl bg-cyan-500/10 border border-cyan-400/20 text-xs font-mono text-cyan-300 truncate flex items-center gap-2">
+            <Sparkles className="size-3 text-cyan-400 shrink-0 animate-spin" />
+            <span className="truncate">Connecting directly to Render backend AI...</span>
+          </div>
+        ) : null}
 
         {/* Quick Voice Auto-Nav Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-mono">

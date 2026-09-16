@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/primitives/dropdown-menu';
 import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight, TextAlignJustify } from 'lucide-react';
+import { ArrowUpRight, TextAlignJustify, Loader2 } from 'lucide-react';
 
 export type NavigationSection = {
   title: string;
@@ -29,24 +29,53 @@ const navigationData: NavigationSection[] = [
   { title: 'Contact', href: '#contact' },
 ];
 
-const CollaborateButton = ({ className, onClick }: { className?: string; onClick?: () => void }) => (
+const CollaborateButton = ({
+  className,
+  onClick,
+  isConnected,
+  isConnecting,
+}: {
+  className?: string;
+  onClick?: () => void;
+  isConnected?: boolean;
+  isConnecting?: boolean;
+}) => (
   <Button
     onClick={onClick}
+    disabled={isConnecting}
     className={cn(
       'relative text-xs font-semibold rounded-full h-8.5 px-4 group transition-all duration-300 hover:scale-105 overflow-hidden',
-      'bg-slate-900 text-white dark:bg-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200',
+      isConnected
+        ? 'bg-emerald-600 text-white hover:bg-rose-600'
+        : isConnecting
+        ? 'bg-cyan-600 text-white cursor-wait'
+        : 'bg-slate-900 text-white dark:bg-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200',
       'border border-slate-700 dark:border-white/20 shadow-md cursor-pointer flex items-center gap-1.5',
       className
     )}
   >
     <span className="font-sans font-semibold tracking-wide">
-      Let&apos;s Collaborate
+      {isConnecting ? 'Connecting...' : isConnected ? 'AI Active (End)' : "Let's Collaborate"}
     </span>
-    <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    {isConnecting ? (
+      <Loader2 size={13} className="animate-spin text-white" />
+    ) : isConnected ? (
+      <span className="size-2 rounded-full bg-emerald-300 animate-ping" />
+    ) : (
+      <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    )}
   </Button>
 );
 
-export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
+export const Navbar = ({
+  onStartCall,
+  isConnected = false,
+  isConnecting = false,
+}: {
+  onStartCall?: () => void;
+  isConnected?: boolean;
+  isConnecting?: boolean;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleResize = useCallback(() => {
@@ -118,7 +147,12 @@ export const Navbar = ({ onStartCall }: { onStartCall?: () => void }) => {
 
         {/* Right Section: Collaborate CTA Button, Day/Night Theme Switch, & Mobile Menu */}
         <div className="flex items-center gap-3">
-          <CollaborateButton className="hidden lg:flex" onClick={handleCollaborate} />
+          <CollaborateButton
+            className="hidden lg:flex"
+            onClick={handleCollaborate}
+            isConnected={isConnected}
+            isConnecting={isConnecting}
+          />
           <DayNightSwitch size="6px" />
 
           {/* Mobile Dropdown Menu Trigger */}
