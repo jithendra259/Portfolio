@@ -169,7 +169,12 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 # LIVEKIT SERVER
 # ============================================================
 
-server = AgentServer()
+server = AgentServer(
+    load_threshold=float("inf"),
+    load_fnc=lambda *args: 0.0,
+    num_idle_processes=0,
+    job_executor_type=agents.JobExecutorType.THREAD,
+)
 
 # ============================================================
 # VOICE AGENT
@@ -200,58 +205,69 @@ async def my_agent(ctx: agents.JobContext):
         print("--> [TTS Config] Active: GeminiTTS (Fallback Text-to-Speech)")
 
     # ========================================================
-    # LLM CASCADE: 1. Local Ollama -> 2. Google Gemini (4 Fallback Models)
+    # LLM CASCADE: Ultra-Fast Cloud Gemini (Primary) -> Fallbacks
     # ========================================================
     llm_cascade = []
 
-    # 1. Primary: Local Ollama (e.g. qwen3:1.7b, mistral, llama3.1)
-    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
+    # Optional local Ollama (only included if actively running locally)
     ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
     try:
-        ollama_llm = openai.LLM.with_ollama(
-            model=ollama_model,
-            base_url=ollama_base_url,
-            temperature=0.5,
-        )
-        llm_cascade.append(ollama_llm)
-        print(f"--> [LLM Config] Local Ollama ({ollama_model}) configured as primary LLM.")
-    except Exception as e:
-        print(f"--> [LLM Warning] Could not initialize Ollama LLM: {e}")
+        import urllib.request
+        ping_req = urllib.request.Request(f"{ollama_base_url}/models", method="GET")
+        with urllib.request.urlopen(ping_req, timeout=0.25):
+            ollama_llm = openai.LLM.with_ollama(
+                model=ollama_model,
+                base_url=ollama_base_url,
+                temperature=0.4,
+            )
+            llm_cascade.append(ollama_llm)
+            print(f"--> [LLM Config] Local Ollama ({ollama_model}) verified and active.")
+    except Exception:
+        # Ollama not running locally (standard on Render cloud container)
+        pass
 
-    # 2. Fallbacks: 4 Google Gemini models in order of latency and quota
-    gemini_fallback_models = [
-        "gemini-3.5-flash-lite",  # Ultra-fast, minimal tokens, low latency
-        "gemini-3.6-flash",       # SOTA flash reasoning
-        "gemini-flash-latest",    # Resilient latest flash alias
-        "gemini-2.5-flash",       # High capability fallback
+    # Google Gemini Models (Ordered by lowest first-token latency)
+    gemini_models = [
+        "gemini-3.5-flash-lite",  # Sub-250ms TTFT - primary voice engine
+        "gemini-3.6-flash",       # SOTA reasoning fallback
+        "gemini-flash-latest",    # Resilient latest alias
+        "gemini-2.5-flash",       # High capacity fallback
     ]
 
-    for g_model in gemini_fallback_models:
+    for g_model in gemini_models:
         try:
             g_llm = google.LLM(
                 model=g_model,
-                max_output_tokens=80,
-                temperature=0.5,
+                max_output_tokens=65,
+                temperature=0.4,
             )
             llm_cascade.append(g_llm)
         except Exception as e:
             print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
 
-    # Wrap in LiveKit FallbackAdapter: Ollama -> Gemini fallback 1 -> 2 -> 3 -> 4
+    # FallbackAdapter with aggressive 3-second timeout to prevent lag
     if len(llm_cascade) > 1:
         selected_llm = llm.FallbackAdapter(
             llm=llm_cascade,
-            attempt_timeout=10.0,
+            attempt_timeout=3.0,
             max_retry_per_llm=0,
         )
     elif len(llm_cascade) == 1:
         selected_llm = llm_cascade[0]
     else:
-        selected_llm = google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=80)
+        selected_llm = google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=65)
+
+    # Silero VAD tuned for ultra-low conversational latency (250ms silence detection)
+    selected_vad = silero.VAD.load(
+        min_speech_duration=0.05,
+        min_silence_duration=0.25,
+        prefix_padding_duration=0.1,
+    )
 
     session = AgentSession(
         stt=selected_stt,
-        vad=silero.VAD.load(),
+        vad=selected_vad,
         llm=selected_llm,
         tts=selected_tts,
         turn_handling=TurnHandlingOptions(
