@@ -32,9 +32,6 @@ const VIEW_MOTION_PROPS = {
   },
 } as const;
 
-import { useWebVoiceAgent } from '@/hooks/useWebVoiceAgent';
-import { useAgentErrors } from '@/hooks/useAgentErrors';
-
 interface ViewControllerProps {
   appConfig: AppConfig;
 }
@@ -44,14 +41,6 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   const { isConnected, start } = session;
   const { messages } = useSessionMessages(session);
   const { resolvedTheme } = useTheme();
-
-  // Direct Vercel Gemini in-browser voice assistant
-  const webVoice = useWebVoiceAgent();
-
-  // If LiveKit worker is offline ("Agent did not join the room"), automatically fall back to Vercel Gemini voice assistant
-  useAgentErrors(() => {
-    webVoice.startSession();
-  });
 
   // Mode: 'docked' keeps the portfolio page fully visible and auto-navigating.
   // 'full' expands into the immersive full-screen audio visualizer tile.
@@ -65,21 +54,16 @@ export function ViewController({ appConfig }: ViewControllerProps) {
       session.end();
       return;
     }
-    if (webVoice.isActive) {
-      webVoice.stopSession();
-      return;
-    }
 
-    // Connect to Python LiveKit backend worker
+    // Connect directly to Python LiveKit backend worker on Render
     try {
       await start();
     } catch (error) {
-      console.warn('Failed to connect to LiveKit backend, falling back to in-browser assistant:', error);
-      webVoice.startSession();
+      console.error('Failed to connect to LiveKit backend:', error);
     }
-  }, [isConnected, session, start, webVoice]);
+  }, [isConnected, session, start]);
 
-  const isHUDVisible = (isConnected || webVoice.isActive) && viewMode === 'docked';
+  const isHUDVisible = isConnected && viewMode === 'docked';
 
   return (
     <div className="relative w-full min-h-screen">
@@ -95,17 +79,11 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           <DockedVoiceHUD
             key="docked-hud"
             onExpand={() => setViewMode('full')}
-            activeTarget={webVoice.isActive ? webVoice.activeTarget : activeTarget}
+            activeTarget={activeTarget}
             messages={messages}
             onManualNavigate={(target) => {
-              if (webVoice.isActive) {
-                webVoice.navigateTo(target);
-                webVoice.sendUserMessage(`Guiding screen to ${target.replace(/_/g, ' ')}`);
-              } else {
-                navigateTo(target, 'data_channel');
-              }
+              navigateTo(target, 'data_channel');
             }}
-            webVoice={webVoice}
           />
         )}
       </AnimatePresence>
