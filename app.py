@@ -269,54 +269,15 @@ def build_tts():
     return GeminiTTS(api_key=google_key) if google_key else cartesia.TTS()
 
 def build_llm():
-    """Gemini 3.5 Flash Lite with fallback cascade, zero thinking budget, and strict token limits"""
+    """Google Gemini Flash Latest with ultra-fast TTFT, zero thinking budget, and strict token limits"""
     api_key = get_clean_google_api_key()
     if not api_key:
         print("--> [LLM CRITICAL] GOOGLE_API_KEY environment variable is NOT set!")
-    elif not api_key.startswith("AIzaSy"):
-        prefix = api_key[:6] if len(api_key) >= 6 else api_key
-        print(f"--> [LLM CRITICAL] Invalid GOOGLE_API_KEY format (starts with '{prefix}...'). Google AI Studio Gemini API keys must start with 'AIzaSy'. Please generate a key at https://aistudio.google.com/app/apikey and update GOOGLE_API_KEY in Render dashboard.")
+    else:
+        print("--> [LLM Info] Initializing Google LLM with 'gemini-flash-latest'...")
 
-    models = []
-    # Primary: Gemini 3.5 Flash Lite (0 thinking tokens, 50 max output tokens for lowest cost & fastest TTFT)
-    try:
-        models.append(
-            google.LLM(
-                model="gemini-3.5-flash-lite",
-                api_key=api_key or None,
-                max_output_tokens=50,
-                temperature=0.2,
-                thinking_config={"thinking_budget": 0},
-            )
-        )
-    except Exception as e:
-        print(f"--> [LLM Warning] Could not init gemini-3.5-flash-lite: {e}")
-
-    # Fallbacks: gemini-2.5-flash, gemini-2.5-pro
-    for fb in ["gemini-2.5-flash", "gemini-2.5-pro"]:
-        try:
-            models.append(
-                google.LLM(
-                    model=fb,
-                    api_key=api_key or None,
-                    max_output_tokens=50,
-                    temperature=0.2,
-                    thinking_config={"thinking_budget": 0},
-                )
-            )
-        except Exception:
-            pass
-
-    if len(models) > 1:
-        return llm.FallbackAdapter(
-            llm=models,
-            attempt_timeout=15.0,  # Complies with Google's minimum 10s deadline
-            max_retry_per_llm=1,
-        )
-    elif len(models) == 1:
-        return models[0]
     return google.LLM(
-        model="gemini-3.5-flash-lite",
+        model="gemini-flash-latest",
         api_key=api_key or None,
         max_output_tokens=50,
         temperature=0.2,
