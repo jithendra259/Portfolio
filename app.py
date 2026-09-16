@@ -181,8 +181,10 @@ async def my_agent(ctx: agents.JobContext):
     # STT: Use Deepgram if DEEPGRAM_API_KEY is present, otherwise fallback to GeminiSTT
     if os.getenv("DEEPGRAM_API_KEY"):
         selected_stt = deepgram.STT(model="nova-3")
+        print("--> [STT Config] Active: Deepgram Nova-3 (Streaming Speech-to-Text)")
     else:
         selected_stt = GeminiSTT()
+        print("--> [STT Config] Active: GeminiSTT (Fallback Speech-to-Text)")
 
     # TTS: Use Cartesia if CARTESIA_API_KEY is present, otherwise fallback to GeminiTTS
     if os.getenv("CARTESIA_API_KEY"):
@@ -192,8 +194,10 @@ async def my_agent(ctx: agents.JobContext):
             language="en",
             speed=1.05,
         )
+        print("--> [TTS Config] Active: Cartesia Sonic-3 (Sub-150ms Text-to-Speech)")
     else:
         selected_tts = GeminiTTS()
+        print("--> [TTS Config] Active: GeminiTTS (Fallback Text-to-Speech)")
 
     # ========================================================
     # LLM CASCADE: 1. Local Ollama -> 2. Google Gemini (4 Fallback Models)
