@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { TokenSource, Room } from 'livekit-client';
 import { useSession } from '@livekit/components-react';
 import { WarningIcon } from '@phosphor-icons/react/dist/ssr';
@@ -94,6 +94,24 @@ export function App({ appConfig }: AppProps) {
     tokenSource,
     appConfig.agentName ? { agentName: appConfig.agentName } : undefined
   );
+
+  // Proactively ping Render backend on mount to eliminate cold start latency
+  useEffect(() => {
+    const backendUrl =
+      process.env.NEXT_PUBLIC_RENDER_BACKEND_URL ||
+      'https://portfolio-backend-ljlv.onrender.com';
+
+    fetch(backendUrl, { mode: 'cors' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          console.log('--> [Render Backend Status]', data);
+        }
+      })
+      .catch((err) => {
+        console.warn('--> [Render Backend Warmup]', err?.message || err);
+      });
+  }, []);
 
   return (
     <AgentSessionProvider session={session}>
