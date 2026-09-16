@@ -183,133 +183,109 @@ server = AgentServer(
 )
 
 # ============================================================
-# ============================================================
-# PRE-WARMED SINGLETONS FOR INSTANT CONNECTION (<50ms)
+# MODULAR AI FACTORY FUNCTIONS (Created within Job Context)
 # ============================================================
 
-print("--> [Pre-warm] Initializing Silero VAD, Deepgram STT, Cartesia TTS, Gemini LLM...")
-
-# Silero VAD loaded once at startup so sessions connect with 0ms model load time
-try:
-    GLOBAL_VAD = silero.VAD.load(
+def build_vad():
+    """Silero VAD with compliant silence threshold for TurnDetector"""
+    return silero.VAD.load(
         min_speech_duration=0.05,
         min_silence_duration=0.25,
         prefix_padding_duration=0.08,
     )
-    print("--> [Pre-warm] Silero VAD pre-warmed successfully.")
-except Exception as e:
-    print(f"--> [Pre-warm Error] Silero VAD: {e}")
-    GLOBAL_VAD = None
 
-# STT: Deepgram Nova-3 zero-delay streaming
-if os.getenv("DEEPGRAM_API_KEY"):
-    GLOBAL_STT = deepgram.STT(
-        model="nova-3",
-        endpointing_ms=25,
-        no_delay=True,
-        smart_format=True,
-    )
-    print("--> [Pre-warm] Deepgram Nova-3 active.")
-else:
-    GLOBAL_STT = GeminiSTT()
-    print("--> [Pre-warm] GeminiSTT active.")
-
-# TTS: Cartesia Sonic-3 sub-150ms voice
-if os.getenv("CARTESIA_API_KEY"):
-    GLOBAL_TTS = cartesia.TTS(
-        model="sonic-3",
-        voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
-        language="en",
-        speed=1.05,
-    )
-    print("--> [Pre-warm] Cartesia Sonic-3 active.")
-else:
-    GLOBAL_TTS = GeminiTTS()
-    print("--> [Pre-warm] GeminiTTS active.")
-
-# LLM Cascade: Fast Cloud Gemini (Thinking Budget = 0)
-llm_cascade = []
-
-if os.getenv("ENABLE_OLLAMA") == "true":
-    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
-    try:
-        ollama_llm = openai.LLM.with_ollama(
-            model=ollama_model,
-            base_url=ollama_base_url,
-            temperature=0.3,
+def build_stt():
+    """Deepgram Nova-3 sub-second streaming STT with Gemini fallback"""
+    if os.getenv("DEEPGRAM_API_KEY"):
+        return deepgram.STT(
+            model="nova-3",
+            endpointing_ms=25,
+            smart_format=True,
         )
-        llm_cascade.append(ollama_llm)
-    except Exception:
-        pass
+    return GeminiSTT()
 
-gemini_models = [
-    "gemini-2.5-flash",       # Instantaneous token streaming with 0 thinking budget
-    "gemini-flash-latest",    # Resilient fallback
-    "gemini-3.5-flash-lite",  # Ultra-light model fallback
-]
-
-for g_model in gemini_models:
-    try:
-        g_llm = google.LLM(
-            model=g_model,
-            max_output_tokens=45,
-            temperature=0.3,
-            thinking_config={"thinking_budget": 0},
+def build_tts():
+    """Cartesia Sonic-3 neural voice with Gemini fallback"""
+    if os.getenv("CARTESIA_API_KEY"):
+        return cartesia.TTS(
+            model="sonic-3",
+            voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
+            language="en",
+            speed=1.05,
         )
-        llm_cascade.append(g_llm)
+    return GeminiTTS()
+
+def build_llm():
+    """Gemini 3.5 Flash Lite with fallback cascade and valid gRPC deadlines"""
+    models = []
+    # Primary: Gemini 3.5 Flash Lite (active quota, fast TTFT)
+    try:
+        models.append(
+            google.LLM(
+                model="gemini-3.5-flash-lite",
+                max_output_tokens=120,
+                temperature=0.3,
+            )
+        )
     except Exception as e:
-        print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
+        print(f"--> [LLM Warning] Could not init gemini-3.5-flash-lite: {e}")
 
-if len(llm_cascade) > 1:
-    GLOBAL_LLM = llm.FallbackAdapter(
-        llm=llm_cascade,
-        attempt_timeout=2.5,
-        max_retry_per_llm=0,
+    # Fallbacks: gemini-2.5-flash, gemini-2.5-pro
+    for fb in ["gemini-2.5-flash", "gemini-2.5-pro"]:
+        try:
+            models.append(
+                google.LLM(
+                    model=fb,
+                    max_output_tokens=120,
+                    temperature=0.3,
+                )
+            )
+        except Exception:
+            pass
+
+    if len(models) > 1:
+        return llm.FallbackAdapter(
+            llm=models,
+            attempt_timeout=15.0,  # Complies with Google's minimum 10s deadline
+            max_retry_per_llm=1,
+        )
+    elif len(models) == 1:
+        return models[0]
+    return google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=120)
+
+def create_session():
+    """Modular session builder binding STT, VAD, LLM, and TTS to active job"""
+    return AgentSession(
+        stt=build_stt(),
+        vad=build_vad(),
+        llm=build_llm(),
+        tts=build_tts(),
+        turn_handling=TurnHandlingOptions(
+            allow_interruptions=True,
+        ),
     )
-elif len(llm_cascade) == 1:
-    GLOBAL_LLM = llm_cascade[0]
-else:
-    GLOBAL_LLM = google.LLM(
-        model="gemini-2.5-flash",
-        max_output_tokens=45,
-        thinking_config={"thinking_budget": 0},
-    )
-print("--> [Pre-warm] Gemini LLM cascade ready.")
 
 
 # ============================================================
-# VOICE AGENT
+# VOICE AGENT ENTRYPOINT
 # ============================================================
 
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: agents.JobContext):
     # 1. Connect immediately so LiveKit signals to browser that agent joined (<50ms)
     await ctx.connect()
-    print("--> [Agent Session] Worker connected to LiveKit room immediately.")
+    print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Use pre-warmed models with zero overhead
-    vad_to_use = GLOBAL_VAD if GLOBAL_VAD else silero.VAD.load(
-        min_speech_duration=0.05,
-        min_silence_duration=0.25,
-        prefix_padding_duration=0.08,
-    )
-
-    session = AgentSession(
-        stt=GLOBAL_STT,
-        vad=vad_to_use,
-        llm=GLOBAL_LLM,
-        tts=GLOBAL_TTS,
-        turn_handling=TurnHandlingOptions(
-            allow_interruptions=True,
-        ),
-    )
+    # 2. Instantiate modular session inside active job context
+    session = create_session()
 
     # 3. Start session with Assistant tool caller
+    assistant = Assistant(room=ctx.room)
     await session.start(
         room=ctx.room,
-        agent=Assistant(room=ctx.room),
+        agent=assistant,
     )
+    print("--> [Agent Session] Assistant started in room.")
 
     # 4. Instant Greeting via Cartesia Sonic-3
     try:
@@ -336,9 +312,11 @@ async def my_agent(ctx: agents.JobContext):
             if not disconnected_fut.done():
                 disconnected_fut.set_result(None)
 
-    ctx.add_shutdown_callback(
-        lambda: disconnected_fut.done() or disconnected_fut.set_result(None)
-    )
+    async def _on_shutdown(*args):
+        if not disconnected_fut.done():
+            disconnected_fut.set_result(None)
+
+    ctx.add_shutdown_callback(_on_shutdown)
 
     await disconnected_fut
     print("--> [Agent Session] Session ended cleanly.")
