@@ -20,5 +20,7 @@ RUN python -m livekit.agents download-files || python app.py download-files || t
 # Copy application source
 COPY app.py .
 
+EXPOSE 10000
+
 # Run LiveKit agent worker in production mode
 CMD ["python", "app.py", "start"]

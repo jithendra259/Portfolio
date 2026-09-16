@@ -1,6 +1,6 @@
 services:
-  - type: worker
-    name: portfolio-voice-agent
+  - type: web
+    name: portfolio-backend
     runtime: docker
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
@@ -20,7 +20,5 @@ services:
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
-      - key: OLLAMA_BASE_URL
-        value: http://localhost:11434/v1
-      - key: OLLAMA_MODEL
-        value: qwen3:1.7b
+      - key: PORT
+        value: "10000"
