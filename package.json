@@ -1,0 +1,13 @@
+{
+  "name": "portfolio-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && pnpm dev",
+    "build": "cd frontend && pnpm build",
+    "start": "cd frontend && pnpm start"
+  },
+  "dependencies": {
+    "next": "15.5.18"
+  }
+}
