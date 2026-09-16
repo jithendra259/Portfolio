@@ -63,7 +63,8 @@ export function ViewController({ appConfig }: ViewControllerProps) {
     }
   }, [isConnected, session, start]);
 
-  const isHUDVisible = isConnected && viewMode === 'docked';
+  const isConnecting = session.connectionState === 'connecting';
+  const isHUDVisible = (isConnected || isConnecting) && viewMode === 'docked';
 
   return (
     <div className="relative w-full min-h-screen">
@@ -71,6 +72,8 @@ export function ViewController({ appConfig }: ViewControllerProps) {
       <WelcomeView
         startButtonText={appConfig.startButtonText}
         onStartCall={handleStartCall}
+        isConnected={isConnected}
+        isConnecting={isConnecting}
       />
 
       {/* Floating Live Voice HUD */}

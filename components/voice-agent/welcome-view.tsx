@@ -6,15 +6,21 @@ import { LandingPage } from '@/components/sections/landingpage';
 interface WelcomeViewProps {
   startButtonText?: string;
   onStartCall: () => void;
+  isConnected?: boolean;
+  isConnecting?: boolean;
 }
 
 export const WelcomeView = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & WelcomeViewProps
->(({ onStartCall, startButtonText, ...props }, ref) => {
+>(({ onStartCall, startButtonText, isConnected, isConnecting, ...props }, ref) => {
   return (
     <div ref={ref} {...props} className="w-full">
-      <LandingPage onStartCall={onStartCall} />
+      <LandingPage
+        onStartCall={onStartCall}
+        isConnected={isConnected}
+        isConnecting={isConnecting}
+      />
     </div>
   );
 });

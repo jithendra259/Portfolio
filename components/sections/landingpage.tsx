@@ -10,6 +10,7 @@ import { DotPattern } from '@/components/ui/effects/dot-pattern';
 import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
+import { cn } from '@/lib/utils';
 import { RobotCanvas } from '@/components/ui/widgets/robot-hero';
 import { CareerEducationTimeline } from '@/components/sections/career-education-timeline';
 import { SkillsCardsStack } from '@/components/sections/skills-cards-stack';
@@ -51,10 +52,13 @@ import {
   Activity,
   Network,
   GitBranch,
+  Loader2,
 } from 'lucide-react';
 
 interface LandingPageProps {
   onStartCall?: () => void;
+  isConnected?: boolean;
+  isConnecting?: boolean;
 }
 
 const techLogos = [
@@ -308,7 +312,11 @@ const paperCaseStudyMap: Record<number, string> = {
   2: '/projects/supervisory-portfolio-xai-governance',
 };
 
-export function LandingPage({ onStartCall }: LandingPageProps) {
+export function LandingPage({
+  onStartCall,
+  isConnected = false,
+  isConnecting = false,
+}: LandingPageProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [viewerPdf, setViewerPdf] = useState<{ url: string; title: string; subtitle?: string } | null>(null);
   const heroRef = React.useRef<HTMLElement>(null);
@@ -369,7 +377,11 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
       )}
 
       {/* Top Glassy Navbar (Root-Level Fixed z-[100]) */}
-      <Navbar onStartCall={onStartCall} />
+      <Navbar
+        onStartCall={onStartCall}
+        isConnected={isConnected}
+        isConnecting={isConnecting}
+      />
 
       {/* ============================================================ */}
       {/* 1. HERO SECTION */}
@@ -825,13 +837,40 @@ export function LandingPage({ onStartCall }: LandingPageProps) {
         <div className="fixed bottom-6 right-6 z-40">
           <button
             onClick={onStartCall}
-            className="group flex items-center gap-3 px-5 py-3.5 rounded-full bg-white dark:bg-[#1e1e1e] hover:bg-slate-900 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black border border-slate-300 dark:border-[#3c3c3c] shadow-xl backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold"
+            disabled={isConnecting}
+            className={cn(
+              "group flex items-center gap-3 px-5 py-3.5 rounded-full border shadow-xl backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold",
+              isConnected
+                ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-rose-950/80 hover:text-rose-300 hover:border-rose-500/50"
+                : isConnecting
+                ? "bg-cyan-950/80 text-cyan-300 border-cyan-500/50 cursor-wait"
+                : "bg-white dark:bg-[#1e1e1e] hover:bg-slate-900 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black border-slate-300 dark:border-[#3c3c3c]"
+            )}
           >
-            <div className="size-3 rounded-full bg-slate-900 dark:bg-white group-hover:bg-white dark:group-hover:bg-black animate-ping" />
-            <Mic className="size-4" />
-            <span className="text-xs font-mono uppercase tracking-wider">
-              Talk with Voice AI
-            </span>
+            {isConnecting ? (
+              <>
+                <Loader2 className="size-4 animate-spin text-cyan-400" />
+                <span className="text-xs font-mono uppercase tracking-wider text-cyan-300">
+                  Connecting to AI...
+                </span>
+              </>
+            ) : isConnected ? (
+              <>
+                <div className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
+                <Mic className="size-4 text-emerald-400" />
+                <span className="text-xs font-mono uppercase tracking-wider">
+                  AI Active (End Call)
+                </span>
+              </>
+            ) : (
+              <>
+                <div className="size-3 rounded-full bg-slate-900 dark:bg-white group-hover:bg-white dark:group-hover:bg-black animate-ping" />
+                <Mic className="size-4" />
+                <span className="text-xs font-mono uppercase tracking-wider">
+                  Talk with Voice AI
+                </span>
+              </>
+            )}
           </button>
         </div>
       )}
