@@ -301,25 +301,8 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
     };
   }, [room, navigateTo]);
 
-  // 2. Real-time Speech Transcript Analyzer (Both User and Agent messages)
-  useEffect(() => {
-    if (!messages || messages.length === 0) return;
-
-    const latestMessage = messages[messages.length - 1];
-    if (!latestMessage) return;
-
-    const msgId = (latestMessage as any).id || `${(latestMessage as any).timestamp}-${(latestMessage as any).message}`;
-    if (msgId === lastProcessedMsgId.current) return;
-    lastProcessedMsgId.current = msgId;
-
-    const textContent = (latestMessage as any).message || (latestMessage as any).text;
-    if (typeof textContent === 'string' && textContent.length > 2) {
-      const matched = matchSpeechIntent(textContent);
-      if (matched) {
-        navigateTo(matched, 'speech_intent');
-      }
-    }
-  }, [messages, navigateTo]);
+  // 2. Navigation is controlled strictly by the Python backend via LiveKit DataChannel ('topic: navigation')
+  // No client-side keyword heuristic parsing so the backend LLM tool decides when to navigate.
 
   return {
     activeTarget,

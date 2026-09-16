@@ -186,7 +186,7 @@ async function callGemini(
   apiKey: string,
   contents: any[]
 ): Promise<{ text: string; navigationTarget?: string } | null> {
-  const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+  const models = ['gemini-2.5-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
 
   for (const model of models) {
     try {

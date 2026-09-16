@@ -145,13 +145,21 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
         ],
     ) -> str:
         """Navigates the user's browser to the requested section or case study."""
-        if self.room and hasattr(self.room, "local_participant") and self.room.local_participant:
+        print(f"--> [Backend AI Tool] Navigating frontend to: {target}")
+        room = getattr(self, "room", None)
+        if not room and hasattr(self, "session") and self.session and hasattr(self.session, "room_io") and self.session.room_io:
+            room = getattr(self.session.room_io, "room", None)
+
+        if room and hasattr(room, "local_participant") and room.local_participant:
             try:
                 payload = json.dumps({"type": "navigate", "target": target})
-                await self.room.local_participant.publish_data(payload.encode("utf-8"), topic="navigation")
+                await room.local_participant.publish_data(payload.encode("utf-8"), topic="navigation")
+                print(f"--> [Backend Data Channel] Published navigation packet for '{target}' successfully.")
                 return f"Successfully navigated screen to {target}."
             except Exception as e:
+                print(f"--> [Backend Error] Failed to publish navigation packet: {e}")
                 return f"Attempted navigation to {target}: {e}"
+        print(f"--> [Backend Warning] No active room participant found to publish navigation.")
         return f"Navigation requested for {target}."
 
 

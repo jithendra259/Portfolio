@@ -124,7 +124,7 @@ class handler(BaseHTTPRequestHandler):
             # If GOOGLE_API_KEY is available in Vercel environment variables, query Gemini
             if google_api_key:
                 try:
-                    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={google_api_key}"
+                    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={google_api_key}"
                     prompt_data = {
                         "contents": [
                             {

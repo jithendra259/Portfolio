@@ -60,15 +60,24 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   // Activate real-time voice-driven auto navigation
   const { activeTarget, navigateTo } = useVoiceAutoNavigation(session, messages);
 
-  const handleStartCall = React.useCallback(() => {
+  const handleStartCall = React.useCallback(async () => {
+    if (isConnected) {
+      session.end();
+      return;
+    }
     if (webVoice.isActive) {
       webVoice.stopSession();
       return;
     }
 
-    // Start in-browser voice assistant (runs cleanly on Vercel & mobile without LiveKit mic lock)
-    webVoice.startSession();
-  }, [webVoice]);
+    // Connect to Python LiveKit backend worker
+    try {
+      await start();
+    } catch (error) {
+      console.warn('Failed to connect to LiveKit backend, falling back to in-browser assistant:', error);
+      webVoice.startSession();
+    }
+  }, [isConnected, session, start, webVoice]);
 
   const isHUDVisible = (isConnected || webVoice.isActive) && viewMode === 'docked';
 
