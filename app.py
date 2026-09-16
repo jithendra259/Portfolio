@@ -193,7 +193,7 @@ print("--> [Pre-warm] Initializing Silero VAD, Deepgram STT, Cartesia TTS, Gemin
 try:
     GLOBAL_VAD = silero.VAD.load(
         min_speech_duration=0.05,
-        min_silence_duration=0.18,
+        min_silence_duration=0.25,
         prefix_padding_duration=0.08,
     )
     print("--> [Pre-warm] Silero VAD pre-warmed successfully.")
@@ -291,7 +291,7 @@ async def my_agent(ctx: agents.JobContext):
     # 2. Use pre-warmed models with zero overhead
     vad_to_use = GLOBAL_VAD if GLOBAL_VAD else silero.VAD.load(
         min_speech_duration=0.05,
-        min_silence_duration=0.18,
+        min_silence_duration=0.25,
         prefix_padding_duration=0.08,
     )
 
