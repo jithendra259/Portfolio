@@ -1,0 +1,10 @@
+# Exclude backend entirely from Vercel deployments
+backend
+backend/**
+*.py
+requirements.txt
+Dockerfile
+render.yaml
+.env
+.env.*
+!.env.example
