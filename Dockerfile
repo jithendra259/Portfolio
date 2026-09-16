@@ -15,7 +15,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Pre-download required LiveKit agent model files (e.g. Silero VAD)
-RUN python -m livekit.agents.cli download-files || true
+RUN python -m livekit.agents download-files || python app.py download-files || true
 
 # Copy application source
 COPY app.py .
