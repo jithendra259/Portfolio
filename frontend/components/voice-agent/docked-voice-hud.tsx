@@ -13,18 +13,6 @@ interface DockedVoiceHUDProps {
   onManualNavigate: (target: NavigationTarget) => void;
   className?: string;
   messages?: any[];
-  webVoice?: {
-    isActive: boolean;
-    isListening: boolean;
-    isSpeaking: boolean;
-    isThinking: boolean;
-    isMuted: boolean;
-    lastSpeaker: 'user' | 'agent' | null;
-    transcript: string;
-    stopSession: () => void;
-    toggleMic: () => void;
-    sendUserMessage: (text: string) => Promise<void>;
-  };
 }
 
 export function DockedVoiceHUD({
@@ -33,30 +21,13 @@ export function DockedVoiceHUD({
   onManualNavigate,
   className,
   messages,
-  webVoice,
 }: DockedVoiceHUDProps) {
   const session = useSessionContext();
   const { state: agentState } = useAgent();
   const [isMuted, setIsMuted] = useState(false);
 
-  const isWebMode = !!webVoice?.isActive;
-
-  const agentStateEffective = isWebMode
-    ? webVoice.isSpeaking
-      ? 'speaking'
-      : webVoice.isThinking
-      ? 'thinking'
-      : webVoice.isListening
-      ? 'listening'
-      : 'listening'
-    : agentState;
-
   // Toggle local mic
   const handleToggleMic = async () => {
-    if (isWebMode && webVoice) {
-      webVoice.toggleMic();
-      return;
-    }
     if (session?.room?.localParticipant) {
       const currentEnabled = session.room.localParticipant.isMicrophoneEnabled;
       await session.room.localParticipant.setMicrophoneEnabled(!currentEnabled);
@@ -66,25 +37,17 @@ export function DockedVoiceHUD({
 
   // Disconnect call
   const handleEndCall = () => {
-    if (isWebMode && webVoice) {
-      webVoice.stopSession();
-    }
     if (session?.room) {
       session.room.disconnect();
     }
   };
 
-  const isMutedEffective = isWebMode && webVoice ? webVoice.isMuted : isMuted;
-
   const msgList = messages ?? [];
   const latestMessage = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-  const latestLiveKitText = latestMessage
+  const latestText = latestMessage
     ? (latestMessage as any).message || (latestMessage as any).text || ''
     : '';
-  const isLiveKitAgent = latestMessage ? (latestMessage as any).from?.isLocal === false : false;
-
-  const latestText = isWebMode && webVoice ? webVoice.transcript : latestLiveKitText;
-  const isAgentMessage = isWebMode && webVoice ? webVoice.lastSpeaker === 'agent' : isLiveKitAgent;
+  const isAgentMessage = latestMessage ? (latestMessage as any).from?.isLocal === false : false;
 
   const currentMeta = activeTarget ? NAVIGATION_TARGETS[activeTarget] : null;
 
@@ -132,32 +95,30 @@ export function DockedVoiceHUD({
                 <span
                   className={cn(
                     'text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold border',
-                    agentStateEffective === 'speaking'
+                    agentState === 'speaking'
                       ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                      : agentStateEffective === 'thinking'
+                      : agentState === 'thinking'
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : agentStateEffective === 'listening'
+                      : agentState === 'listening'
                       ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                      : agentStateEffective === 'failed'
+                      : agentState === 'failed'
                       ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                       : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
                   )}
                 >
-                  {agentStateEffective === 'speaking'
+                  {agentState === 'speaking'
                     ? 'Speaking'
-                    : agentStateEffective === 'thinking'
+                    : agentState === 'thinking'
                     ? 'Thinking'
-                    : agentStateEffective === 'listening'
+                    : agentState === 'listening'
                     ? 'Listening'
-                    : agentStateEffective === 'failed'
+                    : agentState === 'failed'
                     ? 'Offline'
                     : 'Connecting...'}
                 </span>
-                {isWebMode && (
-                  <span className="hidden xs:inline-block text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">
-                    GEMINI
-                  </span>
-                )}
+                <span className="hidden xs:inline-block text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
+                  LIVEKIT LIVE
+                </span>
               </div>
 
               {/* Navigation badge */}
@@ -177,10 +138,10 @@ export function DockedVoiceHUD({
                 key={i}
                 className={cn(
                   'w-1 rounded-full bg-cyan-400 transition-all duration-150',
-                  agentStateEffective === 'speaking' ? 'animate-pulse' : 'opacity-40'
+                  agentState === 'speaking' ? 'animate-pulse' : 'opacity-40'
                 )}
                 style={{
-                  height: agentStateEffective === 'speaking' ? `${h * 0.25}px` : '4px',
+                  height: agentState === 'speaking' ? `${h * 0.25}px` : '4px',
                   animationDelay: `${i * 120}ms`,
                 }}
               />
@@ -195,14 +156,14 @@ export function DockedVoiceHUD({
               onClick={handleToggleMic}
               className={cn(
                 'p-2 rounded-xl border transition-all cursor-pointer',
-                isMutedEffective
+                isMuted
                   ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
                   : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
               )}
-              title={isMutedEffective ? 'Unmute Microphone' : 'Mute Microphone'}
+              title={isMuted ? 'Unmute Microphone' : 'Mute Microphone'}
               aria-label="Toggle Microphone"
             >
-              {isMutedEffective ? <MicOff className="size-4" /> : <Mic className="size-4" />}
+              {isMuted ? <MicOff className="size-4" /> : <Mic className="size-4" />}
             </button>
 
             {/* Expand Fullscreen */}
