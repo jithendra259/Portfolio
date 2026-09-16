@@ -177,123 +177,135 @@ server = AgentServer(
 )
 
 # ============================================================
+# ============================================================
+# PRE-WARMED SINGLETONS FOR INSTANT CONNECTION (<50ms)
+# ============================================================
+
+print("--> [Pre-warm] Initializing Silero VAD, Deepgram STT, Cartesia TTS, Gemini LLM...")
+
+# Silero VAD loaded once at startup so sessions connect with 0ms model load time
+try:
+    GLOBAL_VAD = silero.VAD.load(
+        min_speech_duration=0.05,
+        min_silence_duration=0.18,
+        prefix_padding_duration=0.08,
+    )
+    print("--> [Pre-warm] Silero VAD pre-warmed successfully.")
+except Exception as e:
+    print(f"--> [Pre-warm Error] Silero VAD: {e}")
+    GLOBAL_VAD = None
+
+# STT: Deepgram Nova-3 zero-delay streaming
+if os.getenv("DEEPGRAM_API_KEY"):
+    GLOBAL_STT = deepgram.STT(
+        model="nova-3",
+        endpointing_ms=25,
+        no_delay=True,
+        smart_format=True,
+    )
+    print("--> [Pre-warm] Deepgram Nova-3 active.")
+else:
+    GLOBAL_STT = GeminiSTT()
+    print("--> [Pre-warm] GeminiSTT active.")
+
+# TTS: Cartesia Sonic-3 sub-150ms voice
+if os.getenv("CARTESIA_API_KEY"):
+    GLOBAL_TTS = cartesia.TTS(
+        model="sonic-3",
+        voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
+        language="en",
+        speed=1.05,
+    )
+    print("--> [Pre-warm] Cartesia Sonic-3 active.")
+else:
+    GLOBAL_TTS = GeminiTTS()
+    print("--> [Pre-warm] GeminiTTS active.")
+
+# LLM Cascade: Fast Cloud Gemini (Thinking Budget = 0)
+llm_cascade = []
+
+if os.getenv("ENABLE_OLLAMA") == "true":
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
+    try:
+        ollama_llm = openai.LLM.with_ollama(
+            model=ollama_model,
+            base_url=ollama_base_url,
+            temperature=0.3,
+        )
+        llm_cascade.append(ollama_llm)
+    except Exception:
+        pass
+
+gemini_models = [
+    "gemini-2.5-flash",       # Instantaneous token streaming with 0 thinking budget
+    "gemini-flash-latest",    # Resilient fallback
+    "gemini-3.5-flash-lite",  # Ultra-light model fallback
+]
+
+for g_model in gemini_models:
+    try:
+        g_llm = google.LLM(
+            model=g_model,
+            max_output_tokens=45,
+            temperature=0.3,
+            thinking_config={"thinking_budget": 0},
+        )
+        llm_cascade.append(g_llm)
+    except Exception as e:
+        print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
+
+if len(llm_cascade) > 1:
+    GLOBAL_LLM = llm.FallbackAdapter(
+        llm=llm_cascade,
+        attempt_timeout=2.5,
+        max_retry_per_llm=0,
+    )
+elif len(llm_cascade) == 1:
+    GLOBAL_LLM = llm_cascade[0]
+else:
+    GLOBAL_LLM = google.LLM(
+        model="gemini-2.5-flash",
+        max_output_tokens=45,
+        thinking_config={"thinking_budget": 0},
+    )
+print("--> [Pre-warm] Gemini LLM cascade ready.")
+
+
+# ============================================================
 # VOICE AGENT
 # ============================================================
 
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: agents.JobContext):
+    # 1. Connect immediately so LiveKit signals to browser that agent joined (<50ms)
+    await ctx.connect()
+    print("--> [Agent Session] Worker connected to LiveKit room immediately.")
 
-    # STT: Use Deepgram with zero endpointing latency
-    if os.getenv("DEEPGRAM_API_KEY"):
-        selected_stt = deepgram.STT(
-            model="nova-3",
-            endpointing_ms=25,
-            no_delay=True,
-            smart_format=True,
-        )
-        print("--> [STT Config] Active: Deepgram Nova-3 (Zero-Delay Streaming Speech-to-Text)")
-    else:
-        selected_stt = GeminiSTT()
-        print("--> [STT Config] Active: GeminiSTT (Fallback Speech-to-Text)")
-
-    # TTS: Use Cartesia Sonic-3 for sub-150ms voice generation
-    if os.getenv("CARTESIA_API_KEY"):
-        selected_tts = cartesia.TTS(
-            model="sonic-3",
-            voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
-            language="en",
-            speed=1.05,
-        )
-        print("--> [TTS Config] Active: Cartesia Sonic-3 (Sub-150ms Text-to-Speech)")
-    else:
-        selected_tts = GeminiTTS()
-        print("--> [TTS Config] Active: GeminiTTS (Fallback Text-to-Speech)")
-
-    # ========================================================
-    # LLM CASCADE: Ultra-Fast Cloud Gemini (Thinking Budget = 0)
-    # ========================================================
-    llm_cascade = []
-
-    # Optional local Ollama (only if actively responding locally in <0.2s)
-    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
-    try:
-        import urllib.request
-        ping_req = urllib.request.Request(f"{ollama_base_url}/models", method="GET")
-        with urllib.request.urlopen(ping_req, timeout=0.2):
-            ollama_llm = openai.LLM.with_ollama(
-                model=ollama_model,
-                base_url=ollama_base_url,
-                temperature=0.3,
-            )
-            llm_cascade.append(ollama_llm)
-            print(f"--> [LLM Config] Local Ollama ({ollama_model}) active.")
-    except Exception:
-        pass
-
-    # Google Gemini Models: Thinking Budget = 0 eliminates 2-4 seconds of internal reasoning delay!
-    gemini_models = [
-        "gemini-2.5-flash",       # Sub-150ms instantaneous token streaming with 0 thinking budget
-        "gemini-flash-latest",    # Fast resilient fallback
-        "gemini-3.5-flash-lite",  # Ultra-light model fallback
-    ]
-
-    for g_model in gemini_models:
-        try:
-            g_llm = google.LLM(
-                model=g_model,
-                max_output_tokens=45,
-                temperature=0.3,
-                thinking_config={"thinking_budget": 0},
-            )
-            llm_cascade.append(g_llm)
-        except Exception as e:
-            print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
-
-    # FallbackAdapter with fast 2.5-second failover
-    if len(llm_cascade) > 1:
-        selected_llm = llm.FallbackAdapter(
-            llm=llm_cascade,
-            attempt_timeout=2.5,
-            max_retry_per_llm=0,
-        )
-    elif len(llm_cascade) == 1:
-        selected_llm = llm_cascade[0]
-    else:
-        selected_llm = google.LLM(
-            model="gemini-2.5-flash",
-            max_output_tokens=45,
-            thinking_config={"thinking_budget": 0},
-        )
-
-    # Silero VAD tuned for instantaneous turn-taking (180ms silence detection)
-    selected_vad = silero.VAD.load(
+    # 2. Use pre-warmed models with zero overhead
+    vad_to_use = GLOBAL_VAD if GLOBAL_VAD else silero.VAD.load(
         min_speech_duration=0.05,
         min_silence_duration=0.18,
         prefix_padding_duration=0.08,
     )
 
     session = AgentSession(
-        stt=selected_stt,
-        vad=selected_vad,
-        llm=selected_llm,
-        tts=selected_tts,
+        stt=GLOBAL_STT,
+        vad=vad_to_use,
+        llm=GLOBAL_LLM,
+        tts=GLOBAL_TTS,
         turn_handling=TurnHandlingOptions(
             allow_interruptions=True,
         ),
     )
 
-    # Start session immediately without CPU-heavy neural audio enhancers
+    # 3. Start session with Assistant tool caller
     await session.start(
         room=ctx.room,
         agent=Assistant(room=ctx.room),
     )
 
-
-    # ========================================================
-    # INITIAL GREETING - Zero LLM tokens, instant Cartesia TTS
-    # ========================================================
-
+    # 4. Instant Greeting via Cartesia Sonic-3
     await session.say(
         "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
         allow_interruptions=True,
