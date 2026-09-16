@@ -3,7 +3,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
 from livekit.agents import llm, stt, tts, inference, vad
-from livekit.plugins import cartesia, deepgram, google, silero, openai
+from livekit.plugins import cartesia, deepgram, google, silero
+try:
+    from livekit.plugins import openai
+except Exception:
+    openai = None
+
 try:
     from livekit.plugins import ai_coustics
     HAS_AI_COUSTICS = True
