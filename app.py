@@ -1,3 +1,4 @@
+import asyncio
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -311,10 +312,36 @@ async def my_agent(ctx: agents.JobContext):
     )
 
     # 4. Instant Greeting via Cartesia Sonic-3
-    await session.say(
-        "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
-        allow_interruptions=True,
+    try:
+        await session.say(
+            "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
+            allow_interruptions=True,
+        )
+    except Exception as e:
+        print(f"--> [Agent Greeting Warning] {e}")
+
+    # 5. Keep the agent alive for the entire conversation lifetime
+    disconnected_fut = asyncio.Future()
+
+    @ctx.room.on("disconnected")
+    def on_room_disconnected(*args):
+        if not disconnected_fut.done():
+            disconnected_fut.set_result(None)
+
+    @ctx.room.on("participant_disconnected")
+    def on_participant_disconnected(participant):
+        # End session when all human participants leave the room
+        if len(ctx.room.remote_participants) == 0:
+            print("--> [Agent Session] Remote participants left room, ending session.")
+            if not disconnected_fut.done():
+                disconnected_fut.set_result(None)
+
+    ctx.add_shutdown_callback(
+        lambda: disconnected_fut.done() or disconnected_fut.set_result(None)
     )
+
+    await disconnected_fut
+    print("--> [Agent Session] Session ended cleanly.")
 
 
 # ============================================================
