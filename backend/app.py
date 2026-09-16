@@ -122,12 +122,12 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 - Target destinations: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'.
 - If the visitor wants to meet or collaborate, tell them they can pick a 30-minute slot right here and sync it directly to Google Calendar.
 
-9. VOICE RESPONSE STYLE (STRICT MINIMAL TOKEN POLICY):
-- Keep EVERY response strictly to 1 or 2 concise, conversational sentences (under 25 words total).
-- Speak smoothly, warmly, and directly.
-- NEVER list bullet points, recite mathematical formulas, or give lengthy monologues.
-- When asked about research, projects, or credentials, provide a single punchy summary sentence and ALWAYS navigate the visitor's screen to that section for complete details.
-- Never use markdown symbols (no asterisks, no hashes, no raw bullet points) in speech.
+9. STRICT MINIMAL TOKEN & CONCISE VOICE POLICY (COST & LATENCY OPTIMIZATION):
+- Ultra-concise responses only: Answer in exactly 1 single brief sentence (strictly under 15 words).
+- NEVER give long explanations, bullet points, formula derivations, or monologues.
+- ALWAYS call `navigate_portfolio` to guide the visitor's screen to the requested section instead of explaining it vocally.
+- Every word spoken costs API tokens and audio synthesis time. Be punchy, polite, and direct.
+- Never use markdown formatting (no asterisks, hashes, or bullet points) in speech.
 """
         )
 
@@ -227,7 +227,7 @@ def build_tts():
     return GeminiTTS()
 
 def build_llm():
-    """Gemini 3.5 Flash Lite with fallback cascade and valid gRPC deadlines"""
+    """Gemini 3.5 Flash Lite with fallback cascade, zero thinking budget, and strict token limits"""
     api_key = get_clean_google_api_key()
     if not api_key:
         print("--> [LLM CRITICAL] GOOGLE_API_KEY environment variable is NOT set!")
@@ -236,14 +236,15 @@ def build_llm():
         print(f"--> [LLM CRITICAL] Invalid GOOGLE_API_KEY format (starts with '{prefix}...'). Google AI Studio Gemini API keys must start with 'AIzaSy'. Please generate a key at https://aistudio.google.com/app/apikey and update GOOGLE_API_KEY in Render dashboard.")
 
     models = []
-    # Primary: Gemini 3.5 Flash Lite (active quota, fast TTFT)
+    # Primary: Gemini 3.5 Flash Lite (0 thinking tokens, 50 max output tokens for lowest cost & fastest TTFT)
     try:
         models.append(
             google.LLM(
                 model="gemini-3.5-flash-lite",
                 api_key=api_key or None,
-                max_output_tokens=120,
-                temperature=0.3,
+                max_output_tokens=50,
+                temperature=0.2,
+                thinking_config={"thinking_budget": 0},
             )
         )
     except Exception as e:
@@ -256,8 +257,9 @@ def build_llm():
                 google.LLM(
                     model=fb,
                     api_key=api_key or None,
-                    max_output_tokens=120,
-                    temperature=0.3,
+                    max_output_tokens=50,
+                    temperature=0.2,
+                    thinking_config={"thinking_budget": 0},
                 )
             )
         except Exception:
@@ -271,7 +273,13 @@ def build_llm():
         )
     elif len(models) == 1:
         return models[0]
-    return google.LLM(model="gemini-3.5-flash-lite", api_key=api_key or None, max_output_tokens=120)
+    return google.LLM(
+        model="gemini-3.5-flash-lite",
+        api_key=api_key or None,
+        max_output_tokens=50,
+        temperature=0.2,
+        thinking_config={"thinking_budget": 0},
+    )
 
 def create_session(ctx: agents.JobContext | None = None):
     """Modular session builder binding STT, VAD, LLM, and TTS to active job"""
