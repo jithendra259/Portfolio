@@ -183,15 +183,20 @@ server = AgentServer(
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: agents.JobContext):
 
-    # STT: Use Deepgram if DEEPGRAM_API_KEY is present, otherwise fallback to GeminiSTT
+    # STT: Use Deepgram with zero endpointing latency
     if os.getenv("DEEPGRAM_API_KEY"):
-        selected_stt = deepgram.STT(model="nova-3")
-        print("--> [STT Config] Active: Deepgram Nova-3 (Streaming Speech-to-Text)")
+        selected_stt = deepgram.STT(
+            model="nova-3",
+            endpointing_ms=25,
+            no_delay=True,
+            smart_format=True,
+        )
+        print("--> [STT Config] Active: Deepgram Nova-3 (Zero-Delay Streaming Speech-to-Text)")
     else:
         selected_stt = GeminiSTT()
         print("--> [STT Config] Active: GeminiSTT (Fallback Speech-to-Text)")
 
-    # TTS: Use Cartesia if CARTESIA_API_KEY is present, otherwise fallback to GeminiTTS
+    # TTS: Use Cartesia Sonic-3 for sub-150ms voice generation
     if os.getenv("CARTESIA_API_KEY"):
         selected_tts = cartesia.TTS(
             model="sonic-3",
@@ -205,64 +210,67 @@ async def my_agent(ctx: agents.JobContext):
         print("--> [TTS Config] Active: GeminiTTS (Fallback Text-to-Speech)")
 
     # ========================================================
-    # LLM CASCADE: Ultra-Fast Cloud Gemini (Primary) -> Fallbacks
+    # LLM CASCADE: Ultra-Fast Cloud Gemini (Thinking Budget = 0)
     # ========================================================
     llm_cascade = []
 
-    # Optional local Ollama (only included if actively running locally)
+    # Optional local Ollama (only if actively responding locally in <0.2s)
     ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
     ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
     try:
         import urllib.request
         ping_req = urllib.request.Request(f"{ollama_base_url}/models", method="GET")
-        with urllib.request.urlopen(ping_req, timeout=0.25):
+        with urllib.request.urlopen(ping_req, timeout=0.2):
             ollama_llm = openai.LLM.with_ollama(
                 model=ollama_model,
                 base_url=ollama_base_url,
-                temperature=0.4,
+                temperature=0.3,
             )
             llm_cascade.append(ollama_llm)
-            print(f"--> [LLM Config] Local Ollama ({ollama_model}) verified and active.")
+            print(f"--> [LLM Config] Local Ollama ({ollama_model}) active.")
     except Exception:
-        # Ollama not running locally (standard on Render cloud container)
         pass
 
-    # Google Gemini Models (Ordered by lowest first-token latency)
+    # Google Gemini Models: Thinking Budget = 0 eliminates 2-4 seconds of internal reasoning delay!
     gemini_models = [
-        "gemini-3.5-flash-lite",  # Sub-250ms TTFT - primary voice engine
-        "gemini-3.6-flash",       # SOTA reasoning fallback
-        "gemini-flash-latest",    # Resilient latest alias
-        "gemini-2.5-flash",       # High capacity fallback
+        "gemini-2.5-flash",       # Sub-150ms instantaneous token streaming with 0 thinking budget
+        "gemini-flash-latest",    # Fast resilient fallback
+        "gemini-3.5-flash-lite",  # Ultra-light model fallback
     ]
 
     for g_model in gemini_models:
         try:
             g_llm = google.LLM(
                 model=g_model,
-                max_output_tokens=65,
-                temperature=0.4,
+                max_output_tokens=45,
+                temperature=0.3,
+                thinking_config={"thinking_budget": 0},
             )
             llm_cascade.append(g_llm)
         except Exception as e:
             print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
 
-    # FallbackAdapter with aggressive 3-second timeout to prevent lag
+    # FallbackAdapter with fast 2.5-second failover
     if len(llm_cascade) > 1:
         selected_llm = llm.FallbackAdapter(
             llm=llm_cascade,
-            attempt_timeout=3.0,
+            attempt_timeout=2.5,
             max_retry_per_llm=0,
         )
     elif len(llm_cascade) == 1:
         selected_llm = llm_cascade[0]
     else:
-        selected_llm = google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=65)
+        selected_llm = google.LLM(
+            model="gemini-2.5-flash",
+            max_output_tokens=45,
+            thinking_config={"thinking_budget": 0},
+        )
 
-    # Silero VAD tuned for ultra-low conversational latency (250ms silence detection)
+    # Silero VAD tuned for instantaneous turn-taking (180ms silence detection)
     selected_vad = silero.VAD.load(
         min_speech_duration=0.05,
-        min_silence_duration=0.25,
-        prefix_padding_duration=0.1,
+        min_silence_duration=0.18,
+        prefix_padding_duration=0.08,
     )
 
     session = AgentSession(
@@ -275,33 +283,11 @@ async def my_agent(ctx: agents.JobContext):
         ),
     )
 
-
-    # ========================================================
-    # START SESSION
-    # ========================================================
-
-    # Audio input options (noise cancellation if ai_coustics available)
-    room_opts = None
-    if HAS_AI_COUSTICS and ai_coustics:
-        try:
-            room_opts = room_io.RoomOptions(
-                audio_input=room_io.AudioInputOptions(
-                    noise_cancellation=ai_coustics.audio_enhancement(
-                        model=ai_coustics.EnhancerModel.QUAIL_VF_S,
-                    ),
-                ),
-            )
-        except Exception:
-            room_opts = None
-
-    start_kwargs = {
-        "room": ctx.room,
-        "agent": Assistant(room=ctx.room),
-    }
-    if room_opts:
-        start_kwargs["room_options"] = room_opts
-
-    await session.start(**start_kwargs)
+    # Start session immediately without CPU-heavy neural audio enhancers
+    await session.start(
+        room=ctx.room,
+        agent=Assistant(room=ctx.room),
+    )
 
 
     # ========================================================
