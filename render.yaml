@@ -1,11 +1,11 @@
 services:
-  - type: worker
-    name: livekit-voice-agent
-    env: python
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt && python -m livekit.agents.cli download-files
-    startCommand: python app.py start
+  - type: web
+    name: portfolio-backend
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
     autoDeploy: true
+    plan: free
     envVars:
       - key: LIVEKIT_URL
         sync: false
@@ -19,3 +19,5 @@ services:
         sync: false
       - key: CARTESIA_API_KEY
         sync: false
+      - key: PORT
+        value: "10000"

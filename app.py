@@ -299,8 +299,50 @@ async def my_agent(ctx: agents.JobContext):
 
 
 # ============================================================
+# HTTP HEALTH CHECK SERVER (For Render Web Service deployment)
+# ============================================================
+
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class RenderHealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        status_info = {
+            "status": "healthy",
+            "service": "portfolio-backend-livekit",
+            "agent_name": "my-agent",
+            "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
+            "cartesia_configured": bool(os.getenv("CARTESIA_API_KEY")),
+            "deepgram_configured": bool(os.getenv("DEEPGRAM_API_KEY")),
+            "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
+        }
+        self.wfile.write(json.dumps(status_info, indent=2).encode("utf-8"))
+
+    def log_message(self, format, *args):
+        # Suppress noisy health-check polling logs
+        return
+
+def run_health_server():
+    port = int(os.getenv("PORT", "10000"))
+    try:
+        httpd = HTTPServer(("0.0.0.0", port), RenderHealthHandler)
+        print(f"--> [Render HTTP Health Check] Successfully bound to 0.0.0.0:{port}")
+        httpd.serve_forever()
+    except Exception as err:
+        print(f"--> [Render HTTP Warning] Could not start health server on port {port}: {err}")
+
+# Launch HTTP health server in background thread so Render marks service active & passes checks
+health_thread = threading.Thread(target=run_health_server, daemon=True)
+health_thread.start()
+
+
+# ============================================================
 # RUN
 # ============================================================
 
 if __name__ == "__main__":
-    agents.cli.run_app(server)
+    agents.cli.run_app(server)
