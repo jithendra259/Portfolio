@@ -5,18 +5,6 @@ from dotenv import load_dotenv
 from livekit import agents
 from livekit.agents import llm, stt, tts, inference, vad
 from livekit.plugins import cartesia, deepgram, google, silero
-try:
-    from livekit.plugins import openai
-except Exception:
-    openai = None
-
-try:
-    from livekit.plugins import ai_coustics
-    HAS_AI_COUSTICS = True
-except Exception as e:
-    ai_coustics = None
-    HAS_AI_COUSTICS = False
-
 from livekit.plugins.google.beta import GeminiSTT, GeminiTTS
 from livekit.agents import (
     Agent,
@@ -175,11 +163,34 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 # LIVEKIT SERVER
 # ============================================================
 
+def get_clean_google_api_key() -> str:
+    raw = os.getenv("GOOGLE_API_KEY", "")
+    return raw.strip("\"' \t\r\n")
+
+def prewarm(proc: agents.JobProcess):
+    """Prewarm heavy models during worker startup to prevent event loop blocking on call connect."""
+    try:
+        proc.userdata["vad"] = silero.VAD.load(
+            min_speech_duration=0.05,
+            min_silence_duration=0.25,
+            prefix_padding_duration=0.08,
+        )
+        print("--> [Prewarm] Silero VAD loaded successfully.")
+    except Exception as e:
+        print(f"--> [Prewarm Warning] Failed to prewarm Silero VAD: {e}")
+
+    try:
+        proc.userdata["llm"] = build_llm()
+        print("--> [Prewarm] Google LLM initialized successfully.")
+    except Exception as e:
+        print(f"--> [Prewarm Warning] Failed to prewarm Google LLM: {e}")
+
 server = AgentServer(
     load_threshold=float("inf"),
     load_fnc=lambda *args: 0.0,
     num_idle_processes=0,
     job_executor_type=agents.JobExecutorType.THREAD,
+    setup_fnc=prewarm,
 )
 
 # ============================================================
@@ -217,12 +228,20 @@ def build_tts():
 
 def build_llm():
     """Gemini 3.5 Flash Lite with fallback cascade and valid gRPC deadlines"""
+    api_key = get_clean_google_api_key()
+    if not api_key:
+        print("--> [LLM CRITICAL] GOOGLE_API_KEY environment variable is NOT set!")
+    elif not api_key.startswith("AIzaSy"):
+        prefix = api_key[:6] if len(api_key) >= 6 else api_key
+        print(f"--> [LLM CRITICAL] Invalid GOOGLE_API_KEY format (starts with '{prefix}...'). Google AI Studio Gemini API keys must start with 'AIzaSy'. Please generate a key at https://aistudio.google.com/app/apikey and update GOOGLE_API_KEY in Render dashboard.")
+
     models = []
     # Primary: Gemini 3.5 Flash Lite (active quota, fast TTFT)
     try:
         models.append(
             google.LLM(
                 model="gemini-3.5-flash-lite",
+                api_key=api_key or None,
                 max_output_tokens=120,
                 temperature=0.3,
             )
@@ -236,6 +255,7 @@ def build_llm():
             models.append(
                 google.LLM(
                     model=fb,
+                    api_key=api_key or None,
                     max_output_tokens=120,
                     temperature=0.3,
                 )
@@ -251,14 +271,20 @@ def build_llm():
         )
     elif len(models) == 1:
         return models[0]
-    return google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=120)
+    return google.LLM(model="gemini-3.5-flash-lite", api_key=api_key or None, max_output_tokens=120)
 
-def create_session():
+def create_session(ctx: agents.JobContext | None = None):
     """Modular session builder binding STT, VAD, LLM, and TTS to active job"""
+    vad_instance = None
+    llm_instance = None
+    if ctx and hasattr(ctx, "proc") and hasattr(ctx.proc, "userdata"):
+        vad_instance = ctx.proc.userdata.get("vad")
+        llm_instance = ctx.proc.userdata.get("llm")
+
     return AgentSession(
         stt=build_stt(),
-        vad=build_vad(),
-        llm=build_llm(),
+        vad=vad_instance or build_vad(),
+        llm=llm_instance or build_llm(),
         tts=build_tts(),
         turn_handling=TurnHandlingOptions(
             allow_interruptions=True,
@@ -276,8 +302,8 @@ async def my_agent(ctx: agents.JobContext):
     await ctx.connect()
     print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Instantiate modular session inside active job context
-    session = create_session()
+    # 2. Instantiate modular session inside active job context using prewarmed components
+    session = create_session(ctx)
 
     # 3. Start session with Assistant tool caller
     assistant = Assistant(room=ctx.room)
@@ -327,14 +353,16 @@ async def my_agent(ctx: agents.JobContext):
 # ============================================================
 
 import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 class RenderHealthHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
+    def _send_cors_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
+        self.send_header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "*")
+        self.send_header("Access-Control-Max-Age", "86400")
+
+    def _get_status_payload(self) -> bytes:
         status_info = {
             "status": "healthy",
             "service": "portfolio-backend-livekit",
@@ -344,24 +372,53 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "deepgram_configured": bool(os.getenv("DEEPGRAM_API_KEY")),
             "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         }
-        self.wfile.write(json.dumps(status_info, indent=2).encode("utf-8"))
+        return json.dumps(status_info, indent=2).encode("utf-8")
+
+    def do_HEAD(self):
+        payload = self._get_status_payload()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self._send_cors_headers()
+        self.end_headers()
+
+    def do_GET(self):
+        payload = self._get_status_payload()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self._send_cors_headers()
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._send_cors_headers()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def log_message(self, format, *args):
         # Suppress noisy health-check polling logs
         return
 
-def run_health_server():
-    port = int(os.getenv("PORT", "10000"))
-    try:
-        httpd = HTTPServer(("0.0.0.0", port), RenderHealthHandler)
-        print(f"--> [Render HTTP Health Check] Successfully bound to 0.0.0.0:{port}")
-        httpd.serve_forever()
-    except Exception as err:
-        print(f"--> [Render HTTP Warning] Could not start health server on port {port}: {err}")
+_health_server_thread: threading.Thread | None = None
 
-# Launch HTTP health server in background thread so Render marks service active & passes checks
-health_thread = threading.Thread(target=run_health_server, daemon=True)
-health_thread.start()
+def start_health_server():
+    global _health_server_thread
+    if _health_server_thread is not None and _health_server_thread.is_alive():
+        return
+
+    port = int(os.getenv("PORT", "10000"))
+    def _serve():
+        try:
+            httpd = ThreadingHTTPServer(("0.0.0.0", port), RenderHealthHandler)
+            print(f"--> [Render HTTP Health Check] Successfully bound to 0.0.0.0:{port}")
+            httpd.serve_forever()
+        except Exception as err:
+            print(f"--> [Render HTTP Warning] Could not start health server on port {port}: {err}")
+
+    _health_server_thread = threading.Thread(target=_serve, daemon=True)
+    _health_server_thread.start()
 
 
 # ============================================================
@@ -369,4 +426,5 @@ health_thread.start()
 # ============================================================
 
 if __name__ == "__main__":
+    start_health_server()
     agents.cli.run_app(server)
