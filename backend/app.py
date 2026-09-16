@@ -128,11 +128,12 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 - Target destinations: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'.
 - If the visitor wants to meet or collaborate, tell them they can pick a 30-minute slot right here and sync it directly to Google Calendar.
 
-9. VOICE RESPONSE STYLE:
-- Speak naturally, warmly, conversationally, concisely, and confidently.
-- Keep standard replies under 2-3 sentences. When asked for deep technical, mathematical, or project details, provide thorough, articulate explanations.
+9. VOICE RESPONSE STYLE (STRICT MINIMAL TOKEN POLICY):
+- Keep EVERY response strictly to 1 or 2 concise, conversational sentences (under 25 words total).
+- Speak smoothly, warmly, and directly.
+- NEVER list bullet points, recite mathematical formulas, or give lengthy monologues.
+- When asked about research, projects, or credentials, provide a single punchy summary sentence and ALWAYS navigate the visitor's screen to that section for complete details.
 - Never use markdown symbols (no asterisks, no hashes, no raw bullet points) in speech.
-- Represent Jithendra accurately with high academic and engineering rigor.
 """
         )
 
@@ -194,9 +195,13 @@ async def my_agent(ctx: agents.JobContext):
     else:
         selected_tts = GeminiTTS()
 
-    # LLM: Google Gemini
-    gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-    selected_llm = google.LLM(model=gemini_model)
+    # LLM: Google Gemini - lightweight, minimal token footprint, low latency
+    gemini_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+    selected_llm = google.LLM(
+        model=gemini_model,
+        max_output_tokens=80,
+        temperature=0.5,
+    )
 
     session = AgentSession(
         stt=selected_stt,
@@ -238,19 +243,12 @@ async def my_agent(ctx: agents.JobContext):
 
 
     # ========================================================
-    # INITIAL GREETING
+    # INITIAL GREETING - Zero LLM tokens, instant Cartesia TTS
     # ========================================================
 
-    await session.generate_reply(
-
-        instructions="""
-Greet the visitor briefly.
-
-Introduce yourself as the AI voice assistant
-for this portfolio.
-
-Then ask how you can help them.
-"""
+    await session.say(
+        "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
+        allow_interruptions=True,
     )
 
 
