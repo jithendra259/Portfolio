@@ -17,14 +17,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/py/:path*',
-        destination: '/api/:path*',
-      },
-    ];
-  },
 };
 
 export default nextConfig;
