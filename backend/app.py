@@ -3,7 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
 from livekit.agents import llm, stt, tts, inference, vad
-from livekit.plugins import cartesia, deepgram, google, silero
+from livekit.plugins import cartesia, deepgram, google, silero, openai
 try:
     from livekit.plugins import ai_coustics
     HAS_AI_COUSTICS = True
@@ -195,13 +195,55 @@ async def my_agent(ctx: agents.JobContext):
     else:
         selected_tts = GeminiTTS()
 
-    # LLM: Google Gemini - lightweight, minimal token footprint, low latency
-    gemini_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
-    selected_llm = google.LLM(
-        model=gemini_model,
-        max_output_tokens=80,
-        temperature=0.5,
-    )
+    # ========================================================
+    # LLM CASCADE: 1. Local Ollama -> 2. Google Gemini (4 Fallback Models)
+    # ========================================================
+    llm_cascade = []
+
+    # 1. Primary: Local Ollama (e.g. qwen3:1.7b, mistral, llama3.1)
+    ollama_model = os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+    try:
+        ollama_llm = openai.LLM.with_ollama(
+            model=ollama_model,
+            base_url=ollama_base_url,
+            temperature=0.5,
+        )
+        llm_cascade.append(ollama_llm)
+        print(f"--> [LLM Config] Local Ollama ({ollama_model}) configured as primary LLM.")
+    except Exception as e:
+        print(f"--> [LLM Warning] Could not initialize Ollama LLM: {e}")
+
+    # 2. Fallbacks: 4 Google Gemini models in order of latency and quota
+    gemini_fallback_models = [
+        "gemini-3.5-flash-lite",  # Ultra-fast, minimal tokens, low latency
+        "gemini-3.6-flash",       # SOTA flash reasoning
+        "gemini-flash-latest",    # Resilient latest flash alias
+        "gemini-2.5-flash",       # High capability fallback
+    ]
+
+    for g_model in gemini_fallback_models:
+        try:
+            g_llm = google.LLM(
+                model=g_model,
+                max_output_tokens=80,
+                temperature=0.5,
+            )
+            llm_cascade.append(g_llm)
+        except Exception as e:
+            print(f"--> [LLM Warning] Could not configure Gemini model '{g_model}': {e}")
+
+    # Wrap in LiveKit FallbackAdapter: Ollama -> Gemini fallback 1 -> 2 -> 3 -> 4
+    if len(llm_cascade) > 1:
+        selected_llm = llm.FallbackAdapter(
+            llm=llm_cascade,
+            attempt_timeout=10.0,
+            max_retry_per_llm=0,
+        )
+    elif len(llm_cascade) == 1:
+        selected_llm = llm_cascade[0]
+    else:
+        selected_llm = google.LLM(model="gemini-3.5-flash-lite", max_output_tokens=80)
 
     session = AgentSession(
         stt=selected_stt,
