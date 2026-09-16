@@ -206,25 +206,67 @@ def build_vad():
     )
 
 def build_stt():
-    """Deepgram Nova-3 sub-second streaming STT with Gemini fallback"""
-    if os.getenv("DEEPGRAM_API_KEY"):
-        return deepgram.STT(
-            model="nova-3",
-            endpointing_ms=25,
-            smart_format=True,
-        )
-    return GeminiSTT()
+    """Deepgram Nova-3 streaming STT with Gemini fallback"""
+    google_key = get_clean_google_api_key()
+    deepgram_key = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
+
+    stt_models = []
+    if deepgram_key:
+        try:
+            stt_models.append(
+                deepgram.STT(
+                    api_key=deepgram_key,
+                    model="nova-3",
+                    endpointing_ms=25,
+                    smart_format=True,
+                )
+            )
+        except Exception as e:
+            print(f"--> [STT Warning] Could not init Deepgram STT: {e}")
+
+    if google_key:
+        try:
+            stt_models.append(GeminiSTT(api_key=google_key))
+        except Exception as e:
+            print(f"--> [STT Warning] Could not init GeminiSTT fallback: {e}")
+
+    if len(stt_models) > 1:
+        return stt.FallbackAdapter(stt_models)
+    elif len(stt_models) == 1:
+        return stt_models[0]
+    return GeminiSTT(api_key=google_key) if google_key else deepgram.STT()
 
 def build_tts():
     """Cartesia Sonic-3 neural voice with Gemini fallback"""
-    if os.getenv("CARTESIA_API_KEY"):
-        return cartesia.TTS(
-            model="sonic-3",
-            voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
-            language="en",
-            speed=1.05,
-        )
-    return GeminiTTS()
+    google_key = get_clean_google_api_key()
+    cartesia_key = os.getenv("CARTESIA_API_KEY", "").strip("\"' \t\r\n")
+
+    tts_models = []
+    if cartesia_key:
+        try:
+            tts_models.append(
+                cartesia.TTS(
+                    api_key=cartesia_key,
+                    model="sonic-3",
+                    voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
+                    language="en",
+                    speed=1.05,
+                )
+            )
+        except Exception as e:
+            print(f"--> [TTS Warning] Could not init Cartesia TTS: {e}")
+
+    if google_key:
+        try:
+            tts_models.append(GeminiTTS(api_key=google_key))
+        except Exception as e:
+            print(f"--> [TTS Warning] Could not init GeminiTTS fallback: {e}")
+
+    if len(tts_models) > 1:
+        return tts.FallbackAdapter(tts_models)
+    elif len(tts_models) == 1:
+        return tts_models[0]
+    return GeminiTTS(api_key=google_key) if google_key else cartesia.TTS()
 
 def build_llm():
     """Gemini 3.5 Flash Lite with fallback cascade, zero thinking budget, and strict token limits"""
