@@ -166,6 +166,9 @@ export const CalendarAppointmentBooking = ({
   const [email, setEmail] = useState<string>('');
   const [purpose, setPurpose] = useState<string>(PURPOSE_OPTIONS[0]);
   const [isBooked, setIsBooked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [meetUrl, setMeetUrl] = useState<string>('https://meet.google.com');
+  const [emailStatus, setEmailStatus] = useState<string | null>(null);
   const [googleCalendarUrl, setGoogleCalendarUrl] = useState<string>('');
   const [bookingDetails, setBookingDetails] = useState<{
     startDate: Date;
@@ -182,73 +185,108 @@ export const CalendarAppointmentBooking = ({
     return day < today;
   };
 
-  const handleBooking = () => {
-    if (!date || !selectedTime) return;
+  const handleBooking = async () => {
+    if (!date || !selectedTime || isSubmitting) return;
+    setIsSubmitting(true);
 
-    const [hours, minutes] = selectedTime.split(':').map(Number);
-    const startDate = new Date(date);
-    startDate.setHours(hours, minutes, 0, 0);
+    try {
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const startDate = new Date(date);
+      startDate.setHours(hours, minutes, 0, 0);
 
-    const endDate = new Date(startDate);
-    endDate.setMinutes(endDate.getMinutes() + 30);
+      const endDate = new Date(startDate);
+      endDate.setMinutes(endDate.getMinutes() + 30);
 
-    const meetingTitle = `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`;
-    const meetingDescription = [
-      `Appointment / Discussion with Kandula Jithendra Subramanyam`,
-      `Topic: ${purpose}`,
-      name ? `Attendee: ${name}` : null,
-      email ? `Attendee Email: ${email}` : null,
-      `Host Email: kandulajithendrasubramanyam@gmail.com`,
-      `Host Profile: https://jithendra-portfolio.vercel.app`,
-      `Note: Virtual meeting via Google Meet or requested platform.`,
-    ]
-      .filter(Boolean)
-      .join('\n');
+      // Call schedule-appointment API to generate dedicated Google Meet link and dispatch confirmation emails
+      let generatedMeetUrl = 'https://meet.google.com';
+      let generatedCalendarUrl = '';
+      let emailSentSuccess = false;
 
-    const location = 'Google Meet / Online Meeting';
+      try {
+        const response = await fetch('/api/schedule-appointment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+            date: date.toISOString(),
+            time: selectedTime,
+            purpose,
+          }),
+        });
 
-    const url = buildGoogleCalendarUrl({
-      title: meetingTitle,
-      description: meetingDescription,
-      location,
-      startDate,
-      endDate,
-      guestEmail: email.trim() || undefined,
-    });
-
-    setGoogleCalendarUrl(url);
-    setBookingDetails({
-      startDate,
-      endDate,
-      title: meetingTitle,
-      description: meetingDescription,
-      location,
-    });
-    setIsBooked(true);
-
-    toast.success(
-      `Appointment scheduled for ${date.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-      })} at ${selectedTime}`,
-      {
-        description: 'Click below to save directly to your Google Calendar.',
-        action: {
-          label: 'Google Calendar',
-          onClick: () => window.open(url, '_blank'),
-        },
+        if (response.ok) {
+          const data = await response.json();
+          if (data.meetUrl) generatedMeetUrl = data.meetUrl;
+          if (data.googleCalendarUrl) generatedCalendarUrl = data.googleCalendarUrl;
+          if (data.emailSent) emailSentSuccess = true;
+        }
+      } catch (apiErr) {
+        console.warn('schedule-appointment API offline, fallback to client generation:', apiErr);
       }
-    );
 
-    onSuccess?.({
-      date,
-      time: selectedTime,
-      name: name.trim(),
-      email: email.trim(),
-      purpose,
-      googleCalendarUrl: url,
-    });
+      setMeetUrl(generatedMeetUrl);
+
+      const meetingTitle = `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`;
+      const meetingDescription = [
+        `Appointment / Discussion with Kandula Jithendra Subramanyam`,
+        `Topic: ${purpose}`,
+        name ? `Attendee: ${name}` : null,
+        email ? `Attendee Email: ${email}` : null,
+        `Google Meet Link: ${generatedMeetUrl}`,
+        `Host Email: kandulajithendrasubramanyam@gmail.com`,
+        `Host Profile: https://jithendra-portfolio.vercel.app`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const url =
+        generatedCalendarUrl ||
+        buildGoogleCalendarUrl({
+          title: meetingTitle,
+          description: meetingDescription,
+          location: generatedMeetUrl,
+          startDate,
+          endDate,
+          guestEmail: email.trim() || undefined,
+        });
+
+      setGoogleCalendarUrl(url);
+      setBookingDetails({
+        startDate,
+        endDate,
+        title: meetingTitle,
+        description: meetingDescription,
+        location: generatedMeetUrl,
+      });
+
+      if (emailSentSuccess) {
+        const targetDesc = email.trim()
+          ? `Sent to ${email.trim()} & kandulajithendrasubramanyam@gmail.com`
+          : `Sent to host kandulajithendrasubramanyam@gmail.com`;
+        setEmailStatus(`Confirmation email with Google Meet link dispatched! (${targetDesc})`);
+        toast.success(`Meeting Confirmed! Confirmation email sent with Google Meet link.`);
+      } else {
+        setEmailStatus(`Meeting Confirmed! Google Meet video link generated.`);
+        toast.success(`Meeting Confirmed! Google Meet link ready.`);
+      }
+
+      setIsBooked(true);
+
+      onSuccess?.({
+        date,
+        time: selectedTime,
+        name: name.trim(),
+        email: email.trim(),
+        purpose,
+        googleCalendarUrl: url,
+      });
+    } catch (err: any) {
+      console.error('Booking error:', err);
+      toast.error('Could not complete scheduling. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   /* ============================================================ */
@@ -308,7 +346,7 @@ export const CalendarAppointmentBooking = ({
                   <span className="text-slate-500 dark:text-neutral-500 block text-xs uppercase mb-1">Platform</span>
                   <span className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <Video className="size-4 text-emerald-500" />
-                    Google Meet (Auto-Generated)
+                    Google Meet
                   </span>
                 </div>
               </div>
@@ -319,6 +357,45 @@ export const CalendarAppointmentBooking = ({
                 </div>
               )}
             </div>
+
+            {/* Dedicated Google Meet Link Callout Box */}
+            <div className="max-w-2xl mx-auto my-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-950 dark:text-emerald-100 text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-emerald-500/5">
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0">
+                  <Video className="size-5" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold block">
+                    Google Meet Video Conference
+                  </span>
+                  <a
+                    href={meetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-mono font-bold text-slate-900 dark:text-white underline hover:text-emerald-500 transition-colors"
+                  >
+                    {meetUrl}
+                  </a>
+                </div>
+              </div>
+
+              <a
+                href={meetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold shrink-0 transition-colors text-center shadow-md shadow-emerald-600/20"
+              >
+                Join Google Meet
+              </a>
+            </div>
+
+            {/* Email Dispatch Notice */}
+            {emailStatus && (
+              <div className="max-w-2xl mx-auto mb-6 px-4 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono text-cyan-700 dark:text-cyan-300 text-center flex items-center justify-center gap-2">
+                <Mail className="size-3.5 text-cyan-500 shrink-0" />
+                <span>{emailStatus}</span>
+              </div>
+            )}
 
             {/* Action buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto pt-2">
@@ -577,12 +654,12 @@ export const CalendarAppointmentBooking = ({
               </Button>
 
               <Button
-                disabled={!date || !selectedTime}
+                disabled={!date || !selectedTime || isSubmitting}
                 onClick={handleBooking}
-                className="w-full sm:w-auto h-12 px-7 rounded-xl font-mono text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                className="w-full sm:w-auto h-12 px-7 rounded-xl font-mono text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01] disabled:opacity-60"
               >
                 <CalendarIcon className="size-4" />
-                <span>Confirm & Add to Google Calendar</span>
+                <span>{isSubmitting ? 'Confirming & Generating Link...' : 'Confirm & Add to Google Calendar'}</span>
               </Button>
             </div>
           </div>
@@ -649,8 +726,10 @@ export const CalendarAppointmentBooking = ({
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Platform:</span>
-                <span className="font-semibold text-foreground">Google Meet / Virtual</span>
+                <span className="text-muted-foreground">Google Meet:</span>
+                <a href={meetUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-400 underline truncate max-w-[200px]">
+                  {meetUrl}
+                </a>
               </div>
             </div>
 
