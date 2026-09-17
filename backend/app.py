@@ -1,22 +1,22 @@
 import asyncio
+import json
 import os
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Annotated
+
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents import llm, stt, tts, inference, vad, utils
-from livekit.agents.types import APIConnectOptions, DEFAULT_API_CONNECT_OPTIONS
-from livekit.plugins import deepgram, google, silero
-from livekit.plugins.google.beta import GeminiSTT
 from livekit.agents import (
     Agent,
     AgentServer,
     AgentSession,
     TurnHandlingOptions,
-    room_io,
+    inference,
+    llm,
 )
-import edge_tts
-import av
-
+from livekit.plugins import google
 
 # ============================================================
 # ENVIRONMENT
@@ -32,9 +32,6 @@ load_dotenv()
 # ============================================================
 # ASSISTANT
 # ============================================================
-
-import json
-from typing import Annotated
 
 class Assistant(Agent):
 
@@ -71,7 +68,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
   * Journal: Elsevier Engineering Applications of Artificial Intelligence (EAAI). Manuscript ID: EAAI-26-14280.
   * Authors: K. J. Subramanyam (First & Corresponding Author), Sunayana Jadhav.
   * Methodology: Formulates a 5-agent blackboard architecture for institutional portfolio optimization addressing fire-sale contagion and cross-sector spillovers via SEC 13-F bipartite co-holding graphs. Integrates graph-regularized Conditional Value-at-Risk (G-CVaR) with adaptive contagion penalization, Ledoit-Wolf shrinkage, and human-in-the-loop auditing.
-  * Key Results: Achieves a 25.9% reduction in CVaR at 95% confidence and a 32.5 percentage point reduction in crisis drawdown relative to equal-weight benchmarks over 552 rolling windows across 2005-2025 (tested across 2008 GFC, 2020 COVID shock, and 2022 rate hikes).
+  * Key Results: Achieves a 25.9% reduction in CVaR at 95% confidence and a 32.5 percentage point reduction in crisis drawdown relative to equal-weight benchmarks over 552 rolling windows across 2005-2025.
 - Paper 2 (Springer Nature LNCS / IJCACI 2026 - Presented & Accepted):
   * Title: "Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization"
   * Conference: 5th International Joint Conference on Advances in Computational Intelligence (IJCACI 2026), Washington University of Science and Technology (WUST), Alexandria, USA. Published in Springer Nature LNCS.
@@ -87,8 +84,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 4. KEY PROJECTS & ARCHITECTURES:
 - Agentic AI Portfolio Governance Chatbot (This Voice Assistant):
-  * Built using LangGraph, LangChain, CVXPY, CLARABEL, NetworkX, Mistral-7B via Ollama, LiveKit WebRTC, Deepgram Nova-3 STT, Cartesia Sonic-3 TTS, Silero VAD, and Google Gemini.
-  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-500ms voice TTFT.
+  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-300ms voice TTFT via LiveKit Inference, Deepgram Nova-3 STT, Cartesia Sonic-3 TTS, and Google Gemini.
 - Multi-Agent Adaptive Portfolio Governance System:
   * Full-stack quantitative investment intelligence platform built on Next.js 15, TypeScript, TailwindCSS, and Python backend.
 - Regime-Adaptive Supervisory Governance:
@@ -100,7 +96,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 5. TECHNICAL SKILLS:
 - AI & Multi-Agent Swarms: LangGraph, LangChain, Multi-Agent Blackboards, Directed Acyclic Graph (DAG) Workflows, RAG, Numerical Grounding & Hallucination Mitigation, Tool Calling.
-- Large Language Models & Voice: Google Gemini, Mistral-7B, Llama-3, Ollama, LiveKit WebRTC, Deepgram Nova-3, Cartesia Sonic-3, Silero VAD.
+- Large Language Models & Voice: Google Gemini, Mistral-7B, Llama-3, Ollama, LiveKit WebRTC, Deepgram Nova-3, Cartesia Sonic-3, Cloud Turn Detection.
 - Machine Learning: PyTorch, TensorFlow, Scikit-Learn, XGBoost, ARIMA, Markov Chains, Hugging Face, OpenCV.
 - Quantitative Finance & Math: Convex Optimization (CVXPY), CLARABEL solver, Conditional Value-at-Risk (CVaR), Ledoit-Wolf Shrinkage, Bipartite Institutional Co-holding Networks, Eigenvector Centrality, NetworkX, YFinance.
 - Full-Stack Web: Next.js 15 (App Router), React 19, TypeScript, JavaScript, TailwindCSS, Node.js, FastAPI, Flask, MongoDB, REST APIs, WebSockets, WebRTC.
@@ -161,163 +157,19 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
         return f"Navigation requested for {target}."
 
 
-
 # ============================================================
-# LIVEKIT SERVER
+# LIVEKIT SERVER & CLOUD INFERENCE PIPELINE
 # ============================================================
 
 def get_clean_google_api_key() -> str:
     raw = os.getenv("GOOGLE_API_KEY", "")
     return raw.strip("\"' \t\r\n")
 
-def prewarm(proc: agents.JobProcess):
-    """Prewarm heavy models during worker startup to prevent event loop blocking on call connect."""
-    try:
-        proc.userdata["vad"] = build_vad()
-        print("--> [Prewarm] Silero VAD (8kHz optimized) loaded successfully.")
-    except Exception as e:
-        print(f"--> [Prewarm Warning] Failed to prewarm Silero VAD: {e}")
-
-    try:
-        proc.userdata["llm"] = build_llm()
-        print("--> [Prewarm] Google LLM initialized successfully.")
-    except Exception as e:
-        print(f"--> [Prewarm Warning] Failed to prewarm Google LLM: {e}")
-
-    try:
-        proc.userdata["tts"] = build_tts()
-        _codec = av.CodecContext.create("mp3", "r")
-        _resampler = av.AudioResampler(format="s16", layout="mono", rate=24000)
-        print("--> [Prewarm] EdgeTTS (Male Voice: GuyNeural) prewarmed successfully.")
-    except Exception as e:
-        print(f"--> [Prewarm Warning] Failed to prewarm EdgeTTS: {e}")
-
-server = AgentServer(
-    load_threshold=float("inf"),
-    load_fnc=lambda *args: 0.0,
-    num_idle_processes=0,
-    job_executor_type=agents.JobExecutorType.THREAD,
-    setup_fnc=prewarm,
-)
-
-# ============================================================
-# MODULAR AI FACTORY FUNCTIONS (Created within Job Context)
-# ============================================================
-
-def build_vad():
-    """Silero VAD at 8kHz for 50% reduced CPU footprint on constrained cloud hosts"""
-    return silero.VAD.load(
-        min_speech_duration=0.05,
-        min_silence_duration=0.35,
-        prefix_padding_duration=0.1,
-        sample_rate=8000,
-    )
-
-def build_stt():
-    """Real-time streaming STT using Google Gemini STT directly (zero fallback stall)"""
-    google_key = get_clean_google_api_key()
-    deepgram_key = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
-
-    if deepgram_key and len(deepgram_key) > 10:
-        try:
-            return deepgram.STT(
-                api_key=deepgram_key,
-                model="nova-3",
-                endpointing_ms=25,
-                smart_format=True,
-            )
-        except Exception as e:
-            print(f"--> [STT Warning] Could not init Deepgram STT: {e}")
-
-    return GeminiSTT(api_key=google_key) if google_key else deepgram.STT()
-
-def decode_mp3_to_pcm(mp3_bytes: bytes, sample_rate: int = 24000) -> list[bytes]:
-    """CPU-bound audio decoding running in dedicated thread to prevent event loop stalls"""
-    codec = av.CodecContext.create("mp3", "r")
-    resampler = av.AudioResampler(format="s16", layout="mono", rate=sample_rate)
-    pcm_chunks = []
-    packets = codec.parse(mp3_bytes)
-    for packet in packets:
-        for frame in codec.decode(packet):
-            for resampled in resampler.resample(frame):
-                pcm_chunks.append(resampled.to_ndarray().tobytes())
-    for frame in codec.decode():
-        for resampled in resampler.resample(frame):
-            pcm_chunks.append(resampled.to_ndarray().tobytes())
-    for resampled in resampler.resample(None):
-        pcm_chunks.append(resampled.to_ndarray().tobytes())
-    return pcm_chunks
-
-class EdgeTTSChunkedStream(tts.ChunkedStream):
-    async def _run(self, output_emitter: tts.AudioEmitter) -> None:
-        communicate = edge_tts.Communicate(
-            text=self._input_text,
-            voice=self._tts._voice,
-            rate=self._tts._rate,
-        )
-        output_emitter.initialize(
-            request_id=utils.shortuuid(),
-            sample_rate=self._tts.sample_rate,
-            num_channels=self._tts.num_channels,
-            mime_type="audio/pcm",
-        )
-        mp3_buffer = bytearray()
-        async for chunk in communicate.stream():
-            if chunk["type"] == "audio" and chunk.get("data"):
-                mp3_buffer.extend(chunk["data"])
-
-        if mp3_buffer:
-            # Offload CPU audio decoding to worker thread so asyncio event loop never blocks
-            pcm_frames = await asyncio.to_thread(
-                decode_mp3_to_pcm, bytes(mp3_buffer), self._tts.sample_rate
-            )
-            for frame_data in pcm_frames:
-                output_emitter.push(frame_data)
-                await asyncio.sleep(0)
-
-
-class EdgeTTS(tts.TTS):
-    """Ultra-fast, zero-credit streaming male neural voice using Microsoft Edge TTS"""
-    def __init__(
-        self,
-        voice: str = "en-US-GuyNeural",
-        rate: str = "+4%",
-        sample_rate: int = 24000,
-    ) -> None:
-        super().__init__(
-            capabilities=tts.TTSCapabilities(streaming=False),
-            sample_rate=sample_rate,
-            num_channels=1,
-        )
-        self._voice = voice
-        self._rate = rate
-
-    @property
-    def model(self) -> str:
-        return "edge-tts-guy-neural"
-
-    @property
-    def provider(self) -> str:
-        return "microsoft-edge"
-
-    def synthesize(
-        self,
-        text: str,
-        *,
-        conn_options: APIConnectOptions = DEFAULT_API_CONNECT_OPTIONS,
-    ) -> tts.ChunkedStream:
-        return EdgeTTSChunkedStream(tts=self, input_text=text, conn_options=conn_options)
-
-
-def build_tts():
-    """Ultra-fast male neural voice (en-US-GuyNeural) - 0 credits, 0 cost, sub-second latency"""
-    return EdgeTTS(voice="en-US-GuyNeural", rate="+4%")
-
 def build_llm():
-    """Google Gemini 2.5 Flash with thought signature support for multi-turn tool calling"""
+    """Google Gemini 2.5 Flash with thought signature support for multi-turn tool calling."""
     api_key = get_clean_google_api_key()
     if not api_key:
-        print("--> [LLM CRITICAL] GOOGLE_API_KEY environment variable is NOT set!")
+        print("--> [LLM Warning] GOOGLE_API_KEY environment variable is not set!")
     else:
         print("--> [LLM Info] Initializing Google LLM with 'gemini-2.5-flash'...")
 
@@ -330,24 +182,44 @@ def build_llm():
     )
 
 def create_session(ctx: agents.JobContext | None = None):
-    """Modular session builder binding STT, VAD, LLM, and TTS to active job"""
-    vad_instance = None
+    """
+    Standard LiveKit Cloud Inference Voice Pipeline:
+    - STT: Deepgram Nova-3 via LiveKit Inference (cloud edge)
+    - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference (cloud edge)
+    - Turn Detection: LiveKit Cloud TurnDetector (0% CPU on Render, 0ms queue delay)
+    - LLM: Google Gemini 2.5 Flash (sub-second generation with tool-calling support)
+    """
     llm_instance = None
-    tts_instance = None
     if ctx and hasattr(ctx, "proc") and hasattr(ctx.proc, "userdata"):
-        vad_instance = ctx.proc.userdata.get("vad")
         llm_instance = ctx.proc.userdata.get("llm")
-        tts_instance = ctx.proc.userdata.get("tts")
 
     return AgentSession(
-        stt=build_stt(),
-        vad=vad_instance or build_vad(),
+        stt=inference.STT(model="deepgram/nova-3", language="multi"),
         llm=llm_instance or build_llm(),
-        tts=tts_instance or build_tts(),
+        tts=inference.TTS(
+            model="cartesia/sonic-3",
+            voice="a0e99841-438c-4a64-b679-ae501e7d6091",
+        ),
         turn_handling=TurnHandlingOptions(
-            allow_interruptions=True,
+            turn_detection=inference.TurnDetector(),
         ),
     )
+
+def prewarm(proc: agents.JobProcess):
+    """Prewarm LLM during worker startup for zero-latency first response."""
+    try:
+        proc.userdata["llm"] = build_llm()
+        print("--> [Prewarm] Google Gemini LLM initialized successfully.")
+    except Exception as e:
+        print(f"--> [Prewarm Warning] Failed to prewarm Google LLM: {e}")
+
+server = AgentServer(
+    load_threshold=float("inf"),
+    load_fnc=lambda *args: 0.0,
+    num_idle_processes=0,
+    job_executor_type=agents.JobExecutorType.THREAD,
+    setup_fnc=prewarm,
+)
 
 
 # ============================================================
@@ -360,7 +232,7 @@ async def my_agent(ctx: agents.JobContext):
     await ctx.connect()
     print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Instantiate modular session inside active job context using prewarmed components
+    # 2. Instantiate cloud-inference session
     session = create_session(ctx)
 
     # 3. Start session with Assistant tool caller
@@ -371,7 +243,7 @@ async def my_agent(ctx: agents.JobContext):
     )
     print("--> [Agent Session] Assistant started in room.")
 
-    # 4. Instant Greeting via Cartesia Sonic-3
+    # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
     try:
         await session.say(
             "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
@@ -410,9 +282,6 @@ async def my_agent(ctx: agents.JobContext):
 # HTTP HEALTH CHECK SERVER (For Render Web Service deployment)
 # ============================================================
 
-import threading
-from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-
 class RenderHealthHandler(BaseHTTPRequestHandler):
     def _send_cors_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -425,9 +294,11 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "status": "healthy",
             "service": "portfolio-backend-livekit",
             "agent_name": "my-agent",
+            "pipeline": "livekit-cloud-inference",
+            "stt": "deepgram/nova-3",
+            "tts": "cartesia/sonic-3 (male)",
+            "turn_detection": "livekit-inference-cloud-turndetector",
             "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
-            "tts_engine": "edge-tts-guy-neural",
-            "deepgram_configured": bool(os.getenv("DEEPGRAM_API_KEY")),
             "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         }
         return json.dumps(status_info, indent=2).encode("utf-8")
@@ -485,4 +356,4 @@ def start_health_server():
 
 if __name__ == "__main__":
     start_health_server()
-    agents.cli.run_app(server)
+    agents.cli.run_app(server)
