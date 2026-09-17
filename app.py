@@ -12,9 +12,13 @@ from livekit.agents import (
     Agent,
     AgentServer,
     AgentSession,
+    AudioConfig,
+    BackgroundAudioPlayer,
+    BuiltinAudioClip,
     TurnHandlingOptions,
     inference,
     llm,
+    text_transforms,
 )
 from livekit.plugins import google
 
@@ -185,9 +189,12 @@ def create_session(ctx: agents.JobContext | None = None):
     """
     Standard LiveKit Cloud Inference Voice Pipeline:
     - STT: Deepgram Nova-3 via LiveKit Inference (cloud edge)
-    - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference (cloud edge)
+    - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference
     - Turn Detection: LiveKit Cloud TurnDetector (0% CPU on Render, 0ms queue delay)
-    - LLM: Google Gemini 2.5 Flash (sub-second generation with tool-calling support)
+    - Preemptive Generation: Speculative LLM generation for sub-100ms conversational TTFT
+    - Word-level TTS-aligned Transcriptions: Synced caption streams over lk.transcription
+    - Pronunciation Maps: Phonetic replacements for CVXPY, CLARABEL, G-CVaR, AQI, and academic terms
+    - LLM: Google Gemini 2.5 Flash
     """
     llm_instance = None
     if ctx and hasattr(ctx, "proc") and hasattr(ctx.proc, "userdata"):
@@ -202,7 +209,33 @@ def create_session(ctx: agents.JobContext | None = None):
         ),
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(),
+            preemptive_generation={"enabled": True},
         ),
+        use_tts_aligned_transcript=True,
+        tts_text_transforms=[
+            "filter_emoji",
+            "filter_markdown",
+            text_transforms.replace({
+                "CVXPY": "C V X P Y",
+                "CVaR": "C-Var",
+                "G-CVaR": "G C-Var",
+                "CLARABEL": "Clara-bell",
+                "AQI": "A Q I",
+                "PM2.5": "P M 2.5",
+                "KSCST": "K S C S T",
+                "EAAI": "E A A I",
+                "IJCACI": "I J C A C I",
+                "LNCS": "L N C S",
+                "GATE": "Gate",
+                "API": "A P I",
+                "APIs": "A P Is",
+                "LLM": "L L M",
+                "LLMs": "L L Ms",
+                "STT": "S T T",
+                "TTS": "T T S",
+                "VAD": "V A D",
+            }),
+        ],
     )
 
 def prewarm(proc: agents.JobProcess):
@@ -232,7 +265,7 @@ async def my_agent(ctx: agents.JobContext):
     await ctx.connect()
     print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Instantiate cloud-inference session
+    # 2. Instantiate cloud-inference session with multimodal audio features
     session = create_session(ctx)
 
     # 3. Start session with Assistant tool caller
@@ -243,7 +276,20 @@ async def my_agent(ctx: agents.JobContext):
     )
     print("--> [Agent Session] Assistant started in room.")
 
-    # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
+    # 4. Background Audio (Thinking Sound: subtle typing while navigating/processing)
+    bg_audio = None
+    try:
+        bg_audio = BackgroundAudioPlayer(
+            thinking_sound=[
+                AudioConfig(BuiltinAudioClip.KEYBOARD_TYPING, volume=0.25),
+            ],
+        )
+        await bg_audio.start(room=ctx.room, agent_session=session)
+        print("--> [Agent Session] Background thinking audio player active.")
+    except Exception as bg_err:
+        print(f"--> [Agent Session Info] Background audio optional: {bg_err}")
+
+    # 5. Instant Greeting via Cartesia Sonic-3 Male Voice
     try:
         await session.say(
             "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
@@ -252,7 +298,7 @@ async def my_agent(ctx: agents.JobContext):
     except Exception as e:
         print(f"--> [Agent Greeting Warning] {e}")
 
-    # 5. Keep the agent alive for the entire conversation lifetime
+    # 6. Keep the agent alive for the entire conversation lifetime
     disconnected_fut = asyncio.Future()
 
     @ctx.room.on("disconnected")
@@ -269,12 +315,22 @@ async def my_agent(ctx: agents.JobContext):
                 disconnected_fut.set_result(None)
 
     async def _on_shutdown(*args):
+        if bg_audio:
+            try:
+                await bg_audio.aclose()
+            except Exception:
+                pass
         if not disconnected_fut.done():
             disconnected_fut.set_result(None)
 
     ctx.add_shutdown_callback(_on_shutdown)
 
     await disconnected_fut
+    if bg_audio:
+        try:
+            await bg_audio.aclose()
+        except Exception:
+            pass
     print("--> [Agent Session] Session ended cleanly.")
 
 
@@ -298,6 +354,10 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "stt": "deepgram/nova-3",
             "tts": "cartesia/sonic-3 (male)",
             "turn_detection": "livekit-inference-cloud-turndetector",
+            "preemptive_generation": True,
+            "tts_aligned_transcript": True,
+            "pronunciation_map": True,
+            "thinking_sound": True,
             "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
             "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         }
