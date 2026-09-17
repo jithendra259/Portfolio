@@ -3,6 +3,7 @@ import { regimeAdaptiveSupervisoryGovernance } from './regime-adaptive-superviso
 import { adaptivePortfolioGovernance } from './adaptive-portfolio-governance';
 import { supervisoryPortfolioXaiGovernance } from './supervisory-portfolio-xai-governance';
 import { agenticPortfolioChatbot } from './agentic-portfolio-chatbot';
+import { voiceAgentPortfolioArchitecture } from './voice-agent-portfolio-architecture';
 import { personalisedAqiSystem } from './personalised-aqi-system';
 import { swarmRobotsAgriculture } from './swarm-robots-agriculture';
 
@@ -16,6 +17,7 @@ export * from './types';
  * Everything else (landing page, BentoGrid, categories, dynamic /projects/[id] routing) updates automatically!
  */
 export const ALL_PROJECTS: Project[] = [
+  voiceAgentPortfolioArchitecture,
   regimeAdaptiveSupervisoryGovernance,
   adaptivePortfolioGovernance,
   supervisoryPortfolioXaiGovernance,

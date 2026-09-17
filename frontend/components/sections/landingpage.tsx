@@ -252,6 +252,39 @@ function BentoSwarmRobotsBackground() {
   );
 }
 
+function BentoVoiceAgentArchBackground() {
+  return (
+    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
+      <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
+        <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
+          <span className="flex items-center gap-1">
+            <Cpu className="size-3" /> Groq LPU + WebRTC
+          </span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">&lt;500ms TTFT</span>
+        </div>
+        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+          <div className="flex justify-between">
+            <span>Primary LLM:</span>
+            <span className="font-bold text-emerald-400">Groq LPU (Sub-90ms)</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Neural TTS:</span>
+            <span className="font-bold text-white">Cartesia Sonic-3</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Fallback Engine:</span>
+            <span className="font-bold text-cyan-400">Gemini 2.5 Flash</span>
+          </div>
+          <div className="flex justify-between">
+            <span>UI Auto-Nav:</span>
+            <span className="font-bold text-amber-400">LiveKit DataChannel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const projectMetaMap: Record<
   string,
   {
@@ -262,6 +295,13 @@ const projectMetaMap: Record<
     Icon: React.ComponentType<{ className?: string }>;
   }
 > = {
+  'voice-agent-portfolio-architecture': {
+    venue: 'Production Voice AI Architecture & WebRTC System',
+    tags: ['Groq LPU (<90ms)', 'Cartesia Sonic-3', 'LiveKit WebRTC', 'Next.js 15 App Router', 'Gemini Fallback'],
+    colSpan: 'col-span-3 md:col-span-2',
+    bg: <BentoVoiceAgentArchBackground />,
+    Icon: Mic,
+  },
   'regime-adaptive-supervisory-governance': {
     venue: 'Springer Nature LNCS / IJCACI 2026',
     tags: ['Composite Instability I_t', 'Ledoit-Wolf Shrinkage', 'Regime Switching', '2005–2025 Dataset'],
@@ -279,7 +319,7 @@ const projectMetaMap: Record<
   'supervisory-portfolio-xai-governance': {
     venue: 'Elsevier Computers & Operations Research / CAS Journal',
     tags: ['7-Agent DAG Pipeline', 'Mistral-7B (Ollama)', '0% Hallucination', 'MiFID II Compliance'],
-    colSpan: 'col-span-3 md:col-span-2',
+    colSpan: 'col-span-3 md:col-span-1',
     bg: <BentoXaiDagBackground />,
     Icon: GitBranch,
   },
@@ -300,7 +340,7 @@ const projectMetaMap: Record<
   'swarm-robots-agriculture': {
     venue: 'Autonomous Hardware & IoT Systems',
     tags: ['ESP32 Mesh Network', 'Decentralized Swarm', 'Edge CNN Vision', 'Precision Agriculture'],
-    colSpan: 'col-span-3 md:col-span-2',
+    colSpan: 'col-span-3 md:col-span-1',
     bg: <BentoSwarmRobotsBackground />,
     Icon: Bot,
   },

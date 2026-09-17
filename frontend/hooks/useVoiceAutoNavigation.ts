@@ -20,7 +20,8 @@ export type NavigationTarget =
   | 'case_study_regime_supervisory'
   | 'case_study_supervisory_xai'
   | 'case_study_aqi'
-  | 'case_study_swarm_robotics';
+  | 'case_study_swarm_robotics'
+  | 'case_study_voice_architecture';
 
 export interface NavigationTargetMeta {
   type: 'section' | 'route';
@@ -38,6 +39,11 @@ export const NAVIGATION_TARGETS: Record<NavigationTarget, NavigationTargetMeta> 
   experience: { type: 'section', destination: 'experience', label: 'Experience Timeline' },
   resume: { type: 'section', destination: 'resume', label: 'Resume' },
   contact: { type: 'section', destination: 'contact', label: 'Contact Section' },
+  case_study_voice_architecture: {
+    type: 'route',
+    destination: '/projects/voice-agent-portfolio-architecture',
+    label: 'Voice AI Portfolio Architecture',
+  },
   case_study_adaptive_governance: {
     type: 'route',
     destination: '/projects/adaptive-portfolio-governance',
@@ -114,6 +120,20 @@ function matchSpeechIntent(text: string): NavigationTarget | null {
     lower.includes('crop disease')
   ) {
     return 'case_study_swarm_robotics';
+  }
+
+  if (
+    lower.includes('how this portfolio') ||
+    lower.includes('how is this built') ||
+    lower.includes('portfolio architecture') ||
+    lower.includes('voice architecture') ||
+    lower.includes('webrtc architecture') ||
+    lower.includes('groq architecture') ||
+    lower.includes('how did you build this') ||
+    lower.includes('how is this website built') ||
+    lower.includes('voice agent project')
+  ) {
+    return 'case_study_voice_architecture';
   }
 
   // Section matches
