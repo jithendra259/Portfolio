@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useEffect } from 'react';
-import { TokenSource, Room } from 'livekit-client';
+import { TokenSource, Room, AudioPresets } from 'livekit-client';
 import { useSession } from '@livekit/components-react';
 import { WarningIcon } from '@phosphor-icons/react/dist/ssr';
 import type { AppConfig } from '@/app-config';
@@ -90,10 +90,45 @@ export function App({ appConfig }: AppProps) {
       : TokenSource.endpoint('/api/token');
   }, [appConfig]);
 
+  // Create an explicit Room configured for voice AI clarity.
+  // This runs once and is stable across renders (useMemo with no deps).
+  const room = useMemo(
+    () =>
+      new Room({
+        // ── Microphone capture defaults ────────────────────────────────
+        audioCaptureDefaults: {
+          // Keep WebRTC built-ins ON — they run client-side before upload
+          // and complement (not conflict with) the agent-side ai-coustics model.
+          // The LiveKit docs only warn against enabling a *second* Krisp/ai-coustics
+          // model in the frontend, not against standard WebRTC processing.
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+        // ── Microphone publish defaults ────────────────────────────────
+        publishDefaults: {
+          // DTX (discontinuous transmission): pauses the encoded stream when the
+          // user is silent, reducing bandwidth and Deepgram processing load.
+          dtx: true,
+          // RED (redundant audio encoding): sends each audio frame twice in
+          // consecutive packets. Receiver reconstructs dropped packets from
+          // the redundant copy — eliminates audio glitches on lossy Wi-Fi.
+          // Costs ~2x audio bandwidth but is almost always worth it for STT quality.
+          red: true,
+          // Standard voice quality — Deepgram nova-3 works best on clean mono voice
+          audioPreset: AudioPresets.speech,
+        },
+      }),
+    []
+  );
+
   const session = useSession(
     tokenSource,
-    appConfig.agentName ? { agentName: appConfig.agentName } : undefined
+    appConfig.agentName
+      ? { agentName: appConfig.agentName, room }
+      : { room }
   );
+
 
   // Proactively ping Render backend on mount to eliminate cold start latency
   useEffect(() => {
