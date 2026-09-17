@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { FloatingIconsHero } from '@/components/ui/widgets/floating-icons-hero-section';
 import { contactIcons } from '@/components/ui/widgets/contact-floating-icons';
 import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
@@ -8,6 +9,8 @@ import { PearlButton } from '@/components/ui/pearl-button';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export function ContactSection() {
+  const router = useRouter();
+
   return (
     <section id="contact" className="relative w-full overflow-hidden">
       <FloatingIconsHero
@@ -17,8 +20,11 @@ export function ContactSection() {
         className="bg-transparent h-auto min-h-[780px] py-24"
       >
         <div className="py-4 flex flex-col items-center justify-center gap-5 w-full max-w-md mx-auto">
-          {/* Book Appointment Pearl Button redirects directly to /book-appointment page */}
-          <PearlButton label="Book Appointment" href="/book-appointment" />
+          {/* Pearl Button redirects directly to /book-appointment with exact original UI */}
+          <PearlButton
+            label="Book Appointment"
+            onClick={() => router.push('/book-appointment')}
+          />
 
           {/* Gmail Copy Button placed BELOW */}
           <EmailRevealButton
