@@ -203,6 +203,7 @@ export async function POST(req: NextRequest) {
         await transporter.sendMail({
           from: `"${HOST_NAME}" <${smtpUser}>`,
           to: recipients.join(', '),
+          replyTo: HOST_EMAIL,
           subject: `Confirmed: 1-on-1 Meeting with ${HOST_NAME} (${formattedDate} @ ${time} IST)`,
           text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})\n\nSave to Google Calendar: ${googleCalendarUrl}`,
           html: htmlEmail,
