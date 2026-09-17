@@ -12,15 +12,11 @@ from livekit.agents import (
     Agent,
     AgentServer,
     AgentSession,
-    AudioConfig,
-    BackgroundAudioPlayer,
-    BuiltinAudioClip,
     TurnHandlingOptions,
     inference,
     llm,
     text_transforms,
 )
-from livekit.plugins import google
 
 # ============================================================
 # ENVIRONMENT
@@ -88,7 +84,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 4. KEY PROJECTS & ARCHITECTURES:
 - Agentic AI Portfolio Governance Chatbot (This Voice Assistant):
-  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-300ms voice TTFT via LiveKit Inference, Deepgram Nova-3 STT, Cartesia Sonic-3 TTS, and Google Gemini.
+  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-300ms voice TTFT via LiveKit Inference, Deepgram Nova-3 STT, Cartesia Sonic-3 TTS, and Gemini.
 - Multi-Agent Adaptive Portfolio Governance System:
   * Full-stack quantitative investment intelligence platform built on Next.js 15, TypeScript, TailwindCSS, and Python backend.
 - Regime-Adaptive Supervisory Governance:
@@ -165,51 +161,25 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 # LIVEKIT SERVER & CLOUD INFERENCE PIPELINE
 # ============================================================
 
-def get_clean_google_api_key() -> str:
-    raw = os.getenv("GOOGLE_API_KEY", "")
-    return raw.strip("\"' \t\r\n")
-
-def build_llm():
-    """Google Gemini 2.5 Flash with thought signature support for multi-turn tool calling."""
-    api_key = get_clean_google_api_key()
-    if not api_key:
-        print("--> [LLM Warning] GOOGLE_API_KEY environment variable is not set!")
-    else:
-        print("--> [LLM Info] Initializing Google LLM with 'gemini-2.5-flash'...")
-
-    return google.LLM(
-        model="gemini-2.5-flash",
-        api_key=api_key or None,
-        max_output_tokens=60,
-        temperature=0.2,
-        thinking_config={"thinking_budget": 0},
-    )
-
 def create_session(ctx: agents.JobContext | None = None):
     """
     Standard LiveKit Cloud Inference Voice Pipeline:
     - STT: Deepgram Nova-3 via LiveKit Inference (cloud edge)
     - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference
     - Turn Detection: LiveKit Cloud TurnDetector (0% CPU on Render, 0ms queue delay)
-    - Preemptive Generation: Speculative LLM generation for sub-100ms conversational TTFT
     - Word-level TTS-aligned Transcriptions: Synced caption streams over lk.transcription
     - Pronunciation Maps: Phonetic replacements for CVXPY, CLARABEL, G-CVaR, AQI, and academic terms
-    - LLM: Google Gemini 2.5 Flash
+    - LLM: Google Gemini 2.5 Flash powered natively by LiveKit Cloud Inference (zero Google 429 quota exhaustion)
     """
-    llm_instance = None
-    if ctx and hasattr(ctx, "proc") and hasattr(ctx.proc, "userdata"):
-        llm_instance = ctx.proc.userdata.get("llm")
-
     return AgentSession(
         stt=inference.STT(model="deepgram/nova-3", language="multi"),
-        llm=llm_instance or build_llm(),
+        llm=inference.LLM(model="google/gemini-2.5-flash"),
         tts=inference.TTS(
             model="cartesia/sonic-3",
             voice="a0e99841-438c-4a64-b679-ae501e7d6091",
         ),
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(),
-            preemptive_generation={"enabled": True},
         ),
         use_tts_aligned_transcript=True,
         tts_text_transforms=[
@@ -238,20 +208,11 @@ def create_session(ctx: agents.JobContext | None = None):
         ],
     )
 
-def prewarm(proc: agents.JobProcess):
-    """Prewarm LLM during worker startup for zero-latency first response."""
-    try:
-        proc.userdata["llm"] = build_llm()
-        print("--> [Prewarm] Google Gemini LLM initialized successfully.")
-    except Exception as e:
-        print(f"--> [Prewarm Warning] Failed to prewarm Google LLM: {e}")
-
 server = AgentServer(
     load_threshold=float("inf"),
     load_fnc=lambda *args: 0.0,
     num_idle_processes=0,
     job_executor_type=agents.JobExecutorType.THREAD,
-    setup_fnc=prewarm,
 )
 
 
@@ -265,7 +226,7 @@ async def my_agent(ctx: agents.JobContext):
     await ctx.connect()
     print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Instantiate cloud-inference session with multimodal audio features
+    # 2. Instantiate cloud-inference session
     session = create_session(ctx)
 
     # 3. Start session with Assistant tool caller
@@ -276,20 +237,7 @@ async def my_agent(ctx: agents.JobContext):
     )
     print("--> [Agent Session] Assistant started in room.")
 
-    # 4. Background Audio (Thinking Sound: subtle typing while navigating/processing)
-    bg_audio = None
-    try:
-        bg_audio = BackgroundAudioPlayer(
-            thinking_sound=[
-                AudioConfig(BuiltinAudioClip.KEYBOARD_TYPING, volume=0.25),
-            ],
-        )
-        await bg_audio.start(room=ctx.room, agent_session=session)
-        print("--> [Agent Session] Background thinking audio player active.")
-    except Exception as bg_err:
-        print(f"--> [Agent Session Info] Background audio optional: {bg_err}")
-
-    # 5. Instant Greeting via Cartesia Sonic-3 Male Voice
+    # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
     try:
         await session.say(
             "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
@@ -298,7 +246,7 @@ async def my_agent(ctx: agents.JobContext):
     except Exception as e:
         print(f"--> [Agent Greeting Warning] {e}")
 
-    # 6. Keep the agent alive for the entire conversation lifetime
+    # 5. Keep the agent alive for the entire conversation lifetime
     disconnected_fut = asyncio.Future()
 
     @ctx.room.on("disconnected")
@@ -315,22 +263,12 @@ async def my_agent(ctx: agents.JobContext):
                 disconnected_fut.set_result(None)
 
     async def _on_shutdown(*args):
-        if bg_audio:
-            try:
-                await bg_audio.aclose()
-            except Exception:
-                pass
         if not disconnected_fut.done():
             disconnected_fut.set_result(None)
 
     ctx.add_shutdown_callback(_on_shutdown)
 
     await disconnected_fut
-    if bg_audio:
-        try:
-            await bg_audio.aclose()
-        except Exception:
-            pass
     print("--> [Agent Session] Session ended cleanly.")
 
 
@@ -353,13 +291,11 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "pipeline": "livekit-cloud-inference",
             "stt": "deepgram/nova-3",
             "tts": "cartesia/sonic-3 (male)",
+            "llm": "google/gemini-2.5-flash (livekit-inference)",
             "turn_detection": "livekit-inference-cloud-turndetector",
-            "preemptive_generation": True,
             "tts_aligned_transcript": True,
             "pronunciation_map": True,
-            "thinking_sound": True,
             "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
-            "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         }
         return json.dumps(status_info, indent=2).encode("utf-8")
 
