@@ -198,6 +198,7 @@ NAVIGATION_TARGETS = {
     "about": "Personal journey, philosophy, and biography",
     "resume": "Interactive resume and downloadable CV",
     "contact": "Direct contact options and meeting booking calendar",
+    "book_appointment": "Dedicated full-screen interactive calendar appointment booking page (/book-appointment)",
     "skills": "Comprehensive technical skill matrix and proficiencies",
     "certificates": "Verified academic, competitive exam (GATE), and professional credentials",
     "experience": "Research and software engineering industry roles",

@@ -32,8 +32,8 @@ class NavigationToolset(llm.Toolset):
     def __init__(self, get_room: Callable[[], rtc.Room | None]) -> None:
         @llm.function_tool(
             description=(
-                "Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study. "
-                "Supported targets: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', "
+                "Auto-navigate the visitor's screen in real time to a specific portfolio section, research paper case study, or booking page. "
+                "Supported targets: 'projects', 'research', 'about', 'resume', 'contact', 'book_appointment', 'skills', 'certificates', "
                 "'experience', 'home', 'case_study_voice_architecture', 'case_study_adaptive_governance', 'case_study_regime_supervisory', "
                 "'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'."
             )
