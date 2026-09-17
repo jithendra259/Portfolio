@@ -34,7 +34,7 @@ class NavigationToolset(llm.Toolset):
             description=(
                 "Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study. "
                 "Supported targets: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', "
-                "'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', "
+                "'experience', 'home', 'case_study_voice_architecture', 'case_study_adaptive_governance', 'case_study_regime_supervisory', "
                 "'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'."
             )
         )

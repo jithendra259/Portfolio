@@ -97,6 +97,17 @@ PUBLICATIONS = [
 
 PROJECTS = [
     {
+        "id": "voice_portfolio_architecture",
+        "name": "Real-Time Voice AI Portfolio & Agentic Web Architecture",
+        "description": (
+            "Interactive voice-driven engineering portfolio. Built with Next.js 15 App Router, LiveKit WebRTC, "
+            "Groq LPU (sub-90ms TTFT primary LLM), Cartesia Sonic-3 neural TTS, Deepgram Nova-3 STT, "
+            "and Google Gemini 2.5 Flash fallback. Uses bi-directional WebRTC data channels for real-time UI auto-navigation "
+            "and is cloud-optimized for zero event-loop blocking on Render's 0.1 vCPU."
+        ),
+        "target_nav": "case_study_voice_architecture",
+    },
+    {
         "id": "voice_assistant",
         "name": "Agentic AI Portfolio Governance Chatbot",
         "description": (
@@ -191,6 +202,7 @@ NAVIGATION_TARGETS = {
     "certificates": "Verified academic, competitive exam (GATE), and professional credentials",
     "experience": "Research and software engineering industry roles",
     "home": "Hero section and high-level introduction",
+    "case_study_voice_architecture": "Deep-dive case study on this Portfolio's Real-Time Voice AI & Agentic Web Architecture (Groq LPU, LiveKit WebRTC, Next.js 15)",
     "case_study_adaptive_governance": "Deep-dive case study on G-CVaR portfolio optimization (EAAI Paper)",
     "case_study_regime_supervisory": "Deep-dive case study on Regime-Adaptive Supervisory Governance (Springer LNCS Paper)",
     "case_study_supervisory_xai": "Deep-dive case study on 100% Numerically Grounded Explainable AI (COR Paper)",
