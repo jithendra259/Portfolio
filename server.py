@@ -5,8 +5,9 @@ Manages room connections, voice pipeline startup, greeting utterance, and clean 
 
 import asyncio
 
-from livekit import agents
-from livekit.agents import AgentServer, room_io
+from livekit import agents, rtc
+from livekit.agents import AgentSession, AgentServer, room_io
+from livekit.plugins import ai_coustics
 
 from agent import Assistant
 from config import settings
@@ -40,12 +41,27 @@ async def my_agent(ctx: agents.JobContext) -> None:
         room=ctx.room,
         agent=assistant,
         room_options=room_io.RoomOptions(
+            audio_input=room_io.AudioInputOptions(
+                # ai-coustics QUAIL_VF_S: Voice Focus 2.1 Small — lightweight voice isolation
+                # Runs entirely on LiveKit Cloud inference infra: ZERO local CPU on Render.
+                # Best WER (7.1%) vs Krisp or background-only models for single-speaker use.
+                # Participant selector: skip AI-to-AI audio (agent participants don't need isolation)
+                noise_cancellation=lambda params: None
+                if params.participant.kind == rtc.ParticipantKind.PARTICIPANT_KIND_AGENT
+                else ai_coustics.audio_enhancement(
+                    model=ai_coustics.EnhancerModel.QUAIL_VF_S,
+                    model_parameters=ai_coustics.ModelParameters(
+                        # 0.8 = recommended enhancement level from LiveKit docs audio samples
+                        enhancement_level=0.8,
+                    ),
+                ),
+            ),
             text_output=room_io.TextOutputOptions(
                 sync_transcription=False,
             ),
         ),
     )
-    print("--> [Server] Assistant session started in room with real-time text streaming.")
+    print("-->[Server] Assistant session started — ai-coustics QUAIL_VF_S voice isolation active.")
 
     # 4. Inactivity & Lifecycle Watchdog (user_away_timeout)
     idle_disconnect_task: asyncio.Task | None = None
