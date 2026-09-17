@@ -1,8 +1,6 @@
 import asyncio
 import json
 import os
-import threading
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Annotated
 
@@ -187,27 +185,44 @@ def build_llm_pipeline():
 
     return inference.LLM(model="google/gemini-2.5-flash")
 
+_SHARED_STT: inference.STT | None = None
+_SHARED_LLM: llm.LLM | None = None
+_SHARED_TTS: inference.TTS | None = None
+
+def get_shared_pipeline():
+    global _SHARED_STT, _SHARED_LLM, _SHARED_TTS
+    if _SHARED_STT is None:
+        _SHARED_STT = inference.STT(model="deepgram/nova-3", language="multi")
+    if _SHARED_LLM is None:
+        _SHARED_LLM = build_llm_pipeline()
+    if _SHARED_TTS is None:
+        _SHARED_TTS = inference.TTS(
+            model="cartesia/sonic-3",
+            voice="a0e99841-438c-4a64-b679-ae501e7d6091",
+        )
+    return _SHARED_STT, _SHARED_LLM, _SHARED_TTS
+
 def create_session(ctx: agents.JobContext | None = None):
     """
-    Standard LiveKit Cloud Inference Voice Pipeline with Groq LPU Acceleration:
+    Ultra-low latency LiveKit Voice Pipeline with Groq LPU Acceleration:
+    - Shared pre-warmed models: Zero SSL certificate reload or disk-read stalls
     - LLM: Groq LPU (Primary) + Gemini 2.5 Flash (Automatic Fallback)
     - STT: Deepgram Nova-3 via LiveKit Inference (cloud edge)
     - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference
-    - Turn Detection: LiveKit Cloud TurnDetector (0% CPU on Render, 0ms queue delay)
-    - Word-level TTS-aligned Transcriptions: Synced caption streams over lk.transcription
-    - Pronunciation Maps: Phonetic replacements for CVXPY, CLARABEL, G-CVaR, AQI, and academic terms
+    - Turn Detection: LiveKit Cloud TurnDetector v1 (0% CPU on Render)
+    - Endpointing: 0.5s min_delay to guarantee clean transcript commit before speech
+    - Pronunciation Maps: Phonetic replacements for academic & quant terms
     """
+    stt, llm_pipeline, tts = get_shared_pipeline()
     return AgentSession(
-        stt=inference.STT(model="deepgram/nova-3", language="multi"),
-        llm=build_llm_pipeline(),
-        tts=inference.TTS(
-            model="cartesia/sonic-3",
-            voice="a0e99841-438c-4a64-b679-ae501e7d6091",
-        ),
+        stt=stt,
+        llm=llm_pipeline,
+        tts=tts,
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(version="v1"),
+            endpointing={"min_delay": 0.5, "max_delay": 3.0},
         ),
-        use_tts_aligned_transcript=True,
+        use_tts_aligned_transcript=False,
         tts_text_transforms=[
             "filter_emoji",
             "filter_markdown",
@@ -236,21 +251,34 @@ def create_session(ctx: agents.JobContext | None = None):
 
 def prewarm(proc: agents.JobProcess):
     """
-    Pre-warm core networking, async, and inference modules before incoming requests arrive.
+    Pre-warm core networking, async, SSL contexts, and inference modules before incoming requests arrive.
     Eliminates cold-start delays and event loop stalls during session initialization.
     """
     try:
         import anyio.lowlevel  # noqa: F401
+        import anyio.streams.memory  # noqa: F401
+        import anyio._backends._asyncio  # noqa: F401
         import httpcore  # noqa: F401
         import httpx  # noqa: F401
         import inspect  # noqa: F401
+        import ssl  # noqa: F401
+        import certifi  # noqa: F401
+        import re  # noqa: F401
+        # Pre-cache default SSL contexts and certs so they never hit disk during live speech
+        ssl.create_default_context(cafile=certifi.where())
+        ssl.create_default_context().load_default_certs()
         from livekit.plugins import openai  # noqa: F401
         from livekit.agents import inference, AgentSession  # noqa: F401
-        print("--> [Prewarm] Core networking and inference libraries pre-loaded.")
+        get_shared_pipeline()
+        print("--> [Prewarm] Core networking, SSL certificates, and shared pipeline pre-loaded.")
     except Exception as e:
         print(f"--> [Prewarm Warning] {e}")
 
+port_num = int(os.getenv("PORT", "10000"))
+
 server = AgentServer(
+    port=port_num,
+    host="0.0.0.0",
     load_threshold=float("inf"),
     load_fnc=lambda *args: 0.0,
     num_idle_processes=1,
@@ -298,85 +326,8 @@ async def my_agent(ctx: agents.JobContext):
 
 
 # ============================================================
-# HTTP HEALTH CHECK SERVER (For Render Web Service deployment)
-# ============================================================
-
-class RenderHealthHandler(BaseHTTPRequestHandler):
-    def _send_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "*")
-        self.send_header("Access-Control-Max-Age", "86400")
-
-    def _get_status_payload(self) -> bytes:
-        status_info = {
-            "status": "healthy",
-            "service": "portfolio-backend-livekit",
-            "agent_name": "my-agent",
-            "pipeline": "livekit-cloud-inference-with-groq",
-            "stt": "deepgram/nova-3",
-            "tts": "cartesia/sonic-3 (male)",
-            "primary_llm": "groq/qwen3.8-27b (14,400 free req/day, ~100ms TTFT)",
-            "fallback_llm": "google/gemini-2.5-flash (livekit-inference)",
-            "turn_detection": "livekit-inference-cloud-turndetector",
-            "tts_aligned_transcript": True,
-            "pronunciation_map": True,
-            "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
-            "groq_configured": bool(os.getenv("GROQ_API_KEY")),
-        }
-        return json.dumps(status_info, indent=2).encode("utf-8")
-
-    def do_HEAD(self):
-        payload = self._get_status_payload()
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(payload)))
-        self._send_cors_headers()
-        self.end_headers()
-
-    def do_GET(self):
-        payload = self._get_status_payload()
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(payload)))
-        self._send_cors_headers()
-        self.end_headers()
-        self.wfile.write(payload)
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._send_cors_headers()
-        self.send_header("Content-Length", "0")
-        self.end_headers()
-
-    def log_message(self, format, *args):
-        # Suppress noisy health-check polling logs
-        return
-
-_health_server_thread: threading.Thread | None = None
-
-def start_health_server():
-    global _health_server_thread
-    if _health_server_thread is not None and _health_server_thread.is_alive():
-        return
-
-    port = int(os.getenv("PORT", "10000"))
-    def _serve():
-        try:
-            httpd = ThreadingHTTPServer(("0.0.0.0", port), RenderHealthHandler)
-            print(f"--> [Render HTTP Health Check] Successfully bound to 0.0.0.0:{port}")
-            httpd.serve_forever()
-        except Exception as err:
-            print(f"--> [Render HTTP Warning] Could not start health server on port {port}: {err}")
-
-    _health_server_thread = threading.Thread(target=_serve, daemon=True)
-    _health_server_thread.start()
-
-
-# ============================================================
 # RUN
 # ============================================================
 
 if __name__ == "__main__":
-    start_health_server()
     agents.cli.run_app(server)
