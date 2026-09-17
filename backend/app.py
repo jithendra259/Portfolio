@@ -234,11 +234,28 @@ def create_session(ctx: agents.JobContext | None = None):
         ],
     )
 
+def prewarm(proc: agents.JobProcess):
+    """
+    Pre-warm core networking, async, and inference modules before incoming requests arrive.
+    Eliminates cold-start delays and event loop stalls during session initialization.
+    """
+    try:
+        import anyio.lowlevel  # noqa: F401
+        import httpcore  # noqa: F401
+        import httpx  # noqa: F401
+        import inspect  # noqa: F401
+        from livekit.plugins import openai  # noqa: F401
+        from livekit.agents import inference, AgentSession  # noqa: F401
+        print("--> [Prewarm] Core networking and inference libraries pre-loaded.")
+    except Exception as e:
+        print(f"--> [Prewarm Warning] {e}")
+
 server = AgentServer(
     load_threshold=float("inf"),
     load_fnc=lambda *args: 0.0,
-    num_idle_processes=0,
+    num_idle_processes=1,
     job_executor_type=agents.JobExecutorType.THREAD,
+    setup_fnc=prewarm,
 )
 
 
@@ -265,37 +282,19 @@ async def my_agent(ctx: agents.JobContext):
 
     # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
     try:
-        await session.say(
+        session.say(
             "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
             allow_interruptions=True,
         )
     except Exception as e:
         print(f"--> [Agent Greeting Warning] {e}")
 
-    # 5. Keep the agent alive for the entire conversation lifetime
-    disconnected_fut = asyncio.Future()
-
-    @ctx.room.on("disconnected")
-    def on_room_disconnected(*args):
-        if not disconnected_fut.done():
-            disconnected_fut.set_result(None)
-
+    # 5. Cleanly shutdown the job as soon as the user disconnects
     @ctx.room.on("participant_disconnected")
     def on_participant_disconnected(participant):
-        # End session when all human participants leave the room
         if len(ctx.room.remote_participants) == 0:
-            print("--> [Agent Session] Remote participants left room, ending session.")
-            if not disconnected_fut.done():
-                disconnected_fut.set_result(None)
-
-    async def _on_shutdown(*args):
-        if not disconnected_fut.done():
-            disconnected_fut.set_result(None)
-
-    ctx.add_shutdown_callback(_on_shutdown)
-
-    await disconnected_fut
-    print("--> [Agent Session] Session ended cleanly.")
+            print("--> [Agent Session] Remote participant left room, shutting down job cleanly.")
+            ctx.shutdown(reason="remote participant left")
 
 
 # ============================================================
