@@ -27,7 +27,7 @@ export function ContactSection() {
         className="bg-transparent h-auto min-h-[780px] py-24"
       >
         <div className="py-4 flex flex-col items-center justify-center gap-5 w-full max-w-md mx-auto">
-          {/* Book Appointment Pearl Button placed ABOVE Gmail copy */}
+          {/* Book Appointment Pearl Button opens Modal */}
           <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
             <DialogTrigger asChild>
               <PearlButton label="Book Appointment" />
@@ -40,6 +40,14 @@ export function ContactSection() {
               <CalendarAppointmentBooking />
             </DialogContent>
           </Dialog>
+
+          {/* Standalone Full-Page Link */}
+          <a
+            href="/book-appointment"
+            className="text-xs font-mono text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-semibold"
+          >
+            <span>Open Dedicated Booking Page in Full Screen &rarr;</span>
+          </a>
 
           {/* Gmail Copy Button placed BELOW */}
           <EmailRevealButton

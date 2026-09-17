@@ -16,6 +16,7 @@ export type NavigationTarget =
   | 'experience'
   | 'resume'
   | 'contact'
+  | 'book_appointment'
   | 'case_study_adaptive_governance'
   | 'case_study_regime_supervisory'
   | 'case_study_supervisory_xai'
@@ -39,6 +40,11 @@ export const NAVIGATION_TARGETS: Record<NavigationTarget, NavigationTargetMeta> 
   experience: { type: 'section', destination: 'experience', label: 'Experience Timeline' },
   resume: { type: 'section', destination: 'resume', label: 'Resume' },
   contact: { type: 'section', destination: 'contact', label: 'Contact Section' },
+  book_appointment: {
+    type: 'route',
+    destination: '/book-appointment',
+    label: 'Schedule a Meeting',
+  },
   case_study_voice_architecture: {
     type: 'route',
     destination: '/projects/voice-agent-portfolio-architecture',
@@ -120,6 +126,19 @@ function matchSpeechIntent(text: string): NavigationTarget | null {
     lower.includes('crop disease')
   ) {
     return 'case_study_swarm_robotics';
+  }
+
+  if (
+    lower.includes('schedule a meeting') ||
+    lower.includes('book an appointment') ||
+    lower.includes('book a call') ||
+    lower.includes('schedule an interview') ||
+    lower.includes('calendar booking') ||
+    lower.includes('schedule call') ||
+    lower.includes('meeting page') ||
+    lower.includes('booking page')
+  ) {
+    return 'book_appointment';
   }
 
   if (
