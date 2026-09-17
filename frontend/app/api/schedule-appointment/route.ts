@@ -39,9 +39,12 @@ export async function POST(req: NextRequest) {
     const endDate = new Date(startDate);
     endDate.setMinutes(endDate.getMinutes() + 30);
 
-    // Generate dedicated Google Meet room
-    const meetCode = generateMeetCode();
-    const meetUrl = `https://meet.google.com/${meetCode}`;
+    // Generate dedicated meeting room
+    // If a permanent Google Meet link is configured (e.g. from meet.google.com "Create a meeting for later"),
+    // use it so Google recognizes the room. Otherwise generate unique meeting room code.
+    const customMeetUrl = (process.env.GOOGLE_MEET_LINK || process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK || '').trim();
+    const meetCode = customMeetUrl ? (customMeetUrl.split('/').pop() || generateMeetCode()) : generateMeetCode();
+    const meetUrl = customMeetUrl || `https://meet.google.com/${meetCode}`;
 
     const formattedDate = startDate.toLocaleDateString('en-US', {
       weekday: 'long',
