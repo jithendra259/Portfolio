@@ -5,9 +5,8 @@ Manages room connections, voice pipeline startup, greeting utterance, and clean 
 
 import asyncio
 
-from livekit import agents, rtc
-from livekit.agents import AgentSession, AgentServer, room_io
-from livekit.plugins import ai_coustics
+from livekit import agents
+from livekit.agents import AgentServer, room_io
 
 from agent import Assistant
 from config import settings
@@ -41,27 +40,22 @@ async def my_agent(ctx: agents.JobContext) -> None:
         room=ctx.room,
         agent=assistant,
         room_options=room_io.RoomOptions(
-            audio_input=room_io.AudioInputOptions(
-                # ai-coustics QUAIL_VF_S: Voice Focus 2.1 Small — lightweight voice isolation
-                # Runs entirely on LiveKit Cloud inference infra: ZERO local CPU on Render.
-                # Best WER (7.1%) vs Krisp or background-only models for single-speaker use.
-                # Participant selector: skip AI-to-AI audio (agent participants don't need isolation)
-                noise_cancellation=lambda params: None
-                if params.participant.kind == rtc.ParticipantKind.PARTICIPANT_KIND_AGENT
-                else ai_coustics.audio_enhancement(
-                    model=ai_coustics.EnhancerModel.QUAIL_VF_S,
-                    model_parameters=ai_coustics.ModelParameters(
-                        # 0.8 = recommended enhancement level from LiveKit docs audio samples
-                        enhancement_level=0.8,
-                    ),
-                ),
-            ),
+            # NOTE: ai-coustics QUAIL_VF_S was removed.
+            # Despite the docs claiming it runs "server-side on LiveKit Cloud",
+            # the Python plugin runs the Rust model LOCALLY via FFI (_uniffi_rust_call_with_error).
+            # On Render 0.1 vCPU this blocked the asyncio event loop for 387ms and caused
+            # VAD to fall 8+ seconds behind realtime, breaking voice entirely.
+            # Audio quality is instead handled by:
+            #   - WebRTC echoCancellation + noiseSuppression in the browser (frontend Room config)
+            #   - Deepgram nova-3's built-in noise robustness
+            #   - STT inference fallback chain (assemblyai/universal-streaming)
             text_output=room_io.TextOutputOptions(
                 sync_transcription=False,
             ),
         ),
     )
-    print("-->[Server] Assistant session started — ai-coustics QUAIL_VF_S voice isolation active.")
+    print("-->[Server] Assistant session started. Audio: WebRTC browser-side + Deepgram nova-3.")
+
 
     # 4. Inactivity & Lifecycle Watchdog (user_away_timeout)
     idle_disconnect_task: asyncio.Task | None = None
