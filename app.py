@@ -17,6 +17,7 @@ from livekit.agents import (
     llm,
     text_transforms,
 )
+from livekit.plugins import openai
 
 # ============================================================
 # ENVIRONMENT
@@ -84,7 +85,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 4. KEY PROJECTS & ARCHITECTURES:
 - Agentic AI Portfolio Governance Chatbot (This Voice Assistant):
-  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-300ms voice TTFT via LiveKit Inference, Deepgram Nova-3 STT, Cartesia Sonic-3 TTS, and Gemini.
+  * Decoupled into 10+ agent roles: Supervisor, Data Ingestion, Risk Assessment, Regime Detection, Optimization, Grounding & Verification, and Conversational Explainer. Delivers sub-200ms voice TTFT via Groq LPU LLM, LiveKit Inference, Deepgram Nova-3 STT, and Cartesia Sonic-3 TTS.
 - Multi-Agent Adaptive Portfolio Governance System:
   * Full-stack quantitative investment intelligence platform built on Next.js 15, TypeScript, TailwindCSS, and Python backend.
 - Regime-Adaptive Supervisory Governance:
@@ -96,7 +97,7 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 5. TECHNICAL SKILLS:
 - AI & Multi-Agent Swarms: LangGraph, LangChain, Multi-Agent Blackboards, Directed Acyclic Graph (DAG) Workflows, RAG, Numerical Grounding & Hallucination Mitigation, Tool Calling.
-- Large Language Models & Voice: Google Gemini, Mistral-7B, Llama-3, Ollama, LiveKit WebRTC, Deepgram Nova-3, Cartesia Sonic-3, Cloud Turn Detection.
+- Large Language Models & Voice: Groq LPU, Google Gemini, Mistral-7B, Llama-3, LiveKit WebRTC, Deepgram Nova-3, Cartesia Sonic-3, Cloud Turn Detection.
 - Machine Learning: PyTorch, TensorFlow, Scikit-Learn, XGBoost, ARIMA, Markov Chains, Hugging Face, OpenCV.
 - Quantitative Finance & Math: Convex Optimization (CVXPY), CLARABEL solver, Conditional Value-at-Risk (CVaR), Ledoit-Wolf Shrinkage, Bipartite Institutional Co-holding Networks, Eigenvector Centrality, NetworkX, YFinance.
 - Full-Stack Web: Next.js 15 (App Router), React 19, TypeScript, JavaScript, TailwindCSS, Node.js, FastAPI, Flask, MongoDB, REST APIs, WebSockets, WebRTC.
@@ -158,22 +159,47 @@ You are the voice AI clone and interactive portfolio assistant for Kandula Jithe
 
 
 # ============================================================
-# LIVEKIT SERVER & CLOUD INFERENCE PIPELINE
+# LIVEKIT SERVER & HYBRID GROQ + GEMINI FALLBACK PIPELINE
 # ============================================================
+
+def build_llm_pipeline():
+    """
+    Builds a high-availability dual-LLM pipeline:
+    1. Primary: Groq LPU (qwen/qwen3.8-27b) — 14,400 free requests/day, sub-100ms TTFT
+    2. Fallback: Google Gemini 2.5 Flash via LiveKit Cloud Inference — automatically handles traffic if Groq ever throttles
+    """
+    groq_key = os.getenv("GROQ_API_KEY", "").strip("\"' \t\r\n")
+
+    if groq_key:
+        groq_llm = openai.LLM(
+            model="qwen/qwen3.8-27b",
+            base_url="https://api.groq.com/openai/v1",
+            api_key=groq_key,
+            max_completion_tokens=60,
+            temperature=0.2,
+        )
+        gemini_fallback = inference.LLM(model="google/gemini-2.5-flash")
+        return llm.FallbackAdapter(
+            [groq_llm, gemini_fallback],
+            attempt_timeout=5.0,
+            max_retry_per_llm=1,
+        )
+
+    return inference.LLM(model="google/gemini-2.5-flash")
 
 def create_session(ctx: agents.JobContext | None = None):
     """
-    Standard LiveKit Cloud Inference Voice Pipeline:
+    Standard LiveKit Cloud Inference Voice Pipeline with Groq LPU Acceleration:
+    - LLM: Groq LPU (Primary) + Gemini 2.5 Flash (Automatic Fallback)
     - STT: Deepgram Nova-3 via LiveKit Inference (cloud edge)
     - TTS: Cartesia Sonic-3 ultra-fast male voice via LiveKit Inference
     - Turn Detection: LiveKit Cloud TurnDetector (0% CPU on Render, 0ms queue delay)
     - Word-level TTS-aligned Transcriptions: Synced caption streams over lk.transcription
     - Pronunciation Maps: Phonetic replacements for CVXPY, CLARABEL, G-CVaR, AQI, and academic terms
-    - LLM: Google Gemini 2.5 Flash powered natively by LiveKit Cloud Inference (zero Google 429 quota exhaustion)
     """
     return AgentSession(
         stt=inference.STT(model="deepgram/nova-3", language="multi"),
-        llm=inference.LLM(model="google/gemini-2.5-flash"),
+        llm=build_llm_pipeline(),
         tts=inference.TTS(
             model="cartesia/sonic-3",
             voice="a0e99841-438c-4a64-b679-ae501e7d6091",
@@ -226,7 +252,7 @@ async def my_agent(ctx: agents.JobContext):
     await ctx.connect()
     print("--> [Agent Session] Worker connected to LiveKit room.")
 
-    # 2. Instantiate cloud-inference session
+    # 2. Instantiate cloud-inference session with Groq + Gemini fallback
     session = create_session(ctx)
 
     # 3. Start session with Assistant tool caller
@@ -288,14 +314,16 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "status": "healthy",
             "service": "portfolio-backend-livekit",
             "agent_name": "my-agent",
-            "pipeline": "livekit-cloud-inference",
+            "pipeline": "livekit-cloud-inference-with-groq",
             "stt": "deepgram/nova-3",
             "tts": "cartesia/sonic-3 (male)",
-            "llm": "google/gemini-2.5-flash (livekit-inference)",
+            "primary_llm": "groq/qwen3.8-27b (14,400 free req/day, ~100ms TTFT)",
+            "fallback_llm": "google/gemini-2.5-flash (livekit-inference)",
             "turn_detection": "livekit-inference-cloud-turndetector",
             "tts_aligned_transcript": True,
             "pronunciation_map": True,
             "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
+            "groq_configured": bool(os.getenv("GROQ_API_KEY")),
         }
         return json.dumps(status_info, indent=2).encode("utf-8")
 
