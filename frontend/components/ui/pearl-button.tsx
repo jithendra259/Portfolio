@@ -1,13 +1,28 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
-export type PearlButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type PearlButtonProps = {
   label?: string;
-};
+  className?: string;
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  onClick?: (e: React.MouseEvent<any>) => void;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>(
-  ({ label = 'Pearl Button', className = '', type = 'button', ...props }, ref) => {
+export const PearlButton = React.forwardRef<any, PearlButtonProps>(
+  ({ label = 'Pearl Button', className = '', href, type = 'button', onClick, ...props }, ref) => {
+    const content = (
+      <div className="wrap">
+        <p>
+          <span>✧</span>
+          <span>✦</span>
+          {label}
+        </p>
+      </div>
+    );
+
     return (
       <>
         <style>{`
@@ -19,6 +34,9 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
             cursor: pointer;
             border: 0;
             position: relative;
+            display: inline-block;
+            text-decoration: none;
+            user-select: none;
             border-radius: var(--radius);
             background-color: var(--bg);
             transition: all 0.2s ease;
@@ -59,25 +77,26 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
             gap: 12px;
             margin: 0;
             transition: all 0.2s ease;
-            transform: translateY(2%);
-            -webkit-mask-image: linear-gradient(to bottom, white 40%, transparent);
-                    mask-image: linear-gradient(to bottom, white 40%, transparent);
           }
-          .pearl-button .wrap::before,
+          .pearl-button .wrap::before {
+            content: "";
+            position: absolute;
+            transition: all 0.3s ease;
+            left: -15%;
+            right: -15%;
+            top: 15%;
+            bottom: -85%;
+            border-radius: 50%;
+            background: radial-gradient(
+              circle at center,
+              rgba(255, 255, 255, 0.6) 0%,
+              rgba(255, 255, 255, 0) 70%
+            );
+          }
           .pearl-button .wrap::after {
             content: "";
             position: absolute;
             transition: all 0.3s ease;
-          }
-          .pearl-button .wrap::before {
-            left: -15%;
-            right: -15%;
-            bottom: 25%;
-            top: -100%;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.12);
-          }
-          .pearl-button .wrap::after {
             left: 6%;
             right: 6%;
             top: 12%;
@@ -120,15 +139,15 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
           }
         `}</style>
 
-        <button ref={ref} type={type} className={`pearl-button ${className}`} {...props}>
-          <div className="wrap">
-            <p>
-              <span>✧</span>
-              <span>✦</span>
-              {label}
-            </p>
-          </div>
-        </button>
+        {href ? (
+          <Link ref={ref} href={href} className={`pearl-button ${className}`} onClick={onClick}>
+            {content}
+          </Link>
+        ) : (
+          <button ref={ref} type={type} className={`pearl-button ${className}`} onClick={onClick} {...props}>
+            {content}
+          </button>
+        )}
       </>
     );
   }

@@ -4,20 +4,10 @@ import * as React from 'react';
 import { FloatingIconsHero } from '@/components/ui/widgets/floating-icons-hero-section';
 import { contactIcons } from '@/components/ui/widgets/contact-floating-icons';
 import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
-import { CalendarAppointmentBooking } from '@/components/ui/calendar-appointment-booking';
-import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { PearlButton } from '@/components/ui/pearl-button';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export function ContactSection() {
-  const [isBookingOpen, setIsBookingOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleOpenBooking = () => setIsBookingOpen(true);
-    window.addEventListener('open-appointment-booking', handleOpenBooking);
-    return () => window.removeEventListener('open-appointment-booking', handleOpenBooking);
-  }, []);
-
   return (
     <section id="contact" className="relative w-full overflow-hidden">
       <FloatingIconsHero
@@ -27,27 +17,8 @@ export function ContactSection() {
         className="bg-transparent h-auto min-h-[780px] py-24"
       >
         <div className="py-4 flex flex-col items-center justify-center gap-5 w-full max-w-md mx-auto">
-          {/* Book Appointment Pearl Button opens Modal */}
-          <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-            <DialogTrigger asChild>
-              <PearlButton label="Book Appointment" />
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl p-0 border-border bg-transparent shadow-2xl overflow-hidden">
-              <DialogTitle className="sr-only">Book an Appointment</DialogTitle>
-              <DialogDescription className="sr-only">
-                Choose an available date and time slot to book an engineering or research discussion with Kandula Jithendra Subramanyam.
-              </DialogDescription>
-              <CalendarAppointmentBooking />
-            </DialogContent>
-          </Dialog>
-
-          {/* Standalone Full-Page Link */}
-          <a
-            href="/book-appointment"
-            className="text-xs font-mono text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-semibold"
-          >
-            <span>Open Dedicated Booking Page in Full Screen &rarr;</span>
-          </a>
+          {/* Book Appointment Pearl Button redirects directly to /book-appointment page */}
+          <PearlButton label="Book Appointment" href="/book-appointment" />
 
           {/* Gmail Copy Button placed BELOW */}
           <EmailRevealButton
