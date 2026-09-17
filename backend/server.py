@@ -3,6 +3,8 @@ LiveKit Agent Server and RTC Session Lifecycle Orchestrator.
 Manages room connections, voice pipeline startup, greeting utterance, and clean session shutdown.
 """
 
+import asyncio
+
 from livekit import agents
 from livekit.agents import AgentServer, room_io
 
@@ -45,9 +47,44 @@ async def my_agent(ctx: agents.JobContext) -> None:
     )
     print("--> [Server] Assistant session started in room with real-time text streaming.")
 
-    # 4. Cleanly shutdown the job runner as soon as the user disconnects
+    # 4. Inactivity & Lifecycle Watchdog (user_away_timeout)
+    idle_disconnect_task: asyncio.Task | None = None
+
+    @session.on("user_state_changed")
+    def on_user_state_changed(ev):
+        nonlocal idle_disconnect_task
+        state = getattr(ev, "new_state", None)
+        if state == "away":
+            print("--> [Server Watchdog] Visitor away detected. Sending check-in prompt.")
+            asyncio.create_task(
+                session.say(
+                    "Still there? Let me know if you'd like to explore any of Jithendra's research papers, engineering projects, or resume.",
+                    allow_interruptions=True,
+                    add_to_chat_ctx=False,
+                )
+            )
+
+            async def _idle_shutdown():
+                try:
+                    await asyncio.sleep(settings.IDLE_DISCONNECT_TIMEOUT)
+                    print("--> [Server Watchdog] Inactivity timeout reached without reply. Gracefully shutting down.")
+                    ctx.shutdown(reason="inactivity timeout")
+                except asyncio.CancelledError:
+                    pass
+
+            if idle_disconnect_task is None or idle_disconnect_task.done():
+                idle_disconnect_task = asyncio.create_task(_idle_shutdown())
+        elif state in ("speaking", "listening"):
+            if idle_disconnect_task and not idle_disconnect_task.done():
+                print("--> [Server Watchdog] Visitor activity resumed. Resetting idle watchdog.")
+                idle_disconnect_task.cancel()
+                idle_disconnect_task = None
+
+    # 5. Cleanly shutdown the job runner as soon as the user disconnects
     @ctx.room.on("participant_disconnected")
     def on_participant_disconnected(participant):
         if len(ctx.room.remote_participants) == 0:
             print("--> [Server] Remote participant left room, shutting down job cleanly.")
+            if idle_disconnect_task and not idle_disconnect_task.done():
+                idle_disconnect_task.cancel()
             ctx.shutdown(reason="remote participant left")

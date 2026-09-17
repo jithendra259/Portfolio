@@ -42,11 +42,26 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
                 "min_delay": settings.MIN_ENDPOINTING_DELAY,
                 "max_delay": settings.MAX_ENDPOINTING_DELAY,
             },
+            interruption={
+                # "adaptive" uses LiveKit Cloud inference to distinguish real barge-ins
+                # from short backchannels ("uh-huh", "ok", "right") — avoids false turn switches
+                "mode": "adaptive",
+                "min_duration": 0.5,
+                "min_words": 0,
+            },
+            preemptive_generation={
+                # Start LLM generation as soon as the final STT transcript arrives,
+                # before turn-detection confirms — reduces perceived latency
+                "enabled": True,
+                "preemptive_tts": False,  # keep False: saves wasted compute on Render free tier
+                "max_speech_duration": 10.0,
+            },
             user_turn_limit={
                 "max_words": settings.USER_TURN_MAX_WORDS,
                 "max_duration": settings.USER_TURN_MAX_DURATION,
             },
         ),
+        user_away_timeout=settings.USER_AWAY_TIMEOUT,
         use_tts_aligned_transcript=False,
         tts_text_transforms=[
             "filter_emoji",
