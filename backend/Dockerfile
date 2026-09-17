@@ -14,8 +14,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source
+# Copy application source modules and subfolders
+COPY config/ ./config/
+COPY api/ ./api/
+COPY voice/ ./voice/
+COPY agent/ ./agent/
 COPY prompts/ ./prompts/
+COPY server.py .
 COPY app.py .
 
 # Pre-download required LiveKit agent model files (e.g. Silero VAD)
