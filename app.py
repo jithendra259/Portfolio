@@ -205,7 +205,7 @@ def create_session(ctx: agents.JobContext | None = None):
             voice="a0e99841-438c-4a64-b679-ae501e7d6091",
         ),
         turn_handling=TurnHandlingOptions(
-            turn_detection=inference.TurnDetector(),
+            turn_detection=inference.TurnDetector(version="v1"),
         ),
         use_tts_aligned_transcript=True,
         tts_text_transforms=[
