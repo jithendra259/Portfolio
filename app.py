@@ -3,9 +3,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents import llm, stt, tts, inference, vad
-from livekit.plugins import cartesia, deepgram, google, silero
-from livekit.plugins.google.beta import GeminiSTT, GeminiTTS
+from livekit.agents import llm, stt, tts, inference, vad, utils
+from livekit.agents.types import APIConnectOptions, DEFAULT_API_CONNECT_OPTIONS
+from livekit.plugins import deepgram, google, silero
+from livekit.plugins.google.beta import GeminiSTT
 from livekit.agents import (
     Agent,
     AgentServer,
@@ -13,6 +14,8 @@ from livekit.agents import (
     TurnHandlingOptions,
     room_io,
 )
+import edge_tts
+import av
 
 
 # ============================================================
@@ -185,6 +188,14 @@ def prewarm(proc: agents.JobProcess):
     except Exception as e:
         print(f"--> [Prewarm Warning] Failed to prewarm Google LLM: {e}")
 
+    try:
+        proc.userdata["tts"] = build_tts()
+        _codec = av.CodecContext.create("mp3", "r")
+        _resampler = av.AudioResampler(format="s16", layout="mono", rate=24000)
+        print("--> [Prewarm] EdgeTTS (Male Voice: GuyNeural) prewarmed successfully.")
+    except Exception as e:
+        print(f"--> [Prewarm Warning] Failed to prewarm EdgeTTS: {e}")
+
 server = AgentServer(
     load_threshold=float("inf"),
     load_fnc=lambda *args: 0.0,
@@ -236,37 +247,73 @@ def build_stt():
         return stt_models[0]
     return GeminiSTT(api_key=google_key) if google_key else deepgram.STT()
 
+class EdgeTTSChunkedStream(tts.ChunkedStream):
+    async def _run(self, output_emitter: tts.AudioEmitter) -> None:
+        communicate = edge_tts.Communicate(
+            text=self._input_text,
+            voice=self._tts._voice,
+            rate=self._tts._rate,
+        )
+        output_emitter.initialize(
+            request_id=utils.shortuuid(),
+            sample_rate=self._tts.sample_rate,
+            num_channels=self._tts.num_channels,
+            mime_type="audio/pcm",
+        )
+        codec = av.CodecContext.create("mp3", "r")
+        resampler = av.AudioResampler(format="s16", layout="mono", rate=self._tts.sample_rate)
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio" and chunk.get("data"):
+                packets = codec.parse(chunk["data"])
+                for packet in packets:
+                    for frame in codec.decode(packet):
+                        for resampled in resampler.resample(frame):
+                            output_emitter.push(resampled.to_ndarray().tobytes())
+
+        # Flush decoder and resampler
+        for frame in codec.decode():
+            for resampled in resampler.resample(frame):
+                output_emitter.push(resampled.to_ndarray().tobytes())
+        for resampled in resampler.resample(None):
+            output_emitter.push(resampled.to_ndarray().tobytes())
+
+
+class EdgeTTS(tts.TTS):
+    """Ultra-fast, zero-credit streaming male neural voice using Microsoft Edge TTS"""
+    def __init__(
+        self,
+        voice: str = "en-US-GuyNeural",
+        rate: str = "+4%",
+        sample_rate: int = 24000,
+    ) -> None:
+        super().__init__(
+            capabilities=tts.TTSCapabilities(streaming=False),
+            sample_rate=sample_rate,
+            num_channels=1,
+        )
+        self._voice = voice
+        self._rate = rate
+
+    @property
+    def model(self) -> str:
+        return "edge-tts-guy-neural"
+
+    @property
+    def provider(self) -> str:
+        return "microsoft-edge"
+
+    def synthesize(
+        self,
+        text: str,
+        *,
+        conn_options: APIConnectOptions = DEFAULT_API_CONNECT_OPTIONS,
+    ) -> tts.ChunkedStream:
+        return EdgeTTSChunkedStream(tts=self, input_text=text, conn_options=conn_options)
+
+
 def build_tts():
-    """Cartesia Sonic-3 neural voice with Gemini fallback"""
-    google_key = get_clean_google_api_key()
-    cartesia_key = os.getenv("CARTESIA_API_KEY", "").strip("\"' \t\r\n")
-
-    tts_models = []
-    if cartesia_key:
-        try:
-            tts_models.append(
-                cartesia.TTS(
-                    api_key=cartesia_key,
-                    model="sonic-3",
-                    voice="f786b574-daa5-4673-aa0c-cbe3e8534c02",
-                    language="en",
-                    speed=1.05,
-                )
-            )
-        except Exception as e:
-            print(f"--> [TTS Warning] Could not init Cartesia TTS: {e}")
-
-    if google_key:
-        try:
-            tts_models.append(GeminiTTS(api_key=google_key))
-        except Exception as e:
-            print(f"--> [TTS Warning] Could not init GeminiTTS fallback: {e}")
-
-    if len(tts_models) > 1:
-        return tts.FallbackAdapter(tts_models)
-    elif len(tts_models) == 1:
-        return tts_models[0]
-    return GeminiTTS(api_key=google_key) if google_key else cartesia.TTS()
+    """Ultra-fast male neural voice (en-US-GuyNeural) - 0 credits, 0 cost, sub-second latency"""
+    return EdgeTTS(voice="en-US-GuyNeural", rate="+4%")
 
 def build_llm():
     """Google Gemini Flash Latest with ultra-fast TTFT, zero thinking budget, and strict token limits"""
@@ -288,15 +335,17 @@ def create_session(ctx: agents.JobContext | None = None):
     """Modular session builder binding STT, VAD, LLM, and TTS to active job"""
     vad_instance = None
     llm_instance = None
+    tts_instance = None
     if ctx and hasattr(ctx, "proc") and hasattr(ctx.proc, "userdata"):
         vad_instance = ctx.proc.userdata.get("vad")
         llm_instance = ctx.proc.userdata.get("llm")
+        tts_instance = ctx.proc.userdata.get("tts")
 
     return AgentSession(
         stt=build_stt(),
         vad=vad_instance or build_vad(),
         llm=llm_instance or build_llm(),
-        tts=build_tts(),
+        tts=tts_instance or build_tts(),
         turn_handling=TurnHandlingOptions(
             allow_interruptions=True,
         ),
@@ -379,7 +428,7 @@ class RenderHealthHandler(BaseHTTPRequestHandler):
             "service": "portfolio-backend-livekit",
             "agent_name": "my-agent",
             "livekit_configured": bool(os.getenv("LIVEKIT_URL")),
-            "cartesia_configured": bool(os.getenv("CARTESIA_API_KEY")),
+            "tts_engine": "edge-tts-guy-neural",
             "deepgram_configured": bool(os.getenv("DEEPGRAM_API_KEY")),
             "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         }
@@ -438,4 +487,4 @@ def start_health_server():
 
 if __name__ == "__main__":
     start_health_server()
-    agents.cli.run_app(server)
+    agents.cli.run_app(server)
