@@ -1,4 +1,4 @@
-livekit>=1.1.15
-livekit-agents>=1.7.1
-livekit-plugins-google>=1.7.1
+livekit>=1.1.18
+livekit-agents>=1.8.2
+livekit-plugins-openai>=1.8.2
 python-dotenv>=1.0.0
