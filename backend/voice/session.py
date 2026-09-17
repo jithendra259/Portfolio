@@ -42,6 +42,10 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
                 "min_delay": settings.MIN_ENDPOINTING_DELAY,
                 "max_delay": settings.MAX_ENDPOINTING_DELAY,
             },
+            user_turn_limit={
+                "max_words": settings.USER_TURN_MAX_WORDS,
+                "max_duration": settings.USER_TURN_MAX_DURATION,
+            },
         ),
         use_tts_aligned_transcript=False,
         tts_text_transforms=[

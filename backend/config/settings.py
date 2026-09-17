@@ -37,6 +37,8 @@ class Settings:
     TURN_DETECTOR_VERSION: str = "v1"
     MIN_ENDPOINTING_DELAY: float = 0.5
     MAX_ENDPOINTING_DELAY: float = 3.0
+    USER_TURN_MAX_WORDS: int = 50
+    USER_TURN_MAX_DURATION: float = 25.0
 
     # LiveKit Cloud Credentials
     LIVEKIT_URL: str = os.getenv("LIVEKIT_URL", "")

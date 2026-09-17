@@ -8,7 +8,14 @@ from collections.abc import AsyncIterable
 from typing import Annotated
 
 from livekit import rtc
-from livekit.agents import Agent, ModelSettings, llm
+from livekit.agents import (
+    Agent,
+    FlushSentinel,
+    ModelSettings,
+    StopResponse,
+    UserTurnExceededEvent,
+    llm,
+)
 
 from prompts import SYSTEM_INSTRUCTIONS
 from .tools import broadcast_navigation
@@ -42,6 +49,11 @@ class Assistant(Agent):
         Lifecycle hook called when the user finishes speaking or typing, before LLM response generation.
         Performs precise domain grounding for Jithendra's research papers and engineering projects.
         """
+        # If the user turn contains no recognizable text, halt generation to prevent hallucinated audio
+        if not new_message.text_content or not new_message.text_content.strip():
+            print("--> [Assistant Hook] on_user_turn_completed: Empty utterance detected, stopping response.")
+            raise StopResponse()
+
         query = (new_message.text_content or "").lower()
 
         # Paper 1: Elsevier EAAI Grounding
@@ -95,6 +107,45 @@ class Assistant(Agent):
                 ),
             )
 
+    async def on_user_turn_exceeded(self, ev: UserTurnExceededEvent) -> None:
+        """
+        Lifecycle hook called when the visitor speaks past configured word or duration thresholds.
+        Steps in politely so the visitor receives timely, guided assistance without monologue delays.
+        """
+        print(f"--> [Assistant Hook] on_user_turn_exceeded: words={ev.accumulated_word_count}, duration={ev.duration:.1f}s")
+        await self.session.say(
+            "Pardon the interruption, I want to make sure I cover everything for you—which specific project, research paper, or skill should we focus on?",
+            allow_interruptions=True,
+        )
+
+    async def llm_node(
+        self,
+        chat_ctx: llm.ChatContext,
+        tools: list[llm.Tool],
+        model_settings: ModelSettings,
+    ) -> AsyncIterable[llm.ChatChunk | str | FlushSentinel]:
+        """
+        LLM processing node: intercepts generation stream.
+        If the model invokes navigate_portfolio without an accompanying text delta,
+        emits an immediate spoken acknowledgment and FlushSentinel to provide zero-latency
+        speech feedback before the screen navigation completes.
+        """
+        called_tools: list[llm.FunctionToolCall] = []
+        has_text_message = False
+
+        async for chunk in Agent.default.llm_node(self, chat_ctx, tools, model_settings):
+            if isinstance(chunk, llm.ChatChunk) and chunk.delta:
+                if chunk.delta.content:
+                    has_text_message = True
+                if chunk.delta.tool_calls:
+                    called_tools.extend(chunk.delta.tool_calls)
+            yield chunk
+
+        tool_names = [tool.name for tool in called_tools]
+        if not has_text_message and "navigate_portfolio" in tool_names:
+            yield "Navigating your screen now. "
+            yield FlushSentinel()
+
     async def transcription_node(
         self, text: AsyncIterable[str], model_settings: ModelSettings
     ) -> AsyncIterable[str]:
@@ -103,7 +154,12 @@ class Assistant(Agent):
         Ensures raw Markdown emphasis asterisks and headers do not leak into live captions.
         """
         async for chunk in text:
-            cleaned = chunk.replace("**", "").replace("##", "").replace("`", "")
+            cleaned = (
+                chunk.replace("**", "")
+                .replace("###", "")
+                .replace("##", "")
+                .replace("`", "")
+            )
             yield cleaned
 
     async def on_exit(self) -> None:
