@@ -18,7 +18,7 @@ from livekit.agents import (
 )
 
 from prompts import SYSTEM_INSTRUCTIONS
-from .tools import broadcast_navigation
+from .tools import build_portfolio_toolsets
 
 
 class Assistant(Agent):
@@ -26,7 +26,21 @@ class Assistant(Agent):
 
     def __init__(self, room: rtc.Room | None = None) -> None:
         self.room = room
-        super().__init__(instructions=SYSTEM_INSTRUCTIONS)
+
+        def _get_room() -> rtc.Room | None:
+            r = getattr(self, "room", None)
+            if not r and hasattr(self, "session") and self.session and hasattr(self.session, "room_io") and self.session.room_io:
+                r = getattr(self.session.room_io, "room", None)
+            return r
+
+        def _get_session():
+            return getattr(self, "session", None)
+
+        toolsets = build_portfolio_toolsets(get_session=_get_session, get_room=_get_room)
+        super().__init__(
+            instructions=SYSTEM_INSTRUCTIONS,
+            tools=toolsets,
+        )
 
     async def on_enter(self) -> None:
         """
@@ -142,9 +156,16 @@ class Assistant(Agent):
             yield chunk
 
         tool_names = [tool.name for tool in called_tools]
-        if not has_text_message and "navigate_portfolio" in tool_names:
-            yield "Navigating your screen now. "
-            yield FlushSentinel()
+        if not has_text_message:
+            if "navigate_portfolio" in tool_names:
+                yield "Navigating your screen now. "
+                yield FlushSentinel()
+            elif "research_paper_deep_dive" in tool_names:
+                yield "Analyzing the technical architecture from the publication now. "
+                yield FlushSentinel()
+            elif "schedule_meeting" in tool_names:
+                yield "Connecting you with the meeting scheduler now. "
+                yield FlushSentinel()
 
     async def transcription_node(
         self, text: AsyncIterable[str], model_settings: ModelSettings
@@ -165,20 +186,3 @@ class Assistant(Agent):
     async def on_exit(self) -> None:
         """Lifecycle hook called when the agent relinquishes control or session ends."""
         print("--> [Assistant Hook] on_exit: Session concluded.")
-
-    @llm.function_tool(
-        description="Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study."
-    )
-    async def navigate_portfolio(
-        self,
-        target: Annotated[
-            str,
-            "Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'",
-        ],
-    ) -> str:
-        """Navigates the user's browser to the requested section or case study."""
-        room = getattr(self, "room", None)
-        if not room and hasattr(self, "session") and self.session and hasattr(self.session, "room_io") and self.session.room_io:
-            room = getattr(self.session.room_io, "room", None)
-
-        return await broadcast_navigation(room, target)

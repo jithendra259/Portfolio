@@ -39,6 +39,8 @@ class Settings:
     MAX_ENDPOINTING_DELAY: float = 3.0
     USER_TURN_MAX_WORDS: int = 50
     USER_TURN_MAX_DURATION: float = 25.0
+    USER_AWAY_TIMEOUT: float = 25.0
+    IDLE_DISCONNECT_TIMEOUT: float = 35.0
 
     # LiveKit Cloud Credentials
     LIVEKIT_URL: str = os.getenv("LIVEKIT_URL", "")
