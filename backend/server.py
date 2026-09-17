@@ -45,16 +45,7 @@ async def my_agent(ctx: agents.JobContext) -> None:
     )
     print("--> [Server] Assistant session started in room with real-time text streaming.")
 
-    # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
-    try:
-        session.say(
-            "Hi! I'm Jithendra's AI assistant. What would you like to explore?",
-            allow_interruptions=True,
-        )
-    except Exception as e:
-        print(f"--> [Server Greeting Warning] {e}")
-
-    # 5. Cleanly shutdown the job runner as soon as the user disconnects
+    # 4. Cleanly shutdown the job runner as soon as the user disconnects
     @ctx.room.on("participant_disconnected")
     def on_participant_disconnected(participant):
         if len(ctx.room.remote_participants) == 0:
