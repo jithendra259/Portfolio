@@ -4,7 +4,7 @@ Manages room connections, voice pipeline startup, greeting utterance, and clean 
 """
 
 from livekit import agents
-from livekit.agents import AgentServer
+from livekit.agents import AgentServer, room_io
 
 from agent import Assistant
 from config import settings
@@ -32,13 +32,18 @@ async def my_agent(ctx: agents.JobContext) -> None:
     # 2. Instantiate isolated voice session with fresh STT, TTS, and dual-LLM pipeline
     session = create_voice_session(ctx)
 
-    # 3. Start session with Assistant tool caller and persona instructions
+    # 3. Start session with Assistant tool caller and real-time text output options
     assistant = Assistant(room=ctx.room)
     await session.start(
         room=ctx.room,
         agent=assistant,
+        room_options=room_io.RoomOptions(
+            text_output=room_io.TextOutputOptions(
+                sync_transcription=False,
+            ),
+        ),
     )
-    print("--> [Server] Assistant session started in room.")
+    print("--> [Server] Assistant session started in room with real-time text streaming.")
 
     # 4. Instant Greeting via Cartesia Sonic-3 Male Voice
     try:
