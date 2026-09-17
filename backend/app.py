@@ -217,34 +217,21 @@ def build_vad():
     )
 
 def build_stt():
-    """Deepgram Nova-3 streaming STT with Gemini fallback"""
+    """Real-time streaming STT using Google Gemini STT directly (zero fallback stall)"""
     google_key = get_clean_google_api_key()
     deepgram_key = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
 
-    stt_models = []
-    if deepgram_key:
+    if deepgram_key and len(deepgram_key) > 10:
         try:
-            stt_models.append(
-                deepgram.STT(
-                    api_key=deepgram_key,
-                    model="nova-3",
-                    endpointing_ms=25,
-                    smart_format=True,
-                )
+            return deepgram.STT(
+                api_key=deepgram_key,
+                model="nova-3",
+                endpointing_ms=25,
+                smart_format=True,
             )
         except Exception as e:
             print(f"--> [STT Warning] Could not init Deepgram STT: {e}")
 
-    if google_key:
-        try:
-            stt_models.append(GeminiSTT(api_key=google_key))
-        except Exception as e:
-            print(f"--> [STT Warning] Could not init GeminiSTT fallback: {e}")
-
-    if len(stt_models) > 1:
-        return stt.FallbackAdapter(stt_models)
-    elif len(stt_models) == 1:
-        return stt_models[0]
     return GeminiSTT(api_key=google_key) if google_key else deepgram.STT()
 
 class EdgeTTSChunkedStream(tts.ChunkedStream):
@@ -269,13 +256,16 @@ class EdgeTTSChunkedStream(tts.ChunkedStream):
                     for frame in codec.decode(packet):
                         for resampled in resampler.resample(frame):
                             output_emitter.push(resampled.to_ndarray().tobytes())
+                            await asyncio.sleep(0)
 
         # Flush decoder and resampler
         for frame in codec.decode():
             for resampled in resampler.resample(frame):
                 output_emitter.push(resampled.to_ndarray().tobytes())
+                await asyncio.sleep(0)
         for resampled in resampler.resample(None):
             output_emitter.push(resampled.to_ndarray().tobytes())
+            await asyncio.sleep(0)
 
 
 class EdgeTTS(tts.TTS):
@@ -316,17 +306,17 @@ def build_tts():
     return EdgeTTS(voice="en-US-GuyNeural", rate="+4%")
 
 def build_llm():
-    """Google Gemini Flash Latest with ultra-fast TTFT, zero thinking budget, and strict token limits"""
+    """Google Gemini 2.5 Flash with thought signature support for multi-turn tool calling"""
     api_key = get_clean_google_api_key()
     if not api_key:
         print("--> [LLM CRITICAL] GOOGLE_API_KEY environment variable is NOT set!")
     else:
-        print("--> [LLM Info] Initializing Google LLM with 'gemini-flash-latest'...")
+        print("--> [LLM Info] Initializing Google LLM with 'gemini-2.5-flash'...")
 
     return google.LLM(
-        model="gemini-flash-latest",
+        model="gemini-2.5-flash",
         api_key=api_key or None,
-        max_output_tokens=50,
+        max_output_tokens=60,
         temperature=0.2,
         thinking_config={"thinking_budget": 0},
     )
