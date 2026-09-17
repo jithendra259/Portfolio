@@ -23,6 +23,7 @@ import { PdfViewerDialog } from '@/components/ui/pdf-viewer-dialog';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PROJECT_CATEGORIES } from '@/data/projects';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Github,
   Linkedin,
@@ -80,208 +81,292 @@ const techLogos = [
 
 function BentoGraphRiskBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Network className="size-3" /> SEC 13-F Holdings
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">G-CVaR</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Contagion Penalty γ:</span>
-            <span className="font-bold text-white">0.28</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=900&q=80"
+          alt="Financial Network & Risk Graph"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Network className="size-3" /> SEC 13-F Holdings
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">G-CVaR</span>
           </div>
-          <div className="flex justify-between">
-            <span>CVaR @ 95% Cut:</span>
-            <span className="font-bold text-emerald-400">-25.9%</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Crisis Windows:</span>
-            <span className="font-bold text-white">552 Sub-periods</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Contagion Penalty γ:</span>
+              <span className="font-bold text-white">0.28</span>
+            </div>
+            <div className="flex justify-between">
+              <span>CVaR @ 95% Cut:</span>
+              <span className="font-bold text-emerald-400">-25.9%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Crisis Windows:</span>
+              <span className="font-bold text-white">552 Sub-periods</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoInstabilityBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-amber-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Activity className="size-3" /> Instability Index I_t
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Crisis Mode</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Regime Shift:</span>
-            <span className="font-bold text-amber-400">λ_t = 0.85</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=700&q=80"
+          alt="Market Instability & Volatility Regime"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-amber-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Activity className="size-3" /> Instability Index I_t
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Crisis Mode</span>
           </div>
-          <div className="flex justify-between">
-            <span>Ledoit-Wolf Shrinkage:</span>
-            <span className="font-bold text-white">α = 0.42</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Max Drawdown Cut:</span>
-            <span className="font-bold text-emerald-400">-32.5%</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Regime Shift:</span>
+              <span className="font-bold text-amber-400">λ_t = 0.85</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Ledoit-Wolf Shrinkage:</span>
+              <span className="font-bold text-white">α = 0.42</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Max Drawdown Cut:</span>
+              <span className="font-bold text-emerald-400">-32.5%</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoXaiDagBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-purple-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <GitBranch className="size-3" /> 7-Agent DAG
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Mistral-7B</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Grounding Ratio:</span>
-            <span className="font-bold text-emerald-400">100% (0% Hallucination)</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=700&q=80"
+          alt="Neural Pipeline DAG Architecture"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-purple-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <GitBranch className="size-3" /> 7-Agent DAG
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Mistral-7B</span>
           </div>
-          <div className="flex justify-between">
-            <span>Blackboard Sync:</span>
-            <span className="font-bold text-white">Verified Vector</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Audit Standard:</span>
-            <span className="font-bold text-cyan-400">MiFID II &amp; EU AI Act</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Grounding Ratio:</span>
+              <span className="font-bold text-emerald-400">100% (0% Hallucination)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Blackboard Sync:</span>
+              <span className="font-bold text-white">Verified Vector</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Audit Standard:</span>
+              <span className="font-bold text-cyan-400">MiFID II &amp; EU AI Act</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoVoicePipelineBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-pink-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Mic className="size-3" /> LiveKit WebRTC
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300">Live Agent</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Voice Response TTFT:</span>
-            <span className="font-bold text-emerald-400">&lt;500ms</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=700&q=80"
+          alt="Audio Spectrum & Conversational Agent"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-pink-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Mic className="size-3" /> LiveKit WebRTC
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300">Live Agent</span>
           </div>
-          <div className="flex justify-between">
-            <span>Supervisor Model:</span>
-            <span className="font-bold text-white">LangGraph Graph</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Convex Solver:</span>
-            <span className="font-bold text-cyan-400">CLARABEL (38ms)</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Voice Response TTFT:</span>
+              <span className="font-bold text-emerald-400">&lt;500ms</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Supervisor Model:</span>
+              <span className="font-bold text-white">LangGraph Graph</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Convex Solver:</span>
+              <span className="font-bold text-cyan-400">CLARABEL (38ms)</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoAqiModelBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-blue-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Wind className="size-3" /> Delhi AQI Network
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">XGBoost</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Test Accuracy R²:</span>
-            <span className="font-bold text-emerald-400">0.912</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=700&q=80"
+          alt="Atmospheric Sky & Air Quality Sensing"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-blue-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Wind className="size-3" /> Delhi AQI Network
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">XGBoost</span>
           </div>
-          <div className="flex justify-between">
-            <span>Sensor Array:</span>
-            <span className="font-bold text-white">10 CPCB Stations</span>
-          </div>
-          <div className="flex justify-between">
-            <span>RMSE Loss:</span>
-            <span className="font-bold text-cyan-400">18.4 μg/m³</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Test Accuracy R²:</span>
+              <span className="font-bold text-emerald-400">0.912</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Sensor Array:</span>
+              <span className="font-bold text-white">10 CPCB Stations</span>
+            </div>
+            <div className="flex justify-between">
+              <span>RMSE Loss:</span>
+              <span className="font-bold text-cyan-400">18.4 μg/m³</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoSwarmRobotsBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-emerald-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Bot className="size-3" /> Swarm Robotics
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">ESP32 Mesh</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Coverage Efficiency:</span>
-            <span className="font-bold text-emerald-400">98.4%</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=700&q=80"
+          alt="Autonomous Robotics & Precision IoT Hardware"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-52 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-emerald-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Bot className="size-3" /> Swarm Robotics
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">ESP32 Mesh</span>
           </div>
-          <div className="flex justify-between">
-            <span>Disease Classifier:</span>
-            <span className="font-bold text-white">Edge CNN</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Mesh Latency:</span>
-            <span className="font-bold text-cyan-400">&lt;15ms</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Coverage Efficiency:</span>
+              <span className="font-bold text-emerald-400">98.4%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Disease Classifier:</span>
+              <span className="font-bold text-white">Edge CNN</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Mesh Latency:</span>
+              <span className="font-bold text-cyan-400">&lt;15ms</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function BentoVoiceAgentArchBackground() {
   return (
-    <div className="absolute top-3 right-3 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/10 p-3 text-left shadow-xl font-mono text-[10px]">
-        <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
-          <span className="flex items-center gap-1">
-            <Cpu className="size-3" /> Groq LPU + WebRTC
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">&lt;500ms TTFT</span>
-        </div>
-        <div className="space-y-1 text-slate-300 dark:text-neutral-400">
-          <div className="flex justify-between">
-            <span>Primary LLM:</span>
-            <span className="font-bold text-emerald-400">Groq LPU (Sub-90ms)</span>
+    <>
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"
+          alt="Groq LPUs & Neural Computing Circuit"
+          fill
+          className="object-cover object-center opacity-25 dark:opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-[#0d0f14] dark:via-[#0d0f14]/75 dark:to-transparent" />
+      </div>
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 pointer-events-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] opacity-95 group-hover:opacity-100 transition-opacity">
+        <div className="w-56 rounded-xl bg-slate-900/90 dark:bg-neutral-900/90 border border-slate-700/60 dark:border-white/15 p-3 text-left shadow-2xl font-mono text-[10px] backdrop-blur-md">
+          <div className="flex items-center justify-between text-cyan-400 font-bold mb-1">
+            <span className="flex items-center gap-1">
+              <Cpu className="size-3" /> Groq LPU + WebRTC
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">&lt;500ms TTFT</span>
           </div>
-          <div className="flex justify-between">
-            <span>Neural TTS:</span>
-            <span className="font-bold text-white">Cartesia Sonic-3</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Fallback Engine:</span>
-            <span className="font-bold text-cyan-400">Gemini 2.5 Flash</span>
-          </div>
-          <div className="flex justify-between">
-            <span>UI Auto-Nav:</span>
-            <span className="font-bold text-amber-400">LiveKit DataChannel</span>
+          <div className="space-y-1 text-slate-300 dark:text-neutral-400">
+            <div className="flex justify-between">
+              <span>Primary LLM:</span>
+              <span className="font-bold text-emerald-400">Groq LPU (Sub-90ms)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Neural TTS:</span>
+              <span className="font-bold text-white">Cartesia Sonic-3</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Fallback Engine:</span>
+              <span className="font-bold text-cyan-400">Gemini 2.5 Flash</span>
+            </div>
+            <div className="flex justify-between">
+              <span>UI Auto-Nav:</span>
+              <span className="font-bold text-amber-400">LiveKit DataChannel</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
