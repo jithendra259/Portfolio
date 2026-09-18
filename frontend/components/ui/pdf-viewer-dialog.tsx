@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import dynamic from "next/dynamic";
-import { FileText, Loader2, ShieldCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const PdfViewer = dynamic(
   () => import("@/components/ui/pdf-viewer").then((m) => m.Component),
@@ -45,27 +45,15 @@ export function PdfViewerDialog({
       <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 flex flex-col gap-0 overflow-hidden bg-background border-border shadow-2xl">
         {/* Header Bar */}
         <DialogHeader className="px-5 py-3 border-b border-border flex flex-row items-center justify-between space-y-0 shrink-0 bg-card/80 backdrop-blur-sm">
-          <div className="flex items-center gap-2.5 min-w-0 pr-8">
-            <div className="size-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
-              <FileText className="size-4" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <DialogTitle className="text-sm font-semibold truncate text-foreground font-sans">
-                {title}
-              </DialogTitle>
-              {subtitle && (
-                <span className="text-[11px] font-mono text-muted-foreground truncate">
-                  {subtitle}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 mr-8">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
-              <ShieldCheck className="size-3.5" />
-              <span>Protected · View Only</span>
-            </span>
+          <div className="flex flex-col min-w-0 pr-8">
+            <DialogTitle className="text-sm font-semibold truncate text-foreground font-sans">
+              {title}
+            </DialogTitle>
+            {subtitle && (
+              <span className="text-[11px] font-mono text-muted-foreground truncate">
+                {subtitle}
+              </span>
+            )}
           </div>
         </DialogHeader>
 
