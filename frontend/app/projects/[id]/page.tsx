@@ -1,47 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import {
-  ArrowLeft,
-  ArrowRight,
-  ExternalLink,
-  ShieldCheck,
-  Cpu,
-  BarChart3,
-  CheckCircle2,
-  AlertTriangle,
-  Layers,
-  Sparkles,
-  BookOpen,
-  GitFork,
-  Code2,
-  Terminal,
-  Activity,
-  Workflow,
-  Compass,
-  Zap,
-} from 'lucide-react';
-import { PROJECT_DETAILS, ProjectDetail } from '@/lib/project-details';
+import { ArrowLeft, ArrowRight, ExternalLink, Code2 } from 'lucide-react';
+import { PROJECT_DETAILS } from '@/lib/project-details';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
-import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { FormattedLatexText } from '@/components/ui/math-display';
 import { IeeePaperView } from '@/components/ui/ieee-paper-view';
 import {
   CaseStudySidebarProvider,
   CaseStudySidebarToggle,
   CaseStudyLayout,
 } from '@/components/ui/case-study-toc-sidebar';
+
+import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -72,149 +45,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
     },
   };
-}
-
-interface ParsedReportTable {
-  title?: string;
-  headers: string[];
-  rows: string[][];
-}
-
-function tryParseReportTable(block: string): ParsedReportTable | null {
-  let lines = block.split('\n').map((l) => l.trimEnd()).filter((l) => l.trim().length > 0);
-  if (lines.length < 2) return null;
-
-  let title: string | undefined = undefined;
-  if (lines[0].trim().endsWith(':') && lines.length >= 3) {
-    const candidate = lines[0].trim().replace(/:$/, '');
-    if (/submitted by|under the guidance|under guidance|author|references|supervision|project submitted/i.test(candidate)) {
-      return null;
-    }
-    title = candidate;
-    lines = lines.slice(1);
-  }
-
-  if (lines.length < 2) return null;
-
-  // Exclude narrative lists, bullet points, equations, credentials
-  const firstLine = lines[0].trim();
-  if (firstLine.startsWith('•') || firstLine.startsWith('-') || firstLine.startsWith('*') || /^\d+\./.test(firstLine)) return null;
-  if (firstLine.includes('min_w') || firstLine.includes('min_{') || firstLine.includes('λ_t') || firstLine.includes('H_l =') || firstLine.includes('Z_{') || firstLine.includes('D_t =') || firstLine.includes('σ_spike')) return null;
-  if (firstLine.includes('Author:') || firstLine.includes('Submitted by:') || firstLine.includes('In partial fulfillment')) return null;
-  if (lines.some((l) => /— 20191ECE/i.test(l))) return null;
-
-  // Multi-space (>=2) or tab separated columns
-  const parsedRows = lines.map((line) => line.trim().split(/\s{2,}|\t+/).filter(Boolean));
-
-  // Check column consistency
-  const colCounts = parsedRows.map((r) => r.length);
-  const minCols = Math.min(...colCounts);
-  const maxCols = Math.max(...colCounts);
-
-  if (minCols >= 2 && maxCols <= 9 && maxCols - minCols <= 1) {
-    const dataRows = parsedRows.slice(1);
-    const hasNumbersOrMetrics = dataRows.some((r) => r.some((c) => /[\d%−\-]/.test(c)));
-    if (hasNumbersOrMetrics) {
-      const firstRowHasOnlyText = !parsedRows[0].some((c) => /^\d+(\.\d+)?%?$/.test(c));
-      const avgHeaderLen = parsedRows[0].reduce((sum, c) => sum + c.length, 0) / parsedRows[0].length;
-      if (firstRowHasOnlyText && avgHeaderLen <= 32) {
-        return {
-          title,
-          headers: parsedRows[0],
-          rows: dataRows,
-        };
-      }
-    }
-  }
-
-  return null;
-}
-
-function renderReportMatter(content: string) {
-  const blocks = content.split(/\n\s*\n/).filter((b) => b.trim().length > 0);
-
-  return (
-    <div className="space-y-4">
-      {blocks.map((block, bIdx) => {
-        const table = tryParseReportTable(block);
-        if (table) {
-          return (
-            <div
-              key={bIdx}
-              className="my-5 overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02] shadow-sm"
-            >
-              {table.title && (
-                <div className="px-4 py-2.5 bg-slate-100/80 dark:bg-white/[0.05] border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-neutral-200">
-                    {table.title}
-                  </span>
-                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20">
-                    {table.rows.length} {table.rows.length === 1 ? 'row' : 'rows'}
-                  </span>
-                </div>
-              )}
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader className="bg-slate-100/60 dark:bg-white/[0.04]">
-                    <TableRow className="border-b border-slate-200 dark:border-white/10">
-                      {table.headers.map((header, hIdx) => {
-                        const isNumeric = table.rows.some((row) =>
-                          row[hIdx] && /^[\d$€£¥%−\-.,\s]+$/.test(row[hIdx].trim())
-                        );
-                        return (
-                          <TableHead
-                            key={hIdx}
-                            className={`text-xs font-bold text-slate-900 dark:text-white py-2.5 px-3 sm:px-4 ${
-                              isNumeric && hIdx > 0 ? 'text-right' : 'text-left'
-                            }`}
-                          >
-                            {header}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {table.rows.map((row, rIdx) => (
-                      <TableRow
-                        key={rIdx}
-                        className="border-b border-slate-200/70 dark:border-white/5 hover:bg-cyan-500/[0.04] transition-colors"
-                      >
-                        {row.map((cell, cIdx) => {
-                          const isNumeric = /^[\d$€£¥%−\-.,\s]+$/.test(cell.trim());
-                          return (
-                            <TableCell
-                              key={cIdx}
-                              className={`py-2.5 px-3 sm:px-4 text-xs font-mono text-slate-700 dark:text-neutral-300 ${
-                                isNumeric && cIdx > 0
-                                  ? 'text-right font-semibold text-slate-900 dark:text-white'
-                                  : 'text-left'
-                              }`}
-                            >
-                              {cell}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          );
-        }
-
-        return (
-          <div
-            key={bIdx}
-            className="text-sm text-slate-700 dark:text-neutral-300 leading-relaxed m-0"
-          >
-            <FormattedLatexText text={block} />
-          </div>
-        );
-      })}
-    </div>
-  );
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {

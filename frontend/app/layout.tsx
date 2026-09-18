@@ -7,7 +7,8 @@ import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
 import { Toaster } from '@/components/ui/primitives/sonner';
 import { cn } from '@/lib/shadcn/utils';
-import { getAppConfig, getStyles } from '@/lib/utils';
+import { CONFIG_ENDPOINT, getAppConfig, getStyles } from '@/lib/utils';
+import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
 
@@ -53,10 +54,9 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const hdrs = await headers();
-  const appConfig = await getAppConfig(hdrs);
+  const appConfig = CONFIG_ENDPOINT ? await getAppConfig(await headers()) : APP_CONFIG_DEFAULTS;
   const styles = getStyles(appConfig);
-  const { pageTitle, pageDescription, companyName, logo, logoDark } = appConfig;
+  const { pageTitle, pageDescription } = appConfig;
 
   return (
     <html

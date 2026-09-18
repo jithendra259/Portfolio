@@ -100,6 +100,13 @@ export function FormattedLatexText({
   className?: string;
   as?: 'span' | 'div' | 'p';
 }) {
+  if (!text) return null;
+
+  // Ultra-fast path: if there are no LaTeX dollar signs, render directly without regex or math parser
+  if (!text.includes('$')) {
+    return <Component className={`leading-relaxed ${className}`}>{text}</Component>;
+  }
+
   // If the text is purely a $$...$$ block
   const trimmed = text.trim();
   if (trimmed.startsWith('$$') && trimmed.endsWith('$$') && trimmed.length > 4) {

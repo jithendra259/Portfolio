@@ -18,7 +18,6 @@ const nextConfig = {
   },
   webpack: (config, { dev, isServer }) => {
     if (dev) {
-      config.cache = false;
       // Use source-map instead of eval-* in dev to prevent pdfjs-dist ESM eval conflicts
       config.devtool = 'cheap-module-source-map';
     }

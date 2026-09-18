@@ -26,9 +26,14 @@ import {
 import { Project, PaperFigure } from '@/data/projects/types';
 import { MathBlock, FormattedLatexText } from '@/components/ui/math-display';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ProjectCharts } from '@/components/ui/project-charts';
 
+import dynamic from 'next/dynamic';
 import { cn } from '@/lib/utils';
+
+const ProjectCharts = dynamic(
+  () => import('@/components/ui/project-charts').then((m) => m.ProjectCharts),
+  { ssr: false }
+);
 
 interface IeeePaperViewProps {
   project: Project;

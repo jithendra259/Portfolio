@@ -1,4 +1,4 @@
-﻿import { cache } from 'react';
+import { cache } from 'react';
 import { TokenSource } from 'livekit-client';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import type { AppConfig } from '@/app-config';
@@ -23,9 +23,9 @@ export interface SandboxConfig {
  * @note React will invalidate the cache for all memoized functions for each server request.
  * https://react.dev/reference/react/cache#caveats
  */
-export const getAppConfig = cache(async (headers: Headers): Promise<AppConfig> => {
+export const getAppConfig = cache(async (headers?: Headers): Promise<AppConfig> => {
   if (CONFIG_ENDPOINT) {
-    const sandboxId = SANDBOX_ID ?? headers.get('x-sandbox-id') ?? '';
+    const sandboxId = SANDBOX_ID ?? headers?.get('x-sandbox-id') ?? '';
 
     try {
       if (!sandboxId) {
