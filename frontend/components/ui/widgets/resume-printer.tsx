@@ -1,14 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { Download } from 'lucide-react';
 export function ResumePrinter({ className }: { className?: string }) {
-  const [isPrinting, setIsPrinting] = useState(true);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handlePrintTrigger = () => {
-    setIsPrinting((prev) => !prev);
-  };
+  const handlePrintTrigger = useCallback(() => {
+    // Clear any existing auto-close timer
+    if (autoCloseTimer.current) {
+      clearTimeout(autoCloseTimer.current);
+      autoCloseTimer.current = null;
+    }
+
+    if (!isPrinting) {
+      // Start printing and auto-close after animations finish (~3.5s total)
+      setIsPrinting(true);
+      autoCloseTimer.current = setTimeout(() => {
+        setIsPrinting(false);
+        autoCloseTimer.current = null;
+      }, 3500);
+    } else {
+      // Manual close
+      setIsPrinting(false);
+    }
+  }, [isPrinting]);
 
   return (
     <div className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${isPrinting ? 'is-active' : ''} ${className || ''}`}>

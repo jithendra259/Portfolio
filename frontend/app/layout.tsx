@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
-import { headers } from 'next/headers';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
 import { Toaster } from '@/components/ui/primitives/sonner';
 import { cn } from '@/lib/shadcn/utils';
-import { CONFIG_ENDPOINT, getAppConfig, getStyles } from '@/lib/utils';
+import { getStyles } from '@/lib/utils';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
@@ -53,8 +52,8 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const appConfig = CONFIG_ENDPOINT ? await getAppConfig(await headers()) : APP_CONFIG_DEFAULTS;
+export default function RootLayout({ children }: RootLayoutProps) {
+  const appConfig = APP_CONFIG_DEFAULTS;
   const styles = getStyles(appConfig);
   const { pageTitle, pageDescription } = appConfig;
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, ExternalLink, Code2 } from 'lucide-react';
@@ -15,6 +14,11 @@ import {
 } from '@/components/ui/case-study-toc-sidebar';
 
 import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
+
+// Instruct Next.js to pre-render and aggressively cache case study pages
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+export const revalidate = false;
 
 interface PageProps {
   params: Promise<{ id: string }>;

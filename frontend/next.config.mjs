@@ -8,6 +8,13 @@ const nextConfig = {
     // Prevent TypeScript build failures on Vercel deployment
     ignoreBuildErrors: true,
   },
+  experimental: {
+    // Keep prefetched and visited pages cached in client router memory for instantaneous navigation
+    staleTimes: {
+      dynamic: 60,
+      static: 300,
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -20,6 +27,10 @@ const nextConfig = {
     if (dev) {
       // Use source-map instead of eval-* in dev to prevent pdfjs-dist ESM eval conflicts
       config.devtool = 'cheap-module-source-map';
+      // Explicitly enable persistent filesystem caching for ultra-fast dev compilation
+      config.cache = {
+        type: 'filesystem',
+      };
     }
 
     config.resolve.alias = {
