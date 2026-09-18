@@ -15,7 +15,7 @@ import {
   Check,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
-import { PearlButton } from '@/components/ui/pearl-button';
+import { FlightSendButton } from '@/components/ui/flight-send-button';
 import { toast } from 'sonner';
 
 interface AppointmentBookingProps {
@@ -823,11 +823,11 @@ export const CalendarAppointmentBooking = ({
               <span>Download .ics</span>
             </button>
 
-            <PearlButton
+            <FlightSendButton
               type="submit"
               disabled={!date || !selectedTime || isSubmitting}
-              label={isSubmitting ? 'Confirming...' : 'Book Appointment'}
-              size="sm"
+              defaultText={isSubmitting ? 'Confirming...' : 'Confirm Schedule'}
+              sentText="Scheduled!"
             />
           </div>
         </div>
