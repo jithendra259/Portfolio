@@ -6,7 +6,7 @@ import { ResumePrinter } from '@/components/ui/widgets/resume-printer';
 export function ResumeSection() {
   return (
     <section
-      className="pt-4 pb-8 sm:pb-10 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto flex flex-col items-center justify-center"
+      className="pt-4 pb-16 sm:pb-20 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto flex flex-col items-center justify-center"
       id="resume"
     >
       {/* Simple Section Title */}
@@ -17,7 +17,7 @@ export function ResumeSection() {
       </div>
 
       {/* Centered Printer in the middle of the page */}
-      <div className="flex items-start justify-center w-full min-h-[140px] pt-1">
+      <div className="flex items-start justify-center w-full min-h-[180px] pt-1 pb-10">
         <ResumePrinter />
       </div>
     </section>

@@ -171,7 +171,7 @@ export function ResumePrinter({ className }: { className?: string }) {
         .resume-printer-scope .receipt-wrapper {
           position: absolute;
           top: 0;
-          left: 44px;
+          left: 35px;
           filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
           transform: translateY(-100%);
           clip-path: inset(100% -100px -100px -100px);
@@ -183,9 +183,9 @@ export function ResumePrinter({ className }: { className?: string }) {
           position: relative;
           display: flex;
           flex-direction: column;
-          gap: 0.8em;
-          padding: 16px 14px;
-          width: 230px;
+          gap: 0.5em;
+          padding: 16px 14px 18px 14px;
+          width: 250px;
           min-height: 200px;
           font-size: 0.75em;
           font-family: var(--font-mono), monospace;
@@ -245,13 +245,29 @@ export function ResumePrinter({ className }: { className?: string }) {
 
         .resume-printer-scope .receipt-table {
           width: 100%;
-          line-height: 1.5em;
+          line-height: 1.45em;
           border-collapse: collapse;
         }
 
         .resume-printer-scope .receipt-table td:last-child {
           text-align: right;
           font-weight: 700;
+          color: #111;
+          white-space: nowrap;
+          padding-left: 6px;
+        }
+
+        .resume-printer-scope .receipt-section-title {
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          font-size: 8px;
+          color: #222;
+          border-bottom: 1px dashed #ccc;
+          padding-top: 5px;
+          padding-bottom: 2px;
+          margin-bottom: 2px;
+          text-align: center;
         }
 
         .resume-printer-scope .receipt-footer {
@@ -303,7 +319,7 @@ export function ResumePrinter({ className }: { className?: string }) {
           }
           100% {
             z-index: 25;
-            transform: translateY(10%);
+            transform: translateY(6%);
             clip-path: inset(-20% -100px -100px -100px);
           }
         }
@@ -313,7 +329,7 @@ export function ResumePrinter({ className }: { className?: string }) {
             z-index: 25;
           }
           30% {
-            transform: translateY(22%) rotate3d(1, 0, 1, -5deg);
+            transform: translateY(10%) rotate3d(1, 0, 1, -2.5deg);
             z-index: 30;
           }
           70% {
@@ -321,7 +337,7 @@ export function ResumePrinter({ className }: { className?: string }) {
           }
           100% {
             z-index: 30;
-            transform: translateY(-25%) scale(1.15);
+            transform: translateY(-8%) scale(1.02);
           }
         }
 
@@ -368,56 +384,128 @@ export function ResumePrinter({ className }: { className?: string }) {
         <div className="receipt-wrapper">
           <div className="receipt">
             {/* Receipt Header */}
-            <div className="receipt-header">
-              <div className="font-bold text-sm tracking-tight text-black">
+            <div className="receipt-header flex flex-col items-center text-center">
+              <div className="font-bold text-[12px] tracking-tight text-black font-mono">
                 {PORTFOLIO_DATA.developer.fullName.toUpperCase()}
               </div>
-              <div className="text-[10px] text-stone-600 mt-0.5">
+              <div className="text-[9.5px] font-bold text-stone-700 mt-0.5 tracking-wide">
                 AI &amp; DATA SCIENCE ENGINEER
               </div>
-              <div className="text-[9px] text-stone-500">
-                {PORTFOLIO_DATA.developer.location}
+              <div className="text-[8.5px] text-stone-600 font-mono mt-0.5 font-bold">
+                📞 {PORTFOLIO_DATA.developer.phone}
+              </div>
+              <div className="text-[8px] text-stone-500 font-mono truncate max-w-[220px]">
+                ✉️ {PORTFOLIO_DATA.developer.email}
+              </div>
+              <div className="text-[8px] text-stone-500 font-mono">
+                📍 {PORTFOLIO_DATA.developer.location} • github.com/jithendra259
               </div>
             </div>
 
             {/* Receipt Subheader */}
-            <div className="receipt-subheader">
-              <span>ORDER: #RESUME-01</span>
+            <div className="receipt-subheader text-[8.5px] text-stone-600 font-mono">
+              <span>REF: #RESUME-KJS-2026</span>
               <span>{new Date().toISOString().slice(0, 10)}</span>
             </div>
 
-            {/* Receipt Content */}
-            <table className="receipt-table text-[10px]">
+            {/* Receipt Section: Education */}
+            <div className="receipt-section-title">
+              -- EDUCATION &amp; QUALIFICATIONS --
+            </div>
+            <table className="receipt-table text-[9px]">
               <tbody>
                 <tr>
-                  <td>M.Tech AI &amp; DS</td>
+                  <td>M.Tech AI &amp; DS (Somaiya)</td>
                   <td>8.06 CGPA</td>
                 </tr>
                 <tr>
-                  <td>B.Tech ECE</td>
-                  <td>8.44 CGPA</td>
+                  <td>B.Tech ECE (Presidency)</td>
+                  <td>7.77 CGPA</td>
                 </tr>
                 <tr>
-                  <td>Elsevier / Springer</td>
-                  <td>2 Papers</td>
+                  <td>GATE 2024 (AI &amp; CS)</td>
+                  <td>Qualified</td>
                 </tr>
                 <tr>
-                  <td>Multi-Agent Swarms</td>
-                  <td>Expert</td>
+                  <td>JEE Mains Examination</td>
+                  <td>85.6 %ile</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Research Publications */}
+            <div className="receipt-section-title">
+              -- RESEARCH PUBLICATIONS --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>Elsevier EAAI (Swarm AI)</td>
+                  <td>1st Author</td>
                 </tr>
                 <tr>
-                  <td>PyTorch / LangGraph</td>
-                  <td>Production</td>
+                  <td>Elsevier COR (XAI Governance)</td>
+                  <td>1st Author</td>
                 </tr>
                 <tr>
-                  <td>Next.js 15 / WebRTC</td>
-                  <td>Full-Stack</td>
+                  <td>Springer Nature (LNCS)</td>
+                  <td>Published</td>
+                </tr>
+                <tr>
+                  <td>KSCST 46th SPP Grant</td>
+                  <td>Funded Lead</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Core Technical Stack */}
+            <div className="receipt-section-title">
+              -- CORE SYSTEMS &amp; TECH STACK --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>Agentic Swarms &amp; Guardrails</td>
+                  <td>LangGraph</td>
+                </tr>
+                <tr>
+                  <td>Convex Optimization / CVaR</td>
+                  <td>CVXPY</td>
+                </tr>
+                <tr>
+                  <td>Real-Time Voice AI Engine</td>
+                  <td>WebRTC / LiveKit</td>
+                </tr>
+                <tr>
+                  <td>Full-Stack Architecture</td>
+                  <td>Next.js 15 / TS</td>
+                </tr>
+                <tr>
+                  <td>Scientific &amp; ML Stack</td>
+                  <td>PyTorch / Python</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Experience */}
+            <div className="receipt-section-title">
+              -- EXPERIENCE &amp; LEADERSHIP --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>MNJ Software Pvt. Ltd.</td>
+                  <td>UI/UX Dev Intern</td>
+                </tr>
+                <tr>
+                  <td>Presidency Capstone</td>
+                  <td>Swarm Team Lead</td>
                 </tr>
               </tbody>
             </table>
 
             {/* Receipt Footer */}
-            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1">
+            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1.5">
               <a
                 href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
                 download="Kandula_Jithendra_Subramanyam_Resume.pdf"
@@ -425,8 +513,8 @@ export function ResumePrinter({ className }: { className?: string }) {
               >
                 <Download className="size-3" /> Download Official PDF
               </a>
-              <div className="text-[8px] text-stone-500 font-mono">
-                VERIFIED CANDIDATE PROFILE
+              <div className="text-[7.5px] text-stone-500 font-mono tracking-tight">
+                VERIFIED CANDIDATE • +91 9704400336
               </div>
             </div>
           </div>
