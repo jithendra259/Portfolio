@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAgent, useSessionContext } from '@livekit/components-react';
-import { Mic, MicOff, PhoneOff, Maximize2, Compass, Sparkles, Volume2 } from 'lucide-react';
+import { Mic, MicOff, PhoneOff, Maximize2, Compass, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NAVIGATION_TARGETS, type NavigationTarget } from '@/hooks/useVoiceAutoNavigation';
 
@@ -25,6 +25,7 @@ export function DockedVoiceHUD({
   const session = useSessionContext();
   const { state: agentState } = useAgent();
   const [isMuted, setIsMuted] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   // Toggle local mic
   const handleToggleMic = async () => {
@@ -63,200 +64,221 @@ export function DockedVoiceHUD({
 
   const currentMeta = activeTarget ? NAVIGATION_TARGETS[activeTarget] : null;
 
+  // Derive aura color from agent state
+  const auraColor =
+    agentState === 'speaking'
+      ? { ring: '#34d399', glow: 'rgba(52,211,153,0.45)', dot: 'bg-emerald-400' }
+      : agentState === 'thinking'
+      ? { ring: '#fbbf24', glow: 'rgba(251,191,36,0.4)', dot: 'bg-amber-400' }
+      : agentState === 'listening'
+      ? { ring: '#22d3ee', glow: 'rgba(34,211,238,0.45)', dot: 'bg-cyan-400' }
+      : agentState === 'failed'
+      ? { ring: '#f43f5e', glow: 'rgba(244,63,94,0.4)', dot: 'bg-rose-500' }
+      : { ring: '#818cf8', glow: 'rgba(129,140,248,0.35)', dot: 'bg-indigo-400' };
+
+  const isPulsing = agentState === 'speaking' || agentState === 'listening';
+
+  const navKeys: NavigationTarget[] = [
+    'projects',
+    'research',
+    'about',
+    'case_study_adaptive_governance',
+    'resume',
+    'contact',
+  ];
+
   return (
     <div
       className={cn(
-        'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4 pointer-events-none',
+        'fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3 pointer-events-none',
         className
       )}
     >
-      <motion.div
-        initial={{ y: 50, opacity: 0, scale: 0.96 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 50, opacity: 0, scale: 0.96 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-        className="pointer-events-auto w-full bg-slate-950/85 dark:bg-[#0d0f14]/90 text-white rounded-3xl border border-white/15 dark:border-white/10 shadow-2xl backdrop-blur-2xl p-3.5 flex flex-col gap-2.5"
-      >
-        {/* Top Row: Live State, Audio Wave, Navigation Indicator & Controls */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Agent Identity & Status */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative flex items-center justify-center size-9 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 shrink-0">
-              <Sparkles className="size-4 text-cyan-400 animate-pulse" />
-              <div
-                className={cn(
-                  'absolute -top-1 -right-1 size-2.5 rounded-full border-2 border-slate-950',
-                  agentState === 'speaking'
-                    ? 'bg-emerald-400 animate-ping'
-                    : agentState === 'thinking'
-                    ? 'bg-amber-400 animate-pulse'
-                    : agentState === 'listening'
-                    ? 'bg-cyan-400'
-                    : agentState === 'failed'
-                    ? 'bg-rose-500'
-                    : 'bg-indigo-400 animate-pulse'
-                )}
-              />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold tracking-wider text-slate-200">
-                  BACKEND AI
-                </span>
+      {/* ── Nav Pills (appear above orb) ── */}
+      <AnimatePresence>
+        {navOpen && (
+          <motion.div
+            key="nav-pills"
+            initial={{ opacity: 0, y: 12, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            className="pointer-events-auto flex items-center gap-1.5 flex-wrap justify-center max-w-xs px-4 py-2.5 rounded-2xl bg-slate-950/80 border border-white/10 backdrop-blur-xl shadow-2xl"
+          >
+            <span className="text-[9px] uppercase font-bold text-slate-500 tracking-widest w-full text-center mb-0.5">
+              Say or Tap
+            </span>
+            {navKeys.map((key) => {
+              const meta = NAVIGATION_TARGETS[key];
+              const isSelected = activeTarget === key;
+              return (
                 <button
+                  key={key}
                   type="button"
-                  onClick={agentState === 'failed' ? handleRetry : undefined}
+                  onClick={() => {
+                    onManualNavigate(key);
+                    setNavOpen(false);
+                  }}
                   className={cn(
-                    'text-[10px] font-mono px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold border transition-all',
-                    agentState === 'speaking'
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                      : agentState === 'thinking'
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : agentState === 'listening'
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                      : agentState === 'failed'
-                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/40 cursor-pointer animate-pulse'
-                      : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
+                    'px-2.5 py-1 rounded-lg border text-nowrap text-[11px] font-mono transition-all cursor-pointer',
+                    isSelected
+                      ? 'bg-cyan-500/25 text-cyan-300 border-cyan-400/50'
+                      : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
                   )}
-                  title={agentState === 'failed' ? 'Click to retry connection' : undefined}
                 >
-                  {agentState === 'speaking'
-                    ? 'Speaking'
-                    : agentState === 'thinking'
-                    ? 'Thinking'
-                    : agentState === 'listening'
-                    ? 'Listening'
-                    : agentState === 'failed'
-                    ? 'Offline • Tap to Retry'
-                    : 'Connecting...'}
+                  {meta.label.split(' ')[0]}
                 </button>
-                <span className="hidden xs:inline-block text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
-                  RENDER LIVE
-                </span>
-              </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-              {/* Navigation badge */}
-              {currentMeta && (
-                <div className="flex items-center gap-1 text-[11px] text-cyan-300 font-mono truncate">
-                  <Compass className="size-3 shrink-0 animate-spin" style={{ animationDuration: '6s' }} />
-                  <span className="truncate">Auto-Nav: {currentMeta.label}</span>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* ── Latest Transcript Pill ── */}
+      <AnimatePresence>
+        {latestText && (
+          <motion.div
+            key="transcript"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            className="pointer-events-none px-3 py-1.5 rounded-full bg-slate-950/75 border border-white/10 backdrop-blur-xl text-[11px] font-mono text-slate-300 max-w-[280px] truncate shadow-lg"
+          >
+            <span className="text-slate-500 mr-1">
+              {isAgentMessage ? 'AI:' : 'You:'}
+            </span>
+            {latestText}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Sound wave animated bars */}
-          <div className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 shrink-0">
-            {[40, 75, 55, 90, 60, 30].map((h, i) => (
+      {/* ── Aura Orb Cluster ── */}
+      <motion.div
+        initial={{ y: 40, opacity: 0, scale: 0.85 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 40, opacity: 0, scale: 0.85 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        className="pointer-events-auto flex items-end gap-3"
+      >
+        {/* Mic button */}
+        <motion.button
+          type="button"
+          onClick={handleToggleMic}
+          whileTap={{ scale: 0.88 }}
+          whileHover={{ scale: 1.08 }}
+          className={cn(
+            'relative size-12 rounded-full flex items-center justify-center border shadow-lg transition-colors cursor-pointer backdrop-blur-md',
+            isMuted
+              ? 'bg-rose-500/20 border-rose-400/50 text-rose-300 shadow-rose-500/20'
+              : 'bg-white/8 border-white/15 text-slate-300 hover:text-white shadow-black/20'
+          )}
+          title={isMuted ? 'Unmute' : 'Mute'}
+          aria-label="Toggle Microphone"
+        >
+          {isMuted ? <MicOff className="size-4" /> : <Mic className="size-4" />}
+        </motion.button>
+
+        {/* Central Aura Orb */}
+        <motion.button
+          type="button"
+          onClick={() => setNavOpen((v) => !v)}
+          whileTap={{ scale: 0.92 }}
+          className="relative size-20 flex items-center justify-center cursor-pointer"
+          title="Open navigation"
+          aria-label="Toggle navigation"
+        >
+          {/* Outer pulsing aura rings */}
+          {isPulsing && (
+            <>
               <span
-                key={i}
-                className={cn(
-                  'w-1 rounded-full bg-cyan-400 transition-all duration-150',
-                  agentState === 'speaking' ? 'animate-pulse' : 'opacity-40'
-                )}
+                className="absolute inset-0 rounded-full animate-ping opacity-25"
+                style={{ background: auraColor.glow, animationDuration: '1.4s' }}
+              />
+              <span
+                className="absolute -inset-3 rounded-full animate-ping opacity-15"
+                style={{ background: auraColor.glow, animationDuration: '2s', animationDelay: '0.3s' }}
+              />
+            </>
+          )}
+
+          {/* Static outer glow */}
+          <span
+            className="absolute inset-0 rounded-full opacity-30 blur-md"
+            style={{ background: auraColor.glow }}
+          />
+
+          {/* Main orb body */}
+          <span
+            className="absolute inset-0 rounded-full backdrop-blur-xl border-2"
+            style={{
+              background: `radial-gradient(circle at 35% 35%, ${auraColor.ring}22 0%, #0d0f1490 70%)`,
+              borderColor: `${auraColor.ring}60`,
+              boxShadow: `0 0 24px 6px ${auraColor.glow}, inset 0 1px 1px rgba(255,255,255,0.12)`,
+            }}
+          />
+
+          {/* Icon */}
+          <span className="relative z-10 flex items-center justify-center">
+            {currentMeta ? (
+              <Compass
+                className="size-6 text-white/90"
+                style={{ filter: `drop-shadow(0 0 6px ${auraColor.ring})` }}
+              />
+            ) : (
+              <Sparkles
+                className="size-6"
                 style={{
-                  height: agentState === 'speaking' ? `${h * 0.25}px` : '4px',
-                  animationDelay: `${i * 120}ms`,
+                  color: auraColor.ring,
+                  filter: `drop-shadow(0 0 8px ${auraColor.ring})`,
                 }}
               />
-            ))}
-          </div>
-
-          {/* Action Controls */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Mic Toggle */}
-            <button
-              type="button"
-              onClick={handleToggleMic}
-              className={cn(
-                'p-2 rounded-xl border transition-all cursor-pointer',
-                isMuted
-                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
-                  : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
-              )}
-              title={isMuted ? 'Unmute Microphone' : 'Mute Microphone'}
-              aria-label="Toggle Microphone"
-            >
-              {isMuted ? <MicOff className="size-4" /> : <Mic className="size-4" />}
-            </button>
-
-            {/* Expand Fullscreen */}
-            <button
-              type="button"
-              onClick={onExpand}
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
-              title="Expand to Full Immersion Visualizer"
-              aria-label="Expand view"
-            >
-              <Maximize2 className="size-4" />
-            </button>
-
-            {/* End Call */}
-            <button
-              type="button"
-              onClick={handleEndCall}
-              className="px-3 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-mono text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-rose-500/30 transition-all cursor-pointer"
-              title="Disconnect Voice Call"
-              aria-label="Disconnect"
-            >
-              <PhoneOff className="size-3.5" />
-              <span className="hidden xs:inline">End</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Subtitle / Transcript Banner */}
-        {latestText ? (
-          <div className="px-3 py-1.5 rounded-2xl bg-white/5 border border-white/10 text-xs font-mono text-slate-300 truncate flex items-center gap-2">
-            <Volume2 className="size-3 text-cyan-400 shrink-0" />
-            <span className="text-slate-400 shrink-0">
-              {isAgentMessage ? 'Agent:' : 'You:'}
-            </span>
-            <span className="truncate text-slate-200">{latestText}</span>
-          </div>
-        ) : agentState === 'failed' ? (
-          <div className="px-3 py-1.5 rounded-2xl bg-rose-500/15 border border-rose-400/30 text-xs font-mono text-rose-300 flex items-center justify-between gap-2">
-            <span className="truncate">Backend AI starting up or reconnecting...</span>
-            <button
-              type="button"
-              onClick={handleRetry}
-              className="px-2.5 py-0.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-[10px] uppercase shrink-0 cursor-pointer shadow"
-            >
-              Reconnect
-            </button>
-          </div>
-        ) : !session.isConnected ? (
-          <div className="px-3 py-1.5 rounded-2xl bg-cyan-500/10 border border-cyan-400/20 text-xs font-mono text-cyan-300 truncate flex items-center gap-2">
-            <Sparkles className="size-3 text-cyan-400 shrink-0 animate-spin" />
-            <span className="truncate">Connecting directly to Render backend AI...</span>
-          </div>
-        ) : null}
-
-        {/* Quick Voice Auto-Nav Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-mono">
-          <span className="text-slate-400 shrink-0 text-[10px] uppercase font-semibold">
-            Say or Tap:
+            )}
           </span>
-          {(['projects', 'research', 'about', 'case_study_adaptive_governance', 'resume', 'contact'] as NavigationTarget[]).map((key) => {
-            const meta = NAVIGATION_TARGETS[key];
-            const isSelected = activeTarget === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onManualNavigate(key)}
-                className={cn(
-                  'px-2.5 py-1 rounded-lg border text-nowrap transition-all cursor-pointer',
-                  isSelected
-                    ? 'bg-cyan-500/25 text-cyan-300 border-cyan-400/50'
-                    : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
-                )}
-              >
-                {meta.label.split(' ')[0]}
-              </button>
-            );
-          })}
+
+          {/* State dot */}
+          <span
+            className={cn(
+              'absolute top-1 right-1 size-3 rounded-full border-2 border-[#0d0f14] z-20',
+              auraColor.dot,
+              agentState === 'speaking' && 'animate-ping',
+              agentState === 'thinking' && 'animate-pulse',
+              agentState === 'listening' && 'animate-pulse'
+            )}
+          />
+
+          {/* Auto-nav mini label */}
+          {currentMeta && (
+            <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-cyan-300 whitespace-nowrap">
+              → {currentMeta.label.split(' ')[0]}
+            </span>
+          )}
+        </motion.button>
+
+        {/* Expand / End call buttons */}
+        <div className="flex flex-col gap-1.5">
+          <motion.button
+            type="button"
+            onClick={onExpand}
+            whileTap={{ scale: 0.88 }}
+            whileHover={{ scale: 1.08 }}
+            className="size-10 rounded-full flex items-center justify-center bg-white/8 border border-white/15 text-slate-300 hover:text-white shadow-lg shadow-black/20 backdrop-blur-md transition-colors cursor-pointer"
+            title="Expand full view"
+            aria-label="Expand view"
+          >
+            <Maximize2 className="size-3.5" />
+          </motion.button>
+
+          <motion.button
+            type="button"
+            onClick={agentState === 'failed' ? handleRetry : handleEndCall}
+            whileTap={{ scale: 0.88 }}
+            whileHover={{ scale: 1.08 }}
+            className="size-10 rounded-full flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/40 transition-colors cursor-pointer"
+            title={agentState === 'failed' ? 'Reconnect' : 'End call'}
+            aria-label="End call"
+          >
+            <PhoneOff className="size-3.5" />
+          </motion.button>
         </div>
       </motion.div>
     </div>
