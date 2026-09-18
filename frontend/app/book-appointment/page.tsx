@@ -1,66 +1,39 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import Example from '@/components/ui/demo';
-import WorkspaceForm from '@/components/ui/form-layout';
-import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
-import { Button } from '@/components/ui/button';
+import { CalendarAppointmentBooking } from '@/components/ui/calendar-appointment-booking';
+
+export const metadata: Metadata = {
+  title: 'Book a 1-on-1 Session | Kandula Jithendra Subramanyam',
+  description:
+    'Schedule a technical interview, architecture discussion, or collaboration session with Kandula Jithendra Subramanyam.',
+};
 
 export default function BookAppointmentPage() {
-  const [activeTab, setActiveTab] = useState<'demo' | 'workspace'>('demo');
-
   return (
-    <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen w-full bg-black text-white font-sans antialiased">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full border-b border-zinc-900 bg-black/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="group inline-flex items-center gap-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="group inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
           >
-            <span className="size-8 rounded-md bg-muted border border-border flex items-center justify-center group-hover:-translate-x-0.5 transition-transform">
-              <ArrowLeft className="size-4 text-foreground" />
-            </span>
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             <span>Back to Portfolio</span>
           </Link>
 
-          {/* Form Switcher */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center rounded-lg border border-border bg-muted p-1 text-xs">
-              <button
-                type="button"
-                onClick={() => setActiveTab('demo')}
-                className={`px-3 py-1 rounded-md font-medium transition-colors ${
-                  activeTab === 'demo'
-                    ? 'bg-background text-foreground shadow-xs'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                demo.tsx (Form Layout)
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('workspace')}
-                className={`px-3 py-1 rounded-md font-medium transition-colors ${
-                  activeTab === 'workspace'
-                    ? 'bg-background text-foreground shadow-xs'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                form-layout.tsx (Workspace Form)
-              </button>
-            </div>
-
-            <DayNightSwitch />
+          <div className="flex items-center gap-2 text-xs text-zinc-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Available for 1-on-1 Sessions</span>
           </div>
         </div>
       </header>
 
-      {/* Main Content: Render the exact components */}
+      {/* Main Content Area */}
       <main className="max-w-7xl mx-auto">
-        {activeTab === 'demo' ? <Example /> : <WorkspaceForm />}
+        <CalendarAppointmentBooking variant="page" />
       </main>
     </div>
   );
