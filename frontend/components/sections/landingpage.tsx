@@ -461,6 +461,14 @@ export function LandingPage({
       : PORTFOLIO_DATA.projects.filter((p) => p.category === activeCategory);
 
   const [showOpening, setShowOpening] = useState(false);
+  const [showRobotIcon, setShowRobotIcon] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowRobotIcon((prev) => !prev);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -909,7 +917,20 @@ export function LandingPage({
               </>
             ) : (
               <>
-                <Mic className="size-4" />
+                <span className="relative flex items-center justify-center size-4 shrink-0">
+                  <Mic
+                    className={cn(
+                      "size-4 absolute inset-0 transition-all duration-300",
+                      showRobotIcon ? "opacity-0 scale-75 rotate-6 pointer-events-none" : "opacity-100 scale-100 rotate-0"
+                    )}
+                  />
+                  <Bot
+                    className={cn(
+                      "size-4 absolute inset-0 transition-all duration-300",
+                      showRobotIcon ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-75 -rotate-6 pointer-events-none"
+                    )}
+                  />
+                </span>
                 <span className="text-xs font-mono uppercase tracking-wider">
                   Ask
                 </span>
