@@ -885,7 +885,7 @@ export function LandingPage({
             onClick={onStartCall}
             disabled={isConnecting}
             className={cn(
-              "group flex items-center gap-3 px-5 py-3.5 rounded-full border shadow-xl backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold",
+              "group flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full border shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold",
               isConnected
                 ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-rose-950/80 hover:text-rose-300 hover:border-rose-500/50"
                 : isConnecting
@@ -897,23 +897,21 @@ export function LandingPage({
               <>
                 <Loader2 className="size-4 animate-spin text-cyan-400" />
                 <span className="text-xs font-mono uppercase tracking-wider text-cyan-300">
-                  Connecting to AI...
+                  Connecting...
                 </span>
               </>
             ) : isConnected ? (
               <>
-                <div className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
                 <Mic className="size-4 text-emerald-400" />
                 <span className="text-xs font-mono uppercase tracking-wider">
-                  AI Active (End Call)
+                  End Call
                 </span>
               </>
             ) : (
               <>
-                <div className="size-3 rounded-full bg-slate-900 dark:bg-white group-hover:bg-white dark:group-hover:bg-black animate-ping" />
                 <Mic className="size-4" />
                 <span className="text-xs font-mono uppercase tracking-wider">
-                  Talk with Voice AI
+                  Ask
                 </span>
               </>
             )}
