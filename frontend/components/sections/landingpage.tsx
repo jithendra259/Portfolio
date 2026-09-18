@@ -38,7 +38,6 @@ import {
   Award,
   BookOpen,
   Zap,
-  CheckCircle2,
   Sparkles,
   Bot,
   TrendingUp,
@@ -591,23 +590,6 @@ export function LandingPage({
                 <span>Explore Projects</span>
               </a>
             </div>
-
-            {/* Verified Quick Credential Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-mono text-slate-600 dark:text-neutral-400">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                <CheckCircle2 className="size-3 text-emerald-500" />
-                <span>3 Publications (Elsevier &amp; Springer)</span>
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                <CheckCircle2 className="size-3 text-emerald-500" />
-                <span>Somaiya Vidyavihar • CGPA 8.06</span>
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                <CheckCircle2 className="size-3 text-emerald-500" />
-                <span>Sub-500ms WebRTC Voice Pipelines</span>
-              </span>
-            </div>
-
           </div>
 
           {/* Right Column: Free-Moving 3D Robot Mascot (Completely Unboxed) */}
