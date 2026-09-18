@@ -22,6 +22,7 @@ import { CinematicHero } from '@/components/ui/widgets/cinematic-landing-hero';
 import { PdfViewerDialog } from '@/components/ui/pdf-viewer-dialog';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { PROJECT_CATEGORIES } from '@/data/projects';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -466,7 +467,7 @@ export function LandingPage({
   useEffect(() => {
     const interval = setInterval(() => {
       setShowRobotIcon((prev) => !prev);
-    }, 1000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -917,19 +918,32 @@ export function LandingPage({
               </>
             ) : (
               <>
-                <span className="relative flex items-center justify-center size-4 shrink-0">
-                  <Mic
-                    className={cn(
-                      "size-4 absolute inset-0 transition-all duration-300",
-                      showRobotIcon ? "opacity-0 scale-75 rotate-6 pointer-events-none" : "opacity-100 scale-100 rotate-0"
+                <span className="relative flex items-center justify-center size-4 shrink-0 overflow-hidden">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {showRobotIcon ? (
+                      <motion.span
+                        key="robot"
+                        initial={{ opacity: 0, y: 3, scale: 0.85 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -3, scale: 0.85 }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                        className="flex items-center justify-center size-4"
+                      >
+                        <Bot className="size-4" />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="mic"
+                        initial={{ opacity: 0, y: 3, scale: 0.85 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -3, scale: 0.85 }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                        className="flex items-center justify-center size-4"
+                      >
+                        <Mic className="size-4" />
+                      </motion.span>
                     )}
-                  />
-                  <Bot
-                    className={cn(
-                      "size-4 absolute inset-0 transition-all duration-300",
-                      showRobotIcon ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-75 -rotate-6 pointer-events-none"
-                    )}
-                  />
+                  </AnimatePresence>
                 </span>
                 <span className="text-xs font-mono uppercase tracking-wider">
                   Ask
