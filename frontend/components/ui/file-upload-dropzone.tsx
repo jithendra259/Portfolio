@@ -161,13 +161,6 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
     return `${Math.round(bytes / 1024)} KB`;
   };
 
-  const totalBytes = attachedFiles.reduce((acc, f) => acc + f.size, 0);
-  const totalMb = (totalBytes / (1024 * 1024)).toFixed(1);
-  const storagePercentage = Math.min(
-    100,
-    Math.round((totalBytes / (maxTotalSizeMb * 1024 * 1024)) * 100)
-  );
-
   const hasItems = attachedFiles.length > 0 || uploadingFiles.length > 0;
 
   return (
@@ -399,45 +392,6 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
             );
           })}
 
-          {/* STORAGE USED & ACTION CONTROLS (FROM SNIPPET 1) */}
-          <div className="flex items-center justify-between rounded-xl border border-border bg-slate-900/50 p-4">
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Total Attached
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-foreground">{totalMb} MB</span>
-                <span className="text-xs text-muted-foreground">/ {maxTotalSizeMb} MB Limit ({attachedFiles.length} {attachedFiles.length === 1 ? 'file' : 'files'})</span>
-              </div>
-            </div>
-            <div className="relative h-11 w-11 shrink-0">
-              <svg className="h-11 w-11 -rotate-90 transform" viewBox="0 0 36 36">
-                <circle
-                  cx={18}
-                  cy={18}
-                  r={16}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                  className="text-slate-800"
-                />
-                <circle
-                  cx={18}
-                  cy={18}
-                  r={16}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                  strokeDasharray={100}
-                  strokeDashoffset={100 - storagePercentage}
-                  className="text-cyan-500 transition-all duration-500"
-                />
-              </svg>
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-foreground">
-                {storagePercentage}%
-              </span>
-            </div>
-          </div>
         </div>
       )}
     </div>
