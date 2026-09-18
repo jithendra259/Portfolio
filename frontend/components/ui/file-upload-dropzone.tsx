@@ -155,16 +155,6 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
     onFilesChange(attachedFiles.filter((f) => f.id !== id));
   };
 
-  const clearAll = () => {
-    onFilesChange([]);
-    uploadingFiles.forEach((item) => {
-      const reader = activeReaders.current.get(item.id);
-      if (reader) reader.abort();
-    });
-    activeReaders.current.clear();
-    setUploadingFiles([]);
-  };
-
   const formatFileSize = (bytes: number) => {
     const mb = bytes / (1024 * 1024);
     if (mb >= 0.1) return `${mb.toFixed(2)} MB`;
@@ -447,34 +437,6 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
                 {storagePercentage}%
               </span>
             </div>
-          </div>
-
-          {/* UPLOAD MORE & CLEAR ALL BUTTONS (FROM SNIPPET 1) */}
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="group/btn relative overflow-hidden rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 p-px font-medium text-white shadow transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
-            >
-              <span className="relative flex items-center justify-center gap-2 rounded-[11px] bg-slate-950/80 px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors group-hover/btn:bg-transparent">
-                Upload More
-                <svg
-                  className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={clearAll}
-              className="flex items-center justify-center gap-2 rounded-xl border border-border bg-slate-900 px-4 py-2.5 text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              Clear All
-            </button>
           </div>
         </div>
       )}
