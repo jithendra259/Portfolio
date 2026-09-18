@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 
 const HOST_EMAIL = 'kandulajithendrasubramanyam@gmail.com';
 const HOST_NAME = 'Kandula Jithendra Subramanyam';
@@ -13,6 +14,81 @@ function generateMeetCode(): string {
 
 function formatUtcForCalendar(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+async function createGoogleCalendarEvent({
+  title,
+  description,
+  startDate,
+  endDate,
+  attendeeEmail,
+  attendeeName,
+}: {
+  title: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  attendeeEmail?: string;
+  attendeeName: string;
+}): Promise<{ meetUrl: string; eventId?: string } | null> {
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN?.trim();
+
+  if (!clientId || !clientSecret || !refreshToken) {
+    return null;
+  }
+
+  try {
+    const oauth2Client = new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      'https://developers.google.com/oauthplayground'
+    );
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const response = await calendar.events.insert({
+      calendarId: 'primary',
+      conferenceDataVersion: 1,
+      sendUpdates: 'all',
+      requestBody: {
+        summary: title,
+        description,
+        start: {
+          dateTime: startDate.toISOString(),
+          timeZone: 'Asia/Kolkata',
+        },
+        end: {
+          dateTime: endDate.toISOString(),
+          timeZone: 'Asia/Kolkata',
+        },
+        attendees: attendeeEmail && attendeeEmail.includes('@')
+          ? [{ email: attendeeEmail, displayName: attendeeName }]
+          : [],
+        conferenceData: {
+          createRequest: {
+            requestId: `meet-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            conferenceSolutionKey: {
+              type: 'hangoutsMeet',
+            },
+          },
+        },
+      },
+    });
+
+    const meetUrl =
+      response.data.hangoutLink ||
+      response.data.conferenceData?.entryPoints?.find((e) => e.entryPointType === 'video')?.uri;
+
+    if (meetUrl) {
+      return { meetUrl, eventId: response.data.id || undefined };
+    }
+  } catch (err) {
+    console.error('Error creating Google Calendar event with Meet:', err);
+  }
+  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -39,13 +115,6 @@ export async function POST(req: NextRequest) {
     const endDate = new Date(startDate);
     endDate.setMinutes(endDate.getMinutes() + 30);
 
-    // Generate dedicated meeting room
-    // If a permanent Google Meet link is configured (e.g. from meet.google.com "Create a meeting for later"),
-    // use it so Google recognizes the room. Otherwise generate unique meeting room code.
-    const customMeetUrl = (process.env.GOOGLE_MEET_LINK || process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK || '').trim();
-    const meetCode = customMeetUrl ? (customMeetUrl.split('/').pop() || generateMeetCode()) : generateMeetCode();
-    const meetUrl = customMeetUrl || `https://meet.google.com/${meetCode}`;
-
     const formattedDate = startDate.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -57,6 +126,22 @@ export async function POST(req: NextRequest) {
     const endIso = formatUtcForCalendar(endDate);
 
     const meetingTitle = `Discussion: ${HOST_NAME} & ${attendeeName}`;
+
+    // Attempt to create dynamic official Google Meet via Google Calendar API
+    const gcalResult = await createGoogleCalendarEvent({
+      title: meetingTitle,
+      description: `1-on-1 Virtual Session with ${HOST_NAME}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})\nNotes: ${notes || 'N/A'}`,
+      startDate,
+      endDate,
+      attendeeEmail,
+      attendeeName,
+    });
+
+    // Fallback if Google Calendar OAuth is not yet completed
+    const customMeetUrl = (process.env.GOOGLE_MEET_LINK || process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK || '').trim();
+    const meetUrl = gcalResult?.meetUrl || customMeetUrl || `https://meet.google.com/${generateMeetCode()}`;
+    const meetCode = meetUrl.split('/').pop() || 'meeting';
+
     const meetingDescription = [
       `1-on-1 Virtual Session with ${HOST_NAME}`,
       `Topic: ${meetingPurpose}`,
