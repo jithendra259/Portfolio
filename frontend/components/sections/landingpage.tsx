@@ -527,18 +527,17 @@ export function LandingPage({
 
         {/* Hero Content */}
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-24 sm:pt-28 pb-10 sm:pb-12 z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-          <div className="max-w-2xl lg:max-w-3xl flex flex-col items-start text-left space-y-4 sm:space-y-5">
-
+          <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl flex flex-col items-start text-left space-y-4 sm:space-y-5">
 
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">
               <WordRotate
                 words={[
-                  "AGENTIC AI & MULTI-AGENT SWARMS",
-                  "QUANTITATIVE PORTFOLIO GOVERNANCE",
-                  "EXPLAINABLE AI RESEARCHER (0% HALLUCINATION)",
+                  "AUTONOMOUS ROBOTICS & SWARM INTELLIGENCE",
+                  "MULTI-AGENT NEURAL REASONING ARCHITECTURES",
+                  "ZERO-HALLUCINATION DETERMINISTIC SYSTEMS",
                   "CONVEX OPTIMIZATION (CVXPY & CLARABEL)",
-                  "REAL-TIME WEBRTC VOICE PIPELINES (<500MS)",
+                  "REAL-TIME SENSOR FUSION & ACTUATION PIPELINES",
                 ]}
                 className="text-xs sm:text-sm font-mono tracking-widest uppercase text-slate-800 dark:text-neutral-300 font-bold"
                 duration={2600}
@@ -547,12 +546,12 @@ export function LandingPage({
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-950 dark:text-white leading-[1.08]">
-              Autonomous Systems <br />
+              Autonomous Robotics &amp; <br />
               <AuroraText
                 colors={["#00ffc6", "#3b82f6", "#a855f7", "#ec4899"]}
                 className="font-extrabold text-slate-950 dark:text-white"
               >
-                governed by proof.
+                Intelligent Swarms.
               </AuroraText>
             </h1>
 
@@ -561,7 +560,7 @@ export function LandingPage({
               duration={16}
               className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-neutral-300 max-w-xl leading-relaxed font-normal text-left"
             >
-              I architect multi-agent systems and quantitative financial frameworks where LangGraph swarms, convex optimization (CVXPY), and explainable AI converge for verifiable, audit-compliant decisions.
+              Engineering decentralized robotic swarms, multi-agent coordination protocols, and mathematical convex solvers built to perceive, navigate, and execute high-stakes decisions with zero hallucination.
             </TypingAnimation>
 
             {/* Hero Action Buttons */}
@@ -591,11 +590,11 @@ export function LandingPage({
                 window.dispatchEvent(new CustomEvent("trigger-robot-love"));
               }
             }}
-            className="w-full lg:flex-1 flex items-center justify-center relative min-h-[340px] sm:min-h-[420px] lg:min-h-[500px] select-none cursor-pointer"
+            className="w-full lg:flex-1 flex items-center justify-center relative min-h-[420px] sm:min-h-[500px] lg:min-h-[580px] select-none cursor-pointer"
           >
             <RobotCanvas
-              className="w-full h-[340px] sm:h-[420px] lg:h-[500px]"
-              scale={1.12}
+              className="w-full h-[420px] sm:h-[500px] lg:h-[580px]"
+              scale={1.35}
               pantallaColor="#00ffc6"
               pantallaBrillo={1.4}
             />

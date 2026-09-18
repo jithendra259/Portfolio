@@ -35,7 +35,8 @@ function ResponsiveGroup({
   scale?: number;
 }) {
   const { viewport } = useThree();
-  const s = Math.min(0.95, viewport.width / 3.8) * scale;
+  const responsiveFactor = Math.min(1.4, Math.max(0.95, viewport.width / 3.0));
+  const s = responsiveFactor * scale;
   return <group scale={s}>{children}</group>;
 }
 
@@ -1087,7 +1088,7 @@ export function RobotCanvas({
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.2, 6], fov: 38 }}
+        camera={{ position: [0, 0.12, 4.85], fov: 38 }}
         gl={{ alpha: true, antialias: true }}
       >
         <ambientLight intensity={entorno.luzAmbiente} color="#ffffff" />
@@ -1102,7 +1103,7 @@ export function RobotCanvas({
         >
           <orthographicCamera
             attach="shadow-camera"
-            args={[-1.5, 1.5, 1.5, -1.5, 0.1, 20]}
+            args={[-2.2, 2.2, 2.2, -2.2, 0.1, 20]}
           />
         </directionalLight>
 
