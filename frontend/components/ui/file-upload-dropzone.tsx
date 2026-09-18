@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { toast } from '@/components/ui/widgets/notification-card';
 
 export interface UploadedFileMeta {
@@ -23,6 +23,7 @@ export interface FileUploadDropzoneProps {
   onFilesChange: (files: UploadedFileMeta[]) => void;
   maxFileSizeMb?: number;
   maxTotalSizeMb?: number;
+  maxFilesCount?: number;
   className?: string;
 }
 
@@ -31,6 +32,7 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
   onFilesChange,
   maxFileSizeMb = 10,
   maxTotalSizeMb = 25,
+  maxFilesCount = 10,
   className = '',
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -38,82 +40,149 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeReaders = useRef<Map<string, FileReader>>(new Map());
 
-  const processSingleFile = (file: File) => {
-    if (file.size > maxFileSizeMb * 1024 * 1024) {
-      toast.error(`"${file.name}" exceeds the ${maxFileSizeMb}MB limit.`);
-      return;
-    }
+  // Keep a mutable ref to attachedFiles to prevent stale closures during concurrent uploads
+  const attachedFilesRef = useRef<UploadedFileMeta[]>(attachedFiles);
+  useEffect(() => {
+    attachedFilesRef.current = attachedFiles;
+  }, [attachedFiles]);
 
-    // Check if already exists in attached files
-    if (attachedFiles.some((f) => f.filename === file.name && f.size === file.size)) {
-      toast.info(`"${file.name}" is already attached.`);
-      return;
-    }
+  // Keep a mutable ref to currently active uploading file count and bytes
+  const pendingBytesRef = useRef<number>(0);
 
-    const fileId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  const processBatchFiles = (files: File[]) => {
+    if (!files || files.length === 0) return;
 
-    // Add to uploading items with initial progress
-    setUploadingFiles((prev) => [
-      ...prev,
-      { id: fileId, filename: file.name, size: file.size, progress: 12 },
-    ]);
+    let currentTotalBytes =
+      attachedFilesRef.current.reduce((sum, f) => sum + f.size, 0) + pendingBytesRef.current;
+    let currentTotalCount = attachedFilesRef.current.length + activeReaders.current.size;
 
-    // Progress animation simulation
-    let currentProgress = 12;
-    const progressInterval = setInterval(() => {
-      currentProgress += Math.floor(Math.random() * 22) + 15;
-      if (currentProgress >= 92) {
-        currentProgress = 92;
-        clearInterval(progressInterval);
+    const acceptedFiles: File[] = [];
+
+    for (const file of files) {
+      // 1. Check max file count limit
+      if (currentTotalCount >= maxFilesCount) {
+        toast.warning(
+          'Upload Limit Reached',
+          `Maximum ${maxFilesCount} files allowed. Cannot add "${file.name}".`
+        );
+        break;
       }
-      setUploadingFiles((prev) =>
-        prev.map((item) => (item.id === fileId ? { ...item, progress: currentProgress } : item))
-      );
-    }, 160);
 
-    const reader = new FileReader();
-    activeReaders.current.set(fileId, reader);
+      // 2. Check duplicate file
+      const isDuplicate =
+        attachedFilesRef.current.some(
+          (f) => f.filename === file.name && f.size === file.size
+        ) || acceptedFiles.some((f) => f.name === file.name && f.size === file.size);
 
-    reader.onload = () => {
-      // Allow the progress animation to reach 100% smoothly
-      clearInterval(progressInterval);
-      setUploadingFiles((prev) =>
-        prev.map((item) => (item.id === fileId ? { ...item, progress: 100 } : item))
-      );
+      if (isDuplicate) {
+        toast.warning('Already Attached', `"${file.name}" is already in your upload list.`);
+        continue;
+      }
 
-      setTimeout(() => {
-        const resultStr = reader.result as string;
-        const base64 = resultStr.split(',')[1] || '';
+      // 3. Check individual file size limit (e.g. 10MB)
+      const fileSizeInMb = file.size / (1024 * 1024);
+      if (fileSizeInMb > maxFileSizeMb) {
+        toast.warning(
+          'File Limit Exceeded',
+          `"${file.name}" (${fileSizeInMb.toFixed(1)} MB) exceeds the ${maxFileSizeMb}MB per-file limit.`
+        );
+        continue;
+      }
 
-        const newMeta: UploadedFileMeta = {
-          id: fileId,
-          filename: file.name,
-          content: base64,
-          contentType: file.type || 'application/octet-stream',
-          size: file.size,
-        };
+      // 4. Check total cumulative size limit (e.g. 25MB)
+      if (currentTotalBytes + file.size > maxTotalSizeMb * 1024 * 1024) {
+        toast.warning(
+          'Total Limit Exceeded',
+          `Cannot attach "${file.name}". Combined total would exceed ${maxTotalSizeMb}MB.`
+        );
+        continue;
+      }
 
-        // Remove from uploading and add to attached files
+      // Accepted for upload
+      acceptedFiles.push(file);
+      currentTotalBytes += file.size;
+      currentTotalCount += 1;
+    }
+
+    if (acceptedFiles.length === 0) return;
+
+    // Process all accepted files concurrently
+    acceptedFiles.forEach((file) => {
+      const fileId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      pendingBytesRef.current += file.size;
+
+      // Add to uploading list
+      setUploadingFiles((prev) => [
+        ...prev,
+        { id: fileId, filename: file.name, size: file.size, progress: 15 },
+      ]);
+
+      // Dynamic uploading progress animation effect
+      let currentProgress = 15;
+      const progressInterval = setInterval(() => {
+        currentProgress += Math.floor(Math.random() * 20) + 14;
+        if (currentProgress >= 94) {
+          currentProgress = 94;
+          clearInterval(progressInterval);
+        }
+        setUploadingFiles((prev) =>
+          prev.map((item) => (item.id === fileId ? { ...item, progress: currentProgress } : item))
+        );
+      }, 150);
+
+      const reader = new FileReader();
+      activeReaders.current.set(fileId, reader);
+
+      reader.onload = () => {
+        clearInterval(progressInterval);
+        setUploadingFiles((prev) =>
+          prev.map((item) => (item.id === fileId ? { ...item, progress: 100 } : item))
+        );
+
+        setTimeout(() => {
+          const resultStr = reader.result as string;
+          const base64 = resultStr.split(',')[1] || '';
+
+          const newMeta: UploadedFileMeta = {
+            id: fileId,
+            filename: file.name,
+            content: base64,
+            contentType: file.type || 'application/octet-stream',
+            size: file.size,
+          };
+
+          // Safely update attached files using current ref to prevent race conditions
+          const nextAttached = [
+            ...attachedFilesRef.current.filter((f) => f.id !== fileId),
+            newMeta,
+          ];
+          attachedFilesRef.current = nextAttached;
+          onFilesChange(nextAttached);
+
+          // Clean up uploading state
+          pendingBytesRef.current = Math.max(0, pendingBytesRef.current - file.size);
+          setUploadingFiles((prev) => prev.filter((item) => item.id !== fileId));
+          activeReaders.current.delete(fileId);
+
+          toast.success('Document Attached', file.name);
+        }, 350);
+      };
+
+      reader.onerror = () => {
+        clearInterval(progressInterval);
+        pendingBytesRef.current = Math.max(0, pendingBytesRef.current - file.size);
         setUploadingFiles((prev) => prev.filter((item) => item.id !== fileId));
         activeReaders.current.delete(fileId);
-        onFilesChange([...attachedFiles, newMeta]);
-        toast.success(`Attached "${file.name}"`);
-      }, 450);
-    };
+        toast.error('Upload Failed', `Could not read "${file.name}".`);
+      };
 
-    reader.onerror = () => {
-      clearInterval(progressInterval);
-      setUploadingFiles((prev) => prev.filter((item) => item.id !== fileId));
-      activeReaders.current.delete(fileId);
-      toast.error(`Failed to read "${file.name}".`);
-    };
-
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
-    Array.from(files).forEach((file) => processSingleFile(file));
+    processBatchFiles(Array.from(files));
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -148,11 +217,17 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
       reader.abort();
       activeReaders.current.delete(id);
     }
+    const cancelledItem = uploadingFiles.find((f) => f.id === id);
+    if (cancelledItem) {
+      pendingBytesRef.current = Math.max(0, pendingBytesRef.current - cancelledItem.size);
+    }
     setUploadingFiles((prev) => prev.filter((item) => item.id !== id));
   };
 
   const removeFile = (id: string) => {
-    onFilesChange(attachedFiles.filter((f) => f.id !== id));
+    const nextAttached = attachedFilesRef.current.filter((f) => f.id !== id);
+    attachedFilesRef.current = nextAttached;
+    onFilesChange(nextAttached);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -247,7 +322,7 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
         }
       `}</style>
 
-      {/* HIDDEN MULTIPLE FILE INPUT */}
+      {/* HIDDEN MULTIPLE FILE INPUT (ACCEPTS ALL FILES AT ONCE) */}
       <input
         ref={fileInputRef}
         type="file"
@@ -272,18 +347,18 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
               <path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z" />
             </svg>
             <p className="text-sm font-medium text-foreground">
-              {hasItems ? 'Drop more documents here or browse' : 'Drag and Drop'}
+              {hasItems ? 'Drop all files at once or browse' : 'Drag and Drop'}
             </p>
             <p className="text-xs text-muted-foreground">or</p>
             <span className="custom-browse-button">
-              {hasItems ? 'Add files' : 'Browse files'}
+              {hasItems ? 'Add more files' : 'Browse files'}
             </span>
           </div>
         </label>
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        Supported: PDF, DOC, DOCX, JPG, PNG (Max {maxFileSizeMb}MB per file)
+        Supported: PDF, DOC, DOCX, JPG, PNG (Max {maxFileSizeMb}MB per file, up to {maxFilesCount} files)
       </p>
 
       {/* LIST OF UPLOADING AND ATTACHED DOCUMENTS (SNIPPET 1 FLOW) */}
@@ -391,7 +466,6 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
               </div>
             );
           })}
-
         </div>
       )}
     </div>
