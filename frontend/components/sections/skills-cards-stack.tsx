@@ -113,16 +113,11 @@ export function SkillsCardsStack() {
                   {category.skills.map((skill, sIdx) => (
                     <div
                       key={sIdx}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/90 dark:bg-[#111111]/90 border border-slate-200/80 dark:border-[#2a2a2a] hover:border-slate-400 dark:hover:border-[#4d4d4d] transition-colors"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-100/90 dark:bg-[#111111]/90 border border-slate-200/80 dark:border-[#2a2a2a] hover:border-slate-400 dark:hover:border-[#4d4d4d] transition-colors"
                     >
-                      <div className="flex items-center gap-2 min-w-0 pr-2">
-                        <CheckCircle2 className="size-3.5 text-slate-900 dark:text-white shrink-0" />
-                        <span className="text-xs font-medium text-slate-800 dark:text-neutral-200 truncate">
-                          {skill.name}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-[#3c3c3c] text-slate-700 dark:text-neutral-300 shrink-0 shadow-2xs">
-                        {skill.level}
+                      <CheckCircle2 className="size-3.5 text-slate-900 dark:text-white shrink-0" />
+                      <span className="text-xs font-medium text-slate-800 dark:text-neutral-200 truncate">
+                        {skill.name}
                       </span>
                     </div>
                   ))}

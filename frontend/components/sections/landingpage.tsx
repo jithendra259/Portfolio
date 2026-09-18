@@ -530,13 +530,6 @@ export function LandingPage({
         <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 lg:px-20 pt-24 sm:pt-28 pb-10 sm:pb-12 z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
           <div className="max-w-2xl lg:max-w-3xl flex flex-col items-start text-left space-y-4 sm:space-y-5">
 
-            {/* Developer Identity Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 text-slate-900 dark:text-neutral-200 font-mono text-xs font-bold backdrop-blur-md shadow-xs">
-              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Kandula Jithendra Subramanyam</span>
-              <span className="text-slate-400 dark:text-neutral-500">•</span>
-              <span className="text-cyan-600 dark:text-cyan-400">M.Tech AI &amp; Data Science</span>
-            </div>
 
             {/* Category Tagline with WordRotate Animation */}
             <div className="h-6 flex items-center">

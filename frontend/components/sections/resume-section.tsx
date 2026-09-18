@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { FileText } from 'lucide-react';
 import { ResumePrinter } from '@/components/ui/widgets/resume-printer';
 
 export function ResumeSection() {
@@ -12,10 +11,6 @@ export function ResumeSection() {
     >
       {/* Simple Section Title */}
       <div className="flex flex-col items-center text-center mb-3">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 mb-1 font-bold tracking-wider">
-          <FileText className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Curriculum Vitae</span>
-        </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Resume
         </h2>
