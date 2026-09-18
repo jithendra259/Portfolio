@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 import { Download } from 'lucide-react';
 export function ResumePrinter({ className }: { className?: string }) {
-  const [isPrinting, setIsPrinting] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(true);
 
   const handlePrintTrigger = () => {
     setIsPrinting((prev) => !prev);
   };
 
   return (
-    <div className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${className || ''}`}>
+    <div className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${isPrinting ? 'is-active' : ''} ${className || ''}`}>
       <style>{`
         .resume-printer-scope .wrapper {
           --printer-color: #dcdac4;
@@ -278,8 +278,10 @@ export function ResumePrinter({ className }: { className?: string }) {
 
         /* Active Print State Animations with correct z-index layering */
         .resume-printer-scope.is-active .receipt-wrapper,
+        .resume-printer-scope .wrapper.is-active .receipt-wrapper,
         .resume-printer-scope .wrapper:has(.print-button:focus) .receipt-wrapper {
-          z-index: 25;
+          z-index: 50;
+          pointer-events: auto !important;
           animation:
             printReceiptAnim 1.2s 1 forwards ease-in,
             displayReceiptAnim 0.4s 1 forwards cubic-bezier(0, 0.63, 0.96, 1.1);
@@ -287,11 +289,13 @@ export function ResumePrinter({ className }: { className?: string }) {
         }
 
         .resume-printer-scope.is-active .printer-message,
+        .resume-printer-scope .wrapper.is-active .printer-message,
         .resume-printer-scope .wrapper:has(.print-button:focus) .printer-message {
           opacity: 0;
         }
 
         .resume-printer-scope.is-active .letter,
+        .resume-printer-scope .wrapper.is-active .letter,
         .resume-printer-scope .wrapper:has(.print-button:focus) .letter {
           animation: show-letter-text 0.6s 1 forwards linear;
         }
@@ -505,13 +509,27 @@ export function ResumePrinter({ className }: { className?: string }) {
             </table>
 
             {/* Receipt Footer */}
-            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1.5">
+            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1.5 relative z-50 pointer-events-auto">
               <a
                 href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
                 download="Kandula_Jithendra_Subramanyam_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  try {
+                    const link = document.createElement('a');
+                    link.href = '/documents/resume/kandula_jithendra_subramanyam_resume.pdf';
+                    link.download = 'Kandula_Jithendra_Subramanyam_Resume.pdf';
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  } catch (err) {
+                    console.error('Download trigger error:', err);
+                  }
+                }}
+                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center pointer-events-auto select-none shadow-sm active:scale-95"
               >
                 <Download className="size-3" /> Download Official PDF
               </a>
