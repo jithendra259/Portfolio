@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { FlightSendButton } from '@/components/ui/flight-send-button';
-import { FileUploadDropzone } from '@/components/ui/file-upload-dropzone';
+import { FileUploadDropzone, UploadedFileMeta } from '@/components/ui/file-upload-dropzone';
 import { toast } from 'sonner';
 
 interface AppointmentBookingProps {
@@ -159,14 +159,7 @@ export const CalendarAppointmentBooking = ({
   const [notes, setNotes] = useState<string>('');
   const [documentLink, setDocumentLink] = useState<string>('');
 
-  const [attachedFile, setAttachedFile] = useState<{
-    filename: string;
-    content: string;
-    contentType: string;
-    size: number;
-  } | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
+  const [attachedFiles, setAttachedFiles] = useState<UploadedFileMeta[]>([]);
   const [isBooked, setIsBooked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [meetUrl, setMeetUrl] = useState<string>('https://meet.google.com/uvd-rnah-jgh');
@@ -179,37 +172,6 @@ export const CalendarAppointmentBooking = ({
     description: string;
     location: string;
   } | null>(null);
-
-  const handleFileSelect = (file: File) => {
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size exceeds 10MB limit.');
-      return;
-    }
-
-    setIsUploading(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const resultStr = reader.result as string;
-      const base64 = resultStr.split(',')[1] || '';
-      setAttachedFile({
-        filename: file.name,
-        content: base64,
-        contentType: file.type || 'application/octet-stream',
-        size: file.size,
-      });
-      setIsUploading(false);
-      toast.success(`Attached "${file.name}" (${Math.round(file.size / 1024)} KB)`);
-    };
-    reader.onerror = () => {
-      setIsUploading(false);
-      toast.error('Failed to read file.');
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const removeAttachedFile = () => {
-    setAttachedFile(null);
-  };
 
   const handleBooking = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -255,12 +217,18 @@ export const CalendarAppointmentBooking = ({
             purpose: DEFAULT_PURPOSE,
             notes: notes.trim(),
             documentLink: documentLink.trim(),
-            attachment: attachedFile
+            attachments: attachedFiles.map((f) => ({
+              filename: f.filename,
+              content: f.content,
+              contentType: f.contentType,
+              size: f.size,
+            })),
+            attachment: attachedFiles[0]
               ? {
-                  filename: attachedFile.filename,
-                  content: attachedFile.content,
-                  contentType: attachedFile.contentType,
-                  size: attachedFile.size,
+                  filename: attachedFiles[0].filename,
+                  content: attachedFiles[0].content,
+                  contentType: attachedFiles[0].contentType,
+                  size: attachedFiles[0].size,
                 }
               : undefined,
           }),
@@ -287,7 +255,9 @@ export const CalendarAppointmentBooking = ({
         role ? `Role / Organization: ${role.trim()}` : null,
         notes ? `Notes / Agenda: ${notes.trim()}` : null,
         documentLink ? `Document Link: ${documentLink.trim()}` : null,
-        attachedFile ? `Attached File: ${attachedFile.filename}` : null,
+        attachedFiles.length > 0
+          ? `Attached Files: ${attachedFiles.map((f) => f.filename).join(', ')}`
+          : null,
         `Google Meet Link: ${generatedMeetUrl}`,
         `Host Email: kandulajithendrasubramanyam@gmail.com`,
       ]
@@ -332,7 +302,7 @@ export const CalendarAppointmentBooking = ({
         purpose: DEFAULT_PURPOSE,
         notes: notes.trim() || undefined,
         documentLink: documentLink.trim() || undefined,
-        attachmentName: attachedFile?.filename,
+        attachmentName: attachedFiles.map((f) => f.filename).join(', ') || undefined,
         googleCalendarUrl: url,
       });
     } catch (err: unknown) {
@@ -424,20 +394,29 @@ export const CalendarAppointmentBooking = ({
             </div>
           )}
 
-          {(attachedFile || documentLink) && (
-            <div className="space-y-1 text-sm">
-              <span className="text-xs uppercase text-muted-foreground font-medium">Attachments</span>
-              {attachedFile && (
-                <div className="flex items-center gap-2 text-foreground text-sm">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span>{attachedFile.filename}</span>
-                  <span className="text-xs text-muted-foreground">({Math.round(attachedFile.size / 1024)} KB)</span>
+          {(attachedFiles.length > 0 || documentLink) && (
+            <div className="space-y-2 text-sm">
+              <span className="text-xs uppercase text-muted-foreground font-medium">
+                Attached Files ({attachedFiles.length})
+              </span>
+              {attachedFiles.map((file) => (
+                <div key={file.id} className="flex items-center gap-2 text-foreground text-sm">
+                  <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <span className="font-medium">{file.filename}</span>
+                  <span className="text-xs text-muted-foreground">
+                    ({Math.round(file.size / 1024)} KB)
+                  </span>
                 </div>
-              )}
+              ))}
               {documentLink && (
-                <div className="flex items-center gap-2 text-foreground text-sm">
+                <div className="flex items-center gap-2 text-foreground text-sm pt-1">
                   <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <a href={documentLink} target="_blank" rel="noopener noreferrer" className="underline truncate">
+                  <a
+                    href={documentLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline truncate text-cyan-400"
+                  >
                     {documentLink}
                   </a>
                 </div>
@@ -707,13 +686,11 @@ export const CalendarAppointmentBooking = ({
               {/* File Attachment */}
               <div className="col-span-full">
                 <label className="text-sm font-medium text-foreground block mb-2">
-                  Attach File / Job Description (Optional)
+                  Attach Documents / Resumes / Job Specs (Optional)
                 </label>
                 <FileUploadDropzone
-                  attachedFile={attachedFile}
-                  isUploading={isUploading}
-                  onFileSelect={handleFileSelect}
-                  onFileRemove={removeAttachedFile}
+                  attachedFiles={attachedFiles}
+                  onFilesChange={setAttachedFiles}
                 />
               </div>
 

@@ -94,7 +94,24 @@ async function createGoogleCalendarEvent({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, date: dateStr, time, purpose, notes, documentLink, attachment } = body;
+    const {
+      name,
+      email,
+      date: dateStr,
+      time,
+      purpose,
+      notes,
+      documentLink,
+      attachment,
+      attachments: rawAttachments,
+    } = body;
+
+    const fileList: Array<{ filename: string; content: string; contentType?: string; size?: number }> = [];
+    if (Array.isArray(rawAttachments)) {
+      fileList.push(...rawAttachments);
+    } else if (attachment && attachment.filename && attachment.content) {
+      fileList.push(attachment);
+    }
 
     if (!dateStr || !time) {
       return NextResponse.json(
@@ -284,12 +301,17 @@ export async function POST(req: NextRequest) {
             : ''
         }
         ${
-          attachment?.filename
+          fileList.length > 0
             ? `
         <tr>
-          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8;">Attached File:</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; vertical-align: top;">Attached Files (${fileList.length}):</td>
           <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #34d399; font-weight: 600;">
-            &#128206; ${attachment.filename} (${Math.round((attachment.size || 0) / 1024)} KB - Attached to email)
+            ${fileList
+              .map(
+                (f) =>
+                  `&#128206; ${f.filename} (${Math.round((f.size || 0) / 1024)} KB)`
+              )
+              .join('<br>')}
           </td>
         </tr>
         `
@@ -322,20 +344,29 @@ export async function POST(req: NextRequest) {
           },
         ];
 
-        if (attachment && attachment.filename && attachment.content) {
-          mailAttachments.push({
-            filename: attachment.filename,
-            content: Buffer.from(attachment.content, 'base64'),
-            contentType: attachment.contentType || 'application/octet-stream',
-          });
+        for (const file of fileList) {
+          if (file.filename && file.content) {
+            mailAttachments.push({
+              filename: file.filename,
+              content: Buffer.from(file.content, 'base64'),
+              contentType: file.contentType || 'application/octet-stream',
+            });
+          }
         }
+
+        const attachmentsTextSummary =
+          fileList.length > 0
+            ? `\nAttachments:\n${fileList
+                .map((f) => `- ${f.filename} (${Math.round((f.size || 0) / 1024)} KB)`)
+                .join('\n')}`
+            : '';
 
         await transporter.sendMail({
           from: `"${HOST_NAME}" <${smtpUser}>`,
           to: recipients.join(', '),
           replyTo: HOST_EMAIL,
           subject: `Confirmed: 1-on-1 Meeting with ${HOST_NAME} (${formattedDate} @ ${time} IST)`,
-          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})${notes ? `\nNotes: ${notes}` : ''}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachment?.filename ? `\nAttachment: ${attachment.filename}` : ''}\n\nSave to Google Calendar: ${googleCalendarUrl}`,
+          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})${notes ? `\nNotes: ${notes}` : ''}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachmentsTextSummary}\n\nSave to Google Calendar: ${googleCalendarUrl}`,
           html: htmlEmail,
           attachments: mailAttachments,
         });
