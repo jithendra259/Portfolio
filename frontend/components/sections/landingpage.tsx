@@ -887,8 +887,8 @@ export function LandingPage({
       {/* ============================================================ */}
       <Footer />
 
-      {/* Floating Bottom-Right Voice Assistant Button */}
-      {onStartCall && (
+      {/* Floating Bottom-Right Voice Assistant Button — hidden while session is active */}
+      {onStartCall && !isConnected && !isConnecting && (
         <div className="fixed bottom-6 right-6 z-40">
           <button
             onClick={onStartCall}
