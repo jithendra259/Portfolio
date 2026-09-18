@@ -5,7 +5,6 @@ import {
   Calendar as CalendarIcon,
   Clock,
   ExternalLink,
-  Download,
   Video,
   RotateCcw,
   FileText,
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { FlightSendButton } from '@/components/ui/flight-send-button';
+import { SlideDownloadButton } from '@/components/ui/slide-download-button';
 import { FileUploadDropzone, UploadedFileMeta } from '@/components/ui/file-upload-dropzone';
 import { toast } from 'sonner';
 
@@ -443,8 +443,7 @@ export const CalendarAppointmentBooking = ({
             </button>
 
             <div className="flex items-center space-x-3">
-              <button
-                type="button"
+              <SlideDownloadButton
                 onClick={() =>
                   downloadIcsFile({
                     ...bookingDetails,
@@ -452,11 +451,9 @@ export const CalendarAppointmentBooking = ({
                     userEmail: email,
                   })
                 }
-                className="rounded-md border border-border bg-transparent text-foreground hover:bg-muted px-4 py-2 text-sm font-medium transition-colors inline-flex items-center gap-2 cursor-pointer"
-              >
-                <Download className="h-4 w-4" />
-                <span>Download .ics</span>
-              </button>
+                label="Download"
+                title="Download .ics Calendar File"
+              />
 
               <a
                 href={googleCalendarUrl}
@@ -738,10 +735,13 @@ export const CalendarAppointmentBooking = ({
           </div>
 
           <div className="flex items-center space-x-4">
-            <button
+            <SlideDownloadButton
               type="button"
               onClick={() => {
-                if (!date || !selectedTime) return;
+                if (!date || !selectedTime) {
+                  toast.error('Please pick a date and time slot first.');
+                  return;
+                }
                 const [hours, minutes] = selectedTime.split(':').map(Number);
                 const startDate = new Date(date);
                 startDate.setHours(hours, minutes, 0, 0);
@@ -757,11 +757,9 @@ export const CalendarAppointmentBooking = ({
                   userEmail: email,
                 });
               }}
-              className="whitespace-nowrap rounded-full border border-border bg-transparent px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors inline-flex items-center gap-2 cursor-pointer shadow-xs"
-            >
-              <Download className="h-4 w-4" />
-              <span>Download .ics</span>
-            </button>
+              label="Download"
+              title="Download .ics Calendar File"
+            />
 
             <FlightSendButton
               type="submit"
