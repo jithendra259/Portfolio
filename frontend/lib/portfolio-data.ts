@@ -97,7 +97,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       linkedin: 'https://www.linkedin.com/in/kandula-jithendra-subramanyam-0311462a6/',
       email: 'mailto:kandulajithendrasubramanyam@gmail.com',
       orcid: 'https://orcid.org/0009-0005-7593-7871',
-      resumeUrl: '#',
+      resumeUrl: '/documents/resume/kandula_jithendra_subramanyam_resume.pdf',
     },
     languages: [
       { name: 'English', level: 'Fluent' },

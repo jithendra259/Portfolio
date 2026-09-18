@@ -509,6 +509,8 @@ export function ResumePrinter({ className }: { className?: string }) {
               <a
                 href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
                 download="Kandula_Jithendra_Subramanyam_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center"
               >
                 <Download className="size-3" /> Download Official PDF
