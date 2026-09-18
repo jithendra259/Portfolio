@@ -16,10 +16,19 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     if (dev) {
       config.cache = false;
+      // Use source-map instead of eval-* in dev to prevent pdfjs-dist ESM eval conflicts
+      config.devtool = 'cheap-module-source-map';
     }
+
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+      'pdfjs-dist$': 'pdfjs-dist/build/pdf.min.mjs',
+    };
+
     return config;
   },
 };
