@@ -94,7 +94,7 @@ async function createGoogleCalendarEvent({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, date: dateStr, time, purpose, notes } = body;
+    const { name, email, date: dateStr, time, purpose, notes, documentLink, attachment } = body;
 
     if (!dateStr || !time) {
       return NextResponse.json(
@@ -130,17 +130,17 @@ export async function POST(req: NextRequest) {
     // Attempt to create dynamic official Google Meet via Google Calendar API
     const gcalResult = await createGoogleCalendarEvent({
       title: meetingTitle,
-      description: `1-on-1 Virtual Session with ${HOST_NAME}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})\nNotes: ${notes || 'N/A'}`,
+      description: `1-on-1 Virtual Session with ${HOST_NAME}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})\nNotes: ${notes || 'N/A'}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachment?.filename ? `\nAttachment: ${attachment.filename}` : ''}`,
       startDate,
       endDate,
       attendeeEmail,
       attendeeName,
     });
 
-    // Fallback if Google Calendar OAuth is not yet completed
+    // Permanent Google Meet link or fallback
     const customMeetUrl = (process.env.GOOGLE_MEET_LINK || process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK || '').trim();
-    const meetUrl = gcalResult?.meetUrl || customMeetUrl || `https://meet.google.com/${generateMeetCode()}`;
-    const meetCode = meetUrl.split('/').pop() || 'meeting';
+    const meetUrl = gcalResult?.meetUrl || customMeetUrl || `https://meet.google.com/uvd-rnah-jgh`;
+    const meetCode = meetUrl.split('/').pop() || 'uvd-rnah-jgh';
 
     const meetingDescription = [
       `1-on-1 Virtual Session with ${HOST_NAME}`,
@@ -149,6 +149,8 @@ export async function POST(req: NextRequest) {
       attendeeEmail ? `Attendee Email: ${attendeeEmail}` : null,
       `Google Meet Video: ${meetUrl}`,
       notes ? `Notes / Agenda: ${notes}` : null,
+      documentLink ? `Document / JD Link: ${documentLink}` : null,
+      attachment?.filename ? `Attached File: ${attachment.filename}` : null,
       `Host Email: ${HOST_EMAIL}`,
     ]
       .filter(Boolean)
@@ -263,8 +265,32 @@ export async function POST(req: NextRequest) {
           notes
             ? `
         <tr>
-          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8;">Notes:</td>
-          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #cbd5e1;">${notes}</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; vertical-align: top;">Notes / Agenda:</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #f1f5f9; line-height: 1.5; background: rgba(255,255,255,0.02); border-radius: 8px; padding-left: 8px;">${notes.replace(/\n/g, '<br>')}</td>
+        </tr>
+        `
+            : ''
+        }
+        ${
+          documentLink
+            ? `
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8;">Document Link:</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <a href="${documentLink}" target="_blank" style="color: #38bdf8; text-decoration: underline;">${documentLink}</a>
+          </td>
+        </tr>
+        `
+            : ''
+        }
+        ${
+          attachment?.filename
+            ? `
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8;">Attached File:</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #34d399; font-weight: 600;">
+            &#128206; ${attachment.filename} (${Math.round((attachment.size || 0) / 1024)} KB - Attached to email)
+          </td>
         </tr>
         `
             : ''
@@ -288,18 +314,30 @@ export async function POST(req: NextRequest) {
 </html>
         `;
 
+        const mailAttachments: any[] = [
+          {
+            filename: 'invite.ics',
+            method: 'REQUEST',
+            content: icsContent,
+          },
+        ];
+
+        if (attachment && attachment.filename && attachment.content) {
+          mailAttachments.push({
+            filename: attachment.filename,
+            content: Buffer.from(attachment.content, 'base64'),
+            contentType: attachment.contentType || 'application/octet-stream',
+          });
+        }
+
         await transporter.sendMail({
           from: `"${HOST_NAME}" <${smtpUser}>`,
           to: recipients.join(', '),
           replyTo: HOST_EMAIL,
           subject: `Confirmed: 1-on-1 Meeting with ${HOST_NAME} (${formattedDate} @ ${time} IST)`,
-          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})\n\nSave to Google Calendar: ${googleCalendarUrl}`,
+          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})${notes ? `\nNotes: ${notes}` : ''}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachment?.filename ? `\nAttachment: ${attachment.filename}` : ''}\n\nSave to Google Calendar: ${googleCalendarUrl}`,
           html: htmlEmail,
-          icalEvent: {
-            filename: 'invite.ics',
-            method: 'REQUEST',
-            content: icsContent,
-          },
+          attachments: mailAttachments,
         });
 
         emailSent = true;
