@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/widgets/notification-card';
 
 export interface UploadedFileMeta {
   id: string;

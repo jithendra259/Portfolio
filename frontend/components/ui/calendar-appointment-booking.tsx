@@ -15,7 +15,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { FlightSendButton } from '@/components/ui/flight-send-button';
 import { SlideDownloadButton } from '@/components/ui/slide-download-button';
 import { FileUploadDropzone, UploadedFileMeta } from '@/components/ui/file-upload-dropzone';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/widgets/notification-card';
 
 interface AppointmentBookingProps {
   onSuccess?: (details: {

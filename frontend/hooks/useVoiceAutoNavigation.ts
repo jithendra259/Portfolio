@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useRoomContext } from '@livekit/components-react';
 import { RoomEvent } from 'livekit-client';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/widgets/notification-card';
 
 export type NavigationTarget =
   | 'hero'
