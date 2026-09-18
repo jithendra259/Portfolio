@@ -26,11 +26,6 @@ export default function BookAppointmentPage() {
           </Link>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Available for 1-on-1 Sessions</span>
-            </div>
-
             <DayNightSwitch />
           </div>
         </div>
