@@ -590,11 +590,11 @@ export function LandingPage({
                 window.dispatchEvent(new CustomEvent("trigger-robot-love"));
               }
             }}
-            className="w-full lg:w-auto lg:flex-1 flex items-center justify-center relative min-h-[280px] sm:min-h-[340px] lg:min-h-[380px] select-none cursor-pointer"
+            className="w-full lg:w-auto lg:flex-1 flex items-center justify-center relative min-h-[340px] sm:min-h-[400px] lg:min-h-[440px] select-none cursor-pointer"
           >
             <RobotCanvas
-              className="w-full h-[280px] sm:h-[340px] lg:h-[380px]"
-              scale={0.92}
+              className="w-full h-[340px] sm:h-[400px] lg:h-[440px]"
+              scale={1.14}
               pantallaColor="#00ffc6"
               pantallaBrillo={1.4}
             />
