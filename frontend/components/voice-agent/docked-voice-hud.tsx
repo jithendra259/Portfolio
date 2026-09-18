@@ -118,7 +118,6 @@ export function DockedVoiceHUD({
             transition={{ type: 'spring', stiffness: 420, damping: 26 }}
             onClick={() => { setOrbOpen(true); }}
             className="pointer-events-auto relative size-14 rounded-full overflow-hidden cursor-pointer focus:outline-none"
-            style={{ boxShadow: `0 0 20px 4px ${auraColor}55` }}
             title="Open AI Assistant"
             aria-label="Open AI Assistant"
           >
@@ -233,7 +232,6 @@ export function DockedVoiceHUD({
               type="button"
               onClick={() => setControlsOpen((v) => !v)}
               className="relative w-full h-full rounded-full overflow-hidden cursor-pointer focus:outline-none"
-              style={{ boxShadow: `0 0 36px 10px ${auraColor}44` }}
               aria-label="Toggle controls"
             >
               <AgentAudioVisualizerAura
