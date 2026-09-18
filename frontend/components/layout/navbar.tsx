@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/primitives/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,7 @@ import {
 } from '@/components/ui/primitives/dropdown-menu';
 import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight, TextAlignJustify, Loader2 } from 'lucide-react';
+import { TextAlignJustify } from 'lucide-react';
 
 export type NavigationSection = {
   title: string;
@@ -28,44 +27,6 @@ const navigationData: NavigationSection[] = [
   { title: 'Resume', href: '#resume' },
   { title: 'Contact', href: '#contact' },
 ];
-
-const CollaborateButton = ({
-  className,
-  onClick,
-  isConnected,
-  isConnecting,
-}: {
-  className?: string;
-  onClick?: () => void;
-  isConnected?: boolean;
-  isConnecting?: boolean;
-}) => (
-  <Button
-    onClick={onClick}
-    disabled={isConnecting}
-    className={cn(
-      'relative text-xs font-semibold rounded-full h-8.5 px-4 group transition-all duration-300 hover:scale-105 overflow-hidden',
-      isConnected
-        ? 'bg-emerald-600 text-white hover:bg-rose-600'
-        : isConnecting
-        ? 'bg-cyan-600 text-white cursor-wait'
-        : 'bg-slate-900 text-white dark:bg-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200',
-      'border border-slate-700 dark:border-white/20 shadow-md cursor-pointer flex items-center gap-1.5',
-      className
-    )}
-  >
-    <span className="font-sans font-semibold tracking-wide">
-      {isConnecting ? 'Connecting...' : isConnected ? 'AI Active (End)' : "Let's Collaborate"}
-    </span>
-    {isConnecting ? (
-      <Loader2 size={13} className="animate-spin text-white" />
-    ) : isConnected ? (
-      <span className="size-2 rounded-full bg-emerald-300 animate-ping" />
-    ) : (
-      <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-    )}
-  </Button>
-);
 
 export const Navbar = ({
   onStartCall,
@@ -86,17 +47,6 @@ export const Navbar = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [handleResize]);
-
-  const handleCollaborate = () => {
-    if (onStartCall) {
-      onStartCall();
-    } else {
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
 
   return (
     <header className="fixed top-0 inset-x-0 z-[100] flex justify-center pointer-events-none">
@@ -145,14 +95,8 @@ export const Navbar = ({
           ))}
         </div>
 
-        {/* Right Section: Collaborate CTA Button, Day/Night Theme Switch, & Mobile Menu */}
+        {/* Right Section: Day/Night Theme Switch & Mobile Menu */}
         <div className="flex items-center gap-3">
-          <CollaborateButton
-            className="hidden lg:flex"
-            onClick={handleCollaborate}
-            isConnected={isConnected}
-            isConnecting={isConnecting}
-          />
           <DayNightSwitch size="6px" />
 
           {/* Mobile Dropdown Menu Trigger */}
@@ -181,16 +125,6 @@ export const Navbar = ({
                     </a>
                   </DropdownMenuItem>
                 ))}
-                <DropdownMenuItem
-                  className="mt-1 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black px-3 py-2 font-semibold text-xs cursor-pointer flex items-center justify-between"
-                  onClick={() => {
-                    setIsOpen(false);
-                    handleCollaborate();
-                  }}
-                >
-                  <span>Let&apos;s Collaborate</span>
-                  <ArrowUpRight size={13} />
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
