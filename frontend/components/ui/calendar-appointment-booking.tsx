@@ -19,20 +19,11 @@ import {
   FileText,
   X,
   Link2,
-  Briefcase,
-  Bot,
-  Cpu,
-  Code2,
-  Coffee,
   FileCheck,
-  ChevronRight,
-  ShieldCheck,
-  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
@@ -71,58 +62,7 @@ const AVAILABLE_SLOTS = [
   '18:30',
 ];
 
-interface DiscussionTrack {
-  id: string;
-  label: string;
-  badge: string;
-  description: string;
-  icon: any;
-}
-
-const DISCUSSION_TRACKS: DiscussionTrack[] = [
-  {
-    id: 'fulltime-hiring',
-    label: 'Full-Time / Hiring Opportunity',
-    badge: 'Recruiter / Hiring',
-    description: 'Discuss open roles, engineering responsibilities, interview stages, or compensation.',
-    icon: Briefcase,
-  },
-  {
-    id: 'agentic-ai',
-    label: 'Agentic AI & LiveKit Voice Systems',
-    badge: 'AI Architecture',
-    description: 'Ultra-low-latency voice agents, tool-calling pipelines, RAG, and multimodal agent design.',
-    icon: Bot,
-  },
-  {
-    id: 'robotics-swarm',
-    label: 'Robotics & Swarm Intelligence',
-    badge: 'Hardware & Multi-Agent',
-    description: 'Distributed multi-robot coordination, autonomous navigation, and research collaboration.',
-    icon: Cpu,
-  },
-  {
-    id: 'advisory-consulting',
-    label: 'Architecture Review & Consulting',
-    badge: 'Technical Advisory',
-    description: 'Full-stack system architecture, performance optimization, or freelance technical consultation.',
-    icon: Code2,
-  },
-  {
-    id: 'general-networking',
-    label: 'Casual Tech Chat & Networking',
-    badge: 'Coffee Chat',
-    description: 'Meet & greet, industry insights, tech talk, or general professional connection.',
-    icon: Coffee,
-  },
-  {
-    id: 'custom-track',
-    label: 'Custom Agenda / Specific Project',
-    badge: 'Tailored',
-    description: 'Specify a custom agenda, review a specific GitHub repository, or pitch a unique idea.',
-    icon: Sparkles,
-  },
-];
+const DEFAULT_PURPOSE = 'Technical Discussion & 1-on-1 Session';
 
 function formatUtcForCalendar(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -229,8 +169,6 @@ export const CalendarAppointmentBooking = ({
   const [selectedTime, setSelectedTime] = useState<string>('11:00');
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [selectedTrackId, setSelectedTrackId] = useState<string>('fulltime-hiring');
-  const [customTopic, setCustomTopic] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [documentLink, setDocumentLink] = useState<string>('');
 
@@ -255,18 +193,6 @@ export const CalendarAppointmentBooking = ({
     description: string;
     location: string;
   } | null>(null);
-
-  const currentTrack = useMemo(
-    () => DISCUSSION_TRACKS.find((t) => t.id === selectedTrackId) || DISCUSSION_TRACKS[0],
-    [selectedTrackId]
-  );
-
-  const effectivePurpose = useMemo(() => {
-    if (selectedTrackId === 'custom-track' && customTopic.trim()) {
-      return customTopic.trim();
-    }
-    return currentTrack.label;
-  }, [selectedTrackId, customTopic, currentTrack]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -345,7 +271,7 @@ export const CalendarAppointmentBooking = ({
             email: email.trim(),
             date: date.toISOString(),
             time: selectedTime,
-            purpose: effectivePurpose,
+            purpose: DEFAULT_PURPOSE,
             notes: notes.trim(),
             documentLink: documentLink.trim(),
             attachment: attachedFile
@@ -374,7 +300,7 @@ export const CalendarAppointmentBooking = ({
       const meetingTitle = `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`;
       const meetingDescription = [
         `Appointment / Discussion with Kandula Jithendra Subramanyam`,
-        `Topic: ${effectivePurpose}`,
+        `Topic: ${DEFAULT_PURPOSE}`,
         name ? `Attendee: ${name.trim()}` : null,
         email ? `Attendee Email: ${email.trim()}` : null,
         notes ? `Notes / Agenda: ${notes.trim()}` : null,
@@ -421,7 +347,7 @@ export const CalendarAppointmentBooking = ({
         time: selectedTime,
         name: name.trim(),
         email: email.trim(),
-        purpose: effectivePurpose,
+        purpose: DEFAULT_PURPOSE,
         notes: notes.trim(),
         documentLink: documentLink.trim(),
         attachmentName: attachedFile?.filename,
@@ -483,9 +409,9 @@ export const CalendarAppointmentBooking = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-white/10">
               <div>
-                <span className="text-slate-400 block text-xs uppercase mb-1">Topic / Track</span>
+                <span className="text-slate-400 block text-xs uppercase mb-1">Session</span>
                 <span className="font-semibold text-white truncate block">
-                  {effectivePurpose}
+                  {DEFAULT_PURPOSE}
                 </span>
               </div>
               <div>
@@ -615,7 +541,7 @@ export const CalendarAppointmentBooking = ({
   }
 
   /* ============================================================ */
-  /* MAIN BOOKING FORM (DARK THEME & EXECUTIVE WORKFLOW)          */
+  /* MAIN BOOKING FORM (DARK THEME & STREAMLINED WORKFLOW)        */
   /* ============================================================ */
   return (
     <div className={`w-full space-y-8 ${className || ''}`}>
@@ -631,7 +557,7 @@ export const CalendarAppointmentBooking = ({
               Schedule a Technical Session with Jithendra
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
-              Select your preferred date, time slot, and discussion track below. An official Google Meet room and calendar invitation will be dispatched instantly.
+              Select your preferred date, time slot, and share any notes or attachments. An official Google Meet room and calendar invitation will be dispatched instantly.
             </p>
           </div>
 
@@ -736,75 +662,12 @@ export const CalendarAppointmentBooking = ({
         </div>
       </div>
 
-      {/* Section: Discussion Track Options (Cards/Pills) */}
-      <div className="rounded-2xl bg-[#0d111a]/90 border border-white/10 p-6 shadow-xl backdrop-blur-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <span className="text-xs font-mono font-bold tracking-wider uppercase text-cyan-400 flex items-center gap-1.5">
-            <Sparkles className="size-3.5" />
-            <span>03. Choose Discussion Track / Purpose</span>
-          </span>
-          <span className="text-xs font-mono text-slate-400">
-            Tailor the session focus
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {DISCUSSION_TRACKS.map((track) => {
-            const isSelected = selectedTrackId === track.id;
-            const Icon = track.icon;
-            return (
-              <button
-                key={track.id}
-                type="button"
-                onClick={() => setSelectedTrackId(track.id)}
-                className={`p-4 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
-                  isSelected
-                    ? 'bg-cyan-500/10 border-cyan-500/50 shadow-md shadow-cyan-500/10 ring-1 ring-cyan-400/50'
-                    : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
-                }`}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className={`size-8 rounded-lg flex items-center justify-center ${isSelected ? 'bg-cyan-500 text-slate-950' : 'bg-white/5 text-slate-300'}`}>
-                    <Icon className="size-4" />
-                  </div>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${isSelected ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'bg-white/5 text-slate-400 border-white/10'}`}>
-                    {track.badge}
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className={`text-xs font-mono font-bold mb-1 ${isSelected ? 'text-white' : 'text-slate-200'}`}>
-                    {track.label}
-                  </h4>
-                  <p className="text-[11px] text-slate-400 leading-relaxed font-sans line-clamp-2">
-                    {track.description}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Custom topic input if selected */}
-        {selectedTrackId === 'custom-track' && (
-          <div className="pt-2 animate-in fade-in duration-200">
-            <Input
-              type="text"
-              placeholder="e.g., Review GitHub repo & evaluate multi-agent orchestration pattern"
-              value={customTopic}
-              onChange={(e) => setCustomTopic(e.target.value)}
-              className="h-11 rounded-xl text-xs font-mono bg-black/40 border-white/15 focus-visible:ring-cyan-500 text-white placeholder:text-slate-500"
-            />
-          </div>
-        )}
-      </div>
-
       {/* Section: Attendee Details, Note & File Attachment */}
       <div className="rounded-2xl bg-[#0d111a]/90 border border-white/10 p-6 shadow-xl backdrop-blur-xl space-y-6">
         <div className="flex items-center justify-between border-b border-white/10 pb-3">
           <span className="text-xs font-mono font-bold tracking-wider uppercase text-cyan-400 flex items-center gap-1.5">
             <User className="size-3.5" />
-            <span>04. Your Details, Notes & Attachments</span>
+            <span>03. Your Details, Notes & Attachments</span>
           </span>
           <span className="text-xs font-mono text-slate-400">
             Official invite sent to this email
@@ -955,7 +818,7 @@ export const CalendarAppointmentBooking = ({
                 endDate.setMinutes(endDate.getMinutes() + 30);
                 downloadIcsFile({
                   title: `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`,
-                  description: `Topic: ${effectivePurpose}\nAttendee: ${name || 'Guest'}\nHost: kandulajithendrasubramanyam@gmail.com`,
+                  description: `Topic: ${DEFAULT_PURPOSE}\nAttendee: ${name || 'Guest'}\nHost: kandulajithendrasubramanyam@gmail.com`,
                   location: meetUrl,
                   startDate,
                   endDate,
