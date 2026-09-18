@@ -15,6 +15,7 @@ import {
   Check,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import { PearlButton } from '@/components/ui/pearl-button';
 import { toast } from 'sonner';
 
 interface AppointmentBookingProps {
@@ -816,20 +817,18 @@ export const CalendarAppointmentBooking = ({
                   userEmail: email,
                 });
               }}
-              className="whitespace-nowrap rounded-md border border-border bg-transparent px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors inline-flex items-center gap-2 cursor-pointer"
+              className="whitespace-nowrap rounded-full border border-border bg-transparent px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors inline-flex items-center gap-2 cursor-pointer shadow-xs"
             >
               <Download className="h-4 w-4" />
               <span>Download .ics</span>
             </button>
 
-            <button
+            <PearlButton
               type="submit"
               disabled={!date || !selectedTime || isSubmitting}
-              className="whitespace-nowrap rounded-md bg-foreground text-background hover:opacity-90 px-5 py-2 text-sm font-medium transition-opacity disabled:opacity-50 cursor-pointer inline-flex items-center gap-2"
-            >
-              <CalendarIcon className="h-4 w-4" />
-              <span>{isSubmitting ? 'Confirming...' : 'Confirm & Schedule Session'}</span>
-            </button>
+              label={isSubmitting ? 'Confirming...' : 'Book Appointment'}
+              size="sm"
+            />
           </div>
         </div>
       </form>
