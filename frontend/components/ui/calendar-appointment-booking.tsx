@@ -8,14 +8,13 @@ import {
   Download,
   Video,
   RotateCcw,
-  Upload,
   FileText,
-  X,
   Link2,
   Check,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { FlightSendButton } from '@/components/ui/flight-send-button';
+import { FileUploadDropzone } from '@/components/ui/file-upload-dropzone';
 import { toast } from 'sonner';
 
 interface AppointmentBookingProps {
@@ -152,8 +151,6 @@ export const CalendarAppointmentBooking = ({
     return d;
   }, []);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [date, setDate] = useState<Date | undefined>(initialDate);
   const [selectedTime, setSelectedTime] = useState<string>('11:00');
   const [name, setName] = useState<string>('');
@@ -183,10 +180,7 @@ export const CalendarAppointmentBooking = ({
     location: string;
   } | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleFileSelect = (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
       toast.error('File size exceeds 10MB limit.');
       return;
@@ -215,9 +209,6 @@ export const CalendarAppointmentBooking = ({
 
   const removeAttachedFile = () => {
     setAttachedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
 
   const handleBooking = async (e?: React.FormEvent) => {
@@ -714,53 +705,25 @@ export const CalendarAppointmentBooking = ({
               </div>
 
               {/* File Attachment */}
-              <div className="col-span-full sm:col-span-3">
-                <label className="text-sm font-medium text-foreground">
+              <div className="col-span-full">
+                <label className="text-sm font-medium text-foreground block mb-2">
                   Attach File / Job Description (Optional)
                 </label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
-                  onChange={handleFileUpload}
-                  className="hidden"
+                <FileUploadDropzone
+                  attachedFile={attachedFile}
+                  isUploading={isUploading}
+                  onFileSelect={handleFileSelect}
+                  onFileRemove={removeAttachedFile}
                 />
-                {!attachedFile ? (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    className="mt-2 w-full h-10 rounded-md border border-dashed border-input bg-transparent hover:bg-muted text-sm text-muted-foreground hover:text-foreground flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition"
-                  >
-                    <Upload className="h-4 w-4 text-muted-foreground" />
-                    <span className="truncate">{isUploading ? 'Reading file...' : 'Upload PDF, DOCX (Max 10MB)'}</span>
-                  </button>
-                ) : (
-                  <div className="mt-2 h-10 rounded-md border border-border bg-muted/60 px-3 flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 truncate text-foreground">
-                      <FileText className="h-4 w-4 text-foreground shrink-0" />
-                      <span className="truncate font-medium">{attachedFile.filename}</span>
-                      <span className="text-xs text-muted-foreground">({Math.round(attachedFile.size / 1024)} KB)</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={removeAttachedFile}
-                      className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive transition"
-                      title="Remove file"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* Document Link */}
-              <div className="col-span-full sm:col-span-3">
+              <div className="col-span-full">
                 <label
                   htmlFor="booking-doclink"
                   className="text-sm font-medium text-foreground"
                 >
-                  Or Paste Document / Notion / JD Link
+                  Or Paste Document / Notion / JD Link (Optional)
                 </label>
                 <input
                   type="url"
