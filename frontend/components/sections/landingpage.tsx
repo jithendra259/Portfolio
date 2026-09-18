@@ -682,54 +682,6 @@ export function LandingPage({
                 As first and corresponding author of three research manuscripts spanning <strong className="text-slate-900 dark:text-neutral-200">Elsevier EAAI</strong>, <strong className="text-slate-900 dark:text-neutral-200">Elsevier Computers &amp; Operations Research</strong>, and <strong className="text-slate-900 dark:text-neutral-200">Springer Nature LNCS</strong>, I formulate systems where probabilistic language models do not hallucinate, but instead collaborate with convex solvers (CVXPY/CLARABEL), bipartite institutional co-holding graphs, and deterministic regime-switching engines over 20-year empirical universes.
               </p>
 
-              {/* Three Core Competency Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
-                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
-                    <Bot className="size-4 text-indigo-500" />
-                    <span>Agentic Swarms</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
-                    10+ decoupled LangGraph agents coordinating over auditable blackboards with zero hallucination.
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
-                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
-                    <TrendingUp className="size-4 text-emerald-500" />
-                    <span>Convex Solvers</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
-                    Graph-regularized CVaR, Ledoit-Wolf shrinkage, and crisis drawdown containment via CVXPY.
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
-                  <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900 dark:text-white font-mono">
-                    <Mic className="size-4 text-cyan-500" />
-                    <span>Voice &amp; Full-Stack</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-neutral-400 leading-normal">
-                    Real-time sub-500ms WebRTC voice agents (LiveKit), Next.js 15, TypeScript, and MongoDB.
-                  </p>
-                </div>
-              </div>
-
-              {/* Verified Credentials Bar */}
-              <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono text-slate-600 dark:text-neutral-400">
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
-                  🎓 M.Tech CGPA: 8.06
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
-                  📄 3 Research Papers
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
-                  🎯 GATE 2024 (AI &amp; CS Qualified)
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-slate-900 dark:text-white">
-                  📍 Mumbai, India
-                </span>
-              </div>
             </div>
           </div>
         </div>
