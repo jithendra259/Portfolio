@@ -38,7 +38,6 @@ import {
   Award,
   BookOpen,
   Zap,
-  Sparkles,
   Bot,
   TrendingUp,
   Wind,
@@ -658,10 +657,6 @@ export function LandingPage({
             />
             <div className="relative z-10 space-y-5">
               <div>
-                <div className="flex items-center gap-2 text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 mb-2 font-bold">
-                  <Sparkles className="size-3.5 text-cyan-500" />
-                  <span>Engineering &amp; Research Profile</span>
-                </div>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   About Kandula Jithendra Subramanyam
                 </h2>

@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { Project, PaperFigure } from '@/data/projects/types';
 import { MathBlock, FormattedLatexText } from '@/components/ui/math-display';
-import { ProjectPdfButton } from '@/components/ui/project-pdf-button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ProjectCharts } from '@/components/ui/project-charts';
 
@@ -86,57 +85,29 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
       </div>
 
       {/* 2. ACADEMIC TOOLBAR */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-border/40 text-xs">
-        <div className="flex items-center gap-2 text-slate-600 dark:text-neutral-400">
-          <span className="font-mono uppercase font-bold text-cyan-600 dark:text-cyan-400">
-            IEEE Single-Column Case Study
-          </span>
-          <span className="text-slate-300 dark:text-neutral-700">•</span>
-          <span className="hidden sm:inline">Academic Research Format</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Font switcher */}
-          <div className="flex items-center rounded-lg bg-slate-100 dark:bg-white/5 p-0.5 border border-slate-200 dark:border-white/10">
-            <button
-              onClick={() => setFontFamily('serif')}
-              className={`px-2.5 py-1 rounded-md transition-colors font-serif text-xs font-semibold ${
-                fontFamily === 'serif'
-                  ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
-              }`}
-            >
-              Classic Serif
-            </button>
-            <button
-              onClick={() => setFontFamily('sans')}
-              className={`px-2.5 py-1 rounded-md transition-colors font-sans text-xs font-semibold ${
-                fontFamily === 'sans'
-                  ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
-              }`}
-            >
-              Modern Sans
-            </button>
-          </div>
-
-          {/* BibTeX Cite button */}
+      <div className="mb-8 flex flex-wrap items-center justify-end gap-3 pb-4 border-b border-border/40 text-xs">
+        {/* Font switcher */}
+        <div className="flex items-center rounded-lg bg-slate-100 dark:bg-white/5 p-0.5 border border-slate-200 dark:border-white/10">
           <button
-            onClick={() => setShowBibtexModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-neutral-300 font-medium transition-colors"
+            onClick={() => setFontFamily('serif')}
+            className={`px-2.5 py-1 rounded-md transition-colors font-serif text-xs font-semibold ${
+              fontFamily === 'serif'
+                ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
+            }`}
           >
-            <Bookmark className="size-3.5" />
-            <span>Cite (BibTeX)</span>
+            Classic Serif
           </button>
-
-          {/* PDF Viewer / Download Button */}
-          {project.pdfUrl && (
-            <ProjectPdfButton
-              url={project.pdfUrl}
-              title={project.title}
-              subtitle={project.tagline || project.description}
-            />
-          )}
+          <button
+            onClick={() => setFontFamily('sans')}
+            className={`px-2.5 py-1 rounded-md transition-colors font-sans text-xs font-semibold ${
+              fontFamily === 'sans'
+                ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
+            }`}
+          >
+            Modern Sans
+          </button>
         </div>
       </div>
 
