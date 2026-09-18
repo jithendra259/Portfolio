@@ -1,22 +1,19 @@
-import React from 'react';
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowLeft, Clock, Video, Globe } from 'lucide-react';
-import { CalendarAppointmentBooking } from '@/components/ui/calendar-appointment-booking';
-import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Book a 1-on-1 Session | Kandula Jithendra Subramanyam',
-  description:
-    'Schedule a technical interview, architecture discussion, or collaboration session with Kandula Jithendra Subramanyam.',
-};
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import Example from '@/components/ui/demo';
+import WorkspaceForm from '@/components/ui/form-layout';
+import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
+import { Button } from '@/components/ui/button';
 
 export default function BookAppointmentPage() {
+  const [activeTab, setActiveTab] = useState<'demo' | 'workspace'>('demo');
+
   return (
-    <div className="min-h-screen w-full bg-background text-foreground font-sans transition-colors duration-300">
-      {/* Top Navigation Header */}
+    <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
+      {/* Top Header */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           <Link
@@ -29,52 +26,41 @@ export default function BookAppointmentPage() {
             <span>Back to Portfolio</span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="hidden sm:inline-flex items-center gap-1.5 py-1 px-3 font-normal">
-              <span className="size-2 rounded-full bg-primary animate-pulse" />
-              <span>Available for Roles & Advisory</span>
-            </Badge>
+          {/* Form Switcher */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center rounded-lg border border-border bg-muted p-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setActiveTab('demo')}
+                className={`px-3 py-1 rounded-md font-medium transition-colors ${
+                  activeTab === 'demo'
+                    ? 'bg-background text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                demo.tsx (Form Layout)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('workspace')}
+                className={`px-3 py-1 rounded-md font-medium transition-colors ${
+                  activeTab === 'workspace'
+                    ? 'bg-background text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                form-layout.tsx (Workspace Form)
+              </button>
+            </div>
 
             <DayNightSwitch />
           </div>
         </div>
       </header>
 
-      {/* Main Content Body */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-8">
-        {/* Page Title & Intro */}
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                Schedule a 1-on-1 Session
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Direct scheduling for technical screens, system architecture reviews, or advisory discussions with Jithendra.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <Badge variant="outline" className="gap-1.5 py-1 px-2.5">
-                <Clock className="size-3.5 text-muted-foreground" />
-                <span>30 Min</span>
-              </Badge>
-              <Badge variant="outline" className="gap-1.5 py-1 px-2.5">
-                <Video className="size-3.5 text-muted-foreground" />
-                <span>Google Meet HD</span>
-              </Badge>
-              <Badge variant="outline" className="gap-1.5 py-1 px-2.5">
-                <Globe className="size-3.5 text-muted-foreground" />
-                <span>IST (UTC+5:30)</span>
-              </Badge>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Appointment Form */}
-        <CalendarAppointmentBooking variant="page" />
+      {/* Main Content: Render the exact components */}
+      <main className="max-w-7xl mx-auto">
+        {activeTab === 'demo' ? <Example /> : <WorkspaceForm />}
       </main>
     </div>
   );
