@@ -4,10 +4,11 @@ import React from 'react';
 
 export type PearlButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   label?: string;
+  size?: 'sm' | 'md' | 'lg';
 };
 
 export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>(
-  ({ label = 'Pearl Button', className = '', type = 'button', ...props }, ref) => {
+  ({ label = 'Pearl Button', className = '', size = 'lg', type = 'button', ...props }, ref) => {
     return (
       <>
         <style>{`
@@ -29,7 +30,7 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
               0 3rem 3rem rgba(0, 0, 0, 0.3),
               0 1rem 1rem -0.6rem rgba(0, 0, 0, 0.8);
           }
-          .pearl-button .wrap {
+          .pearl-button.size-lg .wrap {
             font-size: 22px;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.85);
@@ -38,8 +39,26 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
             position: relative;
             overflow: hidden;
           }
+          .pearl-button.size-md .wrap {
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 14px 28px;
+            border-radius: inherit;
+            position: relative;
+            overflow: hidden;
+          }
+          .pearl-button.size-sm .wrap {
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 24px;
+            border-radius: inherit;
+            position: relative;
+            overflow: hidden;
+          }
           @media (max-width: 640px) {
-            .pearl-button .wrap {
+            .pearl-button.size-lg .wrap {
               font-size: 16px;
               padding: 16px 24px;
             }
@@ -56,7 +75,7 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
           .pearl-button .wrap p {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             margin: 0;
             transition: all 0.2s ease;
             transform: translateY(2%);
@@ -118,9 +137,19 @@ export const PearlButton = React.forwardRef<HTMLButtonElement, PearlButtonProps>
               0 3rem 3rem rgba(0, 0, 0, 0.3),
               0 1rem 1rem -0.6rem rgba(0, 0, 0, 0.8);
           }
+          .pearl-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+          }
         `}</style>
 
-        <button ref={ref} type={type} className={`pearl-button ${className}`} {...props}>
+        <button
+          ref={ref}
+          type={type}
+          className={`pearl-button size-${size} ${className}`}
+          {...props}
+        >
           <div className="wrap">
             <p>
               <span>✧</span>

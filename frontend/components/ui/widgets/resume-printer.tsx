@@ -1,0 +1,564 @@
+'use client';
+
+import React, { useState, useRef, useCallback } from 'react';
+import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import { Download } from 'lucide-react';
+export function ResumePrinter({ className }: { className?: string }) {
+  const [isPrinting, setIsPrinting] = useState(false);
+  const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handlePrintTrigger = useCallback(() => {
+    // Clear any existing auto-close timer
+    if (autoCloseTimer.current) {
+      clearTimeout(autoCloseTimer.current);
+      autoCloseTimer.current = null;
+    }
+
+    if (!isPrinting) {
+      // Start printing and auto-close after animations finish (~3.5s total)
+      setIsPrinting(true);
+      autoCloseTimer.current = setTimeout(() => {
+        setIsPrinting(false);
+        autoCloseTimer.current = null;
+      }, 3500);
+    } else {
+      // Manual close
+      setIsPrinting(false);
+    }
+  }, [isPrinting]);
+
+  return (
+    <div className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${isPrinting ? 'is-active' : ''} ${className || ''}`}>
+      <style>{`
+        .resume-printer-scope .wrapper {
+          --printer-color: #dcdac4;
+          --printer-color-2: #c0beaa;
+          --receipt-color: #f5f5f5;
+
+          font-size: 14px;
+          position: relative;
+          user-select: none;
+          margin-top: 15px;
+          z-index: 10;
+        }
+
+        .resume-printer-scope .printer {
+          width: 320px;
+          height: 80px;
+          border-radius: 0 0 8px 8px;
+
+          background-color: var(--printer-color);
+          background-image: radial-gradient(#00000015 1px, transparent 0);
+          background-size: 4px 4px;
+          border: 2px solid var(--printer-color-2);
+          box-shadow:
+            0 16px 32px 0px rgba(0, 0, 0, 0.25),
+            0 -30px 16px 0px rgba(0, 0, 0, 0.08);
+          position: relative;
+          z-index: 5;
+        }
+
+        .resume-printer-scope .printer::before {
+          content: "";
+          position: absolute;
+          top: -30px;
+          left: -2px;
+          width: calc(100% + 4px);
+          height: 70px;
+          border-radius: 12px 12px 0 0;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+          box-shadow:
+            0 12px 16px -12px rgba(255, 255, 255, 0.6) inset,
+            0 -6px 16px -6px rgba(0, 0, 0, 0.2) inset,
+            0 6px 8px -6px rgba(0, 0, 0, 0.25);
+          box-sizing: border-box;
+          background-color: inherit;
+          background-image: inherit;
+          filter: brightness(1.12);
+          z-index: 8;
+        }
+
+        .resume-printer-scope .printer::after {
+          content: "";
+          position: absolute;
+          top: 20px;
+          left: 30px;
+          width: 260px;
+          height: 40px;
+          border-radius: 0 0 4px 4px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+          background-color: inherit;
+          background-image: linear-gradient(
+            to top,
+            var(--printer-color),
+            60%,
+            var(--printer-color-2)
+          );
+          box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.25);
+          z-index: 6;
+        }
+
+        .resume-printer-scope .printer-display {
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          padding: 6px 8px;
+          position: absolute;
+          top: -10px;
+          left: 30px;
+          width: 160px;
+          height: 32px;
+
+          background-color: #000;
+          background-image: linear-gradient(transparent 0, rgba(255, 255, 255, 0.15) 90%, transparent 100%);
+          background-size: 100% 8px;
+          background-repeat: no-repeat;
+          border: 3px solid var(--printer-color-2);
+          border-radius: 6px;
+          box-sizing: border-box;
+          box-shadow:
+            -1px -1px 2px 0 rgba(255, 255, 255, 0.6) inset,
+            1px 1px 5px 1px #000 inset,
+            0 0 1px 2px rgba(0, 0, 0, 0.15);
+
+          font-family: "Courier New", Courier, monospace;
+          font-size: 0.8em;
+          color: #5aff5a;
+          filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+          overflow: hidden;
+        }
+
+        .resume-printer-scope .printer-message {
+          position: absolute;
+          transition: opacity 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .resume-printer-scope .letter-wrapper {
+          position: inherit;
+          display: flex;
+        }
+
+        .resume-printer-scope .letter {
+          display: inline-block;
+          opacity: 0;
+        }
+
+        .resume-printer-scope .print-button {
+          z-index: 12;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2em;
+          position: absolute;
+          top: -30px;
+          right: 0;
+          margin: 16px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          width: 48px;
+          height: 36px;
+          background-color: var(--printer-color);
+          box-shadow:
+            1px 1px 2px 0 rgba(255, 255, 255, 0.6) inset,
+            -1px -1px 2px 0 rgba(0, 0, 0, 0.15) inset,
+            0 2px 6px 0px rgba(0, 0, 0, 0.15);
+          transition:
+            box-shadow 0.1s ease-in-out,
+            transform 0.1s ease-in-out;
+        }
+
+        .resume-printer-scope .print-button:hover {
+          box-shadow:
+            2px 2px 2px 0 rgba(255, 255, 255, 0.7) inset,
+            -2px -2px 2px 0 rgba(0, 0, 0, 0.15) inset,
+            0 2px 10px 0px rgba(0, 0, 0, 0.15);
+          transform: scale(1.05);
+        }
+
+        .resume-printer-scope .print-button:active {
+          box-shadow:
+            2px 2px 2px 0 rgba(0, 0, 0, 0.15) inset,
+            -2px -2px 2px 0 rgba(255, 255, 255, 0.7) inset,
+            0 0px 4px 0px rgba(255, 255, 255, 0.7);
+          transform: scale(0.95);
+        }
+
+        .resume-printer-scope .receipt-wrapper {
+          position: absolute;
+          top: 0;
+          left: 35px;
+          filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+          transform: translateY(-100%);
+          clip-path: inset(100% -100px -100px -100px);
+          transition: clip-path 0.5s;
+          z-index: 4;
+        }
+
+        .resume-printer-scope .receipt {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5em;
+          padding: 16px 14px 18px 14px;
+          width: 250px;
+          min-height: 200px;
+          font-size: 0.75em;
+          font-family: var(--font-mono), monospace;
+          font-weight: 400;
+          color: #444;
+          background-color: var(--receipt-color);
+          box-shadow:
+            0 12px 12px 0 rgba(0, 0, 0, 0.15),
+            0 24px 24px 0 rgba(0, 0, 0, 0.15),
+            0 36px 36px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .resume-printer-scope .receipt::before,
+        .resume-printer-scope .receipt::after {
+          --angle: 45deg;
+          content: "";
+          display: block;
+          position: absolute;
+          left: 0px;
+          width: 100%;
+          height: 8px;
+          background: linear-gradient(
+              calc(var(--angle) * -1),
+              var(--receipt-color) 4px,
+              transparent 0
+            ),
+            linear-gradient(var(--angle), var(--receipt-color) 4px, transparent 0);
+          background-position: 4px 0;
+          background-repeat: repeat-x;
+          background-size: 8px 8px;
+        }
+
+        .resume-printer-scope .receipt::before {
+          top: -8px;
+          background-position: 4px 0;
+        }
+
+        .resume-printer-scope .receipt::after {
+          bottom: -8px;
+          background-position: 0 100%;
+          --angle: 225deg;
+        }
+
+        .resume-printer-scope .receipt-header {
+          text-align: center;
+          border-bottom: 1px dashed #ccc;
+          padding-bottom: 6px;
+        }
+
+        .resume-printer-scope .receipt-subheader {
+          border-bottom: 1px dashed #ccc;
+          padding-bottom: 6px;
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.9em;
+        }
+
+        .resume-printer-scope .receipt-table {
+          width: 100%;
+          line-height: 1.45em;
+          border-collapse: collapse;
+        }
+
+        .resume-printer-scope .receipt-table td:last-child {
+          text-align: right;
+          font-weight: 700;
+          color: #111;
+          white-space: nowrap;
+          padding-left: 6px;
+        }
+
+        .resume-printer-scope .receipt-section-title {
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          font-size: 8px;
+          color: #222;
+          border-bottom: 1px dashed #ccc;
+          padding-top: 5px;
+          padding-bottom: 2px;
+          margin-bottom: 2px;
+          text-align: center;
+        }
+
+        .resume-printer-scope .receipt-footer {
+          border-top: 1px dashed #ccc;
+          padding-top: 6px;
+          text-align: center;
+        }
+
+        /* Active Print State Animations with correct z-index layering */
+        .resume-printer-scope.is-active .receipt-wrapper,
+        .resume-printer-scope .wrapper.is-active .receipt-wrapper,
+        .resume-printer-scope .wrapper:has(.print-button:focus) .receipt-wrapper {
+          z-index: 50;
+          pointer-events: auto !important;
+          animation:
+            printReceiptAnim 1.2s 1 forwards ease-in,
+            displayReceiptAnim 0.4s 1 forwards cubic-bezier(0, 0.63, 0.96, 1.1);
+          animation-delay: 0s, 1.35s;
+        }
+
+        .resume-printer-scope.is-active .printer-message,
+        .resume-printer-scope .wrapper.is-active .printer-message,
+        .resume-printer-scope .wrapper:has(.print-button:focus) .printer-message {
+          opacity: 0;
+        }
+
+        .resume-printer-scope.is-active .letter,
+        .resume-printer-scope .wrapper.is-active .letter,
+        .resume-printer-scope .wrapper:has(.print-button:focus) .letter {
+          animation: show-letter-text 0.6s 1 forwards linear;
+        }
+
+        .resume-printer-scope .letter:nth-child(1) { animation-delay: 0.05s; }
+        .resume-printer-scope .letter:nth-child(2) { animation-delay: 0.1s; }
+        .resume-printer-scope .letter:nth-child(3) { animation-delay: 0.15s; }
+        .resume-printer-scope .letter:nth-child(4) { animation-delay: 0.2s; }
+        .resume-printer-scope .letter:nth-child(5) { animation-delay: 0.25s; }
+        .resume-printer-scope .letter:nth-child(6) { animation-delay: 0.3s; }
+        .resume-printer-scope .letter:nth-child(7) { animation-delay: 0.35s; }
+        .resume-printer-scope .letter:nth-child(8) { animation-delay: 0.4s; }
+        .resume-printer-scope .letter:nth-child(9) { animation-delay: 0.45s; }
+        .resume-printer-scope .letter:nth-child(10) { animation-delay: 0.5s; }
+        .resume-printer-scope .letter:nth-child(11) { animation-delay: 0.55s; }
+
+        @keyframes printReceiptAnim {
+          0% {
+            z-index: 4;
+            transform: translateY(-100%);
+            clip-path: inset(100% -100px -100px -100px);
+          }
+          99% {
+            z-index: 4;
+          }
+          100% {
+            z-index: 25;
+            transform: translateY(6%);
+            clip-path: inset(-20% -100px -100px -100px);
+          }
+        }
+
+        @keyframes displayReceiptAnim {
+          0% {
+            z-index: 25;
+          }
+          30% {
+            transform: translateY(10%) rotate3d(1, 0, 1, -2.5deg);
+            z-index: 30;
+          }
+          70% {
+            z-index: 30;
+          }
+          100% {
+            z-index: 30;
+            transform: translateY(-8%) scale(1.02);
+          }
+        }
+
+        @keyframes show-letter-text {
+          10%,
+          100% {
+            opacity: 1;
+          }
+        }
+      `}</style>
+
+      <div className={`wrapper ${isPrinting ? 'is-active' : ''}`}>
+        <div className="printer" />
+        
+        {/* LCD Display */}
+        <div className="printer-display">
+          <span className="printer-message"> Click to print</span>
+          <div className="letter-wrapper">
+            <span className="letter">P</span>
+            <span className="letter">r</span>
+            <span className="letter">i</span>
+            <span className="letter">n</span>
+            <span className="letter">t</span>
+            <span className="letter">i</span>
+            <span className="letter">n</span>
+            <span className="letter">g</span>
+            <span className="letter">.</span>
+            <span className="letter">.</span>
+            <span className="letter">.</span>
+          </div>
+        </div>
+
+        {/* Print Button */}
+        <button
+          onClick={handlePrintTrigger}
+          className="print-button"
+          title="Click to print resume"
+          aria-label="Click to print resume"
+        >
+          🖨
+        </button>
+
+        {/* Receipt Container */}
+        <div className="receipt-wrapper">
+          <div className="receipt">
+            {/* Receipt Header */}
+            <div className="receipt-header flex flex-col items-center text-center">
+              <div className="font-bold text-[12px] tracking-tight text-black font-mono">
+                {PORTFOLIO_DATA.developer.fullName.toUpperCase()}
+              </div>
+              <div className="text-[9.5px] font-bold text-stone-700 mt-0.5 tracking-wide">
+                AI &amp; DATA SCIENCE ENGINEER
+              </div>
+              <div className="text-[8.5px] text-stone-600 font-mono mt-0.5 font-bold">
+                📞 {PORTFOLIO_DATA.developer.phone}
+              </div>
+              <div className="text-[8px] text-stone-500 font-mono truncate max-w-[220px]">
+                ✉️ {PORTFOLIO_DATA.developer.email}
+              </div>
+              <div className="text-[8px] text-stone-500 font-mono">
+                📍 {PORTFOLIO_DATA.developer.location} • github.com/jithendra259
+              </div>
+            </div>
+
+            {/* Receipt Subheader */}
+            <div className="receipt-subheader text-[8.5px] text-stone-600 font-mono">
+              <span>REF: #RESUME-KJS-2026</span>
+              <span>{new Date().toISOString().slice(0, 10)}</span>
+            </div>
+
+            {/* Receipt Section: Education */}
+            <div className="receipt-section-title">
+              -- EDUCATION &amp; QUALIFICATIONS --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>M.Tech AI &amp; DS (Somaiya)</td>
+                  <td>8.06 CGPA</td>
+                </tr>
+                <tr>
+                  <td>B.Tech ECE (Presidency)</td>
+                  <td>7.77 CGPA</td>
+                </tr>
+                <tr>
+                  <td>GATE 2024 (AI &amp; CS)</td>
+                  <td>Qualified</td>
+                </tr>
+                <tr>
+                  <td>JEE Mains Examination</td>
+                  <td>85.6 %ile</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Research Publications */}
+            <div className="receipt-section-title">
+              -- RESEARCH PUBLICATIONS --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>Elsevier EAAI (Swarm AI)</td>
+                  <td>1st Author</td>
+                </tr>
+                <tr>
+                  <td>Elsevier COR (XAI Governance)</td>
+                  <td>1st Author</td>
+                </tr>
+                <tr>
+                  <td>Springer Nature (LNCS)</td>
+                  <td>Published</td>
+                </tr>
+                <tr>
+                  <td>KSCST 46th SPP Grant</td>
+                  <td>Funded Lead</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Core Technical Stack */}
+            <div className="receipt-section-title">
+              -- CORE SYSTEMS &amp; TECH STACK --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>Agentic Swarms &amp; Guardrails</td>
+                  <td>LangGraph</td>
+                </tr>
+                <tr>
+                  <td>Convex Optimization / CVaR</td>
+                  <td>CVXPY</td>
+                </tr>
+                <tr>
+                  <td>Real-Time Voice AI Engine</td>
+                  <td>WebRTC / LiveKit</td>
+                </tr>
+                <tr>
+                  <td>Full-Stack Architecture</td>
+                  <td>Next.js 15 / TS</td>
+                </tr>
+                <tr>
+                  <td>Scientific &amp; ML Stack</td>
+                  <td>PyTorch / Python</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Section: Experience */}
+            <div className="receipt-section-title">
+              -- EXPERIENCE &amp; LEADERSHIP --
+            </div>
+            <table className="receipt-table text-[9px]">
+              <tbody>
+                <tr>
+                  <td>MNJ Software Pvt. Ltd.</td>
+                  <td>UI/UX Dev Intern</td>
+                </tr>
+                <tr>
+                  <td>Presidency Capstone</td>
+                  <td>Swarm Team Lead</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Receipt Footer */}
+            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1.5 relative z-50 pointer-events-auto">
+              <a
+                href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
+                download="Kandula_Jithendra_Subramanyam_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  try {
+                    const link = document.createElement('a');
+                    link.href = '/documents/resume/kandula_jithendra_subramanyam_resume.pdf';
+                    link.download = 'Kandula_Jithendra_Subramanyam_Resume.pdf';
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  } catch (err) {
+                    console.error('Download trigger error:', err);
+                  }
+                }}
+                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center pointer-events-auto select-none shadow-sm active:scale-95"
+              >
+                <Download className="size-3" /> Download Official PDF
+              </a>
+              <div className="text-[7.5px] text-stone-500 font-mono tracking-tight">
+                VERIFIED CANDIDATE • +91 9704400336
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ResumePrinter;
