@@ -22,7 +22,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
     )
     async def transfer_to_research(
         reason: Annotated[str, "The specific research topic, mathematical question, or paper to explore."],
-    ) -> str:
+    ):
         """Transfers active agent to ResearchSpecialist."""
         session = get_session()
         target = userdata.agents.get("research")
@@ -33,6 +33,17 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         userdata.prev_agent = current
         userdata.record_topic(f"Research: {reason}")
 
+        # Preserve bounded conversation history without system prompt overhead
+        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
+            try:
+                target.chat_ctx = current.chat_ctx.copy(
+                    exclude_instructions=True,
+                    exclude_handoff=True,
+                    exclude_config_update=True,
+                ).truncate(max_items=6)
+            except Exception:
+                pass
+
         log_turn(
             session_id=userdata.session_id,
             role="system",
@@ -42,7 +53,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         )
 
         session.update_agent(target)
-        return f"Transferring you to our Research Specialist to examine {reason} in depth."
+        return target, f"Transferring you to our Research Specialist to examine {reason} in depth."
 
     @llm.function_tool(
         description=(
@@ -53,7 +64,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
     )
     async def transfer_to_engineering(
         reason: Annotated[str, "The specific project, engineering implementation, or architecture to discuss."],
-    ) -> str:
+    ):
         """Transfers active agent to EngineeringSpecialist."""
         session = get_session()
         target = userdata.agents.get("engineering")
@@ -64,6 +75,16 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         userdata.prev_agent = current
         userdata.record_topic(f"Engineering: {reason}")
 
+        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
+            try:
+                target.chat_ctx = current.chat_ctx.copy(
+                    exclude_instructions=True,
+                    exclude_handoff=True,
+                    exclude_config_update=True,
+                ).truncate(max_items=6)
+            except Exception:
+                pass
+
         log_turn(
             session_id=userdata.session_id,
             role="system",
@@ -73,7 +94,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         )
 
         session.update_agent(target)
-        return f"Connecting you with our Engineering Specialist to discuss {reason}."
+        return target, f"Connecting you with our Engineering Specialist to discuss {reason}."
 
     @llm.function_tool(
         description=(
@@ -83,7 +104,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
     )
     async def transfer_to_booking(
         reason: Annotated[str, "The purpose or topic of the requested meeting/interview."],
-    ) -> str:
+    ):
         """Transfers active agent to BookingSpecialist."""
         session = get_session()
         target = userdata.agents.get("booking")
@@ -94,6 +115,16 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         userdata.prev_agent = current
         userdata.record_topic(f"Booking: {reason}")
 
+        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
+            try:
+                target.chat_ctx = current.chat_ctx.copy(
+                    exclude_instructions=True,
+                    exclude_handoff=True,
+                    exclude_config_update=True,
+                ).truncate(max_items=6)
+            except Exception:
+                pass
+
         log_turn(
             session_id=userdata.session_id,
             role="system",
@@ -103,7 +134,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         )
 
         session.update_agent(target)
-        return "Transferring you to our Booking Specialist to reserve time on Jithendra's calendar."
+        return target, "Transferring you to our Booking Specialist to reserve time on Jithendra's calendar."
 
     @llm.function_tool(
         description=(
@@ -113,7 +144,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
     )
     async def transfer_to_greeter(
         reason: Annotated[str, "The reason for returning to the main overview."],
-    ) -> str:
+    ):
         """Transfers active agent back to PortfolioGreeter."""
         session = get_session()
         target = userdata.agents.get("greeter")
@@ -122,6 +153,16 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
 
         current = getattr(session, "current_agent", None)
         userdata.prev_agent = current
+
+        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
+            try:
+                target.chat_ctx = current.chat_ctx.copy(
+                    exclude_instructions=True,
+                    exclude_handoff=True,
+                    exclude_config_update=True,
+                ).truncate(max_items=6)
+            except Exception:
+                pass
 
         log_turn(
             session_id=userdata.session_id,
@@ -132,7 +173,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         )
 
         session.update_agent(target)
-        return "Returning to the main portfolio overview."
+        return target, "Returning to the main portfolio overview."
 
     @llm.function_tool(
         description="Update or remember the visitor's name and email address across the conversation."
