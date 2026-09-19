@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
+      title: rawTitle,
       name,
       email,
       date: dateStr,
@@ -124,7 +125,8 @@ export async function POST(req: NextRequest) {
 
     const attendeeName = name?.trim() || 'Guest';
     const attendeeEmail = email?.trim();
-    const meetingPurpose = purpose || 'Technical / AI Architecture Discussion';
+    const meetingTitleInput = (rawTitle || purpose || '').trim();
+    const meetingPurpose = meetingTitleInput || 'Technical / AI Architecture Discussion';
 
     // Parse start and end times
     const [hours, minutes] = time.split(':').map(Number);
@@ -144,7 +146,9 @@ export async function POST(req: NextRequest) {
     const startIso = formatUtcForCalendar(startDate);
     const endIso = formatUtcForCalendar(endDate);
 
-    const meetingTitle = `Discussion: ${HOST_NAME} & ${attendeeName}`;
+    const meetingTitle = meetingTitleInput
+      ? `${meetingTitleInput} â€” ${HOST_NAME} & ${attendeeName}`
+      : `Discussion: ${HOST_NAME} & ${attendeeName}`;
 
     // Attempt to create dynamic official Google Meet via Google Calendar API
     const gcalResult = await createGoogleCalendarEvent({
@@ -330,8 +334,13 @@ export async function POST(req: NextRequest) {
     </div>
 
     <!-- Footer -->
-    <div style="background: rgba(0,0,0,0.3); padding: 16px 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: #64748b; font-family: monospace;">
-      Host: ${HOST_NAME} &bull; ${HOST_EMAIL}
+    <div style="background: rgba(0,0,0,0.3); padding: 20px 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
+      <p style="margin: 0 0 6px 0; font-size: 11px; color: #64748b; font-family: monospace;">
+        Host: ${HOST_NAME} &bull; ${HOST_EMAIL}
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #94a3b8; font-family: monospace;">
+        ðŸ“ž Helpline / Contact: <a href="tel:+919704400336" style="color: #38bdf8; text-decoration: none; font-weight: 600;">+91 97044 00336</a>
+      </p>
     </div>
   </div>
 </body>
@@ -367,8 +376,8 @@ export async function POST(req: NextRequest) {
           from: `"${HOST_NAME}" <${smtpUser}>`,
           to: recipients.join(', '),
           replyTo: HOST_EMAIL,
-          subject: `Confirmed: 1-on-1 Meeting with ${HOST_NAME} (${formattedDate} @ ${time} IST)`,
-          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})${notes ? `\nNotes: ${notes}` : ''}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachmentsTextSummary}\n\nSave to Google Calendar: ${googleCalendarUrl}`,
+          subject: `Confirmed: ${meetingTitleInput ? meetingTitleInput + ' â€” ' : ''}Meeting with ${HOST_NAME} (${formattedDate} @ ${time} IST)`,
+          text: `Your meeting with ${HOST_NAME} is confirmed for ${formattedDate} at ${time} IST.\n\nGoogle Meet Link: ${meetUrl}\nTopic: ${meetingPurpose}\nAttendee: ${attendeeName} (${attendeeEmail || 'N/A'})${notes ? `\nNotes: ${notes}` : ''}${documentLink ? `\nDoc Link: ${documentLink}` : ''}${attachmentsTextSummary}\n\nSave to Google Calendar: ${googleCalendarUrl}\n\n--\nHost: ${HOST_NAME} | ${HOST_EMAIL}\nHelpline / Contact: +91 97044 00336`,
           html: htmlEmail,
           attachments: mailAttachments,
         });
@@ -427,3 +436,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

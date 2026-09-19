@@ -54,6 +54,14 @@ const AVAILABLE_SLOTS = [
 
 const DEFAULT_PURPOSE = 'Technical Discussion & 1-on-1 Session';
 
+const SUGGESTED_TOPICS = [
+  '💼 Technical Interview',
+  '🔬 Research & Thesis Discussion',
+  '🤖 AI Architecture & Multi-Agent Swarms',
+  '🤝 Consulting / Project Collaboration',
+  '☕ Casual Networking & Intro',
+];
+
 function formatUtcForCalendar(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
@@ -156,6 +164,7 @@ export const CalendarAppointmentBooking = ({
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [role, setRole] = useState<string>('');
+  const [meetingTitle, setMeetingTitle] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [documentLink, setDocumentLink] = useState<string>('');
 
@@ -169,6 +178,7 @@ export const CalendarAppointmentBooking = ({
     startDate: Date;
     endDate: Date;
     title: string;
+    meetingTopic: string;
     description: string;
     location: string;
   } | null>(null);
@@ -214,7 +224,8 @@ export const CalendarAppointmentBooking = ({
             email: email.trim(),
             date: date.toISOString(),
             time: selectedTime,
-            purpose: DEFAULT_PURPOSE,
+            title: meetingTitle.trim() || undefined,
+            purpose: meetingTitle.trim() || DEFAULT_PURPOSE,
             notes: notes.trim(),
             documentLink: documentLink.trim(),
             attachments: attachedFiles.map((f) => ({
@@ -280,6 +291,7 @@ export const CalendarAppointmentBooking = ({
         startDate,
         endDate,
         title: meetingTitle,
+        meetingTopic: meetingTitle.trim() || DEFAULT_PURPOSE,
         description: meetingDescription,
         location: generatedMeetUrl,
       });
@@ -336,7 +348,7 @@ export const CalendarAppointmentBooking = ({
 
           <div className="border-t border-border my-6" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
               <span className="text-xs uppercase text-muted-foreground font-medium">Date & time</span>
               <p className="mt-1 text-sm font-semibold text-foreground">
@@ -351,6 +363,13 @@ export const CalendarAppointmentBooking = ({
               <span className="text-xs uppercase text-muted-foreground font-medium">Attendee</span>
               <p className="mt-1 text-sm font-semibold text-foreground">{name}</p>
               <p className="text-sm text-muted-foreground">{email}</p>
+            </div>
+
+            <div>
+              <span className="text-xs uppercase text-muted-foreground font-medium">Meeting Title / Topic</span>
+              <p className="mt-1 text-sm font-semibold text-foreground truncate" title={bookingDetails?.meetingTopic || meetingTitle || DEFAULT_PURPOSE}>
+                {bookingDetails?.meetingTopic || meetingTitle || DEFAULT_PURPOSE}
+              </p>
             </div>
           </div>
 
@@ -654,11 +673,46 @@ export const CalendarAppointmentBooking = ({
               Discussion details
             </h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Share job description highlights, company context, or attach files to discuss during our call.
+              Specify what the meeting is about, share job description highlights, or attach files to discuss during our call.
             </p>
           </div>
           <div className="sm:max-w-3xl md:col-span-2">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
+              {/* Meeting Title / Topic */}
+              <div className="col-span-full">
+                <label
+                  htmlFor="booking-title"
+                  className="text-sm font-medium text-foreground flex items-center justify-between"
+                >
+                  <span>Meeting title / What is this meeting about?</span>
+                  <span className="text-xs text-muted-foreground font-normal">Recommended</span>
+                </label>
+                <input
+                  type="text"
+                  id="booking-title"
+                  name="booking-title"
+                  placeholder="e.g., Technical Interview for AI Engineer, Research Discussion, or Project Collab"
+                  value={meetingTitle}
+                  onChange={(e) => setMeetingTitle(e.target.value)}
+                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                />
+
+                {/* Quick suggestions */}
+                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] text-muted-foreground mr-1">Suggestions:</span>
+                  {SUGGESTED_TOPICS.map((topic) => (
+                    <button
+                      key={topic}
+                      type="button"
+                      onClick={() => setMeetingTitle(topic.replace(/^[^\w\s]+\s*/, ''))}
+                      className="inline-flex items-center rounded-full border border-border bg-muted/50 hover:bg-muted px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    >
+                      {topic}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="col-span-full">
                 <label
                   htmlFor="booking-notes"
@@ -747,9 +801,12 @@ export const CalendarAppointmentBooking = ({
                 startDate.setHours(hours, minutes, 0, 0);
                 const endDate = new Date(startDate);
                 endDate.setMinutes(endDate.getMinutes() + 30);
+                const finalTopic = meetingTitle.trim() || DEFAULT_PURPOSE;
                 downloadIcsFile({
-                  title: `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`,
-                  description: `Topic: ${DEFAULT_PURPOSE}\nAttendee: ${name || 'Guest'}\nHost: kandulajithendrasubramanyam@gmail.com`,
+                  title: meetingTitle.trim()
+                    ? `${meetingTitle.trim()} — Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`
+                    : `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`,
+                  description: `Topic: ${finalTopic}\nAttendee: ${name || 'Guest'}\nHost: kandulajithendrasubramanyam@gmail.com`,
                   location: meetUrl,
                   startDate,
                   endDate,
