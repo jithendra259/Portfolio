@@ -1,18 +1,71 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext, useSessionMessages } from '@livekit/components-react';
-import { Minimize2 } from 'lucide-react';
+import { Bot, Mic, Minimize2 } from 'lucide-react';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
 import { WelcomeView } from '@/components/voice-agent/welcome-view';
 import { DockedVoiceHUD } from '@/components/voice-agent/docked-voice-hud';
 import { useVoiceAutoNavigation } from '@/hooks/useVoiceAutoNavigation';
+import { cn } from '@/lib/utils';
 
 const MotionWelcomeView = motion.create(WelcomeView);
 const MotionSessionView = motion.create(AgentSessionView_01);
+
+/** Floating ASK button with animated Bot/Mic icon — reused on every page */
+function AskButton({ onStartCall }: { onStartCall: () => void }) {
+  const [showRobot, setShowRobot] = useState(true);
+  useEffect(() => {
+    const id = setInterval(() => setShowRobot((v) => !v), 1800);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="fixed bottom-6 right-6 z-40">
+      <button
+        type="button"
+        onClick={onStartCall}
+        className={cn(
+          'group flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full border shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold',
+          'bg-white dark:bg-[#1e1e1e] hover:bg-slate-900 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black border-slate-300 dark:border-[#3c3c3c]'
+        )}
+        aria-label="Ask the voice agent"
+      >
+        <span className="relative flex items-center justify-center size-4 shrink-0 overflow-hidden">
+          <AnimatePresence mode="wait" initial={false}>
+            {showRobot ? (
+              <motion.span
+                key="robot"
+                initial={{ opacity: 0, y: 3, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -3, scale: 0.85 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className="flex items-center justify-center size-4"
+              >
+                <Bot className="size-4" />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="mic"
+                initial={{ opacity: 0, y: 3, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -3, scale: 0.85 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className="flex items-center justify-center size-4"
+              >
+                <Mic className="size-4" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </span>
+        <span className="text-xs font-mono uppercase tracking-wider">Ask</span>
+      </button>
+    </div>
+  );
+}
 
 const VIEW_MOTION_PROPS = {
   variants: {
@@ -34,9 +87,10 @@ const VIEW_MOTION_PROPS = {
 
 interface ViewControllerProps {
   appConfig: AppConfig;
+  showWelcome?: boolean;
 }
 
-export function ViewController({ appConfig }: ViewControllerProps) {
+export function ViewController({ appConfig, showWelcome = true }: ViewControllerProps) {
   const session = useSessionContext();
   const { isConnected, start } = session;
   const { messages } = useSessionMessages(session);
@@ -67,14 +121,20 @@ export function ViewController({ appConfig }: ViewControllerProps) {
   const isHUDVisible = (isConnected || isConnecting) && viewMode === 'docked';
 
   return (
-    <div className="relative w-full min-h-screen">
+    <div className={showWelcome ? 'relative w-full min-h-screen' : 'relative w-full'}>
       {/* Portfolio page: Always rendered and interactive */}
-      <WelcomeView
-        startButtonText={appConfig.startButtonText}
-        onStartCall={handleStartCall}
-        isConnected={isConnected}
-        isConnecting={isConnecting}
-      />
+      {showWelcome && (
+        <WelcomeView
+          startButtonText={appConfig.startButtonText}
+          onStartCall={handleStartCall}
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+        />
+      )}
+
+      {!showWelcome && !isConnected && !isConnecting && (
+        <AskButton onStartCall={handleStartCall} />
+      )}
 
       {/* Floating Live Voice HUD */}
       <AnimatePresence>
