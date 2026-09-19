@@ -138,9 +138,12 @@ class PortfolioBaseAgent(Agent):
             user_text,
             screen_context=self.userdata.screen_context or {"pathname": self.userdata.active_screen},
         )
-        grounding = result.get("grounding", "").strip()
+        user_intent = result.get("user_intent", "")
+        user_exp = result.get("user_expectation", "")
+        if user_intent or user_exp:
+            print(f"--> [{self.agent_name} Thinking] Intent: '{user_intent}' | Expects: '{user_exp}'")
 
-        # ONLY inject grounding if non-empty (avoid dumping generic RAG or citations into prompt)
+        # Inject context-aware intent thinking and targeted factual grounding
         if grounding:
             turn_ctx.add_message(
                 role="system",

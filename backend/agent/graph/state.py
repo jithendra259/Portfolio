@@ -16,3 +16,5 @@ class PortfolioGraphState(TypedDict, total=False):
     context: str
     grounding: str
     confidence: float
+    user_intent: str
+    user_expectation: str
