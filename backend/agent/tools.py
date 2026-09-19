@@ -26,8 +26,14 @@ async def broadcast_navigation(room: rtc.Room | None, target: str) -> str:
     return f"Navigation requested for {target}."
 
 
+from prompts.knowledge.pages import (
+    get_formatted_section_explanation,
+    get_section_knowledge,
+)
+
+
 class NavigationToolset(llm.Toolset):
-    """Modular toolset for real-time frontend screen navigation and page context awareness."""
+    """Modular toolset for real-time frontend screen navigation, subsection scrolling, and section awareness."""
 
     def __init__(
         self,
@@ -36,21 +42,46 @@ class NavigationToolset(llm.Toolset):
     ) -> None:
         @llm.function_tool(
             description=(
-                "Auto-navigate the visitor's screen in real time to a specific portfolio section, research paper case study, or booking page. "
-                "Supported targets: 'projects', 'research', 'about', 'resume', 'contact', 'book_appointment', 'skills', 'certificates', "
-                "'experience', 'home', 'case_study_voice_architecture', 'case_study_adaptive_governance', 'case_study_regime_supervisory', "
-                "'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'."
+                "Auto-navigate the visitor's screen in real time to any portfolio section, subsection, research paper case study, or booking page. "
+                "Supported targets: "
+                "- Homepage Sections: 'contact' (the contact & collaboration hub), 'skills' (4-card tech stack), 'projects' (featured engineering systems), "
+                "'research' (3 peer-reviewed publications bento), 'experience' (education & career timeline), 'certificates' (GATE & awards), "
+                "'resume' (interactive CV preview), 'about' (candidate background), 'home' (hero & 3D mascot). "
+                "- Booking Page: 'book_appointment' (/book-appointment). "
+                "- Research Case Studies: 'case_study_adaptive_governance' (EAAI), 'case_study_regime_supervisory' (LNCS), 'case_study_supervisory_xai' (COR). "
+                "- Engineering Case Studies: 'case_study_aqi' (AQI), 'case_study_swarm_robotics' (Swarm robots), 'case_study_voice_architecture' (Voice AI). "
+                "- Case Study Subsections: 'sec-math' (Mathematical formulation & equations), 'sec-arch' (System architecture DAG), "
+                "'sec-eval' (Empirical evaluation & Sharpe backtests), 'sec-references' (Academic citations), 'sec-abstract' (Abstract & keywords)."
             )
         )
         async def navigate_portfolio(
             target: Annotated[
                 str,
-                "Target destination section or case study route name.",
+                "The section, subsection, or route to navigate the visitor's screen to.",
             ],
         ) -> str:
-            """Navigates user screen to the desired section."""
+            """Navigates user screen to the desired section and returns a summary of what it contains."""
             room = get_room()
-            return await broadcast_navigation(room, target)
+            clean_target = target.strip().lower().replace("#", "")
+            await broadcast_navigation(room, clean_target)
+            explanation = get_formatted_section_explanation(clean_target)
+            return f"Navigated screen to {clean_target}. Details: {explanation}"
+
+        @llm.function_tool(
+            description=(
+                "Explain in detail what a specific portfolio section or subsection tells. "
+                "Call this whenever the visitor asks 'What does the contact section have?', 'What is in this section?', "
+                "'What does the research section tell?', 'Explain the skills section', or asks about any subsection."
+            )
+        )
+        async def explain_section(
+            section_name: Annotated[
+                str,
+                "Name of the section or subsection (e.g. 'contact', 'skills', 'experience', 'research', 'projects', 'sec-math', 'sec-arch').",
+            ],
+        ) -> str:
+            """Provides full explanation of what a section or subsection tells."""
+            return get_formatted_section_explanation(section_name)
 
         @llm.function_tool(
             description=(
@@ -77,21 +108,22 @@ class NavigationToolset(llm.Toolset):
         async def list_portfolio_pages() -> str:
             """Returns a directory of all available pages and case studies."""
             return (
-                "Available pages and case studies in Jithendra's portfolio:\n"
-                "- / : Homepage (Overview, Research Bento, Projects, Skills, Timeline, Certifications, Contact)\n"
+                "Available pages and sections in Jithendra's portfolio:\n"
+                "- / : Homepage (Sections: #home, #about, #research, #projects, #skills, #experience, #certificates, #resume, #contact)\n"
+                "- #contact : Full contact hub ('Let's Build Intelligent Systems Together', Pearl Booking Button, Email Reveal, Social Links)\n"
+                "- /book-appointment : Dedicated Meeting & Interview Booking (Google Meet)\n"
                 "- /projects/adaptive-portfolio-governance : Elsevier EAAI Case Study (G-CVaR & SEC 13-F Network)\n"
                 "- /projects/regime-adaptive-supervisory-governance : Springer Nature LNCS Case Study (Instability Index I_t)\n"
                 "- /projects/supervisory-portfolio-xai-governance : Elsevier COR Case Study (7-Agent DAG & Mistral-7B)\n"
                 "- /projects/voice-agent-portfolio-architecture : Voice AI Portfolio Architecture Case Study\n"
-                "- /projects/agentic-portfolio-chatbot : Agentic Portfolio Chatbot Case Study\n"
                 "- /projects/personalised-aqi-system : Personalised AQI System Case Study (XGBoost)\n"
                 "- /projects/swarm-robots-agriculture : Autonomous Swarm Robots Case Study (ESP32 Mesh)\n"
-                "- /book-appointment : Interactive Meeting Booking Page (Google Meet)"
+                "- Case Study Subsections: #sec-abstract, #sec-intro, #sec-math, #sec-arch, #sec-eval, #sec-references"
             )
 
         super().__init__(
             id="navigation",
-            tools=[navigate_portfolio, get_current_page_context, list_portfolio_pages],
+            tools=[navigate_portfolio, explain_section, get_current_page_context, list_portfolio_pages],
         )
 
 

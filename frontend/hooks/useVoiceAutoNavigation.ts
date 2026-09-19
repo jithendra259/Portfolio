@@ -7,249 +7,270 @@ import { useRoomContext } from '@livekit/components-react';
 import { RoomEvent } from 'livekit-client';
 import { toast } from '@/components/ui/widgets/notification-card';
 
-export type NavigationTarget =
-  | 'hero'
-  | 'about'
-  | 'research'
-  | 'projects'
-  | 'skills'
-  | 'certificates'
-  | 'experience'
-  | 'resume'
-  | 'contact'
-  | 'book_appointment'
-  | 'case_study_adaptive_governance'
-  | 'case_study_regime_supervisory'
-  | 'case_study_supervisory_xai'
-  | 'case_study_aqi'
-  | 'case_study_swarm_robotics'
-  | 'case_study_voice_architecture';
+export type NavigationTarget = string;
 
 export interface NavigationTargetMeta {
-  type: 'section' | 'route';
+  type: 'section' | 'route' | 'subsection';
   destination: string;
   label: string;
+  pageRoute?: string;
 }
 
-export const NAVIGATION_TARGETS: Record<NavigationTarget, NavigationTargetMeta> = {
-  hero: { type: 'section', destination: 'hero', label: 'Overview' },
+export const NAVIGATION_TARGETS: Record<string, NavigationTargetMeta> = {
+  // ── Homepage Primary Sections ─────────────────────────────────────────
+  home: { type: 'section', destination: 'home', label: 'Home Overview' },
+  hero: { type: 'section', destination: 'home', label: 'Hero Section' },
   about: { type: 'section', destination: 'about', label: 'About & Credentials' },
-  research: { type: 'section', destination: 'research', label: 'Research Papers' },
+  research: { type: 'section', destination: 'research', label: 'Research Papers Bento' },
   projects: { type: 'section', destination: 'projects', label: 'Featured Projects' },
   skills: { type: 'section', destination: 'skills', label: 'Skills & Tech Stack' },
-  certificates: { type: 'section', destination: 'certificates', label: 'Certifications' },
-  experience: { type: 'section', destination: 'experience', label: 'Experience Timeline' },
-  resume: { type: 'section', destination: 'resume', label: 'Resume' },
+  experience: { type: 'section', destination: 'experience', label: 'Career & Education Timeline' },
+  certificates: { type: 'section', destination: 'certificates', label: 'Certifications & Awards' },
+  resume: { type: 'section', destination: 'resume', label: 'Resume Preview' },
   contact: { type: 'section', destination: 'contact', label: 'Contact Section' },
+
+  // ── Standalone Pages ──────────────────────────────────────────────────
   book_appointment: {
     type: 'route',
     destination: '/book-appointment',
     label: 'Schedule a Meeting',
+  },
+
+  // ── Research & Project Case Studies ───────────────────────────────────
+  case_study_adaptive_governance: {
+    type: 'route',
+    destination: '/projects/adaptive-portfolio-governance',
+    label: 'Adaptive Portfolio Governance (Elsevier EAAI)',
+  },
+  case_study_regime_supervisory: {
+    type: 'route',
+    destination: '/projects/regime-adaptive-supervisory-governance',
+    label: 'Regime-Adaptive Governance (Springer Nature LNCS)',
+  },
+  case_study_supervisory_xai: {
+    type: 'route',
+    destination: '/projects/supervisory-portfolio-xai-governance',
+    label: 'Supervisory Portfolio XAI (Elsevier COR)',
   },
   case_study_voice_architecture: {
     type: 'route',
     destination: '/projects/voice-agent-portfolio-architecture',
     label: 'Voice AI Portfolio Architecture',
   },
-  case_study_adaptive_governance: {
-    type: 'route',
-    destination: '/projects/adaptive-portfolio-governance',
-    label: 'Adaptive Portfolio Governance (EAAI Paper)',
-  },
-  case_study_regime_supervisory: {
-    type: 'route',
-    destination: '/projects/regime-adaptive-supervisory-governance',
-    label: 'Regime-Adaptive Governance (IJCACI Paper)',
-  },
-  case_study_supervisory_xai: {
-    type: 'route',
-    destination: '/projects/supervisory-portfolio-xai-governance',
-    label: 'Supervisory Portfolio XAI (CAS Journal)',
-  },
   case_study_aqi: {
     type: 'route',
     destination: '/projects/personalised-aqi-system',
-    label: 'Personalised AQI System',
+    label: 'Personalised AQI System (XGBoost)',
   },
   case_study_swarm_robotics: {
     type: 'route',
     destination: '/projects/swarm-robots-agriculture',
-    label: 'Swarm Robots for Agriculture',
+    label: 'Autonomous Swarm Robotics (ESP32 Mesh)',
+  },
+
+  // ── Case Study Subsections (Academic Layout) ──────────────────────────
+  'sec-abstract': {
+    type: 'subsection',
+    destination: 'sec-abstract',
+    label: 'Abstract & Keywords',
+  },
+  'sec-intro': {
+    type: 'subsection',
+    destination: 'sec-intro',
+    label: 'Introduction & Background',
+  },
+  'subsec-intro-problem': {
+    type: 'subsection',
+    destination: 'subsec-intro-problem',
+    label: 'Problem Statement',
+  },
+  'subsec-intro-solution': {
+    type: 'subsection',
+    destination: 'subsec-intro-solution',
+    label: 'Engineered Solution',
+  },
+  'sec-math': {
+    type: 'subsection',
+    destination: 'sec-math',
+    label: 'Mathematical Formulation (G-CVaR & SOCP)',
+  },
+  'subsec-math-cvar': {
+    type: 'subsection',
+    destination: 'subsec-math-cvar',
+    label: 'Equation (1): CVaR Loss',
+  },
+  'subsec-math-graph': {
+    type: 'subsection',
+    destination: 'subsec-math-graph',
+    label: 'Equation (2): Graph Laplacian Regularizer',
+  },
+  'sec-arch': {
+    type: 'subsection',
+    destination: 'sec-arch',
+    label: 'System Architecture Pipeline',
+  },
+  'subsec-arch-fig1': {
+    type: 'subsection',
+    destination: 'subsec-arch-fig1',
+    label: 'Figure 1: Modular Pipeline Schematic',
+  },
+  'sec-eval': {
+    type: 'subsection',
+    destination: 'sec-eval',
+    label: 'Empirical Evaluation & Backtest',
+  },
+  'sec-references': {
+    type: 'subsection',
+    destination: 'sec-references',
+    label: 'Scholarly References & BibTeX',
   },
 };
 
 /**
- * Keyword-based speech intent detector
+ * Normalizes any raw navigation target, slug, hash anchor, or alias into a validated metadata object.
  */
-function matchSpeechIntent(text: string): NavigationTarget | null {
-  const lower = text.toLowerCase();
+export function resolveNavigationTarget(rawTarget: string): NavigationTargetMeta | null {
+  if (!rawTarget) return null;
+  const clean = rawTarget.trim().toLowerCase().replace(/^#+/, '').replace(/^\/+/, '');
 
-  // Route matches (higher specificity)
-  if (
-    lower.includes('adaptive portfolio') ||
-    lower.includes('graph cvar') ||
-    lower.includes('eaai paper') ||
-    lower.includes('contagion penalization')
-  ) {
-    return 'case_study_adaptive_governance';
+  // 1. Direct match in dictionary
+  if (NAVIGATION_TARGETS[clean]) {
+    return NAVIGATION_TARGETS[clean];
   }
 
-  if (
-    lower.includes('regime adaptive') ||
-    lower.includes('supervisory governance') ||
-    lower.includes('ijcaci') ||
-    lower.includes('conference paper')
-  ) {
-    return 'case_study_regime_supervisory';
+  // 2. Exact match with original string (e.g. 'sec-math')
+  if (NAVIGATION_TARGETS[rawTarget.trim().replace(/^#+/, '')]) {
+    return NAVIGATION_TARGETS[rawTarget.trim().replace(/^#+/, '')];
   }
 
-  if (
-    lower.includes('supervisory portfolio') ||
-    lower.includes('explainable ai') ||
-    lower.includes('xai') ||
-    lower.includes('cas journal') ||
-    lower.includes('conversational explainability')
-  ) {
-    return 'case_study_supervisory_xai';
+  // 3. Alias mapping
+  const aliasMap: Record<string, string> = {
+    // Contact aliases
+    contact_section: 'contact',
+    contact_page: 'contact',
+    contact_us: 'contact',
+    get_in_touch: 'contact',
+    email_contact: 'contact',
+    booking_contact: 'contact',
+
+    // Booking aliases
+    'book-appointment': 'book_appointment',
+    book_a_call: 'book_appointment',
+    schedule_meeting: 'book_appointment',
+    schedule_interview: 'book_appointment',
+    appointment: 'book_appointment',
+    booking: 'book_appointment',
+
+    // Section aliases
+    top: 'home',
+    header: 'home',
+    bio: 'about',
+    credentials: 'about',
+    background: 'about',
+    publications: 'research',
+    papers: 'research',
+    research_papers: 'research',
+    research_bento: 'research',
+    featured_projects: 'projects',
+    tech_stack: 'skills',
+    tech_skills: 'skills',
+    technologies: 'skills',
+    timeline: 'experience',
+    career: 'experience',
+    education: 'experience',
+    certifications: 'certificates',
+    awards: 'certificates',
+    cv: 'resume',
+
+    // Case studies aliases
+    eaai: 'case_study_adaptive_governance',
+    eaai_paper: 'case_study_adaptive_governance',
+    adaptive_governance: 'case_study_adaptive_governance',
+    g_cvar: 'case_study_adaptive_governance',
+    lncs: 'case_study_regime_supervisory',
+    lncs_paper: 'case_study_regime_supervisory',
+    ijcaci: 'case_study_regime_supervisory',
+    regime_supervisory: 'case_study_regime_supervisory',
+    cor: 'case_study_supervisory_xai',
+    cor_paper: 'case_study_supervisory_xai',
+    supervisory_xai: 'case_study_supervisory_xai',
+    xai: 'case_study_supervisory_xai',
+    aqi: 'case_study_aqi',
+    aqi_project: 'case_study_aqi',
+    air_quality: 'case_study_aqi',
+    swarm: 'case_study_swarm_robotics',
+    swarm_robotics: 'case_study_swarm_robotics',
+    swarm_robots: 'case_study_swarm_robotics',
+    voice: 'case_study_voice_architecture',
+    voice_agent: 'case_study_voice_architecture',
+    voice_architecture: 'case_study_voice_architecture',
+
+    // Case study subsections
+    abstract: 'sec-abstract',
+    intro: 'sec-intro',
+    introduction: 'sec-intro',
+    problem: 'subsec-intro-problem',
+    problem_statement: 'subsec-intro-problem',
+    solution: 'subsec-intro-solution',
+    math: 'sec-math',
+    mathematical_formulation: 'sec-math',
+    equations: 'sec-math',
+    formulation: 'sec-math',
+    cvar: 'subsec-math-cvar',
+    graph_risk: 'subsec-math-graph',
+    architecture: 'sec-arch',
+    system_architecture: 'sec-arch',
+    pipeline: 'sec-arch',
+    schematic: 'subsec-arch-fig1',
+    evaluation: 'sec-eval',
+    results: 'sec-eval',
+    empirical_evaluation: 'sec-eval',
+    backtest: 'sec-eval',
+    references: 'sec-references',
+    citations: 'sec-references',
+    bibtex: 'sec-references',
+  };
+
+  if (aliasMap[clean] && NAVIGATION_TARGETS[aliasMap[clean]]) {
+    return NAVIGATION_TARGETS[aliasMap[clean]];
   }
 
-  if (
-    lower.includes('aqi') ||
-    lower.includes('air quality') ||
-    lower.includes('pollution')
-  ) {
-    return 'case_study_aqi';
+  // 4. Fallback for arbitrary element ID or route
+  if (rawTarget.startsWith('/')) {
+    return {
+      type: 'route',
+      destination: rawTarget,
+      label: rawTarget.replace(/^\//, '').replace(/-/g, ' '),
+    };
   }
 
-  if (
-    lower.includes('swarm robot') ||
-    lower.includes('agriculture') ||
-    lower.includes('crop disease')
-  ) {
-    return 'case_study_swarm_robotics';
-  }
+  // Return generic element target if it looks like an ID
+  const elementId = rawTarget.replace(/^#+/, '');
+  return {
+    type: 'section',
+    destination: elementId,
+    label: elementId.replace(/[-_]/g, ' '),
+  };
+}
 
-  if (
-    lower.includes('schedule a meeting') ||
-    lower.includes('book an appointment') ||
-    lower.includes('book a call') ||
-    lower.includes('schedule an interview') ||
-    lower.includes('calendar booking') ||
-    lower.includes('schedule call') ||
-    lower.includes('meeting page') ||
-    lower.includes('booking page')
-  ) {
-    return 'book_appointment';
-  }
+/**
+ * Smoothly scrolls to an HTML element, accounting for the top navbar offset and pulsing with a cyan glow.
+ */
+function scrollToElementWithHighlight(el: HTMLElement): void {
+  const headerOffset = 80;
+  const elementPosition = el.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-  if (
-    lower.includes('how this portfolio') ||
-    lower.includes('how is this built') ||
-    lower.includes('portfolio architecture') ||
-    lower.includes('voice architecture') ||
-    lower.includes('webrtc architecture') ||
-    lower.includes('groq architecture') ||
-    lower.includes('how did you build this') ||
-    lower.includes('how is this website built') ||
-    lower.includes('voice agent project')
-  ) {
-    return 'case_study_voice_architecture';
-  }
+  window.scrollTo({
+    top: Math.max(0, offsetPosition),
+    behavior: 'smooth',
+  });
 
-  // Section matches
-  if (
-    lower.includes('go to project') ||
-    lower.includes('show project') ||
-    lower.includes('view project') ||
-    lower.includes('see project') ||
-    lower.includes('open project') ||
-    lower.includes('all projects') ||
-    lower.includes('featured project')
-  ) {
-    return 'projects';
-  }
-
-  if (
-    lower.includes('research paper') ||
-    lower.includes('publication') ||
-    lower.includes('manuscript') ||
-    lower.includes('journal paper') ||
-    lower.includes('show research') ||
-    lower.includes('view research') ||
-    lower.includes('go to research')
-  ) {
-    return 'research';
-  }
-
-  if (
-    lower.includes('about jithendra') ||
-    lower.includes('about you') ||
-    lower.includes('about him') ||
-    lower.includes('background') ||
-    lower.includes('who are you') ||
-    lower.includes('go to about') ||
-    lower.includes('show about')
-  ) {
-    return 'about';
-  }
-
-  if (
-    lower.includes('resume') ||
-    lower.includes('curriculum vitae') ||
-    lower.includes('show cv') ||
-    lower.includes('download resume')
-  ) {
-    return 'resume';
-  }
-
-  if (
-    lower.includes('contact') ||
-    lower.includes('get in touch') ||
-    lower.includes('book appointment') ||
-    lower.includes('hire') ||
-    lower.includes('email') ||
-    lower.includes('collaborate')
-  ) {
-    return 'contact';
-  }
-
-  if (
-    lower.includes('experience') ||
-    lower.includes('work history') ||
-    lower.includes('internship') ||
-    lower.includes('career')
-  ) {
-    return 'experience';
-  }
-
-  if (
-    lower.includes('certificate') ||
-    lower.includes('certification') ||
-    lower.includes('degrees') ||
-    lower.includes('credentials')
-  ) {
-    return 'certificates';
-  }
-
-  if (
-    lower.includes('skill') ||
-    lower.includes('tech stack') ||
-    lower.includes('technologies') ||
-    lower.includes('tools')
-  ) {
-    return 'skills';
-  }
-
-  if (
-    lower.includes('back to top') ||
-    lower.includes('go to home') ||
-    lower.includes('scroll top') ||
-    lower.includes('top of page')
-  ) {
-    return 'hero';
-  }
-
-  return null;
+  // Highlight pulse animation
+  el.classList.add('ring-2', 'ring-cyan-400/60', 'rounded-2xl', 'transition-all', 'duration-300');
+  setTimeout(() => {
+    el.classList.remove('ring-2', 'ring-cyan-400/60', 'rounded-2xl', 'transition-all', 'duration-300');
+  }, 2800);
 }
 
 export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
@@ -257,65 +278,95 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
   const pathname = usePathname();
   const room = useRoomContext();
   const { setTheme } = useTheme();
-  const [activeTarget, setActiveTarget] = useState<NavigationTarget | null>(null);
+  const [activeTarget, setActiveTarget] = useState<string | null>(null);
   const [lastNavigatedAt, setLastNavigatedAt] = useState<number | null>(null);
-  const lastProcessedMsgId = useRef<string | null>(null);
   const cooldownRef = useRef<number>(0);
 
+  // Check for pending scroll targets across Next.js page route transitions
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const pendingTarget = sessionStorage.getItem('pending_scroll_target');
+    if (pendingTarget) {
+      sessionStorage.removeItem('pending_scroll_target');
+      const timer = setTimeout(() => {
+        const el = document.getElementById(pendingTarget);
+        if (el) {
+          scrollToElementWithHighlight(el);
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
+
   const navigateTo = useCallback(
-    (targetKey: NavigationTarget, source: 'data_channel' | 'speech_intent' = 'data_channel') => {
+    (rawTarget: string, source: 'data_channel' | 'speech_intent' = 'data_channel') => {
       const now = Date.now();
-      // 2-second cooldown to prevent rapid oscillations
-      if (now - cooldownRef.current < 2000 && activeTarget === targetKey) {
+      // 1.5-second cooldown to prevent rapid oscillation
+      if (now - cooldownRef.current < 1500 && activeTarget === rawTarget) {
         return;
       }
       cooldownRef.current = now;
 
-      const target = NAVIGATION_TARGETS[targetKey];
-      if (!target) return;
+      const target = resolveNavigationTarget(rawTarget);
+      if (!target) {
+        console.warn(`[AutoNav Warning] Could not resolve target: "${rawTarget}"`);
+        return;
+      }
 
-      setActiveTarget(targetKey);
+      setActiveTarget(target.destination);
       setLastNavigatedAt(now);
 
-      toast.info(`🧭 Auto-Navigating: ${target.label}`, {
-        description: `Voice agent guided screen to ${target.label}`,
+      toast.info(`🧭 Navigating: ${target.label}`, {
+        description: `Voice agent navigated screen to ${target.label}`,
         duration: 3500,
       });
 
-      if (target.type === 'section') {
-        if (pathname !== '/') {
+      // ── Handle Section or Subsection Navigation ────────────────────────
+      if (target.type === 'section' || target.type === 'subsection') {
+        const el = document.getElementById(target.destination);
+        if (el) {
+          // Element is already in the DOM on the current screen
+          scrollToElementWithHighlight(el);
+        } else if (pathname !== '/') {
+          // Target is a homepage section, but visitor is on a case study page
+          sessionStorage.setItem('pending_scroll_target', target.destination);
           router.push(`/#${target.destination}`);
+
+          // Poll for element in case Next.js renders quickly
+          const pollInterval = setInterval(() => {
+            const targetEl = document.getElementById(target.destination);
+            if (targetEl) {
+              clearInterval(pollInterval);
+              sessionStorage.removeItem('pending_scroll_target');
+              scrollToElementWithHighlight(targetEl);
+            }
+          }, 80);
+          setTimeout(() => clearInterval(pollInterval), 2500);
         } else {
-          const el = document.getElementById(target.destination);
-          if (el) {
-            const headerOffset = 80;
-            const elementPosition = el.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-              top: Math.max(0, offsetPosition),
-              behavior: 'smooth',
-            });
-
-            // Brief pulse highlight on section header
-            el.classList.add('ring-2', 'ring-cyan-400/40', 'rounded-2xl', 'transition-all');
-            setTimeout(() => {
-              el.classList.remove('ring-2', 'ring-cyan-400/40', 'rounded-2xl', 'transition-all');
-            }, 2500);
+          // Attempt fallback query selector
+          const fallbackEl = document.querySelector(`[id*="${target.destination}"]`) as HTMLElement;
+          if (fallbackEl) {
+            scrollToElementWithHighlight(fallbackEl);
           }
         }
-      } else if (target.type === 'route') {
-        router.push(target.destination);
+      }
+      // ── Handle Full Route Transition ───────────────────────────────────
+      else if (target.type === 'route') {
+        if (pathname !== target.destination) {
+          router.push(target.destination);
+        }
       }
     },
     [pathname, router, activeTarget]
   );
 
-  // 1. Data Channel Listener from LiveKit Python Agent
+  // ── LiveKit Data Channel Listener ──────────────────────────────────────
   useEffect(() => {
     if (!room) return;
 
     const handleDataReceived = (payload: Uint8Array, participant: any, kind: any, topic?: string) => {
+      // 1. Assistant Action Channel (Downloads, Themes, Bookings)
       if (topic === 'assistant_action') {
         try {
           const data = JSON.parse(new TextDecoder().decode(payload));
@@ -334,44 +385,12 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
             setTheme(data.theme);
             toast.success(`Switched to ${data.theme} mode.`);
           }
-          if (
-            data?.type === 'booking_request' &&
-            typeof data.name === 'string' &&
-            typeof data.email === 'string' &&
-            typeof data.topic === 'string' &&
-            typeof data.date === 'string' &&
-            typeof data.time === 'string'
-          ) {
-            void (async () => {
-              try {
-                const response = await fetch('/api/schedule-appointment', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    name: data.name,
-                    email: data.email,
-                    purpose: data.topic,
-                    notes: 'Booked by the voice assistant.',
-                    date: new Date(`${data.date}T00:00:00`).toISOString(),
-                    time: data.time,
-                  }),
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result?.error || 'Booking failed');
-
-                toast.success(
-                  result.emailSent
-                    ? `Appointment booked and confirmation sent to ${data.email}.`
-                    : 'Appointment reserved. Opening the calendar confirmation.'
-                );
-                if (result.googleCalendarUrl) {
-                  window.open(result.googleCalendarUrl, '_blank', 'noopener,noreferrer');
-                }
-              } catch (error) {
-                console.error('Voice booking failed:', error);
-                toast.error('I collected your details, but the appointment could not be submitted.');
-              }
-            })();
+          if (data?.type === 'booking_confirmed') {
+            const details = data.booking || {};
+            toast.success(`Appointment Confirmed!`, {
+              description: `Reserved for ${details.name || 'visitor'} (${details.email || ''}) on ${details.date || 'Flexible'}.`,
+              duration: 5000,
+            });
           }
         } catch (e) {
           console.error('Failed to parse assistant action packet:', e);
@@ -379,12 +398,24 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
         return;
       }
 
+      // 2. Navigation Channel (Zero-Latency Screen Routing & Subsection Anchors)
       if (topic === 'navigation' || topic === 'lk-navigation') {
         try {
           const text = new TextDecoder().decode(payload);
-          const data = JSON.parse(text);
-          if (data && data.target && NAVIGATION_TARGETS[data.target as NavigationTarget]) {
-            navigateTo(data.target as NavigationTarget, 'data_channel');
+          let targetStr = text.trim();
+
+          // If payload is JSON formatted: {"type": "navigate", "target": "..."}
+          try {
+            const parsed = JSON.parse(text);
+            if (parsed && typeof parsed === 'object') {
+              targetStr = parsed.target || parsed.destination || targetStr;
+            }
+          } catch {
+            // Raw string payload
+          }
+
+          if (targetStr) {
+            navigateTo(targetStr, 'data_channel');
           }
         } catch (e) {
           console.error('Failed to parse navigation data packet:', e);
@@ -398,13 +429,10 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
     };
   }, [room, navigateTo, setTheme]);
 
-  // 2. Navigation is controlled strictly by the Python backend via LiveKit DataChannel ('topic: navigation')
-  // No client-side keyword heuristic parsing so the backend LLM tool decides when to navigate.
-
   return {
     activeTarget,
     lastNavigatedAt,
     navigateTo,
-    currentTargetMeta: activeTarget ? NAVIGATION_TARGETS[activeTarget] : null,
+    currentTargetMeta: activeTarget ? resolveNavigationTarget(activeTarget) : null,
   };
 }

@@ -7,7 +7,12 @@ Divided into modular subfiles:
 - pages.py: Structured screen knowledge and empirical results for all portfolio routes
 """
 
-from .pages import PAGE_KNOWLEDGE
+from .pages import (
+    PAGE_KNOWLEDGE,
+    SECTION_KNOWLEDGE,
+    get_formatted_section_explanation,
+    get_section_knowledge,
+)
 from .profile import (
     BIOGRAPHY,
     COMPETITIVE_EXAMS,
@@ -28,4 +33,7 @@ __all__ = [
     "PROJECTS",
     "NAVIGATION_TARGETS",
     "PAGE_KNOWLEDGE",
+    "SECTION_KNOWLEDGE",
+    "get_section_knowledge",
+    "get_formatted_section_explanation",
 ]

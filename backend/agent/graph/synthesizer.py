@@ -22,9 +22,13 @@ def ground_and_synthesize_node(state: PortfolioGraphState) -> dict[str, Any]:
     if screen_context:
         parts.append(f"[Active Visitor Screen: {screen_context}]")
 
-    # 2. Target navigation cue if applicable
+    # 2. Target navigation cue and section explanation if applicable
     if target and route not in ("resource", "theme"):
         parts.append(f"[Destination Screen Target: '{target}']")
+        from prompts.knowledge import get_formatted_section_explanation
+        sec_expl = get_formatted_section_explanation(target)
+        if sec_expl:
+            parts.append(f"[Section Details: {sec_expl}]")
 
     # 3. Action direct cues
     if route == "resource":
