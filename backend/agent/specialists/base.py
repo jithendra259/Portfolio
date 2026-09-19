@@ -92,6 +92,8 @@ class PortfolioBaseAgent(Agent):
                 except Exception as err:
                     print(f"--> [Context Preservation Warning] {err}")
 
+        self._clean_extra()
+
         # Async non-blocking record of agent entry to Supabase
         log_turn(
             session_id=self.userdata.session_id,
@@ -119,6 +121,15 @@ class PortfolioBaseAgent(Agent):
             return f"Viewing '{title}' ({path}): {summary}"
         return f"Viewing page '{path}'."
 
+    def _clean_extra(self, ctx: Optional[llm.ChatContext] = None) -> None:
+        """Strips extra metadata dictionaries so LiveKit serializer never produces extra_content."""
+        target_ctx = ctx or self.chat_ctx
+        if not target_ctx or not hasattr(target_ctx, "items"):
+            return
+        for item in target_ctx.items:
+            if hasattr(item, "extra") and isinstance(item.extra, dict):
+                item.extra.clear()
+
     async def on_user_turn_completed(
         self, turn_ctx: llm.ChatContext, new_message: llm.ChatMessage
     ) -> None:
@@ -132,6 +143,10 @@ class PortfolioBaseAgent(Agent):
         user_text = new_message.text_content.strip()
         self.last_user_query = user_text
         start_time = time.time()
+
+        # Clean any extra content from previous turns or fallbacks
+        self._clean_extra(turn_ctx)
+        self._clean_extra(self.chat_ctx)
 
         # Run fast LangGraph query routing & grounding with active screen context
         result = await route_portfolio_query(
@@ -149,6 +164,8 @@ class PortfolioBaseAgent(Agent):
                 role="system",
                 content=grounding,
             )
+
+        self._clean_extra(turn_ctx)
 
         elapsed_ms = (time.time() - start_time) * 1000.0
 

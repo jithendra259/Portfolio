@@ -8,22 +8,20 @@ from config import settings
 
 def _sanitize_groq_messages(messages: list[Any]) -> list[dict[str, Any]]:
     """
-    Strips 'extra_content' from assistant messages and tool calls.
-    LiveKit injects extra_content (e.g. from Google Gemini fallback or LiveKit metrics)
-    into ChatMessage objects. Groq strictly enforces OpenAI schema and rejects requests
-    with 400 'property extra_content is unsupported'.
+    Enforces strict OpenAI specification whitelist on all messages.
+    Completely eliminates 'property extra_content is unsupported' from Groq
+    by dropping any unapproved keys attached by LiveKit or fallback providers.
     """
     clean_messages = []
+    allowed_msg_keys = {"role", "content", "name", "tool_calls", "tool_call_id"}
     for msg in messages:
         if isinstance(msg, dict):
-            clean = dict(msg)
-            clean.pop("extra_content", None)
+            clean = {k: v for k, v in msg.items() if k in allowed_msg_keys}
             if "tool_calls" in clean and isinstance(clean["tool_calls"], list):
                 clean_tool_calls = []
                 for tc in clean["tool_calls"]:
                     if isinstance(tc, dict):
-                        tc_clean = dict(tc)
-                        tc_clean.pop("extra_content", None)
+                        tc_clean = {k: v for k, v in tc.items() if k in {"id", "type", "function"}}
                         clean_tool_calls.append(tc_clean)
                     else:
                         clean_tool_calls.append(tc)

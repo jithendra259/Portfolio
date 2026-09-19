@@ -13,10 +13,10 @@ class Settings:
     PORT: int = int(os.getenv("PORT", "10000"))
     HOST: str = os.getenv("HOST", "0.0.0.0")
 
-    # Groq LPU Configuration (Sub-100ms primary LLM)
+    # Groq LPU Configuration (Sub-100ms primary LLM, 30,000 ITPM quota)
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "").strip("\"' \t\r\n")
     GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
-    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
     GROQ_MAX_TOKENS: int = 60
     GROQ_TEMPERATURE: float = 0.2
 

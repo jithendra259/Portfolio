@@ -14,14 +14,10 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
     """Factory creating handoff tools bound to the active session and shared userdata."""
 
     @llm.function_tool(
-        description=(
-            "Transfer the conversation to the Research Specialist agent for deep mathematical rigor, "
-            "empirical formulas (G-CVaR, Ledoit-Wolf shrinkage, CLARABEL interior-point SOCP), "
-            "or peer-reviewed publication breakdowns (Elsevier EAAI, Springer Nature LNCS, Elsevier COR)."
-        )
+        description="Transfer to Research Specialist for math proofs, G-CVaR, Ledoit-Wolf, or 3 papers."
     )
     async def transfer_to_research(
-        reason: Annotated[str, "The specific research topic, mathematical question, or paper to explore."],
+        reason: Annotated[str, "The research topic or paper to explore."],
     ):
         """Transfers active agent to ResearchSpecialist."""
         session = get_session()
@@ -54,14 +50,10 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         return target, f"Transferring you to our Research Specialist to examine {reason} in depth."
 
     @llm.function_tool(
-        description=(
-            "Transfer the conversation to the Engineering Specialist agent for real-world ML systems, "
-            "Autonomous Swarm Robotics (ESP32 mesh & decentralized consensus), Personalised AQI Forecasting (XGBoost), "
-            "or Voice AI pipeline architecture (LiveKit, Cartesia, Deepgram, Groq LPU, Supabase)."
-        )
+        description="Transfer to Engineering Specialist for robotics, swarm ESP32 mesh, AQI, or voice AI."
     )
     async def transfer_to_engineering(
-        reason: Annotated[str, "The specific project, engineering implementation, or architecture to discuss."],
+        reason: Annotated[str, "The project or architecture to discuss."],
     ):
         """Transfers active agent to EngineeringSpecialist."""
         session = get_session()
@@ -93,10 +85,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         return target, f"Connecting you with our Engineering Specialist to discuss {reason}."
 
     @llm.function_tool(
-        description=(
-            "Transfer the conversation to the Booking Specialist agent to schedule a meeting, "
-            "recruiter interview, or technical collaboration with Jithendra."
-        )
+        description="Transfer to Booking Specialist to schedule a meeting, interview, or call."
     )
     async def transfer_to_booking(
         reason: Annotated[str, "The purpose or topic of the requested meeting/interview."],
@@ -131,10 +120,7 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         return target, "Transferring you to our Booking Specialist to reserve time on Jithendra's calendar."
 
     @llm.function_tool(
-        description=(
-            "Transfer back to the Portfolio Greeter agent for general portfolio overview, "
-            "candidate summary, color theme changes, resume downloads, or general navigation."
-        )
+        description="Transfer back to Greeter agent for general portfolio overview or navigation."
     )
     async def transfer_to_greeter(
         reason: Annotated[str, "The reason for returning to the main overview."],
