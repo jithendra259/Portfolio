@@ -697,20 +697,6 @@ export const CalendarAppointmentBooking = ({
                   className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
                 />
 
-                {/* Quick suggestions */}
-                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[11px] text-muted-foreground mr-1">Suggestions:</span>
-                  {SUGGESTED_TOPICS.map((topic) => (
-                    <button
-                      key={topic}
-                      type="button"
-                      onClick={() => setMeetingTitle(topic.replace(/^[^\w\s]+\s*/, ''))}
-                      className="inline-flex items-center rounded-full border border-border bg-muted/50 hover:bg-muted px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                    >
-                      {topic}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="col-span-full">
