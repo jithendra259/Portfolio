@@ -85,27 +85,7 @@ class PortfolioVectorRetriever:
             print("--> [RAG Engine Warning] Corpus is empty!")
             return
 
-        # 2. Build or Warm Up Dense Embeddings
-        try:
-            from sentence_transformers import SentenceTransformer
-            self.encoder = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
-            # Warm up encoder
-            self.encoder.encode(["warm up query"], convert_to_numpy=True)
-            self.has_dense = True
-
-            if self.embeddings is None or len(self.embeddings) != len(self.corpus):
-                print(f"--> [RAG Engine] Encoding {len(self.corpus)} chunks into dense vectors...")
-                texts = [c.text for c in self.corpus]
-                self.embeddings = self.encoder.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
-                np.savez_compressed(CACHE_FILE, embeddings=self.embeddings)
-                with open(CHUNKS_FILE, "w", encoding="utf-8") as f:
-                    json.dump([asdict(c) for c in self.corpus], f, indent=2)
-                print(f"--> [RAG Engine] Saved {len(self.corpus)} chunk embeddings to {CACHE_FILE}.")
-        except Exception as e:
-            print(f"--> [RAG Engine Warning] SentenceTransformer unavailable ({e}), using TF-IDF sparse fallback.")
-            self.has_dense = False
-
-        # 3. Always prepare TF-IDF Sparse Keyword Indexer
+        # 2. Prepare TF-IDF Sparse Keyword Indexer immediately (<30ms)
         try:
             from sklearn.feature_extraction.text import TfidfVectorizer
             corpus_texts = [f"{' '.join(c.keywords)} {c.title} {c.text}" for c in self.corpus]
@@ -113,6 +93,38 @@ class PortfolioVectorRetriever:
             self.tfidf_matrix = self.tfidf.fit_transform(corpus_texts)
         except Exception as e:
             print(f"--> [RAG Engine Warning] TF-IDF init failed: {e}")
+
+        # 3. Asynchronously load Dense SentenceTransformer in background thread
+        # This prevents LiveKit process initialization timeout (10s default) on constrained cloud CPUs
+        def _warm_dense_encoder() -> None:
+            try:
+                import torch
+                torch.set_num_threads(1)
+                try:
+                    torch.set_num_interop_threads(1)
+                except RuntimeError:
+                    pass
+                from sentence_transformers import SentenceTransformer
+                encoder = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
+                self.encoder = encoder
+                self.has_dense = True
+
+                if self.embeddings is None or len(self.embeddings) != len(self.corpus):
+                    print(f"--> [RAG Engine] Encoding {len(self.corpus)} chunks into dense vectors...")
+                    texts = [c.text for c in self.corpus]
+                    self.embeddings = self.encoder.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
+                    np.savez_compressed(CACHE_FILE, embeddings=self.embeddings)
+                    with open(CHUNKS_FILE, "w", encoding="utf-8") as f:
+                        json.dump([asdict(c) for c in self.corpus], f, indent=2)
+                    print(f"--> [RAG Engine] Saved {len(self.corpus)} chunk embeddings to {CACHE_FILE}.")
+                else:
+                    print("--> [RAG Engine] Dense SentenceTransformer encoder ready in RAM.")
+            except Exception as exc:
+                print(f"--> [RAG Engine Warning] SentenceTransformer background load: {exc}")
+
+        import threading
+        threading.Thread(target=_warm_dense_encoder, daemon=True).start()
+
 
     def _encode_query(self, query: str) -> np.ndarray | None:
         """Encodes query string into a unit vector with LRU caching."""

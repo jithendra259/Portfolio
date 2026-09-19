@@ -13,7 +13,7 @@ from agent import Assistant, create_multi_agent_system, log_session_start
 from config import settings
 from voice import create_voice_session, prewarm_voice_pipeline
 
-# Configure AgentServer with thread executor and prewarm routine
+# Configure AgentServer with thread executor, generous init timeout, and prewarm routine
 server = AgentServer(
     port=settings.PORT,
     host=settings.HOST,
@@ -21,8 +21,11 @@ server = AgentServer(
     load_fnc=lambda *args: 0.0,
     num_idle_processes=1,
     job_executor_type=agents.JobExecutorType.THREAD,
+    initialize_process_timeout=120.0,
+    shutdown_process_timeout=30.0,
     setup_fnc=prewarm_voice_pipeline,
 )
+
 
 
 @server.rtc_session(agent_name="my-agent")
