@@ -51,8 +51,8 @@ def _build_portfolio_graph():
         },
     )
 
-    # Screen grounder proceeds to vector retrieval for deep project details
-    builder.add_edge("screen_grounder", "vector_retrieval")
+    # Screen grounder proceeds directly to synthesis for active page awareness
+    builder.add_edge("screen_grounder", "synthesize")
 
     # Vector retrieval proceeds to synthesis
     builder.add_edge("vector_retrieval", "synthesize")

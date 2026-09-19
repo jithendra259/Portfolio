@@ -85,14 +85,14 @@ class NavigationToolset(llm.Toolset):
 
         @llm.function_tool(
             description=(
-                "Query and inspect what page, research paper, or project case study the visitor is currently viewing on their screen. "
-                "Returns the active page URL path, title, project details, and technical takeaways. "
+                "Query what page, research paper, or case study the visitor is currently viewing. "
+                "Returns a concise 1-sentence synopsis of the active screen. "
                 "Call this whenever the user asks 'Where am I?', 'What page is this?', 'What am I looking at right now?', "
                 "'Explain this project/paper', or asks any question referencing 'this page' or 'this screen'."
             )
         )
         async def get_current_page_context() -> str:
-            """Inspects and returns the visitor's current screen and page context."""
+            """Inspects and returns the visitor's current screen and page context concisely."""
             assistant = get_assistant() if get_assistant else None
             if assistant and hasattr(assistant, "get_formatted_page_context"):
                 context_str = assistant.get_formatted_page_context()
@@ -158,26 +158,30 @@ class ResearchToolset(llm.Toolset):
 
         @llm.function_tool(
             description=(
-                "Query and retrieve semantically relevant passages, proofs, mathematical formulations, and experimental metrics "
-                "from Jithendra's peer-reviewed research papers (Elsevier EAAI, Elsevier COR, Springer Nature LNCS), "
-                "project architecture specifications (AQI Forecasting, Swarm Robotics, Voice AI), and verified candidate profile. "
-                "Use this tool whenever you need specific empirical numbers (e.g. CVaR reductions, Sharpe ratios, p-values, "
-                "Ledoit-Wolf alpha parameters, CLARABEL SOCP formulations, ESP32 mesh protocols) or direct paper citations."
+                "Query and retrieve a precise factual metric or formulation from Jithendra's research papers "
+                "or engineering specifications. Returns a concise single-fact answer (under 160 chars)."
             )
         )
         async def semantic_knowledge_search(
             query: Annotated[
                 str,
-                "The semantic search query, technical question, or topic to retrieve citations and facts for.",
+                "The technical question or topic to retrieve a specific metric or formulation for.",
             ],
         ) -> str:
-            """Executes high-speed vector retrieval across the portfolio knowledge base."""
-            from .rag import get_retriever, search_knowledge_base
-            results = search_knowledge_base(query=query, top_k=2)
+            """Executes vector retrieval returning only the single top fact."""
+            from .rag import search_knowledge_base
+            results = search_knowledge_base(query=query, top_k=1)
             if not results:
-                return f"No direct citations found for '{query}'."
-            retriever = get_retriever()
-            return retriever.format_grounding(results, max_chars=600)
+                return f"No direct record found for '{query}'."
+            top_chunk = results[0]
+            raw_text = (top_chunk.get("text") or top_chunk.get("content") or "").strip()
+            clean_text = " ".join(raw_text.split())
+            if clean_text.startswith("[PDF"):
+                idx = clean_text.find("]")
+                if idx != -1:
+                    clean_text = clean_text[idx + 1:].strip()
+            single_fact = clean_text[:160]
+            return f"Fact: {single_fact}"
 
         super().__init__(id="research", tools=[research_paper_deep_dive, semantic_knowledge_search])
 

@@ -8,6 +8,16 @@ from typing import Any, Optional
 
 
 @dataclass
+class HandoffPacket:
+    """Laser-targeted task packet passed between agents during handoffs.
+    Contains only what the next agent needs to execute the specific task."""
+    target: str
+    reason: str
+    active_screen: str = "/"
+    last_user_query: str = ""
+
+
+@dataclass
 class PortfolioUserData:
     """
     Session-wide shared state tracked across all specialist agents:
@@ -27,6 +37,7 @@ class PortfolioUserData:
     booking_details: dict = field(default_factory=dict)
     agents: dict[str, Any] = field(default_factory=dict)
     prev_agent: Optional[Any] = None
+    pending_handoff: Optional[HandoffPacket] = None
 
     def record_topic(self, topic: str) -> None:
         """Adds a topic to explored history if not already present."""

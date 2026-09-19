@@ -22,19 +22,11 @@ def screen_grounder_node(state: PortfolioGraphState) -> dict[str, Any]:
 
     if data:
         title = data.get("title", pathname)
-        summary = data.get("summary", "")
-        math_rigor = data.get("mathematical_rigor", "")
-        agents = " | ".join(data.get("architecture_agents", [])[:3])
-        results = " | ".join(data.get("empirical_results", [])[:2])
-
-        screen_summary = f"Visitor is viewing '{title}' ({pathname}). Overview: {summary}"
-        if agents:
-            screen_summary += f" Key Agents: {agents}."
-        if math_rigor:
-            screen_summary += f" Math formulation: {math_rigor}."
-        if results:
-            screen_summary += f" Key Metrics: {results}."
+        summary = data.get("summary", "").strip()
+        if len(summary) > 140:
+            summary = summary[:137] + "..."
+        screen_summary = f"Viewing '{title}' ({pathname}): {summary}"
     else:
-        screen_summary = f"Visitor is viewing page '{pathname}'."
+        screen_summary = f"Viewing page '{pathname}'."
 
     return {"context": screen_summary}

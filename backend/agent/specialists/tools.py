@@ -6,7 +6,7 @@ with shared userdata preservation, matching the LiveKit Restaurant Agent recipe.
 
 from typing import Annotated, Callable
 from livekit.agents import llm
-from .userdata import PortfolioUserData
+from .userdata import PortfolioUserData, HandoffPacket
 from agent.supabase_logger import log_turn
 
 
@@ -32,17 +32,15 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         current = getattr(session, "current_agent", None) or userdata.agents.get("greeter")
         userdata.prev_agent = current
         userdata.record_topic(f"Research: {reason}")
+        last_query = getattr(current, "last_user_query", "") or reason
 
-        # Preserve bounded conversation history without system prompt overhead
-        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
-            try:
-                target.chat_ctx = current.chat_ctx.copy(
-                    exclude_instructions=True,
-                    exclude_handoff=True,
-                    exclude_config_update=True,
-                ).truncate(max_items=6)
-            except Exception:
-                pass
+        # Scoped handoff packet: pass only what is needed to execute this transfer
+        userdata.pending_handoff = HandoffPacket(
+            target="research",
+            reason=reason,
+            active_screen=userdata.active_screen,
+            last_user_query=last_query,
+        )
 
         log_turn(
             session_id=userdata.session_id,
@@ -74,16 +72,14 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         current = getattr(session, "current_agent", None) or userdata.agents.get("greeter")
         userdata.prev_agent = current
         userdata.record_topic(f"Engineering: {reason}")
+        last_query = getattr(current, "last_user_query", "") or reason
 
-        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
-            try:
-                target.chat_ctx = current.chat_ctx.copy(
-                    exclude_instructions=True,
-                    exclude_handoff=True,
-                    exclude_config_update=True,
-                ).truncate(max_items=6)
-            except Exception:
-                pass
+        userdata.pending_handoff = HandoffPacket(
+            target="engineering",
+            reason=reason,
+            active_screen=userdata.active_screen,
+            last_user_query=last_query,
+        )
 
         log_turn(
             session_id=userdata.session_id,
@@ -114,16 +110,14 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
         current = getattr(session, "current_agent", None) or userdata.agents.get("greeter")
         userdata.prev_agent = current
         userdata.record_topic(f"Booking: {reason}")
+        last_query = getattr(current, "last_user_query", "") or reason
 
-        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
-            try:
-                target.chat_ctx = current.chat_ctx.copy(
-                    exclude_instructions=True,
-                    exclude_handoff=True,
-                    exclude_config_update=True,
-                ).truncate(max_items=6)
-            except Exception:
-                pass
+        userdata.pending_handoff = HandoffPacket(
+            target="booking",
+            reason=reason,
+            active_screen="/book-appointment",
+            last_user_query=last_query,
+        )
 
         log_turn(
             session_id=userdata.session_id,
@@ -153,16 +147,14 @@ def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], 
 
         current = getattr(session, "current_agent", None)
         userdata.prev_agent = current
+        last_query = getattr(current, "last_user_query", "") or reason
 
-        if current and hasattr(current, "chat_ctx") and current.chat_ctx:
-            try:
-                target.chat_ctx = current.chat_ctx.copy(
-                    exclude_instructions=True,
-                    exclude_handoff=True,
-                    exclude_config_update=True,
-                ).truncate(max_items=6)
-            except Exception:
-                pass
+        userdata.pending_handoff = HandoffPacket(
+            target="greeter",
+            reason=reason,
+            active_screen=userdata.active_screen,
+            last_user_query=last_query,
+        )
 
         log_turn(
             session_id=userdata.session_id,

@@ -41,6 +41,7 @@ class PortfolioBaseAgent(Agent):
         self.agent_name = agent_name
         self.userdata = userdata
         self._get_room = get_room
+        self.last_user_query: str = ""
 
         super().__init__(
             instructions=instructions,
@@ -50,38 +51,46 @@ class PortfolioBaseAgent(Agent):
     async def on_enter(self) -> None:
         """
         Lifecycle hook invoked when this agent becomes active in the session.
-        Preserves context from previous agent using bounded truncation (max_items=6),
-        preventing unbounded token growth while ensuring conversational continuity.
+        Uses scoped HandoffPacket so the new specialist receives only the exact
+        information needed to execute its task, without dumping transcripts or full papers.
         """
         print(f"--> [Agent Lifecycle] Entered '{self.agent_name}' specialist.")
 
-        prev_agent = self.userdata.prev_agent
-        if prev_agent and hasattr(prev_agent, "chat_ctx") and prev_agent.chat_ctx:
-            try:
-                # Copy previous chat context without prior internal handoff markers
-                copied_ctx = prev_agent.chat_ctx.copy(
-                    exclude_handoff=True,
-                    exclude_config_update=True,
-                    exclude_instructions=True,
+        # 1. Scoped Need-to-Know Handoff: Receive only the specific task and query
+        if self.userdata.pending_handoff and self.userdata.pending_handoff.target == self.agent_name:
+            handoff = self.userdata.pending_handoff
+            self.userdata.pending_handoff = None
+
+            # Reset chat context: only carry what is needed for this specific handoff task
+            self.chat_ctx.items.clear()
+            self.chat_ctx.add_message(
+                role="system",
+                content=(
+                    f"[Task Directive: You are the {self.agent_name.capitalize()} Specialist. "
+                    f"Address the visitor's specific query: '{handoff.reason}'. "
+                    f"Active screen: {handoff.active_screen}. Answer directly and concisely in under 15 words.]"
+                ),
+            )
+            if handoff.last_user_query:
+                self.chat_ctx.add_message(
+                    role="user",
+                    content=handoff.last_user_query,
                 )
-                # Bounded truncation to keep TTFT <100ms
-                if len(copied_ctx.items) > 6:
-                    copied_ctx.truncate(max_items=6)
-
-                # Transfer items to this agent's chat context if not already present
-                for item in copied_ctx.items:
-                    if item not in self.chat_ctx.items:
-                        self.chat_ctx.items.append(item)
-
-                # Inject state summary
-                summary = self.userdata.get_summary()
-                if summary:
-                    self.chat_ctx.add_message(
-                        role="system",
-                        content=f"[Session Context:\n{summary}]",
-                    )
-            except Exception as err:
-                print(f"--> [Context Preservation Warning] {err}")
+        else:
+            # Minimal continuity fallback: carry at most the last 2 items
+            prev_agent = self.userdata.prev_agent
+            if prev_agent and hasattr(prev_agent, "chat_ctx") and prev_agent.chat_ctx:
+                try:
+                    copied_ctx = prev_agent.chat_ctx.copy(
+                        exclude_handoff=True,
+                        exclude_config_update=True,
+                        exclude_instructions=True,
+                    ).truncate(max_items=2)
+                    for item in copied_ctx.items:
+                        if item not in self.chat_ctx.items:
+                            self.chat_ctx.items.append(item)
+                except Exception as err:
+                    print(f"--> [Context Preservation Warning] {err}")
 
         # Async non-blocking record of agent entry to Supabase
         log_turn(
@@ -94,30 +103,48 @@ class PortfolioBaseAgent(Agent):
             active_agent=self.agent_name,
         )
 
+    def get_formatted_page_context(self) -> str:
+        """Returns concise, 1-line summary of what the visitor is currently viewing."""
+        from prompts.knowledge import PAGE_KNOWLEDGE
+        path = (self.userdata.active_screen or "/").strip()
+        data = PAGE_KNOWLEDGE.get(path)
+        if not data:
+            for k, v in PAGE_KNOWLEDGE.items():
+                if k != "/" and k in path:
+                    data = v
+                    break
+        if data:
+            title = data.get("title", path)
+            summary = data.get("summary", "")[:120]
+            return f"Viewing '{title}' ({path}): {summary}"
+        return f"Viewing page '{path}'."
+
     async def on_user_turn_completed(
         self, turn_ctx: llm.ChatContext, new_message: llm.ChatMessage
     ) -> None:
         """
         Lifecycle hook called when user finishes speaking.
-        Injects real-time page grounding and queues asynchronous Supabase turn logging.
+        Injects real-time page grounding only when needed, avoiding prompt bloat.
         """
         if not new_message.text_content or not new_message.text_content.strip():
             raise StopResponse()
 
-        start_time = time.time()
         user_text = new_message.text_content.strip()
+        self.last_user_query = user_text
+        start_time = time.time()
 
         # Run fast LangGraph query routing & grounding with active screen context
         result = await route_portfolio_query(
             user_text,
             screen_context=self.userdata.screen_context or {"pathname": self.userdata.active_screen},
         )
-        grounding = result.get("grounding") or result.get("context", "")
+        grounding = result.get("grounding", "").strip()
 
+        # ONLY inject grounding if non-empty (avoid dumping generic RAG or citations into prompt)
         if grounding:
             turn_ctx.add_message(
                 role="system",
-                content=f"[Verified Portfolio Context for Assistant Answer:\n{grounding}]",
+                content=grounding,
             )
 
         elapsed_ms = (time.time() - start_time) * 1000.0
