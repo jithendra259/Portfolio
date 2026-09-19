@@ -37,6 +37,13 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
           backchannel_boundary=(1.0, 2.0) — extra 2s end-window for Deepgram transcript latency
           Preemptive LLM generation (no preemptive TTS — saves Render CPU)
     """
+    # Credentials dict passed only when non-empty to let LiveKit fallback to os.environ safely
+    lk_auth: dict[str, str] = {}
+    if settings.LIVEKIT_API_KEY:
+        lk_auth["api_key"] = settings.LIVEKIT_API_KEY
+    if settings.LIVEKIT_API_SECRET:
+        lk_auth["api_secret"] = settings.LIVEKIT_API_SECRET
+
     # Multi-provider STT fallback pipeline: if Deepgram nova-3 hits gateway 429,
     # FallbackAdapter seamlessly shifts streaming audio to AssemblyAI or Nova-2 without dropping session
     stt_pipeline = stt.FallbackAdapter(
@@ -44,19 +51,16 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
             inference.STT(
                 model=settings.STT_MODEL,
                 language=settings.STT_LANGUAGE,
-                api_key=settings.LIVEKIT_API_KEY,
-                api_secret=settings.LIVEKIT_API_SECRET,
+                **lk_auth,
             ),
             inference.STT(
                 model=settings.STT_FALLBACK_MODEL,
-                api_key=settings.LIVEKIT_API_KEY,
-                api_secret=settings.LIVEKIT_API_SECRET,
+                **lk_auth,
             ),
             inference.STT(
                 model="deepgram/nova-2",
                 language=settings.STT_LANGUAGE,
-                api_key=settings.LIVEKIT_API_KEY,
-                api_secret=settings.LIVEKIT_API_SECRET,
+                **lk_auth,
             ),
         ],
         attempt_timeout=3.0,
@@ -69,19 +73,18 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
             inference.TTS(
                 model=settings.TTS_MODEL,
                 voice=settings.TTS_VOICE_ID,
-                api_key=settings.LIVEKIT_API_KEY,
-                api_secret=settings.LIVEKIT_API_SECRET,
+                **lk_auth,
             ),
             inference.TTS(
                 model=settings.TTS_FALLBACK_MODEL,
                 voice=settings.TTS_FALLBACK_VOICE_ID,
-                api_key=settings.LIVEKIT_API_KEY,
-                api_secret=settings.LIVEKIT_API_SECRET,
+                **lk_auth,
             ),
         ],
-        attempt_timeout=4.0,
         max_retry_per_tts=1,
     )
+
+
 
     return AgentSession(
         stt=stt_pipeline,

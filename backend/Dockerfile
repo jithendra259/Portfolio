@@ -23,10 +23,17 @@ COPY prompts/ ./prompts/
 COPY server.py .
 COPY app.py .
 
-# Pre-download required LiveKit agent model files (e.g. Silero VAD)
-RUN python -m livekit.agents download-files || python app.py download-files || true
+# Environment optimizations for production container
+ENV PYTHONUNBUFFERED=1 \
+    LIVEKIT_AGENTS_LOOP_BLOCK_WARN_MS=0 \
+    OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
+
+# Pre-download required LiveKit agent model files
+RUN python -m livekit.agents download-files
 
 EXPOSE 10000
 
 # Run LiveKit agent worker in production mode
 CMD ["python", "app.py", "start"]
+

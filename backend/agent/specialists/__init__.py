@@ -4,7 +4,7 @@ Implements the LiveKit Restaurant Agent pattern with typed session.userdata,
 specialist handoffs, bounded context preservation, and non-blocking Supabase logging.
 """
 
-from typing import Callable, Optional, Tuple
+from typing import Any, Callable, Optional, Tuple
 from livekit import rtc
 
 from agent.tools import (
@@ -24,8 +24,9 @@ from .booking import BookingSpecialist
 def create_multi_agent_system(
     session_id: str,
     get_room: Callable[[], Optional[rtc.Room]],
-    get_session: Callable[[], any],
+    get_session: Callable[[], Any],
 ) -> Tuple[PortfolioGreeter, PortfolioUserData]:
+
     """
     Constructs the 4-agent specialist cluster and shared PortfolioUserData.
     Returns the primary entry agent (PortfolioGreeter) and the shared userdata.

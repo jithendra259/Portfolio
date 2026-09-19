@@ -8,7 +8,11 @@ import os
 from pathlib import Path
 from typing import Any
 
-import fitz  # PyMuPDF
+try:
+    import pymupdf as fitz  # Modern PyMuPDF API
+except ImportError:
+    import fitz  # Legacy fallback
+
 
 from .chunker import clean_text, chunk_text
 from .types import KnowledgeChunk

@@ -4,13 +4,14 @@ Enables seamless LiveKit agent-to-agent transfers using session.update_agent
 with shared userdata preservation, matching the LiveKit Restaurant Agent recipe.
 """
 
-from typing import Annotated, Callable
+from typing import Annotated, Any, Callable
 from livekit.agents import llm
 from .userdata import PortfolioUserData, HandoffPacket
 from agent.supabase_logger import log_turn
 
 
-def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], any]) -> list[llm.FunctionTool]:
+def create_handoff_tools(userdata: PortfolioUserData, get_session: Callable[[], Any]) -> list[llm.FunctionTool]:
+
     """Factory creating handoff tools bound to the active session and shared userdata."""
 
     @llm.function_tool(
