@@ -220,9 +220,19 @@ def load_page_and_profile_knowledge() -> list[KnowledgeChunk]:
     return chunks
 
 
+from .pdf_loader import load_all_pdfs
+
+
 def build_full_corpus() -> list[KnowledgeChunk]:
-    """Combines research papers, case studies, and candidate profile knowledge."""
+    """Combines original PDF publications, project reports, case studies, and candidate profile knowledge."""
     corpus: list[KnowledgeChunk] = []
-    corpus.extend(load_research_papers())
-    corpus.extend(load_page_and_profile_knowledge())
+    # 1. Primary Original PDF Documents (Papers, AQI Report, Swarm Robotics Proposal, Resume)
+    pdf_chunks = load_all_pdfs()
+    corpus.extend(pdf_chunks)
+
+    # 2. Structured Web Page Knowledge & Profile Facts
+    page_chunks = load_page_and_profile_knowledge()
+    corpus.extend(page_chunks)
+
+    print(f"--> [Corpus Builder] Built corpus with {len(corpus)} chunks ({len(pdf_chunks)} from PDFs, {len(page_chunks)} from Web/Profile).")
     return corpus
