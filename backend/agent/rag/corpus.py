@@ -8,7 +8,7 @@ from .chunker import clean_text, chunk_text
 from .types import KnowledgeChunk
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
-TRANSCRIPTS_DIR = BACKEND_DIR.parent / "frontend" / "documents" / "transcripts"
+TRANSCRIPTS_DIR = BACKEND_DIR / "documents" / "transcripts"
 
 
 def load_research_papers() -> list[KnowledgeChunk]:

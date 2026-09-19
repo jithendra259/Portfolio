@@ -1,7 +1,7 @@
 """
 Direct PDF Document Ingestion and Parser for Jithendra's Portfolio.
 Uses PyMuPDF (fitz) to extract text, page numbers, and structural sections from all
-original publications, reports, project proposals, and resume PDFs in frontend/public/documents/.
+original publications, reports, project proposals, and resume PDFs in backend/documents/.
 """
 
 import os
@@ -18,7 +18,7 @@ from .chunker import clean_text, chunk_text
 from .types import KnowledgeChunk
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
-DOCUMENTS_DIR = BACKEND_DIR.parent / "frontend" / "public" / "documents"
+DOCUMENTS_DIR = BACKEND_DIR / "documents"
 
 PDF_CATALOG: list[dict[str, Any]] = [
     {
@@ -92,7 +92,7 @@ PDF_CATALOG: list[dict[str, Any]] = [
 
 def load_all_pdfs() -> list[KnowledgeChunk]:
     """
-    Parses all 6 PDF documents in frontend/public/documents/ page-by-page.
+    Parses all 6 PDF documents in backend/documents/ page-by-page.
     Extracts text with page citations and chunks into overlapping semantic windows.
     """
     chunks: list[KnowledgeChunk] = []
