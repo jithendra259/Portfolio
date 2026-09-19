@@ -4,11 +4,12 @@ Manages room connections, voice pipeline startup, greeting utterance, and clean 
 """
 
 import asyncio
+import json
 
 from livekit import agents
 from livekit.agents import AgentServer, room_io
 
-from agent import Assistant
+from agent import Assistant, create_multi_agent_system, log_session_start
 from config import settings
 from voice import create_voice_session, prewarm_voice_pipeline
 
@@ -33,22 +34,53 @@ async def my_agent(ctx: agents.JobContext) -> None:
 
     # 2. Instantiate isolated voice session with fresh STT, TTS, and dual-LLM pipeline
     session = create_voice_session(ctx)
+    session_id = getattr(ctx.room, "name", "portfolio_session")
 
-    # 3. Start session with Assistant tool caller and real-time text output options
-    assistant = Assistant(room=ctx.room)
+    # 3. Instantiate Multi-Agent Specialist Cluster (Greeter, Research, Engineering, Booking)
+    greeter, userdata = create_multi_agent_system(
+        session_id=session_id,
+        get_room=lambda: ctx.room,
+        get_session=lambda: session,
+    )
+    session.userdata = userdata
+
+    # Async non-blocking session recording to Supabase
+    log_session_start(
+        session_id=session_id,
+        visitor_name="Anonymous Visitor",
+        initial_screen="/",
+    )
+
+    @ctx.room.on("data_received")
+    def on_data_received(packet) -> None:
+        topic = getattr(packet, "topic", None)
+        if topic not in ("client_context", "page_context"):
+            return
+        try:
+            payload = json.loads(packet.data.decode("utf-8"))
+            if payload.get("type") == "page_context" or "pathname" in payload:
+                pathname = (payload.get("pathname") or "/").strip()
+                title = payload.get("title", "")
+                userdata.active_screen = pathname
+                userdata.active_title = title
+                userdata.screen_context = payload
+                print(f"--> [Server] Visitor page context: {pathname} (title: {title})")
+        except (UnicodeDecodeError, json.JSONDecodeError, AttributeError) as error:
+            print(f"--> [Server Warning] Invalid client page context: {error}")
+
     await session.start(
         room=ctx.room,
-        agent=assistant,
+        agent=greeter,
         room_options=room_io.RoomOptions(
-            # NOTE: ai-coustics QUAIL_VF_S was removed.
-            # Despite the docs claiming it runs "server-side on LiveKit Cloud",
-            # the Python plugin runs the Rust model LOCALLY via FFI (_uniffi_rust_call_with_error).
-            # On Render 0.1 vCPU this blocked the asyncio event loop for 387ms and caused
-            # VAD to fall 8+ seconds behind realtime, breaking voice entirely.
-            # Audio quality is instead handled by:
-            #   - WebRTC echoCancellation + noiseSuppression in the browser (frontend Room config)
-            #   - Deepgram nova-3's built-in noise robustness
-            #   - STT inference fallback chain (assemblyai/universal-streaming)
+            # Disable local Rust AudioProcessingModule (auto_gain_control=False).
+            # LiveKit's default auto_gain_control=True instantiates rtc.AudioProcessingModule,
+            # which synchronously calls Rust FFI apm.process_stream() on EVERY audio frame,
+            # blocking the event loop for ~182ms on Render 0.1 vCPU and causing VAD delays.
+            # Audio quality is already handled in browser WebRTC (AEC/AGC/NS) and Deepgram nova-3.
+            audio_input=room_io.AudioInputOptions(
+                auto_gain_control=False,
+                noise_cancellation=None,
+            ),
             text_output=room_io.TextOutputOptions(
                 sync_transcription=False,
             ),

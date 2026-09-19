@@ -1,8 +1,3 @@
-"""
-API Connection Handlers for Language Models.
-Integrates Groq LPU as ultra-fast primary LLM with automatic Google Gemini 2.5 Flash fallback.
-"""
-
 import ssl
 from typing import Any, Optional
 import certifi

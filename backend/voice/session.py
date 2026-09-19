@@ -9,7 +9,9 @@ from livekit.agents import (
     AgentSession,
     TurnHandlingOptions,
     inference,
+    stt,
     text_transforms,
+    tts,
 )
 
 from api import build_llm_pipeline
@@ -21,11 +23,12 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
     """
     Constructs an ultra-low latency, fault-tolerant voice pipeline:
 
-    STT:  Deepgram Nova-3 (primary, multilingual, aligned-transcript capable)
-          → AssemblyAI Universal Streaming (automatic server-side fallback via LiveKit Cloud)
+    STT:  Deepgram Nova-3 (primary)
+          → AssemblyAI Universal Streaming (automatic fallback adapter on 429/connection error)
+          → Deepgram Nova-2 (secondary fallback)
 
     TTS:  Cartesia Sonic-3 (primary, sub-100ms synthesis, phonetic replacements)
-          → ElevenLabs Multilingual v2 (automatic server-side fallback via LiveKit Cloud)
+          → ElevenLabs Multilingual v2 (automatic fallback adapter)
 
     LLM:  Groq LPU (primary) → Google Gemini 2.5 Flash (agent-side FallbackAdapter)
 
@@ -34,30 +37,57 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
           backchannel_boundary=(1.0, 2.0) — extra 2s end-window for Deepgram transcript latency
           Preemptive LLM generation (no preemptive TTS — saves Render CPU)
     """
+    # Multi-provider STT fallback pipeline: if Deepgram nova-3 hits gateway 429,
+    # FallbackAdapter seamlessly shifts streaming audio to AssemblyAI or Nova-2 without dropping session
+    stt_pipeline = stt.FallbackAdapter(
+        [
+            inference.STT(
+                model=settings.STT_MODEL,
+                language=settings.STT_LANGUAGE,
+                api_key=settings.LIVEKIT_API_KEY,
+                api_secret=settings.LIVEKIT_API_SECRET,
+            ),
+            inference.STT(
+                model=settings.STT_FALLBACK_MODEL,
+                api_key=settings.LIVEKIT_API_KEY,
+                api_secret=settings.LIVEKIT_API_SECRET,
+            ),
+            inference.STT(
+                model="deepgram/nova-2",
+                language=settings.STT_LANGUAGE,
+                api_key=settings.LIVEKIT_API_KEY,
+                api_secret=settings.LIVEKIT_API_SECRET,
+            ),
+        ],
+        attempt_timeout=3.0,
+        max_retry_per_stt=1,
+    )
+
+    # Multi-provider TTS fallback pipeline: Cartesia Sonic-3 -> ElevenLabs
+    tts_pipeline = tts.FallbackAdapter(
+        [
+            inference.TTS(
+                model=settings.TTS_MODEL,
+                voice=settings.TTS_VOICE_ID,
+                api_key=settings.LIVEKIT_API_KEY,
+                api_secret=settings.LIVEKIT_API_SECRET,
+            ),
+            inference.TTS(
+                model=settings.TTS_FALLBACK_MODEL,
+                voice=settings.TTS_FALLBACK_VOICE_ID,
+                api_key=settings.LIVEKIT_API_KEY,
+                api_secret=settings.LIVEKIT_API_SECRET,
+            ),
+        ],
+        attempt_timeout=4.0,
+        max_retry_per_tts=1,
+    )
+
     return AgentSession(
-        # ── STT: Deepgram Nova-3 with AssemblyAI server-side fallback ───────────────
-        stt=inference.STT(
-            model=settings.STT_MODEL,
-            language=settings.STT_LANGUAGE,
-            # If nova-3 fails (4xx, timeout, mid-stream disconnect), LiveKit Cloud
-            # automatically reroutes to AssemblyAI Universal Streaming
-            fallback=[
-                {"model": settings.STT_FALLBACK_MODEL},
-            ],
-        ),
+        stt=stt_pipeline,
         llm=build_llm_pipeline(),
-        # ── TTS: Cartesia Sonic-3 with ElevenLabs server-side fallback ───────────────
-        tts=inference.TTS(
-            model=settings.TTS_MODEL,
-            voice=settings.TTS_VOICE_ID,
-            # If Cartesia fails mid-stream, LiveKit Cloud routes to ElevenLabs
-            fallback=[
-                {
-                    "model": settings.TTS_FALLBACK_MODEL,
-                    "voice": settings.TTS_FALLBACK_VOICE_ID,
-                },
-            ],
-        ),
+        tts=tts_pipeline,
+
         # ── Turn handling: detection + adaptive interruption + preemptive gen ────────
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(version=settings.TURN_DETECTOR_VERSION),

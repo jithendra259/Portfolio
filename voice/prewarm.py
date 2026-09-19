@@ -24,8 +24,27 @@ def prewarm_voice_pipeline(proc: agents.JobProcess) -> None:
         ssl.create_default_context(cafile=certifi.where())
         ssl.create_default_context().load_default_certs()
 
+        # Eagerly initialize singleton SSL context, HTTP transport, and Groq LLM pipeline
+        try:
+            from api.llm import build_llm_pipeline, get_httpx_client, get_ssl_context
+            get_ssl_context()
+            get_httpx_client()
+            build_llm_pipeline()
+            print("--> [Prewarm] Singleton LLM pipeline and SSL context pre-allocated in RAM.")
+        except Exception as llm_err:
+            print(f"--> [Prewarm Warning] Failed to prewarm LLM pipeline: {llm_err}")
+
         from livekit.plugins import openai  # noqa: F401
         from livekit.agents import inference, AgentSession  # noqa: F401
+
+        # Pre-warm vector retriever and embeddings so turn 1 latency is sub-25ms
+        try:
+            from agent.rag import get_retriever
+            retriever = get_retriever()
+            retriever.search("warmup query", top_k=1)
+            print("--> [Prewarm] Vector RAG retriever and dense encoder fully warmed up in RAM.")
+        except Exception as rag_err:
+            print(f"--> [Prewarm Warning] Failed to prewarm vector retriever: {rag_err}")
 
         print("--> [Prewarm] Core networking, SSL certificates, and inference modules pre-loaded.")
     except Exception as e:

@@ -8,6 +8,19 @@ from .tools import (
     broadcast_navigation,
     build_portfolio_toolsets,
 )
+from .specialists import (
+    BookingSpecialist,
+    EngineeringSpecialist,
+    PortfolioGreeter,
+    PortfolioUserData,
+    ResearchSpecialist,
+    create_multi_agent_system,
+)
+from .supabase_logger import (
+    log_booking_lead,
+    log_session_start,
+    log_turn,
+)
 
 __all__ = [
     "Assistant",
@@ -18,4 +31,13 @@ __all__ = [
     "SchedulingToolset",
     "broadcast_navigation",
     "build_portfolio_toolsets",
+    "PortfolioUserData",
+    "PortfolioGreeter",
+    "ResearchSpecialist",
+    "EngineeringSpecialist",
+    "BookingSpecialist",
+    "create_multi_agent_system",
+    "log_session_start",
+    "log_turn",
+    "log_booking_lead",
 ]

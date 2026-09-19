@@ -18,6 +18,8 @@ from livekit.agents import (
 )
 
 from prompts import SYSTEM_INSTRUCTIONS
+from prompts.knowledge import PAGE_KNOWLEDGE
+from .graph import route_portfolio_query
 from .tools import build_portfolio_toolsets
 
 
@@ -26,6 +28,8 @@ class Assistant(Agent):
 
     def __init__(self, room: rtc.Room | None = None) -> None:
         self.room = room
+        self.current_page = "/"
+        self.page_context: dict = {"pathname": "/", "title": "Kandula Jithendra Subramanyam | AI & Quant Portfolio"}
 
         def _get_room() -> rtc.Room | None:
             r = getattr(self, "room", None)
@@ -36,7 +40,11 @@ class Assistant(Agent):
         def _get_session():
             return getattr(self, "session", None)
 
-        toolsets = build_portfolio_toolsets(get_session=_get_session, get_room=_get_room)
+        toolsets = build_portfolio_toolsets(
+            get_session=_get_session,
+            get_room=_get_room,
+            get_assistant=lambda: self,
+        )
         super().__init__(
             instructions=SYSTEM_INSTRUCTIONS,
             tools=toolsets,
@@ -56,69 +64,71 @@ class Assistant(Agent):
         except Exception as e:
             print(f"--> [Assistant Hook Warning] Greeting error: {e}")
 
+    def set_page_context(self, context_data: dict | str) -> None:
+        """Update the structured page context used for visitor screen awareness."""
+        if isinstance(context_data, str):
+            self.current_page = context_data.strip() or "/"
+            self.page_context = {"pathname": self.current_page}
+        elif isinstance(context_data, dict):
+            self.page_context = context_data
+            self.current_page = (context_data.get("pathname") or "/").strip()
+        print(f"--> [Assistant] Active visitor screen updated to: {self.current_page}")
+
+    def set_current_page(self, pathname: str) -> None:
+        """Update the active page pathname."""
+        self.set_page_context(pathname)
+
+    def get_formatted_page_context(self) -> str:
+        """Returns a rich, formatted description of what the visitor is viewing on their screen."""
+        path = (self.current_page or "/").strip()
+        data = PAGE_KNOWLEDGE.get(path)
+        if not data:
+            for k, v in PAGE_KNOWLEDGE.items():
+                if k != "/" and k in path:
+                    data = v
+                    break
+
+        if data:
+            title = data.get("title", path)
+            summary = data.get("summary", "")
+            math_rigor = data.get("mathematical_rigor", "")
+            results = data.get("empirical_results", [])
+            agents = data.get("architecture_agents", [])
+
+            parts = [f"Path: {path}", f"Title: {title}", f"Overview: {summary}"]
+            if agents:
+                parts.append("Key Architecture Agents: " + " | ".join(agents[:3]))
+            if math_rigor:
+                parts.append(f"Formulation: {math_rigor}")
+            if results:
+                parts.append("Key Results: " + " | ".join(results[:2]))
+            return " | ".join(parts)
+
+        title = self.page_context.get("title", "") if isinstance(self.page_context, dict) else ""
+        return f"Portfolio Screen: '{path}'" + (f" | Title: '{title}'" if title else "")
+
     async def on_user_turn_completed(
         self, turn_ctx: llm.ChatContext, new_message: llm.ChatMessage
     ) -> None:
         """
         Lifecycle hook called when the user finishes speaking or typing, before LLM response generation.
-        Performs precise domain grounding for Jithendra's research papers and engineering projects.
+        Continuously grounds the assistant with the active screen and performs domain routing.
         """
-        # If the user turn contains no recognizable text, halt generation to prevent hallucinated audio
         if not new_message.text_content or not new_message.text_content.strip():
             print("--> [Assistant Hook] on_user_turn_completed: Empty utterance detected, stopping response.")
             raise StopResponse()
 
-        query = (new_message.text_content or "").lower()
+        # Execute LangGraph workflow with real-time screen context and vector RAG
+        result = await route_portfolio_query(
+            new_message.text_content,
+            screen_context=self.page_context,
+        )
+        grounding = result.get("grounding") or result.get("context", "")
 
-        # Paper 1: Elsevier EAAI Grounding
-        if any(k in query for k in ["eaai", "g-cvar", "contagion", "fire sale", "bipartite"]):
+        if grounding:
             turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 1 (Elsevier EAAI 2026, manuscript EAAI-26-14280): "
-                    "5-agent blackboard architecture, G-CVaR, Ledoit-Wolf shrinkage, SEC 13-F bipartite graphs. "
-                    "Target screen route: 'case_study_adaptive_governance'."
-                ),
-            )
-        # Paper 2: Springer Nature LNCS Grounding
-        elif any(k in query for k in ["lncs", "ijcaci", "instability index", "regime adaptive", "covariance drift"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 2 (Springer Nature LNCS / IJCACI 2026, WUST Washington): "
-                    "Composite Instability Index, covariance drift, Ledoit-Wolf shrinkage (alpha=0.42). "
-                    "Target screen route: 'case_study_regime_supervisory'."
-                ),
-            )
-        # Paper 3: Elsevier Computers & Operations Research (COR) Grounding
-        elif any(k in query for k in ["cor", "clarabel", "convex solver", "grounding", "xai", "supervisory portfolio"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 3 (Elsevier COR 2026): "
-                    "7-agent DAG architecture, CLARABEL interior-point solver, 100% numerical grounding, MiFID II / EU AI Act. "
-                    "Target screen route: 'case_study_supervisory_xai'."
-                ),
-            )
-        # Project: AQI Air Quality Forecasting
-        elif any(k in query for k in ["aqi", "air quality", "xgboost", "pm2.5", "delhi"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to AQI Global Air Quality Forecasting: "
-                    "CPCB sensor data across 10 Delhi stations, XGBoost R2=0.912 and RMSE=18.4 ug/m3. "
-                    "Target screen route: 'case_study_aqi'."
-                ),
-            )
-        # Project: Autonomous Swarm Robotics
-        elif any(k in query for k in ["swarm", "agriculture", "robot", "esp32", "kscst", "densenet"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Autonomous Precision Agriculture Swarm Robots: "
-                    "ESP32 ESP-NOW mesh, DenseNet121, 98.4% field coverage, KSCST 46th Series Grant. "
-                    "Target screen route: 'case_study_swarm_robotics'."
-                ),
+                role="system",
+                content=f"[Verified Portfolio Context for Assistant Answer:\n{grounding}]",
             )
 
     async def on_user_turn_exceeded(self, ev: UserTurnExceededEvent) -> None:

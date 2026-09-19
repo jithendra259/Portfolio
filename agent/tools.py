@@ -26,29 +26,65 @@ async def broadcast_navigation(room: rtc.Room | None, target: str) -> str:
     return f"Navigation requested for {target}."
 
 
-class NavigationToolset(llm.Toolset):
-    """Modular toolset for real-time frontend screen navigation."""
+from prompts.knowledge.pages import (
+    get_formatted_section_explanation,
+    get_section_knowledge,
+)
 
-    def __init__(self, get_room: Callable[[], rtc.Room | None]) -> None:
+
+class NavigationToolset(llm.Toolset):
+    """Modular toolset for real-time frontend screen navigation, subsection scrolling, and section awareness."""
+
+    def __init__(
+        self,
+        get_room: Callable[[], rtc.Room | None],
+        get_assistant: Callable[[], any] | None = None,
+    ) -> None:
         @llm.function_tool(
-            description=(
-                "Auto-navigate the visitor's screen in real time to a specific portfolio section, research paper case study, or booking page. "
-                "Supported targets: 'projects', 'research', 'about', 'resume', 'contact', 'book_appointment', 'skills', 'certificates', "
-                "'experience', 'home', 'case_study_voice_architecture', 'case_study_adaptive_governance', 'case_study_regime_supervisory', "
-                "'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'."
-            )
+            description="Navigate visitor's screen in real time to any section ('contact', 'skills', 'projects', 'research', 'experience', 'about', 'home', 'book_appointment', or case study name)."
         )
         async def navigate_portfolio(
-            target: Annotated[
-                str,
-                "Target destination section or case study route name.",
-            ],
+            target: Annotated[str, "Target section, page, or case study name."],
         ) -> str:
             """Navigates user screen to the desired section."""
             room = get_room()
-            return await broadcast_navigation(room, target)
+            clean_target = target.strip().lower().replace("#", "")
+            await broadcast_navigation(room, clean_target)
+            explanation = get_formatted_section_explanation(clean_target)
+            return f"Navigated screen to {clean_target}. Details: {explanation}"
 
-        super().__init__(id="navigation", tools=[navigate_portfolio])
+        @llm.function_tool(
+            description="Explain what a portfolio section or subsection contains."
+        )
+        async def explain_section(
+            section_name: Annotated[str, "Name of the section (e.g. 'contact', 'skills', 'research')."],
+        ) -> str:
+            """Provides explanation of what a section tells."""
+            return get_formatted_section_explanation(section_name)
+
+        @llm.function_tool(
+            description="Query what page or case study the visitor is currently viewing."
+        )
+        async def get_current_page_context() -> str:
+            """Inspects and returns the visitor's current screen and page context concisely."""
+            assistant = get_assistant() if get_assistant else None
+            if assistant and hasattr(assistant, "get_formatted_page_context"):
+                context_str = assistant.get_formatted_page_context()
+                print(f"--> [Agent Tool] get_current_page_context: {context_str[:120]}...")
+                return context_str
+            return "The visitor is on the main portfolio page (/)."
+
+        @llm.function_tool(
+            description="List portfolio sections and case studies available to view."
+        )
+        async def list_portfolio_pages() -> str:
+            """Returns directory of available sections."""
+            return "Sections: home, about, research, projects, skills, experience, certificates, resume, contact. Booking: /book-appointment."
+
+        super().__init__(
+            id="navigation",
+            tools=[navigate_portfolio, explain_section, get_current_page_context, list_portfolio_pages],
+        )
 
 
 class ResearchToolset(llm.Toolset):
@@ -80,7 +116,34 @@ class ResearchToolset(llm.Toolset):
             room = get_room()
             return await ResearchReasoner.analyze_topic(session, room, topic)
 
-        super().__init__(id="research", tools=[research_paper_deep_dive])
+        @llm.function_tool(
+            description=(
+                "Query and retrieve a precise factual metric or formulation from Jithendra's research papers "
+                "or engineering specifications. Returns a concise single-fact answer (under 160 chars)."
+            )
+        )
+        async def semantic_knowledge_search(
+            query: Annotated[
+                str,
+                "The technical question or topic to retrieve a specific metric or formulation for.",
+            ],
+        ) -> str:
+            """Executes vector retrieval returning only the single top fact."""
+            from .rag import search_knowledge_base
+            results = search_knowledge_base(query=query, top_k=1)
+            if not results:
+                return f"No direct record found for '{query}'."
+            top_chunk = results[0]
+            raw_text = (top_chunk.get("text") or top_chunk.get("content") or "").strip()
+            clean_text = " ".join(raw_text.split())
+            if clean_text.startswith("[PDF"):
+                idx = clean_text.find("]")
+                if idx != -1:
+                    clean_text = clean_text[idx + 1:].strip()
+            single_fact = clean_text[:160]
+            return f"Fact: {single_fact}"
+
+        super().__init__(id="research", tools=[research_paper_deep_dive, semantic_knowledge_search])
 
 
 class SchedulingToolset(llm.Toolset):
@@ -110,13 +173,84 @@ class SchedulingToolset(llm.Toolset):
         super().__init__(id="scheduling", tools=[schedule_meeting])
 
 
+class ResourceToolset(llm.Toolset):
+    """Voice-triggered downloads for public portfolio resources."""
+
+    def __init__(self, get_room: Callable[[], rtc.Room | None]) -> None:
+        @llm.function_tool(
+            description=(
+                "Download a public portfolio resource in the visitor's browser. "
+                "Supported resources: resume, research, certificates, aqi_report, and swarm_report."
+            )
+        )
+        async def download_resource(
+            resource: Annotated[
+                str,
+                "One of resume, research, certificates, aqi_report, or swarm_report.",
+            ],
+        ) -> str:
+            resources = {
+                "resume": ("/documents/resume/kandula_jithendra_subramanyam_resume.pdf", "Kandula_Jithendra_Subramanyam_Resume.pdf"),
+                "research": ("/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf", "Jithendra_EAAI_Research.pdf"),
+                "certificates": ("/certificates/conference/ijcaci-2026-paper-presentation.jpg", "Jithendra_IJCACI_Certificate.jpg"),
+                "aqi_report": ("/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf", "Jithendra_AQI_Report.pdf"),
+                "swarm_report": ("/documents/swarm-robots-agriculture/swarm-robotics-btech-report.docx", "Jithendra_Swarm_Robotics_Report.docx"),
+            }
+            key = resource.strip().lower().replace(" ", "_")
+            if key not in resources:
+                return "I can download the resume, research paper, certificates, AQI report, or swarm robotics report."
+
+            room = get_room()
+            if room and room.local_participant:
+                url, filename = resources[key]
+                payload = json.dumps({"type": "download", "url": url, "filename": filename})
+                await room.local_participant.publish_data(payload.encode("utf-8"), topic="assistant_action")
+                return f"Starting the {key.replace('_', ' ')} download now."
+            return "The download is ready, but the browser action channel is not connected yet."
+
+        super().__init__(id="resources", tools=[download_resource])
+
+
+class ThemeToolset(llm.Toolset):
+    """Voice control for the portfolio color theme."""
+
+    def __init__(self, get_room: Callable[[], rtc.Room | None]) -> None:
+        @llm.function_tool(
+            description=(
+                "Change the portfolio appearance when the visitor asks for dark mode, light mode, "
+                "night mode, or day mode. The theme must be exactly dark or light."
+            )
+        )
+        async def set_theme(
+            theme: Annotated[str, "The requested theme: dark or light."],
+        ) -> str:
+            selected_theme = theme.strip().lower()
+            if selected_theme not in {"dark", "light"}:
+                return "I can switch the portfolio between dark and light mode."
+
+            room = get_room()
+            if room and room.local_participant:
+                payload = json.dumps({"type": "theme", "theme": selected_theme})
+                await room.local_participant.publish_data(
+                    payload.encode("utf-8"),
+                    topic="assistant_action",
+                )
+                return f"Switched the portfolio to {selected_theme} mode."
+            return "The theme control is unavailable until the browser connection is ready."
+
+        super().__init__(id="theme", tools=[set_theme])
+
+
 def build_portfolio_toolsets(
     get_session: Callable[[], any],
     get_room: Callable[[], rtc.Room | None],
+    get_assistant: Callable[[], any] | None = None,
 ) -> list[llm.Toolset]:
     """Factory creating all modular toolsets bound to the active session and room."""
     return [
-        NavigationToolset(get_room),
+        NavigationToolset(get_room, get_assistant),
         ResearchToolset(get_session, get_room),
         SchedulingToolset(get_room),
+        ResourceToolset(get_room),
+        ThemeToolset(get_room),
     ]
