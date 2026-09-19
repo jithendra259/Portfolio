@@ -49,16 +49,18 @@ export function DockedVoiceHUD({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Click outside controls menu → close the expanded controls tray (never abort live session)
+  // Click outside → end the call entirely (parent unmounts HUD, ASK button returns)
   useEffect(() => {
     const handler = (e: PointerEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setControlsOpen(false);
+        // Disconnect the session — parent sees isConnected=false → shows ASK button
+        session?.room?.disconnect();
       }
     };
     document.addEventListener('pointerdown', handler);
     return () => document.removeEventListener('pointerdown', handler);
-  }, []);
+  }, [session]);
 
   const handleToggleMic = useCallback(async () => {
     const lp = session?.room?.localParticipant;

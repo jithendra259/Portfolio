@@ -1,0 +1,7 @@
+packages:
+  - '.'
+
+onlyBuiltDependencies:
+  - '@rive-app/react-webgl2'
+  - sharp
+  - unrs-resolver

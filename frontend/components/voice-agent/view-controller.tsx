@@ -96,9 +96,6 @@ export function ViewController({ appConfig, showWelcome = true }: ViewController
   const { activeTarget, navigateTo } = useVoiceAutoNavigation(session, messages);
 
   const handleStartCall = React.useCallback(async () => {
-    if (session.connectionState === 'connecting') {
-      return;
-    }
     if (isConnected) {
       session.end();
       return;

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { CalendarAppointmentBooking } from '@/components/ui/calendar-appointment-booking';
+import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 
 export const metadata: Metadata = {
   title: 'Book a 1-on-1 Session | Kandula Jithendra Subramanyam',
@@ -24,12 +25,15 @@ export default function BookAppointmentPage() {
             <span>Back to Portfolio</span>
           </Link>
 
+          <div className="flex items-center gap-4">
+            <DayNightSwitch />
+          </div>
         </div>
       </header>
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto">
-        <CalendarAppointmentBooking />
+        <CalendarAppointmentBooking variant="page" />
       </main>
     </div>
   );
