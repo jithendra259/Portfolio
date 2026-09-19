@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAgent, useSessionContext, useVoiceAssistant } from '@livekit/components-react';
 import { Mic, MicOff, PhoneOff, Maximize2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { AgentAudioVisualizerAura } from '@/components/agents-ui/agent-audio-visualizer-aura';
 import { NAVIGATION_TARGETS, type NavigationTarget } from '@/hooks/useVoiceAutoNavigation';
@@ -64,9 +65,18 @@ export function DockedVoiceHUD({
   const handleToggleMic = useCallback(async () => {
     const lp = session?.room?.localParticipant;
     if (lp) {
-      const enabled = lp.isMicrophoneEnabled;
-      await lp.setMicrophoneEnabled(!enabled);
-      setIsMuted(enabled);
+      try {
+        const enabled = lp.isMicrophoneEnabled;
+        await lp.setMicrophoneEnabled(!enabled);
+        setIsMuted(enabled);
+      } catch (err: any) {
+        console.warn('--> [Voice HUD] Could not toggle microphone:', err);
+        if (err?.name === 'NotReadableError' || err?.message?.includes('Could not start audio source')) {
+          toast.error('Microphone In Use or Blocked', {
+            description: 'Your microphone is locked by another app (Zoom, Teams, Discord, or another browser tab). Please close them and try again.',
+          });
+        }
+      }
     }
   }, [session]);
 

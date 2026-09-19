@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext, useSessionMessages } from '@livekit/components-react';
 import { Bot, Mic, Minimize2 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
 import { WelcomeView } from '@/components/voice-agent/welcome-view';
@@ -103,8 +104,13 @@ export function ViewController({ appConfig, showWelcome = true }: ViewController
     // Connect directly to Python LiveKit backend worker on Render
     try {
       await start();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to connect to LiveKit backend:', error);
+      if (error?.name === 'NotReadableError' || error?.message?.includes('Could not start audio source')) {
+        toast.error('Microphone In Use or Blocked', {
+          description: 'Windows could not start your audio source. Please check if another browser tab, Zoom, Teams, or Discord is locking your mic.',
+        });
+      }
     }
   }, [isConnected, session, start]);
 
