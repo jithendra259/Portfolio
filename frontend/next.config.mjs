@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ['googleapis', 'nodemailer'],
   eslint: {
     // Prevent ESLint/Prettier style checks from blocking production builds on Vercel
     ignoreDuringBuilds: true,
@@ -25,8 +26,6 @@ const nextConfig = {
   },
   webpack: (config, { dev, isServer }) => {
     if (dev) {
-      // Use source-map instead of eval-* in dev to prevent pdfjs-dist ESM eval conflicts
-      config.devtool = 'cheap-module-source-map';
       // Explicitly enable persistent filesystem caching for ultra-fast dev compilation
       config.cache = {
         type: 'filesystem',

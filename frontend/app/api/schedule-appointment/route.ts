@@ -4,7 +4,11 @@ import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 const HOST_EMAIL = 'kandulajithendrasubramanyam@gmail.com';
+
 const HOST_NAME = 'Kandula Jithendra Subramanyam';
 
 function generateMeetCode(): string {
