@@ -8,6 +8,7 @@ import {
   ArrowUp,
   ArrowUpRight,
   BookOpen,
+  Phone,
 } from 'lucide-react';
 
 export function Footer() {
@@ -90,6 +91,16 @@ export function Footer() {
             <div className="pt-2">
               <SocialTooltipIcons />
             </div>
+
+            {/* Contact / Helpline */}
+            <a
+              href="tel:+919704400336"
+              className="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-neutral-500 hover:text-slate-900 dark:hover:text-white transition-colors duration-200 group"
+            >
+              <Phone className="size-3.5 group-hover:text-blue-500 transition-colors" />
+              <span className="font-mono tracking-wide">+91 97044 00336</span>
+              <span className="text-slate-400 dark:text-neutral-600">· Helpline / Contact</span>
+            </a>
           </div>
 
           {/* Column 2: Navigation Sitemap (3 cols) */}
@@ -140,9 +151,19 @@ export function Footer() {
 
         {/* Bottom Sub-Footer Bar */}
         <div className="pt-8 border-t border-slate-300/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-neutral-500 font-sans">
-          <p>
-            © {currentYear} {PORTFOLIO_DATA.developer.fullName}. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <p>
+              © {currentYear} {PORTFOLIO_DATA.developer.fullName}. All rights reserved.
+            </p>
+            <span className="hidden sm:inline text-slate-300 dark:text-neutral-700">·</span>
+            <a
+              href="tel:+919704400336"
+              className="inline-flex items-center gap-1.5 text-slate-400 dark:text-neutral-600 hover:text-slate-700 dark:hover:text-neutral-400 transition-colors font-mono"
+            >
+              <Phone className="size-3" />
+              <span>+91 97044 00336</span>
+            </a>
+          </div>
 
           <div className="flex items-center gap-6">
             <span className="hidden md:inline text-slate-400 dark:text-neutral-600">
