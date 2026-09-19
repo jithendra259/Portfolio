@@ -1,5 +1,5 @@
 import json
-from typing import Annotated, Callable
+from typing import Annotated, Any, Callable
 
 from livekit import rtc
 from livekit.agents import llm
@@ -38,8 +38,9 @@ class NavigationToolset(llm.Toolset):
     def __init__(
         self,
         get_room: Callable[[], rtc.Room | None],
-        get_assistant: Callable[[], any] | None = None,
+        get_assistant: Callable[[], Any] | None = None,
     ) -> None:
+
         @llm.function_tool(
             description="Navigate visitor's screen in real time to any section ('contact', 'skills', 'projects', 'research', 'experience', 'about', 'home', 'book_appointment', or case study name)."
         )
@@ -92,9 +93,10 @@ class ResearchToolset(llm.Toolset):
 
     def __init__(
         self,
-        get_session: Callable[[], any],
+        get_session: Callable[[], Any],
         get_room: Callable[[], rtc.Room | None],
     ) -> None:
+
         from .reasoner import ResearchReasoner
 
         @llm.function_tool(
@@ -242,10 +244,11 @@ class ThemeToolset(llm.Toolset):
 
 
 def build_portfolio_toolsets(
-    get_session: Callable[[], any],
+    get_session: Callable[[], Any],
     get_room: Callable[[], rtc.Room | None],
-    get_assistant: Callable[[], any] | None = None,
+    get_assistant: Callable[[], Any] | None = None,
 ) -> list[llm.Toolset]:
+
     """Factory creating all modular toolsets bound to the active session and room."""
     return [
         NavigationToolset(get_room, get_assistant),
