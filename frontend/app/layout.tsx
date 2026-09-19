@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/primitives/sonner';
 import { cn } from '@/lib/shadcn/utils';
 import { getStyles } from '@/lib/utils';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
+import { App as VoiceAgentApp } from '@/components/voice-agent/app';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
 
@@ -79,7 +80,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <VoiceAgentApp appConfig={APP_CONFIG_DEFAULTS}>{children}</VoiceAgentApp>
           <NetworkErrorTV />
           <Toaster position="top-center" />
           <div className="group fixed bottom-0 left-1/2 z-50 mb-2 -translate-x-1/2">

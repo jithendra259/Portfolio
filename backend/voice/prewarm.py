@@ -27,6 +27,14 @@ def prewarm_voice_pipeline(proc: agents.JobProcess) -> None:
         from livekit.plugins import openai  # noqa: F401
         from livekit.agents import inference, AgentSession  # noqa: F401
 
+        # Pre-warm vector retriever and embeddings so turn 1 latency is sub-25ms
+        try:
+            from agent.rag import get_retriever
+            get_retriever()
+            print("--> [Prewarm] Vector RAG retriever and embeddings pre-warmed in RAM.")
+        except Exception as rag_err:
+            print(f"--> [Prewarm Warning] Failed to prewarm vector retriever: {rag_err}")
+
         print("--> [Prewarm] Core networking, SSL certificates, and inference modules pre-loaded.")
     except Exception as e:
         print(f"--> [Prewarm Warning] Failed to prewarm dependencies: {e}")

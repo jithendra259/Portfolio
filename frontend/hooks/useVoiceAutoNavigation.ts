@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { useRoomContext } from '@livekit/components-react';
 import { RoomEvent } from 'livekit-client';
 import { toast } from '@/components/ui/widgets/notification-card';
@@ -255,6 +256,7 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
   const router = useRouter();
   const pathname = usePathname();
   const room = useRoomContext();
+  const { setTheme } = useTheme();
   const [activeTarget, setActiveTarget] = useState<NavigationTarget | null>(null);
   const [lastNavigatedAt, setLastNavigatedAt] = useState<number | null>(null);
   const lastProcessedMsgId = useRef<string | null>(null);
@@ -314,6 +316,69 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
     if (!room) return;
 
     const handleDataReceived = (payload: Uint8Array, participant: any, kind: any, topic?: string) => {
+      if (topic === 'assistant_action') {
+        try {
+          const data = JSON.parse(new TextDecoder().decode(payload));
+          if (data?.type === 'download' && typeof data.url === 'string') {
+            const link = document.createElement('a');
+            link.href = data.url;
+            link.download = typeof data.filename === 'string' ? data.filename : '';
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success(`Download started: ${data.filename || 'portfolio resource'}`);
+          }
+          if (data?.type === 'theme' && (data.theme === 'dark' || data.theme === 'light')) {
+            setTheme(data.theme);
+            toast.success(`Switched to ${data.theme} mode.`);
+          }
+          if (
+            data?.type === 'booking_request' &&
+            typeof data.name === 'string' &&
+            typeof data.email === 'string' &&
+            typeof data.topic === 'string' &&
+            typeof data.date === 'string' &&
+            typeof data.time === 'string'
+          ) {
+            void (async () => {
+              try {
+                const response = await fetch('/api/schedule-appointment', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    name: data.name,
+                    email: data.email,
+                    purpose: data.topic,
+                    notes: 'Booked by the voice assistant.',
+                    date: new Date(`${data.date}T00:00:00`).toISOString(),
+                    time: data.time,
+                  }),
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result?.error || 'Booking failed');
+
+                toast.success(
+                  result.emailSent
+                    ? `Appointment booked and confirmation sent to ${data.email}.`
+                    : 'Appointment reserved. Opening the calendar confirmation.'
+                );
+                if (result.googleCalendarUrl) {
+                  window.open(result.googleCalendarUrl, '_blank', 'noopener,noreferrer');
+                }
+              } catch (error) {
+                console.error('Voice booking failed:', error);
+                toast.error('I collected your details, but the appointment could not be submitted.');
+              }
+            })();
+          }
+        } catch (e) {
+          console.error('Failed to parse assistant action packet:', e);
+        }
+        return;
+      }
+
       if (topic === 'navigation' || topic === 'lk-navigation') {
         try {
           const text = new TextDecoder().decode(payload);
@@ -331,7 +396,7 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
     return () => {
       room.off(RoomEvent.DataReceived, handleDataReceived);
     };
-  }, [room, navigateTo]);
+  }, [room, navigateTo, setTheme]);
 
   // 2. Navigation is controlled strictly by the Python backend via LiveKit DataChannel ('topic: navigation')
   // No client-side keyword heuristic parsing so the backend LLM tool decides when to navigate.

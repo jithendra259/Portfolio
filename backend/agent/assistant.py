@@ -118,24 +118,18 @@ class Assistant(Agent):
             print("--> [Assistant Hook] on_user_turn_completed: Empty utterance detected, stopping response.")
             raise StopResponse()
 
-        # Always inject active screen awareness into the turn context
-        page_info = self.get_formatted_page_context()
-        screen_grounding = f"[Active Visitor Screen: {page_info}]"
-
-        result = await route_portfolio_query(new_message.text_content)
-        context = result.get("context", "")
-        target = result.get("target")
-
-        combined_grounding = (
-            f"{screen_grounding} "
-            + (f"[LangGraph Domain Grounding] {context} " if context else "")
-            + (f"Target screen route: '{target}'." if target else "")
-        ).strip()
-
-        turn_ctx.add_message(
-            role="assistant",
-            content=combined_grounding,
+        # Execute LangGraph workflow with real-time screen context and vector RAG
+        result = await route_portfolio_query(
+            new_message.text_content,
+            screen_context=self.page_context,
         )
+        grounding = result.get("grounding") or result.get("context", "")
+
+        if grounding:
+            turn_ctx.add_message(
+                role="assistant",
+                content=f"[Verified Portfolio Context: {grounding}]",
+            )
 
     async def on_user_turn_exceeded(self, ev: UserTurnExceededEvent) -> None:
         """

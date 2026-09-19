@@ -124,7 +124,30 @@ class ResearchToolset(llm.Toolset):
             room = get_room()
             return await ResearchReasoner.analyze_topic(session, room, topic)
 
-        super().__init__(id="research", tools=[research_paper_deep_dive])
+        @llm.function_tool(
+            description=(
+                "Query and retrieve semantically relevant passages, proofs, mathematical formulations, and experimental metrics "
+                "from Jithendra's peer-reviewed research papers (Elsevier EAAI, Elsevier COR, Springer Nature LNCS), "
+                "project architecture specifications (AQI Forecasting, Swarm Robotics, Voice AI), and verified candidate profile. "
+                "Use this tool whenever you need specific empirical numbers (e.g. CVaR reductions, Sharpe ratios, p-values, "
+                "Ledoit-Wolf alpha parameters, CLARABEL SOCP formulations, ESP32 mesh protocols) or direct paper citations."
+            )
+        )
+        async def semantic_knowledge_search(
+            query: Annotated[
+                str,
+                "The semantic search query, technical question, or topic to retrieve citations and facts for.",
+            ],
+        ) -> str:
+            """Executes high-speed vector retrieval across the portfolio knowledge base."""
+            from .rag import get_retriever, search_knowledge_base
+            results = search_knowledge_base(query=query, top_k=2)
+            if not results:
+                return f"No direct citations found for '{query}'."
+            retriever = get_retriever()
+            return retriever.format_grounding(results, max_chars=600)
+
+        super().__init__(id="research", tools=[research_paper_deep_dive, semantic_knowledge_search])
 
 
 class SchedulingToolset(llm.Toolset):
