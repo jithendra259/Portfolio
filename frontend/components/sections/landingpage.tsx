@@ -462,14 +462,6 @@ export function LandingPage({
       : PORTFOLIO_DATA.projects.filter((p) => p.category === activeCategory);
 
   const [showOpening, setShowOpening] = useState(false);
-  const [showRobotIcon, setShowRobotIcon] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShowRobotIcon((prev) => !prev);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -887,72 +879,7 @@ export function LandingPage({
       {/* ============================================================ */}
       <Footer />
 
-      {/* Floating Bottom-Right Voice Assistant Button — hidden while session is active */}
-      {onStartCall && !isConnected && !isConnecting && (
-        <div className="fixed bottom-6 right-6 z-40">
-          <button
-            onClick={onStartCall}
-            disabled={isConnecting}
-            className={cn(
-              "group flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full border shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold",
-              isConnected
-                ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-rose-950/80 hover:text-rose-300 hover:border-rose-500/50"
-                : isConnecting
-                ? "bg-cyan-950/80 text-cyan-300 border-cyan-500/50 cursor-wait"
-                : "bg-white dark:bg-[#1e1e1e] hover:bg-slate-900 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black border-slate-300 dark:border-[#3c3c3c]"
-            )}
-          >
-            {isConnecting ? (
-              <>
-                <Loader2 className="size-4 animate-spin text-cyan-400" />
-                <span className="text-xs font-mono uppercase tracking-wider text-cyan-300">
-                  Connecting...
-                </span>
-              </>
-            ) : isConnected ? (
-              <>
-                <Mic className="size-4 text-emerald-400" />
-                <span className="text-xs font-mono uppercase tracking-wider">
-                  End Call
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="relative flex items-center justify-center size-4 shrink-0 overflow-hidden">
-                  <AnimatePresence mode="wait" initial={false}>
-                    {showRobotIcon ? (
-                      <motion.span
-                        key="robot"
-                        initial={{ opacity: 0, y: 3, scale: 0.85 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -3, scale: 0.85 }}
-                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                        className="flex items-center justify-center size-4"
-                      >
-                        <Bot className="size-4" />
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="mic"
-                        initial={{ opacity: 0, y: 3, scale: 0.85 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -3, scale: 0.85 }}
-                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                        className="flex items-center justify-center size-4"
-                      >
-                        <Mic className="size-4" />
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </span>
-                <span className="text-xs font-mono uppercase tracking-wider">
-                  Ask
-                </span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
+
       {/* Interactive PDF Document Viewer Modal */}
       <PdfViewerDialog
         open={!!viewerPdf}

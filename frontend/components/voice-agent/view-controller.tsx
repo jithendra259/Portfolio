@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils';
 const MotionWelcomeView = motion.create(WelcomeView);
 const MotionSessionView = motion.create(AgentSessionView_01);
 
-/** Floating ASK button with animated Bot/Mic icon — reused on every page */
+/** Floating ASK button with animated Bot/Mic icon — active on every page */
 function AskButton({ onStartCall }: { onStartCall: () => void }) {
   const [showRobot, setShowRobot] = useState(true);
   useEffect(() => {
-    const id = setInterval(() => setShowRobot((v) => !v), 1800);
+    const id = setInterval(() => setShowRobot((v) => !v), 1600);
     return () => clearInterval(id);
   }, []);
 
@@ -34,32 +34,23 @@ function AskButton({ onStartCall }: { onStartCall: () => void }) {
         )}
         aria-label="Ask the voice agent"
       >
-        <span className="relative flex items-center justify-center size-4 shrink-0 overflow-hidden">
-          <AnimatePresence mode="wait" initial={false}>
-            {showRobot ? (
-              <motion.span
-                key="robot"
-                initial={{ opacity: 0, y: 3, scale: 0.85 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -3, scale: 0.85 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="flex items-center justify-center size-4"
-              >
-                <Bot className="size-4" />
-              </motion.span>
-            ) : (
-              <motion.span
-                key="mic"
-                initial={{ opacity: 0, y: 3, scale: 0.85 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -3, scale: 0.85 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="flex items-center justify-center size-4"
-              >
-                <Mic className="size-4" />
-              </motion.span>
+        <span className="relative flex items-center justify-center size-4 shrink-0">
+          <Bot
+            className={cn(
+              'size-4 absolute inset-0 transition-all duration-500 ease-in-out',
+              showRobot
+                ? 'opacity-100 scale-100 rotate-0'
+                : 'opacity-0 scale-50 -rotate-45 pointer-events-none'
             )}
-          </AnimatePresence>
+          />
+          <Mic
+            className={cn(
+              'size-4 absolute inset-0 transition-all duration-500 ease-in-out',
+              showRobot
+                ? 'opacity-0 scale-50 rotate-45 pointer-events-none'
+                : 'opacity-100 scale-100 rotate-0'
+            )}
+          />
         </span>
         <span className="text-xs font-mono uppercase tracking-wider">Ask</span>
       </button>
@@ -132,7 +123,7 @@ export function ViewController({ appConfig, showWelcome = true }: ViewController
         />
       )}
 
-      {!showWelcome && !isConnected && !isConnecting && (
+      {!isConnected && !isConnecting && (
         <AskButton onStartCall={handleStartCall} />
       )}
 
