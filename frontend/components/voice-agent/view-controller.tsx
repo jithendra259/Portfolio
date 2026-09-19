@@ -20,19 +20,19 @@ const MotionSessionView = motion.create(AgentSessionView_01);
 /** Floating ASK button with an animated listening orb — active on every page. */
 function AskButton({ onStartCall }: { onStartCall: () => void }) {
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-5 right-5 z-40">
       <button
         type="button"
         onClick={onStartCall}
         className={cn(
-          'group inline-flex h-[74px] items-center gap-3 rounded-full border border-white/10 bg-[#1d1d1d]/80 pl-[9px] pr-8 text-white/70 shadow-2xl shadow-black/30 backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:bg-[#252525] focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer'
+          'group inline-flex h-[60px] items-center gap-2 rounded-full border border-white/10 bg-[#1d1d1d]/80 pl-1.5 pr-5 text-white/70 shadow-2xl shadow-black/30 backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:bg-[#252525] focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer'
         )}
         aria-label="Ask the voice agent"
       >
-        <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full [&_canvas]:!size-16">
+        <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full [&_canvas]:!size-12">
           <ThinkingOrb state="composing" size={64} theme="dark" />
         </span>
-        <span className="whitespace-nowrap text-lg leading-6">Ask</span>
+        <span className="whitespace-nowrap text-base leading-5">Ask</span>
       </button>
     </div>
   );
