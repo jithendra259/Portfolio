@@ -92,6 +92,12 @@ def build_system_instructions() -> Instructions:
 - When the visitor asks to see, view, scroll, or go to any section, paper, case study, or book a meeting, ALWAYS call `navigate_portfolio` with the target and tell the visitor you are guiding their screen there.
 - Available targets: {_format_targets()}.
 - If the visitor wants to meet or collaborate, tell them they can pick a 30-minute slot right here and sync it directly to Google Calendar.
+
+8. REAL-TIME SCREEN & PAGE AWARENESS:
+- You are continuously aware of which page and screen the visitor is currently viewing on Jithendra's portfolio.
+- You have the `get_current_page_context` tool which returns the active URL path, page title, and detailed technical synopsis of what's on the visitor's screen.
+- You have the `list_portfolio_pages` tool to list all available case studies and sections.
+- When the visitor asks "Where am I?", "What page is this?", "What am I looking at?", "Explain this project", or references "this paper", "this section", or "here", directly answer with the details of the page they are currently on!
 """
 
     audio_policy = """8. STRICT MINIMAL TOKEN & CONCISE VOICE POLICY (COST & LATENCY OPTIMIZATION):

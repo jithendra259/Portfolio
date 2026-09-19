@@ -18,6 +18,7 @@ from livekit.agents import (
 )
 
 from prompts import SYSTEM_INSTRUCTIONS
+from .graph import route_portfolio_query
 from .tools import build_portfolio_toolsets
 
 
@@ -26,6 +27,8 @@ class Assistant(Agent):
 
     def __init__(self, room: rtc.Room | None = None) -> None:
         self.room = room
+        self.current_page = "/"
+        self.page_context: dict = {"pathname": "/", "title": "Kandula Jithendra Subramanyam | AI & Quant Portfolio"}
 
         def _get_room() -> rtc.Room | None:
             r = getattr(self, "room", None)
@@ -36,7 +39,11 @@ class Assistant(Agent):
         def _get_session():
             return getattr(self, "session", None)
 
-        toolsets = build_portfolio_toolsets(get_session=_get_session, get_room=_get_room)
+        toolsets = build_portfolio_toolsets(
+            get_session=_get_session,
+            get_room=_get_room,
+            get_assistant=lambda: self,
+        )
         super().__init__(
             instructions=SYSTEM_INSTRUCTIONS,
             tools=toolsets,
@@ -56,70 +63,117 @@ class Assistant(Agent):
         except Exception as e:
             print(f"--> [Assistant Hook Warning] Greeting error: {e}")
 
+    def set_page_context(self, context_data: dict | str) -> None:
+        """Update the structured page context used for visitor screen awareness."""
+        if isinstance(context_data, str):
+            self.current_page = context_data.strip() or "/"
+            self.page_context = {"pathname": self.current_page}
+        elif isinstance(context_data, dict):
+            self.page_context = context_data
+            self.current_page = (context_data.get("pathname") or "/").strip()
+        print(f"--> [Assistant] Active visitor screen updated to: {self.current_page}")
+
+    def set_current_page(self, pathname: str) -> None:
+        """Update the active page pathname."""
+        self.set_page_context(pathname)
+
+    def get_formatted_page_context(self) -> str:
+        """Returns a rich, formatted description of what the visitor is viewing on their screen."""
+        path = (self.current_page or "/").strip()
+        title = ""
+        if isinstance(self.page_context, dict):
+            title = self.page_context.get("title") or ""
+
+        page_descriptions: dict[str, str] = {
+            "/": (
+                "Main Portfolio Home Page (/) - Features interactive 3D Mascot Robot, About Me & Credentials, "
+                "Three Peer-Reviewed Research Publications (Elsevier EAAI, Springer LNCS, Elsevier COR), "
+                "Engineering Projects Showcase, Technical Skills Matrix, Career & Education Timeline, "
+                "Verified Certifications (GATE DA & CS), and Contact & Booking Section."
+            ),
+            "/projects/adaptive-portfolio-governance": (
+                "Case Study: Adaptive Portfolio Governance (Elsevier EAAI Paper, Manuscript EAAI-26-14280) - "
+                "Title: 'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization'. "
+                "Highlights: 5-agent blackboard architecture, SEC 13-F bipartite institutional co-holding networks, "
+                "Graph-Regularized CVaR (G-CVaR) combined with Ledoit-Wolf shrinkage, achieving 25.9% reduction in CVaR-95% "
+                "and 32.5% max drawdown containment over 20 years (2005-2025)."
+            ),
+            "/projects/regime-adaptive-supervisory-governance": (
+                "Case Study: Regime-Adaptive Supervisory Governance (Springer Nature LNCS / IJCACI 2026 Paper) - "
+                "Title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization'. "
+                "Highlights: Instability Index I_t coupling covariance drift, rolling volatility, and correlation stress. "
+                "Dynamically switches concentration limits and Ledoit-Wolf shrinkage (alpha=0.42) across Calm, Turbulent, and Crisis regimes."
+            ),
+            "/projects/supervisory-portfolio-xai-governance": (
+                "Case Study: Supervisory Portfolio XAI Governance (Elsevier Computers & Operations Research) - "
+                "Title: 'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching & Conversational Explainability'. "
+                "Highlights: 7-agent DAG architecture integrating CLARABEL convex interior-point solver with Mistral-7B conversational LLM. "
+                "100% numerical grounding (0% hallucination), MiFID II and EU AI Act audit compliance."
+            ),
+            "/projects/voice-agent-portfolio-architecture": (
+                "Case Study: Real-Time Voice AI Portfolio & Agentic Web Architecture - "
+                "Highlights: Next.js 15 App Router, LiveKit WebRTC Cloud, Groq LPU (<90ms TTFT), "
+                "Cartesia Sonic-3 neural TTS, Deepgram Nova-3 STT, and WebGL Aura shader audio visualizer."
+            ),
+            "/projects/agentic-portfolio-chatbot": (
+                "Case Study: Agentic AI Portfolio Governance Chatbot - "
+                "Highlights: M.Tech thesis project with sub-200ms TTFT, LangGraph supervisor, and CLARABEL convex solver integration."
+            ),
+            "/projects/personalised-aqi-system": (
+                "Case Study: Personalised AQI Global Air Quality Forecasting - "
+                "Highlights: Machine learning pipeline using XGBoost ensemble across 10 Delhi CPCB stations, "
+                "achieving R² = 0.912 and RMSE 18.4 ug/m3 for 48-hour PM2.5 forecasting."
+            ),
+            "/projects/swarm-robots-agriculture": (
+                "Case Study: Autonomous Swarm Robots for Precision Agriculture - "
+                "Highlights: Distributed hardware swarm using ESP32, ESP-NOW mesh network, edge CNNs (DenseNet121). "
+                "98.4% field coverage, 96.8% disease classification. KSCST 46th Series grant winner."
+            ),
+            "/book-appointment": (
+                "Interactive Meeting Booking Page (/book-appointment) - "
+                "Allows visitors, recruiters, and collaborators to book a 30-minute meeting with Jithendra with automated Google Meet link generation."
+            ),
+        }
+
+        desc = page_descriptions.get(path)
+        if not desc:
+            for k, v in page_descriptions.items():
+                if k != "/" and k in path:
+                    desc = v
+                    break
+        if not desc:
+            desc = f"Portfolio Screen Path: '{path}'" + (f" | Title: '{title}'" if title else "")
+        return desc
+
     async def on_user_turn_completed(
         self, turn_ctx: llm.ChatContext, new_message: llm.ChatMessage
     ) -> None:
         """
         Lifecycle hook called when the user finishes speaking or typing, before LLM response generation.
-        Performs precise domain grounding for Jithendra's research papers and engineering projects.
+        Continuously grounds the assistant with the active screen and performs domain routing.
         """
-        # If the user turn contains no recognizable text, halt generation to prevent hallucinated audio
         if not new_message.text_content or not new_message.text_content.strip():
             print("--> [Assistant Hook] on_user_turn_completed: Empty utterance detected, stopping response.")
             raise StopResponse()
 
-        query = (new_message.text_content or "").lower()
+        # Always inject active screen awareness into the turn context
+        page_info = self.get_formatted_page_context()
+        screen_grounding = f"[Active Visitor Screen: {page_info}]"
 
-        # Paper 1: Elsevier EAAI Grounding
-        if any(k in query for k in ["eaai", "g-cvar", "contagion", "fire sale", "bipartite"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 1 (Elsevier EAAI 2026, manuscript EAAI-26-14280): "
-                    "5-agent blackboard architecture, G-CVaR, Ledoit-Wolf shrinkage, SEC 13-F bipartite graphs. "
-                    "Target screen route: 'case_study_adaptive_governance'."
-                ),
-            )
-        # Paper 2: Springer Nature LNCS Grounding
-        elif any(k in query for k in ["lncs", "ijcaci", "instability index", "regime adaptive", "covariance drift"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 2 (Springer Nature LNCS / IJCACI 2026, WUST Washington): "
-                    "Composite Instability Index, covariance drift, Ledoit-Wolf shrinkage (alpha=0.42). "
-                    "Target screen route: 'case_study_regime_supervisory'."
-                ),
-            )
-        # Paper 3: Elsevier Computers & Operations Research (COR) Grounding
-        elif any(k in query for k in ["cor", "clarabel", "convex solver", "grounding", "xai", "supervisory portfolio"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Research Paper 3 (Elsevier COR 2026): "
-                    "7-agent DAG architecture, CLARABEL interior-point solver, 100% numerical grounding, MiFID II / EU AI Act. "
-                    "Target screen route: 'case_study_supervisory_xai'."
-                ),
-            )
-        # Project: AQI Air Quality Forecasting
-        elif any(k in query for k in ["aqi", "air quality", "xgboost", "pm2.5", "delhi"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to AQI Global Air Quality Forecasting: "
-                    "CPCB sensor data across 10 Delhi stations, XGBoost R2=0.912 and RMSE=18.4 ug/m3. "
-                    "Target screen route: 'case_study_aqi'."
-                ),
-            )
-        # Project: Autonomous Swarm Robotics
-        elif any(k in query for k in ["swarm", "agriculture", "robot", "esp32", "kscst", "densenet"]):
-            turn_ctx.add_message(
-                role="assistant",
-                content=(
-                    "[Context Guidance] User query relates to Autonomous Precision Agriculture Swarm Robots: "
-                    "ESP32 ESP-NOW mesh, DenseNet121, 98.4% field coverage, KSCST 46th Series Grant. "
-                    "Target screen route: 'case_study_swarm_robotics'."
-                ),
-            )
+        result = await route_portfolio_query(new_message.text_content)
+        context = result.get("context", "")
+        target = result.get("target")
+
+        combined_grounding = (
+            f"{screen_grounding} "
+            + (f"[LangGraph Domain Grounding] {context} " if context else "")
+            + (f"Target screen route: '{target}'." if target else "")
+        ).strip()
+
+        turn_ctx.add_message(
+            role="assistant",
+            content=combined_grounding,
+        )
 
     async def on_user_turn_exceeded(self, ev: UserTurnExceededEvent) -> None:
         """

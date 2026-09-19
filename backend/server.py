@@ -4,6 +4,7 @@ Manages room connections, voice pipeline startup, greeting utterance, and clean 
 """
 
 import asyncio
+import json
 
 from livekit import agents
 from livekit.agents import AgentServer, room_io
@@ -36,6 +37,20 @@ async def my_agent(ctx: agents.JobContext) -> None:
 
     # 3. Start session with Assistant tool caller and real-time text output options
     assistant = Assistant(room=ctx.room)
+
+    @ctx.room.on("data_received")
+    def on_data_received(packet) -> None:
+        topic = getattr(packet, "topic", None)
+        if topic not in ("client_context", "page_context"):
+            return
+        try:
+            payload = json.loads(packet.data.decode("utf-8"))
+            if payload.get("type") == "page_context" or "pathname" in payload:
+                assistant.set_page_context(payload)
+                print(f"--> [Server] Visitor page context: {assistant.current_page} (title: {payload.get('title')})")
+        except (UnicodeDecodeError, json.JSONDecodeError, AttributeError) as error:
+            print(f"--> [Server Warning] Invalid client page context: {error}")
+
     await session.start(
         room=ctx.room,
         agent=assistant,

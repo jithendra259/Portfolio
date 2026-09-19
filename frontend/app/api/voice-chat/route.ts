@@ -70,12 +70,78 @@ const NAVIGATION_TOOL = {
         required: ['target'],
       },
     },
+    {
+      name: 'get_current_page_context',
+      description: "Inspect and get detailed information about the exact page, research paper, or project case study the visitor is currently viewing on their screen.",
+      parameters: {
+        type: 'OBJECT',
+        properties: {},
+      },
+    },
   ],
 };
 
 // Robust, high-quality fallback responder that ensures speech replies and screen navigation always work
-function generateLocalPortfolioResponse(userMessage: string): { text: string; navigationTarget?: string } {
+function generateLocalPortfolioResponse(
+  userMessage: string,
+  currentPage: string = '/'
+): { text: string; navigationTarget?: string } {
   const query = userMessage.toLowerCase().trim();
+
+  // 0. Page awareness queries
+  if (
+    query.includes('where am i') ||
+    query.includes('what page') ||
+    query.includes('which page') ||
+    query.includes('this page') ||
+    query.includes('current page') ||
+    query.includes('what am i looking at') ||
+    query.includes('this screen')
+  ) {
+    if (currentPage.includes('adaptive-portfolio-governance')) {
+      return {
+        text: "You are currently exploring the Adaptive Portfolio Governance case study for Jithendra's Elsevier EAAI research paper on graph-regularized CVaR optimization.",
+      };
+    }
+    if (currentPage.includes('regime-adaptive-supervisory-governance')) {
+      return {
+        text: "You are viewing the Regime-Adaptive Supervisory Governance case study for his Springer Nature LNCS research publication on market instability indices.",
+      };
+    }
+    if (currentPage.includes('supervisory-portfolio-xai-governance')) {
+      return {
+        text: "You are looking at the Supervisory Portfolio XAI Governance case study for his Elsevier Computers & Operations Research paper featuring CLARABEL and Mistral-7B.",
+      };
+    }
+    if (currentPage.includes('voice-agent-portfolio-architecture')) {
+      return {
+        text: "You are on the Voice AI Portfolio Architecture case study detailing the sub-90 millisecond Groq LPU and LiveKit WebRTC pipeline powering this portfolio.",
+      };
+    }
+    if (currentPage.includes('agentic-portfolio-chatbot')) {
+      return {
+        text: "You are viewing the Agentic AI Portfolio Chatbot case study developed for Jithendra's M.Tech thesis.",
+      };
+    }
+    if (currentPage.includes('personalised-aqi-system')) {
+      return {
+        text: "You are on the Personalised AQI Global Air Quality Forecasting case study evaluating XGBoost across 10 Delhi CPCB stations.",
+      };
+    }
+    if (currentPage.includes('swarm-robots-agriculture')) {
+      return {
+        text: "You are exploring the Autonomous Swarm Robots for Precision Agriculture case study funded by the Karnataka State Council for Science and Technology.",
+      };
+    }
+    if (currentPage.includes('book-appointment')) {
+      return {
+        text: "You are on the meeting booking page where you can schedule a 30-minute consultation or recruiter interview with Jithendra.",
+      };
+    }
+    return {
+      text: "You are on the main portfolio overview page showing Jithendra's research publications, engineering projects, skills, and timeline.",
+    };
+  }
 
   // 1. Research & Papers
   if (
@@ -184,7 +250,8 @@ function generateLocalPortfolioResponse(userMessage: string): { text: string; na
 // Attempts Gemini LLM call with supported models
 async function callGemini(
   apiKey: string,
-  contents: any[]
+  contents: any[],
+  currentPage: string = '/'
 ): Promise<{ text: string; navigationTarget?: string } | null> {
   const models = ['gemini-2.5-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
 
@@ -229,6 +296,11 @@ async function callGemini(
         if (part.functionCall && part.functionCall.name === 'navigate_portfolio') {
           navigationTarget = part.functionCall.args?.target;
         }
+        if (part.functionCall && part.functionCall.name === 'get_current_page_context') {
+          if (!text.trim()) {
+            text = `You are currently viewing ${currentPage || 'the main portfolio'}.`;
+          }
+        }
       }
 
       if (!text.trim() && navigationTarget) {
@@ -254,6 +326,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const userMessage = (body.message || '').trim();
     const history = body.history || [];
+    const currentPage = (body.pathname || body.currentPage || '/').trim();
 
     if (!userMessage) {
       return NextResponse.json({
@@ -272,18 +345,22 @@ export async function POST(req: Request) {
         })),
         {
           role: 'user',
-          parts: [{ text: userMessage }],
+          parts: [
+            {
+              text: `[Active Visitor Screen: ${currentPage}]\n${userMessage}`,
+            },
+          ],
         },
       ];
 
-      const llmResult = await callGemini(apiKey, contents);
+      const llmResult = await callGemini(apiKey, contents, currentPage);
       if (llmResult) {
         return NextResponse.json(llmResult);
       }
     }
 
     // 2. Seamless local knowledge-base fallback with full speech and autonavigation
-    const fallbackResult = generateLocalPortfolioResponse(userMessage);
+    const fallbackResult = generateLocalPortfolioResponse(userMessage, currentPage);
     return NextResponse.json(fallbackResult);
   } catch (error) {
     console.error('Error in /api/voice-chat:', error);

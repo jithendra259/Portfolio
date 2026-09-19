@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { type ReactNode, useMemo, useEffect } from 'react';
 import { TokenSource, Room, AudioPresets } from 'livekit-client';
 import { useSession } from '@livekit/components-react';
+import { usePathname } from 'next/navigation';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionProvider } from '@/components/agents-ui/agent-session-provider';
 import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
@@ -79,9 +80,11 @@ function AppSetup() {
 
 interface AppProps {
   appConfig: AppConfig;
+  children?: ReactNode;
 }
 
-export function App({ appConfig }: AppProps) {
+export function App({ appConfig, children }: AppProps) {
+  const pathname = usePathname();
   const tokenSource = useMemo(() => {
     return typeof process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT === 'string'
       ? getSandboxTokenSource(appConfig)
@@ -146,12 +149,59 @@ export function App({ appConfig }: AppProps) {
       });
   }, []);
 
+  useEffect(() => {
+    if (!session.isConnected || !room?.localParticipant) return;
+
+    const publishCurrentPage = () => {
+      try {
+        const payload = JSON.stringify({
+          type: 'page_context',
+          pathname,
+          title: typeof document !== 'undefined' ? document.title : '',
+          url: typeof window !== 'undefined' ? window.location.href : pathname,
+          hash: typeof window !== 'undefined' ? window.location.hash : '',
+          timestamp: Date.now(),
+        });
+        const encoded = new TextEncoder().encode(payload);
+        room.localParticipant.publishData(encoded, {
+          topic: 'client_context',
+          reliable: true,
+        }).catch((err) => console.warn('Failed to publish client_context:', err));
+        room.localParticipant.publishData(encoded, {
+          topic: 'page_context',
+          reliable: true,
+        }).catch(() => {});
+      } catch (e) {
+        console.warn('Error serializing page_context:', e);
+      }
+    };
+
+    // Publish immediately
+    publishCurrentPage();
+
+    // Re-publish after 600ms to guarantee server worker receives it if worker setup took a moment
+    const timer = setTimeout(publishCurrentPage, 600);
+
+    // Listen for agent's query_page pings
+    const handleData = (payload: Uint8Array, participant?: any, kind?: any, topic?: string) => {
+      if (topic === 'query_page') {
+        publishCurrentPage();
+      }
+    };
+
+    room.on('dataReceived', handleData);
+
+    return () => {
+      clearTimeout(timer);
+      room.off('dataReceived', handleData);
+    };
+  }, [pathname, room, session.isConnected]);
+
   return (
     <AgentSessionProvider session={session}>
       <AppSetup />
-      <main className="w-full min-h-screen">
-        <ViewController appConfig={appConfig} />
-      </main>
+      {children}
+      <ViewController appConfig={appConfig} showWelcome={pathname === '/'} />
       <StartAudioButton label="Start Audio" />
     </AgentSessionProvider>
   );
