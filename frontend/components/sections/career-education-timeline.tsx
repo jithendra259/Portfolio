@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Timeline3D, { TimelineEvent } from '@/components/ui/widgets/3d-interactive-timeline';
-import { Briefcase, GraduationCap, Sparkles, Award } from 'lucide-react';
+import { Briefcase, GraduationCap, Award } from 'lucide-react';
 
 export function CareerEducationTimeline() {
   const [filter, setFilter] = useState<'All' | 'Professional' | 'Education'>('All');
@@ -162,9 +162,6 @@ export function CareerEducationTimeline() {
   return (
     <section className="pt-20 pb-10 px-4 sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto" id="experience">
       <div className="flex flex-col items-center text-center mb-12">
-        <span className="text-xs font-mono uppercase text-slate-600 dark:text-neutral-400 font-bold tracking-widest flex items-center gap-1.5 mb-2">
-          <Sparkles className="size-3.5" /> Chronological Journey
-        </span>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           Experience &amp; Education
         </h2>
