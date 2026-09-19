@@ -18,6 +18,7 @@ from livekit.agents import (
 )
 
 from prompts import SYSTEM_INSTRUCTIONS
+from prompts.knowledge import PAGE_KNOWLEDGE
 from .graph import route_portfolio_query
 from .tools import build_portfolio_toolsets
 
@@ -80,70 +81,31 @@ class Assistant(Agent):
     def get_formatted_page_context(self) -> str:
         """Returns a rich, formatted description of what the visitor is viewing on their screen."""
         path = (self.current_page or "/").strip()
-        title = ""
-        if isinstance(self.page_context, dict):
-            title = self.page_context.get("title") or ""
-
-        page_descriptions: dict[str, str] = {
-            "/": (
-                "Main Portfolio Home Page (/) - Features interactive 3D Mascot Robot, About Me & Credentials, "
-                "Three Peer-Reviewed Research Publications (Elsevier EAAI, Springer LNCS, Elsevier COR), "
-                "Engineering Projects Showcase, Technical Skills Matrix, Career & Education Timeline, "
-                "Verified Certifications (GATE DA & CS), and Contact & Booking Section."
-            ),
-            "/projects/adaptive-portfolio-governance": (
-                "Case Study: Adaptive Portfolio Governance (Elsevier EAAI Paper, Manuscript EAAI-26-14280) - "
-                "Title: 'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization'. "
-                "Highlights: 5-agent blackboard architecture, SEC 13-F bipartite institutional co-holding networks, "
-                "Graph-Regularized CVaR (G-CVaR) combined with Ledoit-Wolf shrinkage, achieving 25.9% reduction in CVaR-95% "
-                "and 32.5% max drawdown containment over 20 years (2005-2025)."
-            ),
-            "/projects/regime-adaptive-supervisory-governance": (
-                "Case Study: Regime-Adaptive Supervisory Governance (Springer Nature LNCS / IJCACI 2026 Paper) - "
-                "Title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization'. "
-                "Highlights: Instability Index I_t coupling covariance drift, rolling volatility, and correlation stress. "
-                "Dynamically switches concentration limits and Ledoit-Wolf shrinkage (alpha=0.42) across Calm, Turbulent, and Crisis regimes."
-            ),
-            "/projects/supervisory-portfolio-xai-governance": (
-                "Case Study: Supervisory Portfolio XAI Governance (Elsevier Computers & Operations Research) - "
-                "Title: 'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching & Conversational Explainability'. "
-                "Highlights: 7-agent DAG architecture integrating CLARABEL convex interior-point solver with Mistral-7B conversational LLM. "
-                "100% numerical grounding (0% hallucination), MiFID II and EU AI Act audit compliance."
-            ),
-            "/projects/voice-agent-portfolio-architecture": (
-                "Case Study: Real-Time Voice AI Portfolio & Agentic Web Architecture - "
-                "Highlights: Next.js 15 App Router, LiveKit WebRTC Cloud, Groq LPU (<90ms TTFT), "
-                "Cartesia Sonic-3 neural TTS, Deepgram Nova-3 STT, and WebGL Aura shader audio visualizer."
-            ),
-            "/projects/agentic-portfolio-chatbot": (
-                "Case Study: Agentic AI Portfolio Governance Chatbot - "
-                "Highlights: M.Tech thesis project with sub-200ms TTFT, LangGraph supervisor, and CLARABEL convex solver integration."
-            ),
-            "/projects/personalised-aqi-system": (
-                "Case Study: Personalised AQI Global Air Quality Forecasting - "
-                "Highlights: Machine learning pipeline using XGBoost ensemble across 10 Delhi CPCB stations, "
-                "achieving R² = 0.912 and RMSE 18.4 ug/m3 for 48-hour PM2.5 forecasting."
-            ),
-            "/projects/swarm-robots-agriculture": (
-                "Case Study: Autonomous Swarm Robots for Precision Agriculture - "
-                "Highlights: Distributed hardware swarm using ESP32, ESP-NOW mesh network, edge CNNs (DenseNet121). "
-                "98.4% field coverage, 96.8% disease classification. KSCST 46th Series grant winner."
-            ),
-            "/book-appointment": (
-                "Interactive Meeting Booking Page (/book-appointment) - "
-                "Allows visitors, recruiters, and collaborators to book a 30-minute meeting with Jithendra with automated Google Meet link generation."
-            ),
-        }
-
-        desc = page_descriptions.get(path)
-        if not desc:
-            for k, v in page_descriptions.items():
+        data = PAGE_KNOWLEDGE.get(path)
+        if not data:
+            for k, v in PAGE_KNOWLEDGE.items():
                 if k != "/" and k in path:
-                    desc = v
+                    data = v
                     break
-        if not desc:
-            desc = f"Portfolio Screen Path: '{path}'" + (f" | Title: '{title}'" if title else "")
-        return desc
+
+        if data:
+            title = data.get("title", path)
+            summary = data.get("summary", "")
+            math_rigor = data.get("mathematical_rigor", "")
+            results = data.get("empirical_results", [])
+            agents = data.get("architecture_agents", [])
+
+            parts = [f"Path: {path}", f"Title: {title}", f"Overview: {summary}"]
+            if agents:
+                parts.append("Key Architecture Agents: " + " | ".join(agents[:3]))
+            if math_rigor:
+                parts.append(f"Formulation: {math_rigor}")
+            if results:
+                parts.append("Key Results: " + " | ".join(results[:2]))
+            return " | ".join(parts)
+
+        title = self.page_context.get("title", "") if isinstance(self.page_context, dict) else ""
+        return f"Portfolio Screen: '{path}'" + (f" | Title: '{title}'" if title else "")
 
     async def on_user_turn_completed(
         self, turn_ctx: llm.ChatContext, new_message: llm.ChatMessage
