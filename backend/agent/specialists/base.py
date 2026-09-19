@@ -148,8 +148,6 @@ class PortfolioBaseAgent(Agent):
 
         # Clean any extra content from previous turns or fallbacks
         self._clean_extra(turn_ctx)
-        self._clean_extra(self.chat_ctx)
-
         # Run fast LangGraph query routing & grounding with active screen context
         result = await route_portfolio_query(
             user_text,
@@ -173,8 +171,6 @@ class PortfolioBaseAgent(Agent):
         self._clean_extra(turn_ctx)
 
         # Enforce strict minimum context length (< 300 tokens) to guarantee sub-90ms TTFT
-        if len(self.chat_ctx.items) > 4:
-            self.chat_ctx.truncate(max_items=4)
         if len(turn_ctx.items) > 4:
             turn_ctx.truncate(max_items=4)
 

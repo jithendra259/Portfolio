@@ -101,12 +101,10 @@ async def my_agent(ctx: agents.JobContext) -> None:
         state = getattr(ev, "new_state", None)
         if state == "away":
             print("--> [Server Watchdog] Visitor away detected. Sending check-in prompt.")
-            asyncio.create_task(
-                session.say(
-                    "Still there? Let me know if you'd like to explore any of Jithendra's research papers, engineering projects, or resume.",
-                    allow_interruptions=True,
-                    add_to_chat_ctx=False,
-                )
+            session.say(
+                "Still there? Let me know if you'd like to explore any of Jithendra's research papers, engineering projects, or resume.",
+                allow_interruptions=True,
+                add_to_chat_ctx=False,
             )
 
             async def _idle_shutdown():
