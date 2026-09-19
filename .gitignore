@@ -1,0 +1,27 @@
+# Python virtual environment & cache
+venv/
+.venv/
+env/
+ENV/
+livekit/
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Frontend artifacts on backend branch
+frontend/
+node_modules/
+.next/
+
+# Local secrets
+.env
+.env.local
+*.env
+.DS_Store
+Thumbs.db
