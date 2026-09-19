@@ -24,6 +24,16 @@ def prewarm_voice_pipeline(proc: agents.JobProcess) -> None:
         ssl.create_default_context(cafile=certifi.where())
         ssl.create_default_context().load_default_certs()
 
+        # Eagerly initialize singleton SSL context, HTTP transport, and Groq LLM pipeline
+        try:
+            from api.llm import build_llm_pipeline, get_httpx_client, get_ssl_context
+            get_ssl_context()
+            get_httpx_client()
+            build_llm_pipeline()
+            print("--> [Prewarm] Singleton LLM pipeline and SSL context pre-allocated in RAM.")
+        except Exception as llm_err:
+            print(f"--> [Prewarm Warning] Failed to prewarm LLM pipeline: {llm_err}")
+
         from livekit.plugins import openai  # noqa: F401
         from livekit.agents import inference, AgentSession  # noqa: F401
 
