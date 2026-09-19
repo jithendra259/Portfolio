@@ -9,7 +9,7 @@ import json
 from livekit import agents
 from livekit.agents import AgentServer, room_io
 
-from agent import Assistant
+from agent import Assistant, create_multi_agent_system, log_session_start
 from config import settings
 from voice import create_voice_session, prewarm_voice_pipeline
 
@@ -34,9 +34,22 @@ async def my_agent(ctx: agents.JobContext) -> None:
 
     # 2. Instantiate isolated voice session with fresh STT, TTS, and dual-LLM pipeline
     session = create_voice_session(ctx)
+    session_id = getattr(ctx.room, "name", "portfolio_session")
 
-    # 3. Start session with Assistant tool caller and real-time text output options
-    assistant = Assistant(room=ctx.room)
+    # 3. Instantiate Multi-Agent Specialist Cluster (Greeter, Research, Engineering, Booking)
+    greeter, userdata = create_multi_agent_system(
+        session_id=session_id,
+        get_room=lambda: ctx.room,
+        get_session=lambda: session,
+    )
+    session.userdata = userdata
+
+    # Async non-blocking session recording to Supabase
+    log_session_start(
+        session_id=session_id,
+        visitor_name="Anonymous Visitor",
+        initial_screen="/",
+    )
 
     @ctx.room.on("data_received")
     def on_data_received(packet) -> None:
@@ -46,14 +59,18 @@ async def my_agent(ctx: agents.JobContext) -> None:
         try:
             payload = json.loads(packet.data.decode("utf-8"))
             if payload.get("type") == "page_context" or "pathname" in payload:
-                assistant.set_page_context(payload)
-                print(f"--> [Server] Visitor page context: {assistant.current_page} (title: {payload.get('title')})")
+                pathname = (payload.get("pathname") or "/").strip()
+                title = payload.get("title", "")
+                userdata.active_screen = pathname
+                userdata.active_title = title
+                userdata.screen_context = payload
+                print(f"--> [Server] Visitor page context: {pathname} (title: {title})")
         except (UnicodeDecodeError, json.JSONDecodeError, AttributeError) as error:
             print(f"--> [Server Warning] Invalid client page context: {error}")
 
     await session.start(
         room=ctx.room,
-        agent=assistant,
+        agent=greeter,
         room_options=room_io.RoomOptions(
             # NOTE: ai-coustics QUAIL_VF_S was removed.
             # Despite the docs claiming it runs "server-side on LiveKit Cloud",

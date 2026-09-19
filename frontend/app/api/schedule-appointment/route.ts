@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
+import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 
 const HOST_EMAIL = 'kandulajithendrasubramanyam@gmail.com';
 const HOST_NAME = 'Kandula Jithendra Subramanyam';
@@ -380,6 +382,24 @@ export async function POST(req: NextRequest) {
       console.warn(
         'SMTP credentials not set (SMTP_USER/GMAIL_USER and SMTP_PASS/GMAIL_APP_PASSWORD). Email dispatch simulated.'
       );
+    }
+
+    // Persist booking lead to Supabase (non-blocking)
+    try {
+      const cookieStore = await cookies();
+      const supabase = createClient(cookieStore);
+      await supabase.from('bookings').insert({
+        visitor_name: attendeeName,
+        email: attendeeEmail,
+        topic: meetingPurpose,
+        preferred_date: formattedDate,
+        preferred_time: time,
+        meet_url: meetUrl,
+        notes: notes || '',
+        created_at: new Date().toISOString(),
+      });
+    } catch (supaErr) {
+      console.warn('Supabase booking lead persistence notice:', supaErr);
     }
 
     return NextResponse.json({
