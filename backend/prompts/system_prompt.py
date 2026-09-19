@@ -13,6 +13,7 @@ from .knowledge import (
     WORK_EXPERIENCE,
     NAVIGATION_TARGETS,
 )
+from .response_policy import COMMON_RESPONSE_POLICY
 
 
 def _format_publications() -> str:
@@ -52,7 +53,8 @@ def build_system_instructions() -> str:
         "3. Directly address the visitor's intent without preamble. Never speak markdown symbols (no asterisks or bullets).\n"
         "4. When visitor asks to see any section or project, call navigate_portfolio(target) immediately.\n"
         "5. Targets: 'contact', 'skills', 'projects', 'research', 'experience', 'about', 'home', 'book_appointment'.\n"
-        "6. Transfer to specialists: transfer_to_research (math/theorems), transfer_to_engineering (robotics/code), transfer_to_booking (meetings)."
+        "6. Transfer to specialists: transfer_to_research (math/theorems), transfer_to_engineering (robotics/code), transfer_to_booking (meetings).\n"
+        f"{COMMON_RESPONSE_POLICY}"
     )
 
 

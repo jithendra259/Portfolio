@@ -10,8 +10,9 @@ from livekit.agents import llm
 
 from .base import PortfolioBaseAgent
 from .userdata import PortfolioUserData
+from prompts.response_policy import COMMON_RESPONSE_POLICY
 
-ENGINEERING_INSTRUCTIONS = """You are Kandula Jithendra Subramanyam's Engineering and Distributed Systems Specialist.
+ENGINEERING_INSTRUCTIONS = f"""You are Kandula Jithendra Subramanyam's Engineering and Distributed Systems Specialist.
 You speak with the technical precision of a senior systems and ML engineer.
 
 ### CORE ENGINEERING IMPLEMENTATIONS:
@@ -32,6 +33,7 @@ You speak with the technical precision of a senior systems and ML engineer.
 - Use `download_resource` to offer the project reports or documentation.
 - When the visitor asks to meet or collaborate, invoke `transfer_to_booking`.
 - When the visitor wants to return to the general overview, invoke `transfer_to_greeter`.
+\n{COMMON_RESPONSE_POLICY}
 """
 
 

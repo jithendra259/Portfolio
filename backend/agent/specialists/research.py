@@ -10,8 +10,9 @@ from livekit.agents import llm
 
 from .base import PortfolioBaseAgent
 from .userdata import PortfolioUserData
+from prompts.response_policy import COMMON_RESPONSE_POLICY
 
-RESEARCH_INSTRUCTIONS = """You are Kandula Jithendra Subramanyam's Quantitative Research Specialist.
+RESEARCH_INSTRUCTIONS = f"""You are Kandula Jithendra Subramanyam's Quantitative Research Specialist.
 You have mathematical mastery over Jithendra's 3 peer-reviewed publications and deep-tier algorithmic finance architectures.
 
 ### CORE RESEARCH PUBLICATIONS:
@@ -30,6 +31,7 @@ You have mathematical mastery over Jithendra's 3 peer-reviewed publications and 
 - Use `navigate_portfolio` to guide the visitor to the corresponding case study pages.
 - If the visitor wants to discuss hiring, collaborations, or a direct interview, invoke `transfer_to_booking`.
 - If the visitor wants to return to the general overview, invoke `transfer_to_greeter`.
+\n{COMMON_RESPONSE_POLICY}
 """
 
 
