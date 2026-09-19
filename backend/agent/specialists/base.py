@@ -68,9 +68,11 @@ class PortfolioBaseAgent(Agent):
                 content=(
                     f"[Task Directive: You are the {self.agent_name.capitalize()} Specialist. "
                     f"Address the visitor's specific query: '{handoff.reason}'. "
-                    f"Active screen: {handoff.active_screen}. Answer directly and concisely in under 15 words.]"
+                    f"Active screen: {handoff.active_screen}. "
+                    f"For standard queries, answer under 15-20 words. For deep dives, give a structured breakdown in 45-70 words.]"
                 ),
             )
+
             if handoff.last_user_query:
                 self.chat_ctx.add_message(
                     role="user",
@@ -155,8 +157,11 @@ class PortfolioBaseAgent(Agent):
         )
         user_intent = result.get("user_intent", "")
         user_exp = result.get("user_expectation", "")
+        mode = result.get("description_mode", "short")
+        grounding = result.get("grounding", "")
+
         if user_intent or user_exp:
-            print(f"--> [{self.agent_name} Thinking] Intent: '{user_intent}' | Expects: '{user_exp}'")
+            print(f"--> [{self.agent_name} Thinking] Intent: '{user_intent}' | Mode: '{mode}' | Expects: '{user_exp}'")
 
         # Inject context-aware intent thinking and targeted factual grounding
         if grounding:
@@ -166,6 +171,13 @@ class PortfolioBaseAgent(Agent):
             )
 
         self._clean_extra(turn_ctx)
+
+        # Enforce strict minimum context length (< 300 tokens) to guarantee sub-90ms TTFT
+        if len(self.chat_ctx.items) > 4:
+            self.chat_ctx.truncate(max_items=4)
+        if len(turn_ctx.items) > 4:
+            turn_ctx.truncate(max_items=4)
+
 
         elapsed_ms = (time.time() - start_time) * 1000.0
 

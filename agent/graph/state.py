@@ -18,3 +18,5 @@ class PortfolioGraphState(TypedDict, total=False):
     confidence: float
     user_intent: str
     user_expectation: str
+    description_mode: str  # 'short' (default < 20 words) or 'long' (deep dive 45-75 words)
+
