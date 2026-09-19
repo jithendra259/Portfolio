@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext, useSessionMessages } from '@livekit/components-react';
-import { Bot, Mic, Minimize2 } from 'lucide-react';
+import { Minimize2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
@@ -12,48 +12,27 @@ import { WelcomeView } from '@/components/voice-agent/welcome-view';
 import { DockedVoiceHUD } from '@/components/voice-agent/docked-voice-hud';
 import { useVoiceAutoNavigation } from '@/hooks/useVoiceAutoNavigation';
 import { cn } from '@/lib/utils';
+import { ThinkingOrb } from '@/components/ui/thinking-orbs';
 
 const MotionWelcomeView = motion.create(WelcomeView);
 const MotionSessionView = motion.create(AgentSessionView_01);
 
-/** Floating ASK button with animated Bot/Mic icon — active on every page */
+/** Floating ASK button with an animated listening orb — active on every page. */
 function AskButton({ onStartCall }: { onStartCall: () => void }) {
-  const [showRobot, setShowRobot] = useState(true);
-  useEffect(() => {
-    const id = setInterval(() => setShowRobot((v) => !v), 1600);
-    return () => clearInterval(id);
-  }, []);
-
   return (
     <div className="fixed bottom-6 right-6 z-40">
       <button
         type="button"
         onClick={onStartCall}
         className={cn(
-          'group flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full border shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer font-semibold',
-          'bg-white dark:bg-[#1e1e1e] hover:bg-slate-900 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black border-slate-300 dark:border-[#3c3c3c]'
+          'group inline-flex h-[74px] items-center gap-3 rounded-full border border-white/10 bg-[#1d1d1d]/80 pl-[9px] pr-8 text-white/70 shadow-2xl shadow-black/30 backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:bg-[#252525] focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer'
         )}
         aria-label="Ask the voice agent"
       >
-        <span className="relative flex items-center justify-center size-4 shrink-0">
-          <Bot
-            className={cn(
-              'size-4 absolute inset-0 transition-all duration-500 ease-in-out',
-              showRobot
-                ? 'opacity-100 scale-100 rotate-0'
-                : 'opacity-0 scale-50 -rotate-45 pointer-events-none'
-            )}
-          />
-          <Mic
-            className={cn(
-              'size-4 absolute inset-0 transition-all duration-500 ease-in-out',
-              showRobot
-                ? 'opacity-0 scale-50 rotate-45 pointer-events-none'
-                : 'opacity-100 scale-100 rotate-0'
-            )}
-          />
+        <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full [&_canvas]:!size-16">
+          <ThinkingOrb state="composing" size={64} theme="dark" />
         </span>
-        <span className="text-xs font-mono uppercase tracking-wider">Ask</span>
+        <span className="whitespace-nowrap text-lg leading-6">Ask</span>
       </button>
     </div>
   );
