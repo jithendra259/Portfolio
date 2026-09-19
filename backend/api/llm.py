@@ -1,9 +1,46 @@
-from typing import Any
+import ssl
+from typing import Any, Optional
+import certifi
+import httpx
 import openai
 from livekit.agents import inference, llm
 from livekit.plugins import openai as lk_openai
 
 from config import settings
+
+_CACHED_SSL_CONTEXT: Optional[ssl.SSLContext] = None
+_CACHED_HTTPX_CLIENT: Optional[httpx.AsyncClient] = None
+_CACHED_GROQ_CLIENT: Optional[openai.AsyncClient] = None
+_CACHED_GROQ_LLM: Optional[lk_openai.LLM] = None
+_CACHED_GEMINI_FALLBACK: Optional[inference.LLM] = None
+
+
+def get_ssl_context() -> ssl.SSLContext:
+    """Returns a singleton SSL context loaded with Mozilla Root CA certs in memory."""
+    global _CACHED_SSL_CONTEXT
+    if _CACHED_SSL_CONTEXT is None:
+        _CACHED_SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
+    return _CACHED_SSL_CONTEXT
+
+
+def get_httpx_client() -> httpx.AsyncClient:
+    """
+    Returns a persistent singleton AsyncClient reusing the preloaded SSL context
+    and connection pool, eliminating disk I/O and TLS renegotiation delays.
+    """
+    global _CACHED_HTTPX_CLIENT
+    if _CACHED_HTTPX_CLIENT is None or _CACHED_HTTPX_CLIENT.is_closed:
+        _CACHED_HTTPX_CLIENT = httpx.AsyncClient(
+            verify=get_ssl_context(),
+            timeout=httpx.Timeout(connect=10.0, read=15.0, write=5.0, pool=10.0),
+            follow_redirects=True,
+            limits=httpx.Limits(
+                max_connections=50,
+                max_keepalive_connections=20,
+                keepalive_expiry=120,
+            ),
+        )
+    return _CACHED_HTTPX_CLIENT
 
 
 def _sanitize_groq_messages(messages: list[Any]) -> list[dict[str, Any]]:
@@ -32,16 +69,15 @@ def _sanitize_groq_messages(messages: list[Any]) -> list[dict[str, Any]]:
     return clean_messages
 
 
-def build_llm_pipeline() -> llm.LLM:
-    """
-    Constructs a fault-tolerant, high-performance LLM pipeline:
-    1. Primary: Groq LPU with automatic message sanitization (sub-100ms TTFT).
-    2. Fallback: Google Gemini 2.5 Flash via LiveKit Cloud Inference.
-    """
-    if settings.GROQ_API_KEY:
+def get_groq_client() -> openai.AsyncClient:
+    """Returns a singleton OpenAI client pre-configured with Groq and request sanitization."""
+    global _CACHED_GROQ_CLIENT
+    if _CACHED_GROQ_CLIENT is None:
         client = openai.AsyncClient(
             api_key=settings.GROQ_API_KEY,
             base_url=settings.GROQ_BASE_URL,
+            http_client=get_httpx_client(),
+            max_retries=0,
         )
         orig_create = client.chat.completions.create
 
@@ -51,18 +87,36 @@ def build_llm_pipeline() -> llm.LLM:
             return await orig_create(*args, **kwargs)
 
         client.chat.completions.create = sanitized_create
+        _CACHED_GROQ_CLIENT = client
+    return _CACHED_GROQ_CLIENT
 
-        groq_llm = lk_openai.LLM(
-            model=settings.GROQ_MODEL,
-            client=client,
-            max_completion_tokens=settings.GROQ_MAX_TOKENS,
-            temperature=settings.GROQ_TEMPERATURE,
-        )
-        gemini_fallback = inference.LLM(model=settings.FALLBACK_MODEL)
+
+def build_llm_pipeline() -> llm.LLM:
+    """
+    Constructs a fault-tolerant, high-performance LLM pipeline:
+    1. Primary: Groq LPU with automatic message sanitization (sub-100ms TTFT).
+    2. Fallback: Google Gemini 2.5 Flash via LiveKit Cloud Inference.
+    Reuses pre-warmed singleton clients to ensure 0ms event loop stall on session init.
+    """
+    global _CACHED_GROQ_LLM, _CACHED_GEMINI_FALLBACK
+
+    if settings.GROQ_API_KEY:
+        if _CACHED_GROQ_LLM is None:
+            _CACHED_GROQ_LLM = lk_openai.LLM(
+                model=settings.GROQ_MODEL,
+                client=get_groq_client(),
+                max_completion_tokens=settings.GROQ_MAX_TOKENS,
+                temperature=settings.GROQ_TEMPERATURE,
+            )
+        if _CACHED_GEMINI_FALLBACK is None:
+            _CACHED_GEMINI_FALLBACK = inference.LLM(model=settings.FALLBACK_MODEL)
+
         return llm.FallbackAdapter(
-            [groq_llm, gemini_fallback],
+            [_CACHED_GROQ_LLM, _CACHED_GEMINI_FALLBACK],
             attempt_timeout=settings.LLM_ATTEMPT_TIMEOUT,
             max_retry_per_llm=settings.LLM_MAX_RETRY,
         )
 
-    return inference.LLM(model=settings.FALLBACK_MODEL)
+    if _CACHED_GEMINI_FALLBACK is None:
+        _CACHED_GEMINI_FALLBACK = inference.LLM(model=settings.FALLBACK_MODEL)
+    return _CACHED_GEMINI_FALLBACK
