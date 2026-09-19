@@ -127,8 +127,8 @@ class Assistant(Agent):
 
         if grounding:
             turn_ctx.add_message(
-                role="assistant",
-                content=f"[Verified Portfolio Context: {grounding}]",
+                role="system",
+                content=f"[Verified Portfolio Context for Assistant Answer:\n{grounding}]",
             )
 
     async def on_user_turn_exceeded(self, ev: UserTurnExceededEvent) -> None:

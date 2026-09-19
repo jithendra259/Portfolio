@@ -116,8 +116,8 @@ class PortfolioBaseAgent(Agent):
 
         if grounding:
             turn_ctx.add_message(
-                role="assistant",
-                content=f"[Verified Portfolio Context: {grounding}]",
+                role="system",
+                content=f"[Verified Portfolio Context for Assistant Answer:\n{grounding}]",
             )
 
         elapsed_ms = (time.time() - start_time) * 1000.0
