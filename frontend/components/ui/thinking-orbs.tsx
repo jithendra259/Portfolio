@@ -1,8 +1,23 @@
 'use client';
 
-import { ThinkingOrb } from 'thinking-orbs';
+import React, { useEffect, useState } from 'react';
+import { ThinkingOrb as BaseThinkingOrb } from 'thinking-orbs';
+import type { ThinkingOrbProps } from 'thinking-orbs';
 
-export { ThinkingOrb } from 'thinking-orbs';
+export function ThinkingOrb(props: ThinkingOrbProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <span className="inline-block size-12 rounded-full bg-white/5 animate-pulse" />;
+  }
+
+  return <BaseThinkingOrb {...props} />;
+}
+
 export type {
   ThinkingOrbProps,
   OrbState,
