@@ -72,15 +72,15 @@ async def my_agent(ctx: agents.JobContext) -> None:
         room=ctx.room,
         agent=greeter,
         room_options=room_io.RoomOptions(
-            # NOTE: ai-coustics QUAIL_VF_S was removed.
-            # Despite the docs claiming it runs "server-side on LiveKit Cloud",
-            # the Python plugin runs the Rust model LOCALLY via FFI (_uniffi_rust_call_with_error).
-            # On Render 0.1 vCPU this blocked the asyncio event loop for 387ms and caused
-            # VAD to fall 8+ seconds behind realtime, breaking voice entirely.
-            # Audio quality is instead handled by:
-            #   - WebRTC echoCancellation + noiseSuppression in the browser (frontend Room config)
-            #   - Deepgram nova-3's built-in noise robustness
-            #   - STT inference fallback chain (assemblyai/universal-streaming)
+            # Disable local Rust AudioProcessingModule (auto_gain_control=False).
+            # LiveKit's default auto_gain_control=True instantiates rtc.AudioProcessingModule,
+            # which synchronously calls Rust FFI apm.process_stream() on EVERY audio frame,
+            # blocking the event loop for ~182ms on Render 0.1 vCPU and causing VAD delays.
+            # Audio quality is already handled in browser WebRTC (AEC/AGC/NS) and Deepgram nova-3.
+            audio_input=room_io.AudioInputOptions(
+                auto_gain_control=False,
+                noise_cancellation=None,
+            ),
             text_output=room_io.TextOutputOptions(
                 sync_transcription=False,
             ),
