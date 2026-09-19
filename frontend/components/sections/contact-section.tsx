@@ -11,6 +11,10 @@ import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 export function ContactSection() {
   const router = useRouter();
 
+  React.useEffect(() => {
+    router.prefetch('/book-appointment');
+  }, [router]);
+
   return (
     <section id="contact" className="relative w-full overflow-hidden">
       <FloatingIconsHero
