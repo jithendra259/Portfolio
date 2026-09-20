@@ -12,6 +12,8 @@ from typing import Any
 
 import numpy as np
 
+from config import settings
+
 from .algorithms import (
     LRUQueryCache,
     compute_dense_similarity,
@@ -71,10 +73,13 @@ class PortfolioVectorRetriever:
                 with open(CHUNKS_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self.corpus = [KnowledgeChunk(**item) for item in data]
-                npz = np.load(CACHE_FILE)
-                self.embeddings = npz["embeddings"]
-                self.has_dense = True
-                print(f"--> [RAG Engine] Loaded {len(self.corpus)} cached vector embeddings ({self.embeddings.shape}).")
+                # Keep cached embeddings on disk when dense retrieval is disabled.
+                # Loading them is unnecessary on the constrained production worker.
+                if settings.ENABLE_DENSE_RAG:
+                    with np.load(CACHE_FILE) as npz:
+                        self.embeddings = npz["embeddings"]
+                    self.has_dense = True
+                    print(f"--> [RAG Engine] Loaded {len(self.corpus)} cached vector embeddings ({self.embeddings.shape}).")
             except Exception as e:
                 print(f"--> [RAG Engine Warning] Failed loading cache: {e}. Rebuilding...")
                 self.corpus = build_full_corpus()
@@ -94,8 +99,14 @@ class PortfolioVectorRetriever:
         except Exception as e:
             print(f"--> [RAG Engine Warning] TF-IDF init failed: {e}")
 
-        # 3. Asynchronously load Dense SentenceTransformer in background thread
-        # This prevents LiveKit process initialization timeout (10s default) on constrained cloud CPUs
+        # 3. Dense retrieval is optional. PyTorch/SentenceTransformers alone can
+        # exceed the 512 MB available on a Render Free instance, so production
+        # defaults to the lightweight TF-IDF path above.
+        if not settings.ENABLE_DENSE_RAG:
+            print("--> [RAG Engine] Dense retrieval disabled; using TF-IDF retrieval.")
+            return
+
+        # Asynchronously load Dense SentenceTransformer in background thread.
         def _warm_dense_encoder() -> None:
             try:
                 import torch

@@ -9,7 +9,7 @@ import json
 from livekit import agents
 from livekit.agents import AgentServer, room_io
 
-from agent import Assistant, create_multi_agent_system, log_session_start
+from agent import create_multi_agent_system, log_session_start
 from config import settings
 from voice import create_voice_session, prewarm_voice_pipeline
 
