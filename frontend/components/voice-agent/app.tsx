@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useMemo, useEffect, useCallback, useRef, useState } from 'react';
+import { type ReactNode, useMemo, useEffect } from 'react';
 import { TokenSource, Room, AudioPresets } from 'livekit-client';
 import { useSession } from '@livekit/components-react';
 import { usePathname } from 'next/navigation';
@@ -85,8 +85,6 @@ interface AppProps {
 
 export function App({ appConfig, children }: AppProps) {
   const pathname = usePathname();
-  const [isBackendWarming, setIsBackendWarming] = useState(false);
-  const warmupPromise = useRef<Promise<void> | null>(null);
   const tokenSource = useMemo(() => {
     return typeof process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT === 'string'
       ? getSandboxTokenSource(appConfig)
@@ -133,62 +131,17 @@ export function App({ appConfig, children }: AppProps) {
   );
 
 
-  // A Free Render service sleeps after 15 minutes. Reuse one wake-up request so
-  // the first voice session waits until the LiveKit worker is actually reachable.
-  const warmBackend = useCallback(async () => {
-    if (warmupPromise.current) {
-      return warmupPromise.current;
-    }
-
+  // Best-effort wake-up for a sleeping Render instance. LiveKit remains the
+  // connection path, so this must never block the visitor from starting a room.
+  useEffect(() => {
     const backendUrl =
       process.env.NEXT_PUBLIC_RENDER_BACKEND_URL ||
       'https://portfolio-backend-ljlv.onrender.com';
 
-    warmupPromise.current = (async () => {
-      setIsBackendWarming(true);
-      const deadline = Date.now() + 75_000;
-
-      try {
-        while (Date.now() < deadline) {
-          const controller = new AbortController();
-          const timeout = window.setTimeout(() => controller.abort(), 10_000);
-
-          try {
-            const response = await fetch(backendUrl, {
-              mode: 'cors',
-              cache: 'no-store',
-              signal: controller.signal,
-            });
-            if (response.ok) {
-              console.info('--> [Render Backend] Ready');
-              return;
-            }
-          } catch {
-            // A sleeping Render service can close or delay the first request.
-          } finally {
-            window.clearTimeout(timeout);
-          }
-
-          await new Promise((resolve) => window.setTimeout(resolve, 2_000));
-        }
-
-        throw new Error('The voice service did not become ready in time. Please try again.');
-      } finally {
-        setIsBackendWarming(false);
-        warmupPromise.current = null;
-      }
-    })();
-
-    return warmupPromise.current;
-  }, []);
-
-  // Begin waking the worker as soon as the portfolio loads, before the visitor
-  // presses the voice button.
-  useEffect(() => {
-    void warmBackend().catch((error) => {
+    void fetch(backendUrl, { mode: 'cors', cache: 'no-store' }).catch((error) => {
       console.warn('--> [Render Backend Warmup]', error?.message || error);
     });
-  }, [warmBackend]);
+  }, []);
 
   useEffect(() => {
     if (!session.isConnected || !room?.localParticipant) return;
@@ -242,12 +195,7 @@ export function App({ appConfig, children }: AppProps) {
     <AgentSessionProvider session={session}>
       <AppSetup />
       {children}
-      <ViewController
-        appConfig={appConfig}
-        showWelcome={pathname === '/'}
-        isBackendWarming={isBackendWarming}
-        warmBackend={warmBackend}
-      />
+      <ViewController appConfig={appConfig} showWelcome={pathname === '/'} />
       <StartAudioButton label="Start Audio" />
     </AgentSessionProvider>
   );
