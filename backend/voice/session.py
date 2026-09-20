@@ -1,7 +1,7 @@
 """
 Voice Session Factory for LiveKit Voice Agent.
-Configures Deepgram Nova-3 STT (+ AssemblyAI fallback), Cartesia Sonic-3 TTS (+ ElevenLabs fallback),
-LiveKit Cloud TurnDetector, adaptive interruption handling, and preemptive LLM generation.
+Uses direct Deepgram STT and Cartesia TTS, with Groq as the primary LLM and
+Google Gemini as its direct-provider fallback.
 """
 
 from livekit import agents
@@ -9,10 +9,9 @@ from livekit.agents import (
     AgentSession,
     TurnHandlingOptions,
     inference,
-    stt,
     text_transforms,
-    tts,
 )
+from livekit.plugins import cartesia, deepgram
 
 from api import build_llm_pipeline
 from config import settings
@@ -37,51 +36,23 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
           backchannel_boundary=(1.0, 2.0) — extra 2s end-window for Deepgram transcript latency
           Preemptive LLM generation (no preemptive TTS — saves Render CPU)
     """
-    # Credentials dict passed only when non-empty to let LiveKit fallback to os.environ safely
-    lk_auth: dict[str, str] = {}
-    if settings.LIVEKIT_API_KEY:
-        lk_auth["api_key"] = settings.LIVEKIT_API_KEY
-    if settings.LIVEKIT_API_SECRET:
-        lk_auth["api_secret"] = settings.LIVEKIT_API_SECRET
+    if not settings.DEEPGRAM_API_KEY or not settings.CARTESIA_API_KEY:
+        raise RuntimeError(
+            "DEEPGRAM_API_KEY and CARTESIA_API_KEY must be configured for direct voice streaming."
+        )
 
-    # Multi-provider STT fallback pipeline: if Deepgram nova-3 hits gateway 429,
-    # FallbackAdapter seamlessly shifts streaming audio to AssemblyAI or Nova-2 without dropping session
-    stt_pipeline = stt.FallbackAdapter(
-        [
-            inference.STT(
-                model=settings.STT_MODEL,
-                language=settings.STT_LANGUAGE,
-                **lk_auth,
-            ),
-            inference.STT(
-                model=settings.STT_FALLBACK_MODEL,
-                **lk_auth,
-            ),
-            inference.STT(
-                model="deepgram/nova-2",
-                language=settings.STT_LANGUAGE,
-                **lk_auth,
-            ),
-        ],
-        attempt_timeout=3.0,
-        max_retry_per_stt=1,
+    # Use your own provider accounts instead of LiveKit Inference. This avoids
+    # the agent-gateway 429s shown in the Render logs while retaining LiveKit
+    # for WebRTC rooms, dispatch, and session orchestration.
+    stt_pipeline = deepgram.STT(
+        model=settings.STT_MODEL.removeprefix("deepgram/"),
+        language=settings.STT_LANGUAGE,
+        api_key=settings.DEEPGRAM_API_KEY,
     )
-
-    # Multi-provider TTS fallback pipeline: Cartesia Sonic-3 -> ElevenLabs
-    tts_pipeline = tts.FallbackAdapter(
-        [
-            inference.TTS(
-                model=settings.TTS_MODEL,
-                voice=settings.TTS_VOICE_ID,
-                **lk_auth,
-            ),
-            inference.TTS(
-                model=settings.TTS_FALLBACK_MODEL,
-                voice=settings.TTS_FALLBACK_VOICE_ID,
-                **lk_auth,
-            ),
-        ],
-        max_retry_per_tts=1,
+    tts_pipeline = cartesia.TTS(
+        model=settings.TTS_MODEL.removeprefix("cartesia/"),
+        voice=settings.TTS_VOICE_ID,
+        api_key=settings.CARTESIA_API_KEY,
     )
 
 
