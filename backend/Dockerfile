@@ -21,6 +21,7 @@ COPY voice/ ./voice/
 COPY agent/ ./agent/
 COPY prompts/ ./prompts/
 COPY documents/ ./documents/
+COPY cache/ ./cache/
 COPY server.py .
 COPY app.py .
 
