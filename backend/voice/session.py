@@ -59,7 +59,6 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
                 api_key=settings.ELEVENLABS_API_KEY,
             ),
         ],
-        attempt_timeout=8.0,
         max_retry_per_tts=1,
     )
 
