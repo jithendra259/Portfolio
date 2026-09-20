@@ -148,33 +148,6 @@ class ResearchToolset(llm.Toolset):
         super().__init__(id="research", tools=[research_paper_deep_dive, semantic_knowledge_search])
 
 
-class SchedulingToolset(llm.Toolset):
-    """Modular toolset for visitor meeting booking and collaboration requests."""
-
-    def __init__(self, get_room: Callable[[], rtc.Room | None]) -> None:
-        from .tasks import ScheduleMeetingTask
-
-        @llm.function_tool(
-            description=(
-                "Initiate an interactive meeting scheduling, recruiter interview, or collaboration workflow. "
-                "Delegates to a specialist supervisor task that collects visitor name, email, and topic, "
-                "navigates to the contact screen, and logs the booking."
-            )
-        )
-        async def schedule_meeting() -> str:
-            """Launches ScheduleMeetingTask to gather contact details and book an appointment."""
-            room = get_room()
-            task = ScheduleMeetingTask(room=room)
-            result = await task
-            return (
-                f"Meeting scheduled successfully! Name: {result.get('name')}, "
-                f"Email: {result.get('email')}, Topic: {result.get('topic')}. "
-                "Screen has been navigated to the contact section."
-            )
-
-        super().__init__(id="scheduling", tools=[schedule_meeting])
-
-
 class ResourceToolset(llm.Toolset):
     """Voice-triggered downloads for public portfolio resources."""
 
@@ -241,19 +214,3 @@ class ThemeToolset(llm.Toolset):
             return "The theme control is unavailable until the browser connection is ready."
 
         super().__init__(id="theme", tools=[set_theme])
-
-
-def build_portfolio_toolsets(
-    get_session: Callable[[], Any],
-    get_room: Callable[[], rtc.Room | None],
-    get_assistant: Callable[[], Any] | None = None,
-) -> list[llm.Toolset]:
-
-    """Factory creating all modular toolsets bound to the active session and room."""
-    return [
-        NavigationToolset(get_room, get_assistant),
-        ResearchToolset(get_session, get_room),
-        SchedulingToolset(get_room),
-        ResourceToolset(get_room),
-        ThemeToolset(get_room),
-    ]

@@ -49,6 +49,11 @@ class Settings:
     USER_AWAY_TIMEOUT: float = 25.0
     IDLE_DISCONNECT_TIMEOUT: float = 35.0
 
+    # Dense semantic retrieval loads PyTorch + SentenceTransformers, which is too
+    # large for Render Free's 512 MB process limit. The sparse TF-IDF retriever is
+    # sufficient for this small, portfolio-specific knowledge base.
+    ENABLE_DENSE_RAG: bool = os.getenv("ENABLE_DENSE_RAG", "false").lower() == "true"
+
     # LiveKit Cloud Credentials
     LIVEKIT_URL: str = os.getenv("LIVEKIT_URL", "")
     LIVEKIT_API_KEY: str = os.getenv("LIVEKIT_API_KEY", "")

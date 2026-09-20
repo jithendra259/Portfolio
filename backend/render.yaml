@@ -25,3 +25,5 @@ services:
         sync: false
       - key: PORT
         value: "10000"
+      - key: ENABLE_DENSE_RAG
+        value: "false"
