@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "builds": [
     {
-      "src": "frontend/**",
+      "src": "frontend",
       "use": "@vercel/next",
       "config": {
         "buildCommand": "pnpm install && pnpm run build",
@@ -10,7 +10,7 @@
       }
     },
     {
-      "src": "backend/**",
+      "src": "backend",
       "use": "@vercel/python"
     }
   ]
