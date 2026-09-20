@@ -3,8 +3,8 @@ from typing import Any, Optional
 import certifi
 import httpx
 import openai
-from livekit.agents import inference, llm
-from livekit.plugins import openai as lk_openai
+from livekit.agents import llm
+from livekit.plugins import google, openai as lk_openai
 
 from config import settings
 
@@ -12,7 +12,7 @@ _CACHED_SSL_CONTEXT: Optional[ssl.SSLContext] = None
 _CACHED_HTTPX_CLIENT: Optional[httpx.AsyncClient] = None
 _CACHED_GROQ_CLIENT: Optional[openai.AsyncClient] = None
 _CACHED_GROQ_LLM: Optional[lk_openai.LLM] = None
-_CACHED_GEMINI_FALLBACK: Optional[inference.LLM] = None
+_CACHED_GEMINI_FALLBACK: Optional[google.LLM] = None
 
 
 def get_ssl_context() -> ssl.SSLContext:
@@ -95,10 +95,18 @@ def build_llm_pipeline() -> llm.LLM:
     """
     Constructs a fault-tolerant, high-performance LLM pipeline:
     1. Primary: Groq LPU with automatic message sanitization (sub-100ms TTFT).
-    2. Fallback: Google Gemini 2.5 Flash via LiveKit Cloud Inference.
+    2. Fallback: Google Gemini 2.5 Flash via the direct Google API.
     Reuses pre-warmed singleton clients to ensure 0ms event loop stall on session init.
     """
     global _CACHED_GROQ_LLM, _CACHED_GEMINI_FALLBACK
+
+    if _CACHED_GEMINI_FALLBACK is None and settings.GOOGLE_API_KEY:
+        _CACHED_GEMINI_FALLBACK = google.LLM(
+            model=settings.FALLBACK_MODEL,
+            api_key=settings.GOOGLE_API_KEY,
+            temperature=settings.GROQ_TEMPERATURE,
+            max_output_tokens=settings.GROQ_MAX_TOKENS,
+        )
 
     if settings.GROQ_API_KEY:
         if _CACHED_GROQ_LLM is None:
@@ -108,15 +116,16 @@ def build_llm_pipeline() -> llm.LLM:
                 max_completion_tokens=settings.GROQ_MAX_TOKENS,
                 temperature=settings.GROQ_TEMPERATURE,
             )
-        if _CACHED_GEMINI_FALLBACK is None:
-            _CACHED_GEMINI_FALLBACK = inference.LLM(model=settings.FALLBACK_MODEL)
-
+        providers: list[llm.LLM] = [_CACHED_GROQ_LLM]
+        if _CACHED_GEMINI_FALLBACK is not None:
+            providers.append(_CACHED_GEMINI_FALLBACK)
         return llm.FallbackAdapter(
-            [_CACHED_GROQ_LLM, _CACHED_GEMINI_FALLBACK],
+            providers,
             attempt_timeout=settings.LLM_ATTEMPT_TIMEOUT,
             max_retry_per_llm=settings.LLM_MAX_RETRY,
         )
 
-    if _CACHED_GEMINI_FALLBACK is None:
-        _CACHED_GEMINI_FALLBACK = inference.LLM(model=settings.FALLBACK_MODEL)
-    return _CACHED_GEMINI_FALLBACK
+    if _CACHED_GEMINI_FALLBACK is not None:
+        return _CACHED_GEMINI_FALLBACK
+
+    raise RuntimeError("Set GROQ_API_KEY or GOOGLE_API_KEY to start the voice agent.")

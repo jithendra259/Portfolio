@@ -20,25 +20,21 @@ class Settings:
     GROQ_MAX_TOKENS: int = 60
     GROQ_TEMPERATURE: float = 0.2
 
-    # Google Gemini Fallback Configuration
-    FALLBACK_MODEL: str = "google/gemini-2.5-flash"
+    # Google Gemini fallback (direct Google API, not LiveKit Inference)
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "").strip("\"' \t\r\n")
+    FALLBACK_MODEL: str = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-2.5-flash")
     LLM_ATTEMPT_TIMEOUT: float = 5.0
     LLM_MAX_RETRY: int = 1
 
-    # Speech-To-Text (STT) - Cloud Edge
+    # Direct provider audio credentials. These bypass LiveKit Inference quotas.
+    DEEPGRAM_API_KEY: str = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
+    CARTESIA_API_KEY: str = os.getenv("CARTESIA_API_KEY", "").strip("\"' \t\r\n")
+
+    # Speech-To-Text / Text-To-Speech (direct streaming provider plugins)
     STT_MODEL: str = "deepgram/nova-3"
     STT_LANGUAGE: str = "multi"
-    # Automatic server-side fallback: AssemblyAI Universal Streaming
-    # Triggered by LiveKit Cloud if nova-3 errors (4xx/5xx/timeout/mid-stream disconnect)
-    STT_FALLBACK_MODEL: str = "assemblyai/universal-streaming"
-
-    # Text-To-Speech (TTS) - Ultra-fast Male Voice
     TTS_MODEL: str = "cartesia/sonic-3"
     TTS_VOICE_ID: str = "a0e99841-438c-4a64-b679-ae501e7d6091"
-    # Automatic server-side fallback: ElevenLabs Multilingual v2
-    # Triggered by LiveKit Cloud if Cartesia errors mid-stream
-    TTS_FALLBACK_MODEL: str = "elevenlabs/multilingual-v2"
-    TTS_FALLBACK_VOICE_ID: str = "JBFqnCBsd6RMkjVDRZzb"  # ElevenLabs "George" (closest male match)
 
     # Turn Detection & Latency Tuning
     TURN_DETECTOR_VERSION: str = "v1"

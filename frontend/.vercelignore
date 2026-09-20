@@ -1,0 +1,8 @@
+# Exclude all python and backend files from Vercel deployments
+*.py
+requirements.txt
+Dockerfile
+render.yaml
+.env
+.env.*
+!.env.example
