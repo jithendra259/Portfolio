@@ -138,7 +138,7 @@ export function App({ appConfig, children }: AppProps) {
       'https://portfolio-backend-ljlv.onrender.com';
 
     fetch(backendUrl, { mode: 'cors' })
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => (res.ok ? res.text() : null))
       .then((data) => {
         if (data) {
           console.log('--> [Render Backend Status]', data);
