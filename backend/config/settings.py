@@ -30,11 +30,11 @@ class Settings:
     DEEPGRAM_API_KEY: str = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
     CARTESIA_API_KEY: str = os.getenv("CARTESIA_API_KEY", "").strip("\"' \t\r\n")
 
-    # Speech-To-Text / Text-To-Speech (direct streaming provider plugins)
-    STT_MODEL: str = "deepgram/nova-3"
-    STT_LANGUAGE: str = "multi"
-    TTS_MODEL: str = "cartesia/sonic-3"
-    TTS_VOICE_ID: str = "a0e99841-438c-4a64-b679-ae501e7d6091"
+    # Speech-To-Text / Text-To-Speech
+    STT_MODEL: str = "whisper-large-v3"
+    STT_LANGUAGE: str = "en"
+    TTS_MODEL: str = "google/text-to-speech"
+    TTS_VOICE_ID: str = "en-US-Journey-F"
 
     # Turn Detection & Latency Tuning
     TURN_DETECTOR_VERSION: str = "v1"

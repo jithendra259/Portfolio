@@ -11,7 +11,7 @@ from livekit.agents import (
     inference,
     text_transforms,
 )
-from livekit.plugins import cartesia, deepgram
+from livekit.plugins import openai
 
 from api import build_llm_pipeline
 from config import settings
@@ -36,25 +36,22 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
           backchannel_boundary=(1.0, 2.0) — extra 2s end-window for Deepgram transcript latency
           Preemptive LLM generation (no preemptive TTS — saves Render CPU)
     """
-    if not settings.DEEPGRAM_API_KEY or not settings.CARTESIA_API_KEY:
-        raise RuntimeError(
-            "DEEPGRAM_API_KEY and CARTESIA_API_KEY must be configured for direct voice streaming."
-        )
-
-    # Use your own provider accounts instead of LiveKit Inference. This avoids
-    # the agent-gateway 429s shown in the Render logs while retaining LiveKit
-    # for WebRTC rooms, dispatch, and session orchestration.
-    stt_pipeline = deepgram.STT(
-        model=settings.STT_MODEL.removeprefix("deepgram/"),
+    # We use Groq's high-rate-limit Whisper endpoint for Speech-to-Text
+    stt_pipeline = openai.STT(
+        model=settings.STT_MODEL,
         language=settings.STT_LANGUAGE,
-        api_key=settings.DEEPGRAM_API_KEY,
-    )
-    tts_pipeline = cartesia.TTS(
-        model=settings.TTS_MODEL.removeprefix("cartesia/"),
-        voice=settings.TTS_VOICE_ID,
-        api_key=settings.CARTESIA_API_KEY,
+        base_url=settings.GROQ_BASE_URL,
+        api_key=settings.GROQ_API_KEY,
     )
 
+    # We use LiveKit Cloud Inference for Text-to-Speech (using Google TTS)
+    # This avoids the strict Cartesia rate limits.
+    tts_pipeline = inference.TTS(
+        model=settings.TTS_MODEL,
+        voice=settings.TTS_VOICE_ID,
+        api_key=settings.LIVEKIT_API_KEY,
+        api_secret=settings.LIVEKIT_API_SECRET,
+    )
 
 
     return AgentSession(
