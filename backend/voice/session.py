@@ -50,11 +50,7 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
     # We use ElevenLabs directly for Text-to-Speech
     tts_pipeline = elevenlabs.TTS(
         model=settings.TTS_MODEL,
-        voice=elevenlabs.Voice(
-            id=settings.TTS_VOICE_ID,
-            name="George",
-            category="premade"
-        ),
+        voice_id=settings.TTS_VOICE_ID,
         api_key=settings.ELEVENLABS_API_KEY,
     )
 
