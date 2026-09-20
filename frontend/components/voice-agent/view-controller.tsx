@@ -59,9 +59,16 @@ const VIEW_MOTION_PROPS = {
 interface ViewControllerProps {
   appConfig: AppConfig;
   showWelcome?: boolean;
+  isBackendWarming?: boolean;
+  warmBackend?: () => Promise<void>;
 }
 
-export function ViewController({ appConfig, showWelcome = true }: ViewControllerProps) {
+export function ViewController({
+  appConfig,
+  showWelcome = true,
+  isBackendWarming = false,
+  warmBackend,
+}: ViewControllerProps) {
   const session = useSessionContext();
   const { isConnected, start } = session;
   const { messages } = useSessionMessages(session);
@@ -82,18 +89,24 @@ export function ViewController({ appConfig, showWelcome = true }: ViewController
 
     // Connect directly to Python LiveKit backend worker on Render
     try {
+      if (warmBackend) {
+        await warmBackend();
+      }
       await start();
     } catch (error: any) {
       console.error('Failed to connect to LiveKit backend:', error);
+      toast.error('Voice service is unavailable', {
+        description: error?.message || 'Please try again in a moment.',
+      });
       if (error?.name === 'NotReadableError' || error?.message?.includes('Could not start audio source')) {
         toast.error('Microphone In Use or Blocked', {
           description: 'Windows could not start your audio source. Please check if another browser tab, Zoom, Teams, or Discord is locking your mic.',
         });
       }
     }
-  }, [isConnected, session, start]);
+  }, [isConnected, session, start, warmBackend]);
 
-  const isConnecting = session.connectionState === 'connecting';
+  const isConnecting = session.connectionState === 'connecting' || isBackendWarming;
   const isHUDVisible = (isConnected || isConnecting) && viewMode === 'docked';
 
   return (
