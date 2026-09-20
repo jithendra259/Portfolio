@@ -11,7 +11,7 @@ from livekit.agents import (
     inference,
     text_transforms,
 )
-from livekit.plugins import openai
+from livekit.plugins import openai, elevenlabs
 
 from api import build_llm_pipeline
 from config import settings
@@ -44,13 +44,18 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
         api_key=settings.GROQ_API_KEY,
     )
 
-    # We use LiveKit Cloud Inference for Text-to-Speech (using Google TTS)
-    # This avoids the strict Cartesia rate limits.
-    tts_pipeline = inference.TTS(
+    if not settings.ELEVENLABS_API_KEY:
+        raise RuntimeError("ELEVENLABS_API_KEY must be configured for TTS.")
+
+    # We use ElevenLabs directly for Text-to-Speech
+    tts_pipeline = elevenlabs.TTS(
         model=settings.TTS_MODEL,
-        voice=settings.TTS_VOICE_ID,
-        api_key=settings.LIVEKIT_API_KEY,
-        api_secret=settings.LIVEKIT_API_SECRET,
+        voice=elevenlabs.Voice(
+            id=settings.TTS_VOICE_ID,
+            name="George",
+            category="premade"
+        ),
+        api_key=settings.ELEVENLABS_API_KEY,
     )
 
 

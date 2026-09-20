@@ -29,12 +29,13 @@ class Settings:
     # Direct provider audio credentials. These bypass LiveKit Inference quotas.
     DEEPGRAM_API_KEY: str = os.getenv("DEEPGRAM_API_KEY", "").strip("\"' \t\r\n")
     CARTESIA_API_KEY: str = os.getenv("CARTESIA_API_KEY", "").strip("\"' \t\r\n")
+    ELEVENLABS_API_KEY: str = os.getenv("ELEVENLABS_API_KEY", "").strip("\"' \t\r\n")
 
     # Speech-To-Text / Text-To-Speech
     STT_MODEL: str = "whisper-large-v3"
     STT_LANGUAGE: str = "en"
-    TTS_MODEL: str = "google/text-to-speech"
-    TTS_VOICE_ID: str = "en-US-Journey-F"
+    TTS_MODEL: str = "eleven_multilingual_v2"
+    TTS_VOICE_ID: str = "JBFqnCBsd6RMkjVDRZzb"
 
     # Turn Detection & Latency Tuning
     TURN_DETECTOR_VERSION: str = "v1"
