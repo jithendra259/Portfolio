@@ -1,7 +1,7 @@
 """
 Voice Session Factory for LiveKit Voice Agent.
-Uses direct Deepgram STT and Cartesia TTS, with Groq as the primary LLM and
-Google Gemini as its direct-provider fallback.
+Uses Groq Whisper for STT, Groq Orpheus TTS (primary) with ElevenLabs fallback,
+and Groq LLM with Google Gemini as LLM fallback.
 """
 
 from livekit import agents
@@ -10,10 +10,11 @@ from livekit.agents import (
     TurnHandlingOptions,
     inference,
     text_transforms,
+    tts,
 )
 from livekit.plugins import openai, elevenlabs
 
-from api import build_llm_pipeline
+from api import build_llm_pipeline, GroqOrpheusTTS
 from config import settings
 from prompts import PRONUNCIATION_REPLACEMENTS
 
@@ -45,13 +46,21 @@ def create_voice_session(ctx: agents.JobContext | None = None) -> AgentSession:
     )
 
     if not settings.ELEVENLABS_API_KEY:
-        raise RuntimeError("ELEVENLABS_API_KEY must be configured for TTS.")
+        raise RuntimeError("ELEVENLABS_API_KEY must be configured as TTS fallback.")
 
-    # We use ElevenLabs directly for Text-to-Speech
-    tts_pipeline = elevenlabs.TTS(
-        model=settings.TTS_MODEL,
-        voice_id=settings.TTS_VOICE_ID,
-        api_key=settings.ELEVENLABS_API_KEY,
+    # Primary TTS: Groq Orpheus — ultra-fast, realistic voice (auto-chunked to ≤190 chars)
+    # Fallback TTS: ElevenLabs — kicks in automatically if Orpheus returns an error
+    tts_pipeline = tts.FallbackAdapter(
+        [
+            GroqOrpheusTTS(),
+            elevenlabs.TTS(
+                model=settings.TTS_MODEL,
+                voice_id=settings.TTS_VOICE_ID,
+                api_key=settings.ELEVENLABS_API_KEY,
+            ),
+        ],
+        attempt_timeout=8.0,
+        max_retry_per_tts=1,
     )
 
 
