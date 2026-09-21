@@ -130,19 +130,32 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
  * Get a token source for multi-user LiveKit sessions
  * First calls backend /create_room to get a unique room UUID,
  * then gets a token for that room from /api/token
+ * Falls back to client-side UUID generation if backend is unreachable
  * @returns A token source for multi-user LiveKit sessions
  */
 export function getMultiUserTokenSource() {
   return TokenSource.custom(async () => {
-    // Step 1: Create a room on the backend
-    const createRoomResp = await fetch(`${BACKEND_URL}/create_room`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (!createRoomResp.ok) {
-      throw new Error('Failed to create room on backend');
+    let roomName: string;
+    
+    // Step 1: Try to create a room on the backend
+    try {
+      const createRoomResp = await fetch(`${BACKEND_URL}/create_room`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // Short timeout to fail fast if backend is unreachable
+        signal: AbortSignal.timeout(5000),
+      });
+      if (createRoomResp.ok) {
+        const data = await createRoomResp.json();
+        roomName = data.room;
+      } else {
+        throw new Error('Backend returned non-ok status');
+      }
+    } catch (backendError) {
+      console.warn('Backend /create_room unavailable, generating room UUID client-side:', backendError);
+      // Fallback: generate UUID client-side
+      roomName = crypto.randomUUID();
     }
-    const { room: roomName } = await createRoomResp.json();
 
     // Step 2: Get a token for that specific room
     const tokenResp = await fetch(`/api/token?room=${encodeURIComponent(roomName)}`, {
