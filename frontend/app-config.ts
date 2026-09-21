@@ -62,7 +62,7 @@ export const APP_CONFIG_DEFAULTS: AppConfig = {
   // audioVisualizerGridColumnCount: 25,
   // audioVisualizerType: 'wave',
   // audioVisualizerWaveLineWidth: 3,
-  // audioVisualizerType: 'aura',
+  audioVisualizerType: 'aura',
 
   // agent dispatch configuration
   agentName: process.env.NEXT_PUBLIC_AGENT_NAME ?? process.env.AGENT_NAME ?? 'my-agent',
