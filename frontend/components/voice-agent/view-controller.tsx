@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext, useSessionMessages } from '@livekit/components-react';
@@ -70,13 +70,6 @@ export function ViewController({ appConfig, showWelcome = true }: ViewController
   // Mode: 'docked' keeps the portfolio page fully visible and auto-navigating.
   // 'full' expands into the immersive full-screen audio visualizer tile.
   const [viewMode, setViewMode] = useState<'docked' | 'full'>('docked');
-
-  // Auto-expand to full-screen when using 'aura' visualizer and connected
-  useEffect(() => {
-    if (isConnected && appConfig.audioVisualizerType === 'aura' && viewMode === 'docked') {
-      setViewMode('full');
-    }
-  }, [isConnected, appConfig.audioVisualizerType, viewMode]);
 
   // Activate real-time voice-driven auto navigation
   const { activeTarget, navigateTo } = useVoiceAutoNavigation(session, messages);
