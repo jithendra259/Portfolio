@@ -374,8 +374,6 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
             const link = document.createElement('a');
             link.href = data.url;
             link.download = typeof data.filename === 'string' ? data.filename : '';
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
             document.body.appendChild(link);
             link.click();
             link.remove();
