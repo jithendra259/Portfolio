@@ -1,9 +1,8 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 
+const BACKEND_URL = 'https://portfolio-backend-fx8o.onrender.com';
 const HOST_EMAIL = 'kandulajithendrasubramanyam@gmail.com';
 const HOST_NAME = 'Kandula Jithendra Subramanyam';
 

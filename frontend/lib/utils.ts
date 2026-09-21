@@ -6,6 +6,7 @@ export { cn } from '@/lib/shadcn/utils';
 
 export const CONFIG_ENDPOINT = process.env.NEXT_PUBLIC_APP_CONFIG_ENDPOINT;
 export const SANDBOX_ID = process.env.SANDBOX_ID;
+export const BACKEND_URL = process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
 
 export interface SandboxConfig {
   [key: string]:
@@ -122,5 +123,43 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
       console.error('Error fetching connection details:', error);
       throw new Error('Error fetching connection details!');
     }
+  });
+}
+
+/**
+ * Get a token source for multi-user LiveKit sessions
+ * First calls backend /create_room to get a unique room UUID,
+ * then gets a token for that room from /api/token
+ * @returns A token source for multi-user LiveKit sessions
+ */
+export function getMultiUserTokenSource() {
+  return TokenSource.custom(async () => {
+    // Step 1: Create a room on the backend
+    const createRoomResp = await fetch(`${BACKEND_URL}/create_room`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!createRoomResp.ok) {
+      throw new Error('Failed to create room on backend');
+    }
+    const { room: roomName } = await createRoomResp.json();
+
+    // Step 2: Get a token for that specific room
+    const tokenResp = await fetch(`/api/token?room=${encodeURIComponent(roomName)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!tokenResp.ok) {
+      throw new Error('Failed to get token for room');
+    }
+    const tokenData = await tokenResp.json();
+
+    // Return connection details in the format expected by livekit-client
+    return {
+      serverUrl: tokenData.serverUrl || tokenData.server_url,
+      roomName: tokenData.roomName || tokenData.room_name,
+      participantToken: tokenData.participantToken || tokenData.participant_token,
+      participantName: tokenData.participantName || tokenData.participant_name,
+    };
   });
 }

@@ -10,7 +10,7 @@ import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
 import { ViewController } from '@/components/voice-agent/view-controller';
 import { useAgentErrors } from '@/hooks/useAgentErrors';
 import { useDebugMode } from '@/hooks/useDebug';
-import { getSandboxTokenSource } from '@/lib/utils';
+import { getSandboxTokenSource, getMultiUserTokenSource } from '@/lib/utils';
 
 // Guard against duplicate topic stream handler crashes in React StrictMode & Turbopack
 if (typeof window !== 'undefined' && typeof Room !== 'undefined' && Room.prototype) {
@@ -88,7 +88,7 @@ export function App({ appConfig, children }: AppProps) {
   const tokenSource = useMemo(() => {
     return typeof process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT === 'string'
       ? getSandboxTokenSource(appConfig)
-      : TokenSource.endpoint('/api/token');
+      : getMultiUserTokenSource();
   }, [appConfig]);
 
   // Create an explicit Room configured for voice AI clarity.
@@ -134,9 +134,7 @@ export function App({ appConfig, children }: AppProps) {
   // Best-effort wake-up for a sleeping Render instance. LiveKit remains the
   // connection path, so this must never block the visitor from starting a room.
   useEffect(() => {
-    const backendUrl =
-      process.env.NEXT_PUBLIC_RENDER_BACKEND_URL ||
-      'https://portfolio-backend-ljlv.onrender.com';
+    const backendUrl = process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
 
     void fetch(backendUrl, { mode: 'cors', cache: 'no-store' }).catch((error) => {
       console.warn('--> [Render Backend Warmup]', error?.message || error);
