@@ -13,16 +13,21 @@ interface WelcomeViewProps {
 export const WelcomeView = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & WelcomeViewProps
->(({ onStartCall, isConnected, isConnecting, ...props }, ref) => {
-  return (
-    <div ref={ref} {...props} className="w-full">
-      <LandingPage
-        onStartCall={onStartCall}
-        isConnected={isConnected}
-        isConnecting={isConnecting}
-      />
-    </div>
-  );
-});
+>(
+  (
+    { onStartCall, isConnected, isConnecting, startButtonText: _startButtonText, ...props },
+    ref
+  ) => {
+    return (
+      <div ref={ref} {...props} className="w-full">
+        <LandingPage
+          onStartCall={onStartCall}
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+        />
+      </div>
+    );
+  }
+);
 
 WelcomeView.displayName = 'WelcomeView';
