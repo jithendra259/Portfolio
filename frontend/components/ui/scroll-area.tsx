@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+import { cn } from '@/lib/utils';
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
@@ -11,7 +11,7 @@ const ScrollArea = React.forwardRef<
   <ScrollAreaPrimitive.Root
     ref={ref}
     data-slot="scroll-area"
-    className={cn("relative overflow-hidden", className)}
+    className={cn('relative overflow-hidden', className)}
     {...props}
   >
     <ScrollAreaPrimitive.Viewport
@@ -29,24 +29,22 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 const ScrollBar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
->(({ className, orientation = "vertical", ...props }, ref) => (
+>(({ className, orientation = 'vertical', ...props }, ref) => (
   <ScrollAreaPrimitive.ScrollAreaScrollbar
     ref={ref}
     data-slot="scroll-area-scrollbar"
     orientation={orientation}
     className={cn(
-      "flex touch-none p-px transition-colors select-none",
-      orientation === "vertical" &&
-        "h-full w-2.5 border-l border-l-transparent",
-      orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent",
+      'flex touch-none p-px transition-colors select-none',
+      orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent',
+      orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent',
       className
     )}
     {...props}
   >
     <ScrollAreaPrimitive.ScrollAreaThumb
       data-slot="scroll-area-thumb"
-      className="bg-border relative flex-1 rounded-full hover:bg-muted-foreground/40 transition-colors"
+      className="bg-border hover:bg-muted-foreground/40 relative flex-1 rounded-full transition-colors"
     />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ));

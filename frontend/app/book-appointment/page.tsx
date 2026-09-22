@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 
 export default function BookAppointmentPage() {
   return (
-    <div className="min-h-screen w-full bg-background text-foreground font-sans antialiased transition-colors duration-300">
+    <div className="bg-background text-foreground min-h-screen w-full font-sans antialiased transition-colors duration-300">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 h-16 flex items-center justify-between">
+      <header className="border-border bg-background/95 sticky top-0 z-40 w-full border-b backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:px-10">
           <Link
             href="/"
-            className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="group text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             <span>Back to Portfolio</span>
@@ -32,7 +32,7 @@ export default function BookAppointmentPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto">
+      <main className="mx-auto max-w-7xl">
         <CalendarAppointmentBooking variant="page" />
       </main>
     </div>

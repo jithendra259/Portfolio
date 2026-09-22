@@ -1,25 +1,20 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import Link from "next/link"
+import * as React from 'react';
+import Link from 'next/link';
+import { CircleAlertIcon, CircleCheckIcon, CircleDashedIcon } from 'lucide-react';
 import {
-    CircleAlertIcon,
-    CircleCheckIcon,
-    CircleDashedIcon,
-} from "lucide-react"
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/primitives/navigation-menu';
 
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
-} from "@/components/ui/primitives/navigation-menu"
-
-
-{/***
+{
+  /***
 const components: { title: string; href: string; description: string }[] = [
     {
         title: "Alert Dialog",
@@ -57,15 +52,15 @@ const components: { title: string; href: string; description: string }[] = [
             "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
     },
 ]
-***/}
+***/
+}
 
 export function NavigationMenubar() {
-    return (
-        <div className="flex w-full items-center justify-center">
-            <NavigationMenu>
-                <NavigationMenuList className="flex gap-1 rounded-full border border-white/10 bg-slate-950/10 p-1 backdrop-blur-sm" >
-
-                    {/***
+  return (
+    <div className="flex w-full items-center justify-center">
+      <NavigationMenu>
+        <NavigationMenuList className="flex gap-1 rounded-full border border-white/10 bg-slate-950/10 p-1 backdrop-blur-sm">
+          {/***
                 <NavigationMenuItem>
                     <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -84,7 +79,7 @@ export function NavigationMenubar() {
                 </NavigationMenuItem>
                 ***/}
 
-                    {/*** 
+          {/*** 
                 <NavigationMenuItem className="hidden md:flex">
                     <NavigationMenuTrigger>Components</NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -103,7 +98,7 @@ export function NavigationMenubar() {
                 </NavigationMenuItem>
                 ***/}
 
-                    {/*** 
+          {/*** 
                 <NavigationMenuItem>
                     <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -118,52 +113,63 @@ export function NavigationMenubar() {
                 </NavigationMenuItem>
                 ***/}
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#home" className={navigationMenuTriggerStyle()}>Home</NavigationMenuLink>
-                    </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#home" className={navigationMenuTriggerStyle()}>
+              Home
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#projects" className={navigationMenuTriggerStyle()}>Projects</NavigationMenuLink>
-                    </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#projects" className={navigationMenuTriggerStyle()}>
+              Projects
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#research" className={navigationMenuTriggerStyle()}>Research</NavigationMenuLink>
-                    </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#research" className={navigationMenuTriggerStyle()}>
+              Research
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#skills" className={navigationMenuTriggerStyle()}>Skills</NavigationMenuLink>
-                    </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#skills" className={navigationMenuTriggerStyle()}>
+              Skills
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#experience" className={navigationMenuTriggerStyle()}>Experience</NavigationMenuLink>
-                    </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#experience" className={navigationMenuTriggerStyle()}>
+              Experience
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="#contact" className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
-                    </NavigationMenuItem>
-                </NavigationMenuList>
-
-            </NavigationMenu>
-        </div>
-    )
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#contact" className={navigationMenuTriggerStyle()}>
+              Contact
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
+  );
 }
 
 function ListItem({
-    title,
-    children,
-    href,
-    ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-    return (
-        <li {...props}>
-            <NavigationMenuLink asChild>
-                <Link href={href}>
-                    <div className="flex flex-col gap-1 text-sm">
-                        <div className="leading-none font-medium">{title}</div>
-                        <div className="line-clamp-2 text-muted-foreground">{children}</div>
-                    </div>
-                </Link>
-            </NavigationMenuLink>
-        </li>
-    )
+  title,
+  children,
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<'li'> & { href: string }) {
+  return (
+    <li {...props}>
+      <NavigationMenuLink asChild>
+        <Link href={href}>
+          <div className="flex flex-col gap-1 text-sm">
+            <div className="leading-none font-medium">{title}</div>
+            <div className="text-muted-foreground line-clamp-2">{children}</div>
+          </div>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  );
 }

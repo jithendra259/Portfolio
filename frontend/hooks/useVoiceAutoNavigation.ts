@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { useRoomContext } from '@livekit/components-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { RoomEvent } from 'livekit-client';
+import { useRoomContext } from '@livekit/components-react';
 import { toast } from '@/components/ui/widgets/notification-card';
 
 export type NavigationTarget = string;
@@ -269,7 +269,13 @@ function scrollToElementWithHighlight(el: HTMLElement): void {
   // Highlight pulse animation
   el.classList.add('ring-2', 'ring-cyan-400/60', 'rounded-2xl', 'transition-all', 'duration-300');
   setTimeout(() => {
-    el.classList.remove('ring-2', 'ring-cyan-400/60', 'rounded-2xl', 'transition-all', 'duration-300');
+    el.classList.remove(
+      'ring-2',
+      'ring-cyan-400/60',
+      'rounded-2xl',
+      'transition-all',
+      'duration-300'
+    );
   }, 2800);
 }
 
@@ -365,7 +371,12 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
   useEffect(() => {
     if (!room) return;
 
-    const handleDataReceived = (payload: Uint8Array, participant: any, kind: any, topic?: string) => {
+    const handleDataReceived = (
+      payload: Uint8Array,
+      participant: any,
+      kind: any,
+      topic?: string
+    ) => {
       // 1. Assistant Action Channel (Downloads, Themes, Bookings)
       if (topic === 'assistant_action') {
         try {

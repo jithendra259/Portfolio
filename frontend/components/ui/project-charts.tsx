@@ -1,27 +1,27 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Activity, BarChart3, Cpu, ShieldAlert, Sparkles, TrendingUp, Zap } from 'lucide-react';
 import {
-  Bar,
-  BarChart,
-  Line,
-  LineChart,
   Area,
   AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
   XAxis,
   YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
 } from 'recharts';
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
 } from '@/components/ui/chart';
-import { BarChart3, TrendingUp, ShieldAlert, Zap, Cpu, Sparkles, Activity } from 'lucide-react';
 
 interface ProjectChartsProps {
   projectId: string;
@@ -36,9 +36,9 @@ const portfolioStrategyData = [
   { strategy: 'G-CVaR (Ours)', sharpe: 0.61, sortino: 0.84, cvar: 2.39, returnRate: 12.82 },
   { strategy: 'Standard CVaR', sharpe: 0.62, sortino: 0.82, cvar: 2.45, returnRate: 12.87 },
   { strategy: 'HRP', sharpe: 0.61, sortino: 0.79, cvar: 2.82, returnRate: 11.45 },
-  { strategy: 'Mean-Variance', sharpe: 0.60, sortino: 0.74, cvar: 2.95, returnRate: 10.89 },
-  { strategy: 'Risk Parity', sharpe: 0.60, sortino: 0.76, cvar: 2.91, returnRate: 11.20 },
-  { strategy: 'Equal Weight', sharpe: 0.58, sortino: 0.71, cvar: 3.22, returnRate: 9.80 },
+  { strategy: 'Mean-Variance', sharpe: 0.6, sortino: 0.74, cvar: 2.95, returnRate: 10.89 },
+  { strategy: 'Risk Parity', sharpe: 0.6, sortino: 0.76, cvar: 2.91, returnRate: 11.2 },
+  { strategy: 'Equal Weight', sharpe: 0.58, sortino: 0.71, cvar: 3.22, returnRate: 9.8 },
 ];
 
 const portfolioCrisisData = [
@@ -57,8 +57,8 @@ const aqiModelData = [
   { pollutant: 'NO2', lstm: 0.89, xgboost: 0.93, arima: 0.74, markov: 0.65 },
   { pollutant: 'SO2', lstm: 0.91, xgboost: 0.89, arima: 0.71, markov: 0.62 },
   { pollutant: 'CO', lstm: 0.87, xgboost: 0.88, arima: 0.92, markov: 0.67 },
-  { pollutant: 'O3', lstm: 0.88, xgboost: 0.90, arima: 0.93, markov: 0.64 },
-  { pollutant: 'Overall AQI', lstm: 0.90, xgboost: 0.91, arima: 0.76, markov: 0.72 },
+  { pollutant: 'O3', lstm: 0.88, xgboost: 0.9, arima: 0.93, markov: 0.64 },
+  { pollutant: 'Overall AQI', lstm: 0.9, xgboost: 0.91, arima: 0.76, markov: 0.72 },
 ];
 
 const aqiForecastTimeline = [
@@ -148,29 +148,32 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   const [activeTab, setActiveTab] = useState<'primary' | 'secondary'>('primary');
 
   // 1. ADAPTIVE PORTFOLIO GOVERNANCE / REGIME ADAPTIVE SUPERVISORY
-  if (projectId === 'adaptive-portfolio-governance' || projectId === 'regime-adaptive-supervisory-governance') {
+  if (
+    projectId === 'adaptive-portfolio-governance' ||
+    projectId === 'regime-adaptive-supervisory-governance'
+  ) {
     return (
       <div className="mt-10 space-y-6">
         {/* Header with Switcher Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+        <div className="border-border/40 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-cyan-600 uppercase dark:text-cyan-400">
               <TrendingUp className="size-3.5" />
               <span>Interactive Empirical Graphs (shadcn/ui)</span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+            <h3 className="mt-1 text-base font-bold text-slate-950 sm:text-lg dark:text-white">
               Multi-Universe Statistical Performance &amp; Crisis Stress Visualizer
             </h3>
           </div>
 
-          <div className="flex items-center rounded-xl bg-slate-200/80 dark:bg-white/5 p-1 border border-slate-300 dark:border-white/10 self-start sm:self-auto">
+          <div className="flex items-center self-start rounded-xl border border-slate-300 bg-slate-200/80 p-1 sm:self-auto dark:border-white/10 dark:bg-white/5">
             <button
               type="button"
               onClick={() => setActiveTab('primary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'primary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               Risk-Adjusted Return Metrics
@@ -178,10 +181,10 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             <button
               type="button"
               onClick={() => setActiveTab('secondary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'secondary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               Crisis Drawdown Comparison
@@ -193,35 +196,43 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-4">
+              <div className="mb-6 flex flex-col justify-between gap-2 border-b border-slate-100 pb-4 sm:flex-row sm:items-center dark:border-white/5">
                 <div>
-                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                  <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                     Strategy Sharpe &amp; Sortino Ratios (2005–2025 across 552 Windows)
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                     G-CVaR balances return stability with a 25.9% reduction in CVaR tail risk.
                   </p>
                 </div>
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-medium">
+                <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-cyan-600 dark:text-cyan-400">
                   552 Rolling Windows
                 </span>
               </div>
 
               <ChartContainer config={portfolioConfig} className="h-[340px] w-full">
-                <BarChart data={portfolioStrategyData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
+                <BarChart
+                  data={portfolioStrategyData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
                   <XAxis
                     dataKey="strategy"
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    className="text-xs font-mono"
+                    className="font-mono text-xs"
                   />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    className="text-xs font-mono"
+                    className="font-mono text-xs"
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
@@ -232,41 +243,54 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             </div>
           ) : (
             <div>
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-4">
+              <div className="mb-6 flex flex-col justify-between gap-2 border-b border-slate-100 pb-4 sm:flex-row sm:items-center dark:border-white/5">
                 <div>
-                  <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                  <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                     Maximum Crisis Drawdown (%) — G-CVaR vs. Equal Weight
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
-                    Adaptive sigmoid gating prevents fire-sale contagion during major financial market crashes.
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
+                    Adaptive sigmoid gating prevents fire-sale contagion during major financial
+                    market crashes.
                   </p>
                 </div>
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
+                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
                   Up to 27.4% Drawdown Reduction
                 </span>
               </div>
 
               <ChartContainer config={portfolioConfig} className="h-[340px] w-full">
-                <BarChart data={portfolioCrisisData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
+                <BarChart
+                  data={portfolioCrisisData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
                   <XAxis
                     dataKey="episode"
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    className="text-xs font-mono"
+                    className="font-mono text-xs"
                   />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
-                    className="text-xs font-mono"
+                    className="font-mono text-xs"
                     unit="%"
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar dataKey="gcvar" fill="var(--color-gcvar)" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="equalWeight" fill="var(--color-equalWeight)" radius={[6, 6, 0, 0]} />
+                  <Bar
+                    dataKey="equalWeight"
+                    fill="var(--color-equalWeight)"
+                    radius={[6, 6, 0, 0]}
+                  />
                 </BarChart>
               </ChartContainer>
             </div>
@@ -279,25 +303,25 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   if (projectId === 'supervisory-portfolio-xai-governance') {
     return (
       <div className="mt-10 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+        <div className="border-border/40 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-cyan-600 uppercase dark:text-cyan-400">
               <Cpu className="size-3.5" />
               <span>Supervisory Governance &amp; XAI Fidelity (shadcn/ui)</span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+            <h3 className="mt-1 text-base font-bold text-slate-950 sm:text-lg dark:text-white">
               Multi-Universe Risk-Adjusted Sharpe (U1–U5) &amp; Deterministic Accuracy
             </h3>
           </div>
 
-          <div className="flex items-center rounded-xl bg-slate-200/80 dark:bg-white/5 p-1 border border-slate-300 dark:border-white/10 self-start sm:self-auto">
+          <div className="flex items-center self-start rounded-xl border border-slate-300 bg-slate-200/80 p-1 sm:self-auto dark:border-white/10 dark:bg-white/5">
             <button
               type="button"
               onClick={() => setActiveTab('primary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'primary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               Universe Sharpe (U1–U5)
@@ -305,10 +329,10 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             <button
               type="button"
               onClick={() => setActiveTab('secondary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'secondary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               XAI Zero-Hallucination (%)
@@ -319,48 +343,95 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-4">
+              <div className="mb-6 flex flex-col justify-between gap-2 border-b border-slate-100 pb-4 sm:flex-row sm:items-center dark:border-white/5">
                 <div>
-                  <h4 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white">
+                  <h4 className="text-sm font-bold text-slate-950 sm:text-base dark:text-white">
                     Average Sharpe Ratio Across Asset Universes U1–U5 (2005–2025)
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
-                    Supervisory Ledoit-Wolf shrinkage consistently stabilizes risk-adjusted returns across sector and global universes.
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
+                    Supervisory Ledoit-Wolf shrinkage consistently stabilizes risk-adjusted returns
+                    across sector and global universes.
                   </p>
                 </div>
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-medium">
+                <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 font-mono text-[11px] font-medium text-cyan-600 dark:text-cyan-400">
                   U4 US Sectors: 0.63 Sharpe
                 </span>
               </div>
 
               <ChartContainer config={supervisoryConfig} className="h-[340px] w-full">
-                <BarChart data={universeSharpeData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="universe" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis domain={[0, 0.8]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                <BarChart
+                  data={universeSharpeData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="universe"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    domain={[0, 0.8]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                  <Bar dataKey="supervisory" fill="var(--color-supervisory)" radius={[6, 6, 0, 0]} />
+                  <Bar
+                    dataKey="supervisory"
+                    fill="var(--color-supervisory)"
+                    radius={[6, 6, 0, 0]}
+                  />
                   <Bar dataKey="baseline" fill="var(--color-baseline)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             </div>
           ) : (
             <div>
-              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-                <h4 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white">
+              <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+                <h4 className="text-sm font-bold text-slate-950 sm:text-base dark:text-white">
                   Regulatory Compliance &amp; Zero-Hallucination Rate (Ours vs. Prompted LLMs)
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
-                  Decoupling numerical calculation from local Mistral-7B narrative synthesis ensures 100% mathematical auditability.
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
+                  Decoupling numerical calculation from local Mistral-7B narrative synthesis ensures
+                  100% mathematical auditability.
                 </p>
               </div>
 
               <ChartContainer config={chatbotConfig} className="h-[340px] w-full">
-                <BarChart data={chatbotComparisonData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="metric" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis domain={[0, 100]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" unit="%" />
+                <BarChart
+                  data={chatbotComparisonData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="metric"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                    unit="%"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar dataKey="agentic" fill="var(--color-agentic)" radius={[4, 4, 0, 0]} />
@@ -378,25 +449,25 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   if (projectId === 'personalised-aqi-system') {
     return (
       <div className="mt-10 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+        <div className="border-border/40 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold tracking-wider">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
               <Activity className="size-3.5" />
               <span>Interactive Model Benchmarks (shadcn/ui)</span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+            <h3 className="mt-1 text-base font-bold text-slate-950 sm:text-lg dark:text-white">
               Multi-Pollutant Machine Learning Accuracy &amp; 24-Hour Forecast Curve
             </h3>
           </div>
 
-          <div className="flex items-center rounded-xl bg-slate-200/80 dark:bg-white/5 p-1 border border-slate-300 dark:border-white/10 self-start sm:self-auto">
+          <div className="flex items-center self-start rounded-xl border border-slate-300 bg-slate-200/80 p-1 sm:self-auto dark:border-white/10 dark:bg-white/5">
             <button
               type="button"
               onClick={() => setActiveTab('primary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'primary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               Model R² Comparison
@@ -404,10 +475,10 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             <button
               type="button"
               onClick={() => setActiveTab('secondary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'secondary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               24-Hour Forecast Curve
@@ -418,20 +489,37 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
-              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+                <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                   Pollutant-Wise R² Model Fit (XGBoost vs. LSTM vs. ARIMA vs. Markov)
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                   Dynamic selection assigns the best predictive architecture per pollutant type.
                 </p>
               </div>
 
               <ChartContainer config={aqiConfig} className="h-[340px] w-full">
                 <BarChart data={aqiModelData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="pollutant" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis domain={[0.5, 1.0]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="pollutant"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    domain={[0.5, 1.0]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar dataKey="xgboost" fill="var(--color-xgboost)" radius={[4, 4, 0, 0]} />
@@ -443,24 +531,55 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             </div>
           ) : (
             <div>
-              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+                <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                   24-Hour IAQI Tracking Curve: Forecast vs. Ground Truth
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                   Ensemble predictions with 95% Monte Carlo confidence intervals.
                 </p>
               </div>
 
               <ChartContainer config={aqiConfig} className="h-[340px] w-full">
-                <AreaChart data={aqiForecastTimeline} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="hour" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
+                <AreaChart
+                  data={aqiForecastTimeline}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="hour"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                  <Area type="monotone" dataKey="actual" stroke="var(--color-actual)" fill="var(--color-actual)" fillOpacity={0.2} />
-                  <Area type="monotone" dataKey="predicted" stroke="var(--color-predicted)" fill="var(--color-predicted)" fillOpacity={0.2} />
+                  <Area
+                    type="monotone"
+                    dataKey="actual"
+                    stroke="var(--color-actual)"
+                    fill="var(--color-actual)"
+                    fillOpacity={0.2}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="predicted"
+                    stroke="var(--color-predicted)"
+                    fill="var(--color-predicted)"
+                    fillOpacity={0.2}
+                  />
                 </AreaChart>
               </ChartContainer>
             </div>
@@ -473,25 +592,25 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   if (projectId === 'swarm-robots-agriculture') {
     return (
       <div className="mt-10 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+        <div className="border-border/40 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-bold tracking-wider">
+            <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
               <Zap className="size-3.5" />
               <span>Robotic Efficiency Metrics (shadcn/ui)</span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+            <h3 className="mt-1 text-base font-bold text-slate-950 sm:text-lg dark:text-white">
               Field Execution Speedup &amp; DenseNet-121 CNN Learning Curve
             </h3>
           </div>
 
-          <div className="flex items-center rounded-xl bg-slate-200/80 dark:bg-white/5 p-1 border border-slate-300 dark:border-white/10 self-start sm:self-auto">
+          <div className="flex items-center self-start rounded-xl border border-slate-300 bg-slate-200/80 p-1 sm:self-auto dark:border-white/10 dark:bg-white/5">
             <button
               type="button"
               onClick={() => setActiveTab('primary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'primary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               Field Time per Acre (Hours)
@@ -499,10 +618,10 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
             <button
               type="button"
               onClick={() => setActiveTab('secondary')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold transition-all ${
                 activeTab === 'secondary'
-                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-800 dark:text-white'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
               DenseNet-121 Accuracy Curve
@@ -513,48 +632,105 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
         <div className="py-4">
           {activeTab === 'primary' ? (
             <div>
-              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+                <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                   Field Labor Hours Reduction: Manual vs. Single Robot vs. 5-Robot Swarm
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                   Coordinated multi-agent robotics delivers over 85% operational time reduction.
                 </p>
               </div>
 
               <ChartContainer config={swarmConfig} className="h-[340px] w-full">
-                <BarChart data={swarmTimeData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="task" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" unit="h" />
+                <BarChart
+                  data={swarmTimeData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="task"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                    unit="h"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar dataKey="manual" fill="var(--color-manual)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="singleRobot" fill="var(--color-singleRobot)" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="singleRobot"
+                    fill="var(--color-singleRobot)"
+                    radius={[4, 4, 0, 0]}
+                  />
                   <Bar dataKey="swarm5" fill="var(--color-swarm5)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             </div>
           ) : (
             <div>
-              <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+                <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                   DenseNet-121 CNN Disease Detection Training &amp; Validation Curve
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                   Reaches 93.4% validation accuracy across 50 training epochs.
                 </p>
               </div>
 
               <ChartContainer config={swarmConfig} className="h-[340px] w-full">
-                <LineChart data={densenetAccuracyData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-                  <XAxis dataKey="epoch" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-                  <YAxis domain={[65, 100]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" unit="%" />
+                <LineChart
+                  data={densenetAccuracyData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="opacity-15"
+                  />
+                  <XAxis
+                    dataKey="epoch"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                  />
+                  <YAxis
+                    domain={[65, 100]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={10}
+                    className="font-mono text-xs"
+                    unit="%"
+                  />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                  <Line type="monotone" dataKey="trainAcc" stroke="var(--color-trainAcc)" strokeWidth={2.5} dot={{ r: 4 }} />
-                  <Line type="monotone" dataKey="valAcc" stroke="var(--color-valAcc)" strokeWidth={2.5} dot={{ r: 4 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="trainAcc"
+                    stroke="var(--color-trainAcc)"
+                    strokeWidth={2.5}
+                    dot={{ r: 4 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="valAcc"
+                    stroke="var(--color-valAcc)"
+                    strokeWidth={2.5}
+                    dot={{ r: 4 }}
+                  />
                 </LineChart>
               </ChartContainer>
             </div>
@@ -567,33 +743,55 @@ export function ProjectCharts({ projectId }: ProjectChartsProps) {
   // DEFAULT / CHATBOT PROJECT
   return (
     <div className="mt-10 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+      <div className="border-border/40 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">
+          <div className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-cyan-600 uppercase dark:text-cyan-400">
             <Cpu className="size-3.5" />
             <span>Agentic Intelligence Evaluation (shadcn/ui)</span>
           </div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white mt-1">
+          <h3 className="mt-1 text-base font-bold text-slate-950 sm:text-lg dark:text-white">
             Deterministic Solvers vs. Monolithic Generative LLMs
           </h3>
         </div>
       </div>
 
       <div className="py-4">
-        <div className="mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
-          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+        <div className="mb-6 border-b border-slate-100 pb-4 dark:border-white/5">
+          <h4 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
             Arithmetic Precision, Constraint Enforcing, and Audit Reliability
           </h4>
-          <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
-            Decoupling language understanding from convex optimization ensures 100% mathematical fidelity.
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
+            Decoupling language understanding from convex optimization ensures 100% mathematical
+            fidelity.
           </p>
         </div>
 
         <ChartContainer config={chatbotConfig} className="h-[340px] w-full">
-          <BarChart data={chatbotComparisonData} margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-15" />
-            <XAxis dataKey="metric" tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" />
-            <YAxis domain={[0, 100]} tickLine={false} axisLine={false} tickMargin={10} className="text-xs font-mono" unit="%" />
+          <BarChart
+            data={chatbotComparisonData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 10 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="currentColor"
+              className="opacity-15"
+            />
+            <XAxis
+              dataKey="metric"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+              className="font-mono text-xs"
+            />
+            <YAxis
+              domain={[0, 100]}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+              className="font-mono text-xs"
+              unit="%"
+            />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar dataKey="agentic" fill="var(--color-agentic)" radius={[4, 4, 0, 0]} />

@@ -1,17 +1,17 @@
-import React from "react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface DotPatternProps {
   id?: string;
-  width?: any;
-  height?: any;
-  x?: any;
-  y?: any;
-  cx?: any;
-  cy?: any;
-  cr?: any;
+  width?: string | number;
+  height?: string | number;
+  x?: string | number;
+  y?: string | number;
+  cx?: string | number;
+  cy?: string | number;
+  cr?: string | number;
   className?: string;
-  [key: string]: any;
+  [key: string]: string | number | undefined;
 }
 export function DotPattern({
   id: customId,
@@ -25,14 +25,14 @@ export function DotPattern({
   className,
   ...props
 }: DotPatternProps) {
-  const patternId = customId || "portfolio-dot-pattern";
+  const patternId = customId || 'portfolio-dot-pattern';
 
   return (
     <svg
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-slate-500/50 md:fill-slate-500/70",
-        className,
+        'pointer-events-none absolute inset-0 h-full w-full fill-slate-500/50 md:fill-slate-500/70',
+        className
       )}
       {...props}
     >

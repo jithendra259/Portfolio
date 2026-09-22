@@ -42,16 +42,16 @@ export function MathBlock({ math, className = '' }: MathBlockProps) {
   }, [cleanMath]);
 
   return (
-    <div className={`my-4 flex items-center justify-between gap-4 w-full py-1 ${className}`}>
-      {tag && <div className="w-8 shrink-0 hidden sm:block" aria-hidden="true" />}
+    <div className={`my-4 flex w-full items-center justify-between gap-4 py-1 ${className}`}>
+      {tag && <div className="hidden w-8 shrink-0 sm:block" aria-hidden="true" />}
       <div className="flex-1 overflow-x-auto py-1 text-center">
         <div
-          className="inline-block text-slate-900 dark:text-neutral-100 [&_.katex-display]:m-0 text-sm sm:text-base"
+          className="inline-block text-sm text-slate-900 sm:text-base dark:text-neutral-100 [&_.katex-display]:m-0"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
       {tag && (
-        <span className="shrink-0 text-xs sm:text-sm font-mono text-slate-400 dark:text-neutral-500 select-none pr-1">
+        <span className="shrink-0 pr-1 font-mono text-xs text-slate-400 select-none sm:text-sm dark:text-neutral-500">
           ({tag})
         </span>
       )}

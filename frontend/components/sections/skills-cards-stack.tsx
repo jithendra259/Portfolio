@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { ContainerScroll, CardSticky } from '@/components/ui/widgets/cards-stack';
+import { Bot, CheckCircle2, Code2, Cpu, Sparkles, Terminal, TrendingUp } from 'lucide-react';
+import { CardSticky, ContainerScroll } from '@/components/ui/widgets/cards-stack';
 import { IconCloud } from '@/components/ui/widgets/icon-cloud';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import { Cpu, Sparkles, CheckCircle2, Bot, TrendingUp, Terminal, Code2 } from 'lucide-react';
 
 const techIcons = [
   'typescript',
@@ -49,29 +49,29 @@ const categoryDescriptions = [
 
 export function SkillsCardsStack() {
   return (
-    <section className="relative py-24 px-6 sm:px-12 md:px-16 lg:px-20 max-w-7xl mx-auto" id="skills">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        
+    <section
+      className="relative mx-auto max-w-7xl px-6 py-24 sm:px-12 md:px-16 lg:px-20"
+      id="skills"
+    >
+      <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
         {/* Left Column: Sticky Title + 3D Interactive Icon Cloud */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4 self-start">
+        <div className="space-y-4 self-start lg:sticky lg:top-24 lg:col-span-5">
           <div>
-            <span className="text-xs font-mono uppercase text-slate-700 dark:text-neutral-400 font-bold flex items-center gap-1.5 mb-2">
+            <span className="mb-2 flex items-center gap-1.5 font-mono text-xs font-bold text-slate-700 uppercase dark:text-neutral-400">
               <Cpu className="size-3.5" /> Technical Disciplines
             </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
+            <h2 className="text-3xl leading-[1.1] font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl dark:text-white">
               Technical Skills &amp; Systems
             </h2>
           </div>
 
           {/* Borderless Free-Moving 3D Icon Cloud (Centered & Proportioned) */}
-          <div className="relative flex w-full items-center justify-center -my-2">
+          <div className="relative -my-2 flex w-full items-center justify-center">
             <IconCloud
               radius={140}
               canvasSize={440}
               showControl={false}
-              images={techIcons.map(
-                (slug) => `https://cdn.simpleicons.org/${slug}/${slug}`
-              )}
+              images={techIcons.map((slug) => `https://cdn.simpleicons.org/${slug}/${slug}`)}
             />
           </div>
         </div>
@@ -86,37 +86,37 @@ export function SkillsCardsStack() {
                 topOffset={100}
                 incrementY={32}
                 incrementZ={16}
-                className="w-full rounded-2xl border border-slate-200 dark:border-[#3c3c3c] bg-white dark:bg-[#181818] p-6 sm:p-8 shadow-2xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl transition-all mb-28 last:mb-0"
+                className="mb-28 w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl backdrop-blur-2xl transition-all last:mb-0 sm:p-8 dark:border-[#3c3c3c] dark:bg-[#181818] dark:shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
               >
                 {/* Card Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 dark:border-[#333333] pb-4 mb-5">
-                  <div className="p-2 rounded-xl bg-slate-100 dark:bg-[#111111] border border-slate-200 dark:border-[#3c3c3c] shadow-sm">
+                <div className="mb-5 flex items-center gap-3 border-b border-slate-200 pb-4 dark:border-[#333333]">
+                  <div className="rounded-xl border border-slate-200 bg-slate-100 p-2 shadow-sm dark:border-[#3c3c3c] dark:bg-[#111111]">
                     {categoryIcons[index % categoryIcons.length]}
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500 dark:text-neutral-400 font-bold block">
+                    <span className="block font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase dark:text-neutral-400">
                       CORE DISCIPLINE
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white">
                       {category.category}
                     </h3>
                   </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed mb-6">
+                <p className="mb-6 text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-neutral-300">
                   {categoryDescriptions[index % categoryDescriptions.length]}
                 </p>
 
                 {/* Skills Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {category.skills.map((skill, sIdx) => (
                     <div
                       key={sIdx}
-                      className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-100/90 dark:bg-[#111111]/90 border border-slate-200/80 dark:border-[#2a2a2a] hover:border-slate-400 dark:hover:border-[#4d4d4d] transition-colors"
+                      className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-100/90 p-2.5 transition-colors hover:border-slate-400 dark:border-[#2a2a2a] dark:bg-[#111111]/90 dark:hover:border-[#4d4d4d]"
                     >
-                      <CheckCircle2 className="size-3.5 text-slate-900 dark:text-white shrink-0" />
-                      <span className="text-xs font-medium text-slate-800 dark:text-neutral-200 truncate">
+                      <CheckCircle2 className="size-3.5 shrink-0 text-slate-900 dark:text-white" />
+                      <span className="truncate text-xs font-medium text-slate-800 dark:text-neutral-200">
                         {skill.name}
                       </span>
                     </div>
@@ -126,7 +126,6 @@ export function SkillsCardsStack() {
             ))}
           </ContainerScroll>
         </div>
-
       </div>
     </section>
   );

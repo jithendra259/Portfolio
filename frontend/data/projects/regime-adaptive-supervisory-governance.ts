@@ -5,10 +5,12 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
   title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
   category: 'Quantitative Finance',
   period: '2005 – 2025 (20-Year Study)',
-  tagline: 'Instability-Aware Supervisory Signal Coupling Covariance Drift with Quadratic Regularization & Concentration Caps',
+  tagline:
+    'Instability-Aware Supervisory Signal Coupling Covariance Drift with Quadratic Regularization & Concentration Caps',
   status: 'Springer Nature LNCS / Presented at 5th IJCACI 2026',
   githubUrl: 'https://github.com/jithendra259/Portfolio',
-  pdfUrl: '/documents/regime-adaptive-supervisory-governance/regime-adaptive-supervisory-governance.pdf',
+  pdfUrl:
+    '/documents/regime-adaptive-supervisory-governance/regime-adaptive-supervisory-governance.pdf',
 
   description:
     'Proposes an interpretable regime-adaptive supervisory governance framework for portfolio stabilization during market stress. Instead of switching prediction models, the framework monitors covariance drift, rolling volatility, and correlation stress to dynamically adjust quadratic concentration penalties and weight caps.',
@@ -45,15 +47,30 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
   techStackCategories: [
     {
       category: 'Mathematical Optimization',
-      items: ['CVXPY', 'Quadratic Programming', 'Ledoit-Wolf Shrinkage', 'Herfindahl-Hirschman Index'],
+      items: [
+        'CVXPY',
+        'Quadratic Programming',
+        'Ledoit-Wolf Shrinkage',
+        'Herfindahl-Hirschman Index',
+      ],
     },
     {
       category: 'Risk & Regime Detection',
-      items: ['Covariance Frobenius Drift', 'Rolling Realized Volatility', 'Correlation Stress Matrix', 'Expanding Standardization'],
+      items: [
+        'Covariance Frobenius Drift',
+        'Rolling Realized Volatility',
+        'Correlation Stress Matrix',
+        'Expanding Standardization',
+      ],
     },
     {
       category: 'Empirical Framework',
-      items: ['Rolling Walk-Forward (252d train, 21d rebalance)', 'Out-of-Sample 2015–2025', 'Proportional Cost Drag (10 bps)', 'Ablation Testing'],
+      items: [
+        'Rolling Walk-Forward (252d train, 21d rebalance)',
+        'Out-of-Sample 2015–2025',
+        'Proportional Cost Drag (10 bps)',
+        'Ablation Testing',
+      ],
     },
   ],
 
@@ -76,7 +93,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
     {
       label: 'Effective Number of Assets',
       value: '18.0 Assets',
-      detail: 'HHI of 0.0557 matches 1/N naive diversification (18.0 assets) vs 5.6 for minimum-variance',
+      detail:
+        'HHI of 0.0557 matches 1/N naive diversification (18.0 assets) vs 5.6 for minimum-variance',
     },
     {
       label: 'Average Turnover per Rebalance',
@@ -94,31 +112,36 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
     {
       step: '01',
       title: 'Market Data Ingestion & Returns Processing',
-      description: 'Collects daily adjusted closing price series for 18 liquid U.S. equities from Yahoo Finance (2005–2025) and computes daily percentage returns $r_{i,t} = (P_{i,t} - P_{i,t-1}) / P_{i,t-1}$.',
+      description:
+        'Collects daily adjusted closing price series for 18 liquid U.S. equities from Yahoo Finance (2005–2025) and computes daily percentage returns $r_{i,t} = (P_{i,t} - P_{i,t-1}) / P_{i,t-1}$.',
       tech: 'yfinance & Pandas',
     },
     {
       step: '02',
       title: 'Three-Channel Supervisory Instability Monitor',
-      description: 'Calculates normalized Frobenius covariance drift $\\Delta \\Sigma_t$, 21-day rolling volatility, and cross-asset correlation stress with expanding standardization $z_{k,t} = (X_{k,t} - \\mu_{k,t-1}) / \\sigma_{k,t-1}$.',
+      description:
+        'Calculates normalized Frobenius covariance drift $\\Delta \\Sigma_t$, 21-day rolling volatility, and cross-asset correlation stress with expanding standardization $z_{k,t} = (X_{k,t} - \\mu_{k,t-1}) / \\sigma_{k,t-1}$.',
       tech: 'SciPy & Linear Algebra',
     },
     {
       step: '03',
       title: 'Composite Instability Index Aggregation',
-      description: 'Combines channels via $I_t = 0.4 z_{\\text{drift},t} + 0.3 z_{\\text{vol},t} + 0.3 z_{\\text{corr},t}$ and evaluates the threshold $s_t = \\text{unstable}$ if $I_t > 1.0$.',
+      description:
+        'Combines channels via $I_t = 0.4 z_{\\text{drift},t} + 0.3 z_{\\text{vol},t} + 0.3 z_{\\text{corr},t}$ and evaluates the threshold $s_t = \\text{unstable}$ if $I_t > 1.0$.',
       tech: 'Supervisory Control Logic',
     },
     {
       step: '04',
       title: 'Ledoit-Wolf Convex Quadratic Optimization',
-      description: 'Solves $\\min_w \\sqrt{w^\\top \\hat{\\Sigma} w} + \\lambda_g \\sum w_i^2$ subject to $\\sum w_i = 1$ and $0 \\le w_i \\le u_g$, setting $u_g = 0.20, \\lambda_g = 10$ during instability.',
+      description:
+        'Solves $\\min_w \\sqrt{w^\\top \\hat{\\Sigma} w} + \\lambda_g \\sum w_i^2$ subject to $\\sum w_i = 1$ and $0 \\le w_i \\le u_g$, setting $u_g = 0.20, \\lambda_g = 10$ during instability.',
       tech: 'CVXPY & OSQP Solver',
     },
     {
       step: '05',
       title: 'Audit Logging & Rebalancing Protocol',
-      description: 'Logs weights, turnover, and HHI across 252-day training windows rebalanced every 21 trading days, incorporating a 10 bps proportional transaction cost model.',
+      description:
+        'Logs weights, turnover, and HHI across 252-day training windows rebalanced every 21 trading days, incorporating a 10 bps proportional transaction cost model.',
       tech: 'Deterministic Ledger & Audit CSV',
     },
   ],
@@ -126,40 +149,51 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
   keyCapabilities: [
     {
       title: 'Unified Quadratic Formulation',
-      description: 'Eliminates brittle model switching by adjusting continuous regularization penalties $\\lambda_g$ and weight bounds $u_g$ within a single convex program.',
+      description:
+        'Eliminates brittle model switching by adjusting continuous regularization penalties $\\lambda_g$ and weight bounds $u_g$ within a single convex program.',
     },
     {
       title: 'Multi-Channel Early Warning',
-      description: 'Detects systemic fragility across structural covariance drift, market volatility surges, and cross-asset correlation breakdowns.',
+      description:
+        'Detects systemic fragility across structural covariance drift, market volatility surges, and cross-asset correlation breakdowns.',
     },
     {
       title: 'Guaranteed Diversification',
-      description: 'Overcomes the severe concentration of standard minimum-variance portfolios ($N_{\\text{eff}} = 5.6$) by sustaining an effective diversification of 18.0 assets.',
+      description:
+        'Overcomes the severe concentration of standard minimum-variance portfolios ($N_{\\text{eff}} = 5.6$) by sustaining an effective diversification of 18.0 assets.',
     },
     {
       title: 'Statistically Verified Auditability',
-      description: 'Validated via expanding-window out-of-sample testing, Welch t-tests, and ablation studies with full mathematical transparency.',
+      description:
+        'Validated via expanding-window out-of-sample testing, Welch t-tests, and ablation studies with full mathematical transparency.',
     },
   ],
 
   challenges: [
     {
-      challenge: 'Noisy high-dimensional covariance estimates in volatile markets causing extreme portfolio weight concentration.',
-      solution: 'Applied Ledoit-Wolf shrinkage to improve matrix conditioning combined with an $L_2$ concentration penalty $\\lambda_g \\sum w_i^2$ that mathematically prevents single-asset concentration.',
+      challenge:
+        'Noisy high-dimensional covariance estimates in volatile markets causing extreme portfolio weight concentration.',
+      solution:
+        'Applied Ledoit-Wolf shrinkage to improve matrix conditioning combined with an $L_2$ concentration penalty $\\lambda_g \\sum w_i^2$ that mathematically prevents single-asset concentration.',
     },
     {
-      challenge: 'False regime switching triggers caused by short-term market noise or single-day outliers.',
-      solution: 'Used an expanding-window historical standardization that prevents lookahead bias and aggregated three complementary channels with lagged evaluation.',
+      challenge:
+        'False regime switching triggers caused by short-term market noise or single-day outliers.',
+      solution:
+        'Used an expanding-window historical standardization that prevents lookahead bias and aggregated three complementary channels with lagged evaluation.',
     },
     {
       challenge: 'High turnover and transaction cost drag in dynamic asset allocation strategies.',
-      solution: 'Maintained low 21-day rebalancing frequency with smooth regularization adjustments, resulting in an ultra-low mean turnover of 0.0045 per rebalance.',
+      solution:
+        'Maintained low 21-day rebalancing frequency with smooth regularization adjustments, resulting in an ultra-low mean turnover of 0.0045 per rebalance.',
     },
   ],
 
   ieeePaper: {
-    venue: '5th International Joint Conference on Advances in Computational Intelligence (IJCACI 2026) / Springer Nature LNCS',
-    paperTitle: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
+    venue:
+      '5th International Joint Conference on Advances in Computational Intelligence (IJCACI 2026) / Springer Nature LNCS',
+    paperTitle:
+      'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
     publicationDate: '2026',
     abstract:
       'Portfolio optimization performs best when the risk structure used to construct a portfolio is reasonably stable. However, in stressed market regimes, covariance relationships, volatility levels, and cross-asset correlations can move in tandem, making conventional allocation rules less robust. In this paper, we propose an interpretable regime-adaptive supervisory governance framework for portfolio stabilization during market instability. The proposed framework integrates covariance drift, rolling volatility, and correlation stress into a general instability index and flexibly adjusts governance through concentration limits and regularization strength. Instead of switching allocation models, the approach uses a unified optimization framework to adapt governance behavior as instability increases. We empirically test the framework on 18 liquid U.S. stocks from 2005 to 2025 and find that it maintains broad diversification, slightly improves selected downside-risk measures relative to equal weight, and remains transparent in out-of-sample testing while accounting for transaction costs. Ablation studies show that governance regularization and concentration control are the primary stabilizing factors, whereas regime switching only marginally improves performance in the tested setting. We find no evidence of alpha generation or predictive outperformance. The contribution is therefore more limited and feasible: instability-aware supervision as a governance layer for robust portfolio control.',
@@ -202,7 +236,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
         id: 'fig-equity-curve',
         figureNumber: 'Fig. 1',
         title: 'Regime-Annotated Equity Curve',
-        caption: 'Regime-annotated equity curve during the evaluation period (2015–2025). Red regions indicate active unstable-governance interventions where the supervisory layer tightened concentration caps and increased regularization strength.',
+        caption:
+          'Regime-annotated equity curve during the evaluation period (2015–2025). Red regions indicate active unstable-governance interventions where the supervisory layer tightened concentration caps and increased regularization strength.',
         src: '/images/projects/regime-adaptive-supervisory-governance/fig1-regime-annotated-equity-curve.png',
         alt: 'Regime-annotated equity curve comparison between Governance Framework and Equal Weight benchmark',
       },
@@ -210,7 +245,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
         id: 'fig-ablation-curves',
         figureNumber: 'Fig. 2',
         title: 'Ablation Study: Equity Curves and Drawdown Comparison',
-        caption: 'Ablation study: (a) equity curves and (b) drawdown comparison for the Equal Weight benchmark, Ledoit-Wolf Minimum Variance, Governance without regime switching, and the full Governance framework over the out-of-sample period (2015–2025).',
+        caption:
+          'Ablation study: (a) equity curves and (b) drawdown comparison for the Equal Weight benchmark, Ledoit-Wolf Minimum Variance, Governance without regime switching, and the full Governance framework over the out-of-sample period (2015–2025).',
         src: '/images/projects/regime-adaptive-supervisory-governance/fig2-ablation-equity-curves.png',
         alt: 'Ablation study equity and drawdown curves across four portfolio models',
       },
@@ -218,7 +254,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
         id: 'fig-drawdown',
         figureNumber: 'Fig. 3',
         title: 'Underwater Drawdown Profile Across Market Regimes',
-        caption: 'Underwater drawdown profile comparing the Governance framework against the Equal Weight baseline during market drawdowns including the 2015–2016 commodity sell-off, 2018 volatility spike, and 2020 COVID shock.',
+        caption:
+          'Underwater drawdown profile comparing the Governance framework against the Equal Weight baseline during market drawdowns including the 2015–2016 commodity sell-off, 2018 volatility spike, and 2020 COVID shock.',
         src: '/images/projects/regime-adaptive-supervisory-governance/fig3-drawdown-comparison.png',
         alt: 'Underwater drawdown profile showing tail-risk containment',
       },
@@ -283,7 +320,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
             equations: [
               {
                 id: 'eq-cov-drift',
-                latex: '\\Delta \\Sigma_t = \\frac{\\|\\hat{\\Sigma}_t - \\hat{\\Sigma}_{t-21}\\|_F}{\\|\\hat{\\Sigma}_{t-21}\\|_F}',
+                latex:
+                  '\\Delta \\Sigma_t = \\frac{\\|\\hat{\\Sigma}_t - \\hat{\\Sigma}_{t-21}\\|_F}{\\|\\hat{\\Sigma}_{t-21}\\|_F}',
                 number: '(2)',
                 label: 'Covariance Drift',
               },
@@ -295,7 +333,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
               },
               {
                 id: 'eq-composite-index',
-                latex: 'I_t = \\alpha z_{\\text{drift},t} + \\beta z_{\\text{vol},t} + \\gamma z_{\\text{corr},t}',
+                latex:
+                  'I_t = \\alpha z_{\\text{drift},t} + \\beta z_{\\text{vol},t} + \\gamma z_{\\text{corr},t}',
                 number: '(4)',
                 label: 'Composite Instability Index',
               },
@@ -316,13 +355,15 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
             equations: [
               {
                 id: 'eq-objective',
-                latex: '\\min_{w} \\; \\sqrt{w^\\top \\hat{\\Sigma} w} + \\lambda_g \\sum_{i=1}^N w_i^2',
+                latex:
+                  '\\min_{w} \\; \\sqrt{w^\\top \\hat{\\Sigma} w} + \\lambda_g \\sum_{i=1}^N w_i^2',
                 number: '(5)',
                 label: 'Regularized Objective',
               },
               {
                 id: 'eq-constraints',
-                latex: '\\text{subject to} \\quad \\sum_{i=1}^N w_i = 1, \\quad 0 \\le w_i \\le u_g',
+                latex:
+                  '\\text{subject to} \\quad \\sum_{i=1}^N w_i = 1, \\quad 0 \\le w_i \\le u_g',
                 number: '(6)',
                 label: 'Governance Constraints',
               },
@@ -343,7 +384,8 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
             equations: [
               {
                 id: 'eq-hhi',
-                latex: '\\text{HHI}_t = \\sum_{i=1}^N w_{i,t}^2, \\qquad N_{\\text{eff},t} = \\frac{1}{\\text{HHI}_t}',
+                latex:
+                  '\\text{HHI}_t = \\sum_{i=1}^N w_{i,t}^2, \\qquad N_{\\text{eff},t} = \\frac{1}{\\text{HHI}_t}',
                 number: '(7)',
                 label: 'Herfindahl-Hirschman Index',
               },
@@ -372,7 +414,12 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
                 id: 'tbl-crisis-test',
                 number: 'TABLE I',
                 title: 'CONTINUOUS CRISIS-WINDOW INSTABILITY TEST',
-                headers: ['Sample Partition', 'N (Days)', 'Mean Instability (It)', 'Activation Rate (It > τ)'],
+                headers: [
+                  'Sample Partition',
+                  'N (Days)',
+                  'Mean Instability (It)',
+                  'Activation Rate (It > τ)',
+                ],
                 rows: [
                   ['Crisis Windows (±10d)', '131', '1.3521', '38.2%'],
                   ['Non-Crisis Periods', '4,585', '-0.0200', '9.9%'],
@@ -394,7 +441,11 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
                 id: 'tbl-oos-performance',
                 number: 'TABLE II',
                 title: 'OUT-OF-SAMPLE PERFORMANCE (2015–2025)',
-                headers: ['Performance Metric', 'Governance Framework (Ours)', 'Equal Weight Benchmark'],
+                headers: [
+                  'Performance Metric',
+                  'Governance Framework (Ours)',
+                  'Equal Weight Benchmark',
+                ],
                 rows: [
                   ['Annual Return', '16.65%', '17.09%'],
                   ['Annualized Volatility', '18.15%', '18.42%'],
@@ -420,7 +471,11 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
                 id: 'tbl-concentration',
                 number: 'TABLE III',
                 title: 'CROSS-STRATEGY CONCENTRATION COMPARISON',
-                headers: ['Portfolio Construction Strategy', 'Mean HHI', 'Effective Diversification (N_eff)'],
+                headers: [
+                  'Portfolio Construction Strategy',
+                  'Mean HHI',
+                  'Effective Diversification (N_eff)',
+                ],
                 rows: [
                   ['Equal Weight (1/N)', '0.0556', '18.0 Assets'],
                   ['Minimum Variance (Ledoit-Wolf)', '0.1776', '5.6 Assets'],
@@ -462,11 +517,32 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
                 id: 'tbl-ablation',
                 number: 'TABLE IV',
                 title: 'ABLATION RESULTS (OUT-OF-SAMPLE 2015–2025)',
-                headers: ['Ablation Model', 'Annual Return', 'Volatility', 'Sharpe Ratio', 'Max Drawdown', '95% CVaR'],
+                headers: [
+                  'Ablation Model',
+                  'Annual Return',
+                  'Volatility',
+                  'Sharpe Ratio',
+                  'Max Drawdown',
+                  '95% CVaR',
+                ],
                 rows: [
                   ['Equal Weight', '17.09%', '18.42%', '0.8190', '-36.01%', '-0.0283'],
-                  ['Minimum Variance (Ledoit-Wolf)', '9.81%', '14.63%', '0.5338', '-34.07%', '-0.0218'],
-                  ['Governance (No Regime Switching)', '16.64%', '18.12%', '0.8075', '-35.94%', '-0.0279'],
+                  [
+                    'Minimum Variance (Ledoit-Wolf)',
+                    '9.81%',
+                    '14.63%',
+                    '0.5338',
+                    '-34.07%',
+                    '-0.0218',
+                  ],
+                  [
+                    'Governance (No Regime Switching)',
+                    '16.64%',
+                    '18.12%',
+                    '0.8075',
+                    '-35.94%',
+                    '-0.0279',
+                  ],
                   ['Full Governance Framework', '16.65%', '18.15%', '0.8071', '-35.90%', '-0.0279'],
                 ],
                 note: 'Net of 10 bps transaction costs. Minimum variance suffers a 42% drop in return; our framework retains full equity upside.',
@@ -496,38 +572,182 @@ export const regimeAdaptiveSupervisoryGovernance: Project = {
       },
     ],
     references: [
-      { index: 1, citation: 'V. V. Acharya, R. F. Engle, and M. Richardson, "Capital shortfall: A new approach to measuring systemic risk," American Economic Review, vol. 102, no. 3, pp. 59–64, 2012.', doi: '10.1257/aer.102.3.59' },
-      { index: 2, citation: 'R. Almgren and N. Chriss, "Optimal execution of portfolio transactions," Journal of Risk, vol. 3, no. 2, pp. 5–40, 2001.' },
-      { index: 3, citation: 'A. Ang and G. Bekaert, "International asset allocation with regime shifts," Review of Financial Studies, vol. 15, no. 4, pp. 1137–1187, 2002.', doi: '10.1093/rfs/15.4.1137' },
-      { index: 4, citation: 'S. Basak and A. Shapiro, "Value-at-risk-based risk management: Optimal policies and asset prices," Review of Financial Studies, vol. 14, no. 2, pp. 371–405, 2001.', doi: '10.1093/rfs/14.2.371' },
-      { index: 5, citation: 'J.-P. Bouchaud and M. Potters, "Financial applications of random matrix theory: A short review," arXiv preprint arXiv:0910.1205, 2009.' },
-      { index: 6, citation: 'J. Y. Campbell, M. Lettau, B. G. Malkiel, and Y. Xu, "Have individual stocks become more volatile? An empirical exploration of idiosyncratic risk," Journal of Finance, vol. 56, no. 1, pp. 1–43, 2001.', doi: '10.1111/0022-1082.00318' },
-      { index: 7, citation: 'R. Couillet and M. McKay, "Large dimensional analysis and optimization of robust shrinkage covariance matrix estimators," Journal of Multivariate Analysis, vol. 131, pp. 99–120, 2014.', doi: '10.1016/j.jmva.2014.06.018' },
-      { index: 8, citation: 'V. DeMiguel, L. Garlappi, and R. Uppal, "Optimal versus naive diversification: How inefficient is the 1/N portfolio strategy?" Review of Financial Studies, vol. 22, no. 5, pp. 1915–1953, 2009.', doi: '10.1093/rfs/hhm075' },
-      { index: 9, citation: 'R. J. Elliott, L. Aggoun, and J. B. Moore, Hidden Markov Models: Estimation and Control. Springer, New York, 2010.' },
-      { index: 10, citation: 'R. F. Engle and K. Sheppard, "Theoretical and empirical properties of dynamic conditional correlation multivariate GARCH," NBER Working Paper 8554, 2001.', doi: '10.3386/w8554' },
-      { index: 11, citation: 'F. Espiga-Fernandez, "A systematic approach to portfolio optimization under dynamic risk," Quantitative Finance Letters, vol. 4, pp. 22–34, 2018.' },
-      { index: 12, citation: 'M. Guidolin and A. Timmermann, "Asset allocation under multivariate regime switching," Journal of Economic Dynamics and Control, vol. 31, no. 11, pp. 3503–3544, 2007.', doi: '10.1016/j.jedc.2006.12.004' },
-      { index: 13, citation: 'J. D. Hamilton and R. Susmel, "Autoregressive conditional heteroskedasticity and changes in regime," Journal of Econometrics, vol. 64, no. 1-2, pp. 307–333, 1994.', doi: '10.1016/0304-4076(94)90067-7' },
-      { index: 14, citation: 'J. Iqbal, "Application of regime switching and random matrix theory in portfolio optimization," Computational Economics, vol. 58, no. 3, pp. 697–721, 2021.' },
-      { index: 15, citation: 'C. Kirby and B. Ostdiek, "It\'s all in the timing: Volatility timing, dynamic trading, and return predictability," Journal of Financial and Quantitative Analysis, vol. 47, no. 3, pp. 475–509, 2012.' },
-      { index: 16, citation: 'I. Kovalenko, "Active portfolio management using robust optimization," Annals of Operations Research, vol. 299, no. 1, pp. 411–435, 2021.' },
-      { index: 17, citation: 'L. Laloux, P. Cizeau, J.-P. Bouchaud, and M. Potters, "Noise dressing of financial correlation matrices," Physical Review Letters, vol. 83, no. 7, pp. 1467–1470, 1999.', doi: '10.1103/PhysRevLett.83.1467' },
-      { index: 18, citation: 'O. Ledoit and M. Wolf, "A well-conditioned estimator for large-dimensional covariance matrices," Journal of Multivariate Analysis, vol. 88, no. 2, pp. 365–411, 2004.', doi: '10.1016/S0047-259X(03)00096-4' },
-      { index: 19, citation: 'A. W. Lo, "The adaptive markets hypothesis: Market efficiency from an evolutionary perspective," Journal of Portfolio Management, vol. 30, no. 5, pp. 15–29, 2004.', doi: '10.3905/jpm.2004.442611' },
-      { index: 20, citation: 'F. Longin and B. Solnik, "Extreme correlation of international equity markets," Journal of Finance, vol. 56, no. 2, pp. 649–676, 2001.', doi: '10.1111/0022-1082.00340' },
-      { index: 21, citation: 'M. Lopez de Prado, "Building diversified portfolios that outperform out of sample," Journal of Portfolio Management, vol. 42, no. 4, pp. 59–69, 2016.', doi: '10.3905/jpm.2016.42.4.059' },
-      { index: 22, citation: 'H. Markowitz, "Portfolio selection," Journal of Finance, vol. 7, no. 1, pp. 77–91, 1952.', doi: '10.1111/j.1540-6261.1952.tb01525.x' },
-      { index: 23, citation: 'R. O. Michaud, "The Markowitz optimization enigma: Is \'optimized\' optimal?" Financial Analysts Journal, vol. 45, no. 1, pp. 31–42, 1989.', doi: '10.2469/faj.v45.n1.31' },
-      { index: 24, citation: 'B. Mulvey and H. G. Zhao, "Global asset allocation with regime switching," Operations Research, vol. 52, no. 6, pp. 841–855, 2004.' },
-      { index: 25, citation: 'A. Penev, "Multivariate regime-switching models for asset allocation: A survey," Journal of Banking & Finance, vol. 37, no. 8, pp. 3011–3024, 2013.' },
-      { index: 26, citation: 'F. Rapisarda, D. Brigo, and F. Mercurio, "Parameterizing correlation matrices," Risk Magazine, vol. 20, no. 11, pp. 88–92, 2007.' },
-      { index: 27, citation: 'T. Roncalli, Introduction to Risk Parity and Budgeting. CRC Press, Boca Raton, 2013.' },
-      { index: 28, citation: 'R. T. Rockafellar and S. Uryasev, "Optimization of conditional value-at-risk," Journal of Risk, vol. 2, no. 3, pp. 21–41, 2000.' },
-      { index: 29, citation: 'W. F. Sharpe, "Capital asset prices: A theory of market equilibrium under conditions of risk," Journal of Finance, vol. 19, no. 3, pp. 425–442, 1964.' },
-      { index: 30, citation: 'A. Timmermann, "Elusive return predictability," International Journal of Forecasting, vol. 24, no. 1, pp. 1–18, 2008.' },
-      { index: 31, citation: 'R. Tibshirani, "Regression shrinkage and selection via the lasso," Journal of the Royal Statistical Society: Series B, vol. 58, no. 1, pp. 267–288, 1996.' },
-      { index: 32, citation: 'M. Wooldridge, An Introduction to MultiAgent Systems, 2nd ed. John Wiley & Sons, Chichester, 2009.' },
+      {
+        index: 1,
+        citation:
+          'V. V. Acharya, R. F. Engle, and M. Richardson, "Capital shortfall: A new approach to measuring systemic risk," American Economic Review, vol. 102, no. 3, pp. 59–64, 2012.',
+        doi: '10.1257/aer.102.3.59',
+      },
+      {
+        index: 2,
+        citation:
+          'R. Almgren and N. Chriss, "Optimal execution of portfolio transactions," Journal of Risk, vol. 3, no. 2, pp. 5–40, 2001.',
+      },
+      {
+        index: 3,
+        citation:
+          'A. Ang and G. Bekaert, "International asset allocation with regime shifts," Review of Financial Studies, vol. 15, no. 4, pp. 1137–1187, 2002.',
+        doi: '10.1093/rfs/15.4.1137',
+      },
+      {
+        index: 4,
+        citation:
+          'S. Basak and A. Shapiro, "Value-at-risk-based risk management: Optimal policies and asset prices," Review of Financial Studies, vol. 14, no. 2, pp. 371–405, 2001.',
+        doi: '10.1093/rfs/14.2.371',
+      },
+      {
+        index: 5,
+        citation:
+          'J.-P. Bouchaud and M. Potters, "Financial applications of random matrix theory: A short review," arXiv preprint arXiv:0910.1205, 2009.',
+      },
+      {
+        index: 6,
+        citation:
+          'J. Y. Campbell, M. Lettau, B. G. Malkiel, and Y. Xu, "Have individual stocks become more volatile? An empirical exploration of idiosyncratic risk," Journal of Finance, vol. 56, no. 1, pp. 1–43, 2001.',
+        doi: '10.1111/0022-1082.00318',
+      },
+      {
+        index: 7,
+        citation:
+          'R. Couillet and M. McKay, "Large dimensional analysis and optimization of robust shrinkage covariance matrix estimators," Journal of Multivariate Analysis, vol. 131, pp. 99–120, 2014.',
+        doi: '10.1016/j.jmva.2014.06.018',
+      },
+      {
+        index: 8,
+        citation:
+          'V. DeMiguel, L. Garlappi, and R. Uppal, "Optimal versus naive diversification: How inefficient is the 1/N portfolio strategy?" Review of Financial Studies, vol. 22, no. 5, pp. 1915–1953, 2009.',
+        doi: '10.1093/rfs/hhm075',
+      },
+      {
+        index: 9,
+        citation:
+          'R. J. Elliott, L. Aggoun, and J. B. Moore, Hidden Markov Models: Estimation and Control. Springer, New York, 2010.',
+      },
+      {
+        index: 10,
+        citation:
+          'R. F. Engle and K. Sheppard, "Theoretical and empirical properties of dynamic conditional correlation multivariate GARCH," NBER Working Paper 8554, 2001.',
+        doi: '10.3386/w8554',
+      },
+      {
+        index: 11,
+        citation:
+          'F. Espiga-Fernandez, "A systematic approach to portfolio optimization under dynamic risk," Quantitative Finance Letters, vol. 4, pp. 22–34, 2018.',
+      },
+      {
+        index: 12,
+        citation:
+          'M. Guidolin and A. Timmermann, "Asset allocation under multivariate regime switching," Journal of Economic Dynamics and Control, vol. 31, no. 11, pp. 3503–3544, 2007.',
+        doi: '10.1016/j.jedc.2006.12.004',
+      },
+      {
+        index: 13,
+        citation:
+          'J. D. Hamilton and R. Susmel, "Autoregressive conditional heteroskedasticity and changes in regime," Journal of Econometrics, vol. 64, no. 1-2, pp. 307–333, 1994.',
+        doi: '10.1016/0304-4076(94)90067-7',
+      },
+      {
+        index: 14,
+        citation:
+          'J. Iqbal, "Application of regime switching and random matrix theory in portfolio optimization," Computational Economics, vol. 58, no. 3, pp. 697–721, 2021.',
+      },
+      {
+        index: 15,
+        citation:
+          'C. Kirby and B. Ostdiek, "It\'s all in the timing: Volatility timing, dynamic trading, and return predictability," Journal of Financial and Quantitative Analysis, vol. 47, no. 3, pp. 475–509, 2012.',
+      },
+      {
+        index: 16,
+        citation:
+          'I. Kovalenko, "Active portfolio management using robust optimization," Annals of Operations Research, vol. 299, no. 1, pp. 411–435, 2021.',
+      },
+      {
+        index: 17,
+        citation:
+          'L. Laloux, P. Cizeau, J.-P. Bouchaud, and M. Potters, "Noise dressing of financial correlation matrices," Physical Review Letters, vol. 83, no. 7, pp. 1467–1470, 1999.',
+        doi: '10.1103/PhysRevLett.83.1467',
+      },
+      {
+        index: 18,
+        citation:
+          'O. Ledoit and M. Wolf, "A well-conditioned estimator for large-dimensional covariance matrices," Journal of Multivariate Analysis, vol. 88, no. 2, pp. 365–411, 2004.',
+        doi: '10.1016/S0047-259X(03)00096-4',
+      },
+      {
+        index: 19,
+        citation:
+          'A. W. Lo, "The adaptive markets hypothesis: Market efficiency from an evolutionary perspective," Journal of Portfolio Management, vol. 30, no. 5, pp. 15–29, 2004.',
+        doi: '10.3905/jpm.2004.442611',
+      },
+      {
+        index: 20,
+        citation:
+          'F. Longin and B. Solnik, "Extreme correlation of international equity markets," Journal of Finance, vol. 56, no. 2, pp. 649–676, 2001.',
+        doi: '10.1111/0022-1082.00340',
+      },
+      {
+        index: 21,
+        citation:
+          'M. Lopez de Prado, "Building diversified portfolios that outperform out of sample," Journal of Portfolio Management, vol. 42, no. 4, pp. 59–69, 2016.',
+        doi: '10.3905/jpm.2016.42.4.059',
+      },
+      {
+        index: 22,
+        citation:
+          'H. Markowitz, "Portfolio selection," Journal of Finance, vol. 7, no. 1, pp. 77–91, 1952.',
+        doi: '10.1111/j.1540-6261.1952.tb01525.x',
+      },
+      {
+        index: 23,
+        citation:
+          'R. O. Michaud, "The Markowitz optimization enigma: Is \'optimized\' optimal?" Financial Analysts Journal, vol. 45, no. 1, pp. 31–42, 1989.',
+        doi: '10.2469/faj.v45.n1.31',
+      },
+      {
+        index: 24,
+        citation:
+          'B. Mulvey and H. G. Zhao, "Global asset allocation with regime switching," Operations Research, vol. 52, no. 6, pp. 841–855, 2004.',
+      },
+      {
+        index: 25,
+        citation:
+          'A. Penev, "Multivariate regime-switching models for asset allocation: A survey," Journal of Banking & Finance, vol. 37, no. 8, pp. 3011–3024, 2013.',
+      },
+      {
+        index: 26,
+        citation:
+          'F. Rapisarda, D. Brigo, and F. Mercurio, "Parameterizing correlation matrices," Risk Magazine, vol. 20, no. 11, pp. 88–92, 2007.',
+      },
+      {
+        index: 27,
+        citation:
+          'T. Roncalli, Introduction to Risk Parity and Budgeting. CRC Press, Boca Raton, 2013.',
+      },
+      {
+        index: 28,
+        citation:
+          'R. T. Rockafellar and S. Uryasev, "Optimization of conditional value-at-risk," Journal of Risk, vol. 2, no. 3, pp. 21–41, 2000.',
+      },
+      {
+        index: 29,
+        citation:
+          'W. F. Sharpe, "Capital asset prices: A theory of market equilibrium under conditions of risk," Journal of Finance, vol. 19, no. 3, pp. 425–442, 1964.',
+      },
+      {
+        index: 30,
+        citation:
+          'A. Timmermann, "Elusive return predictability," International Journal of Forecasting, vol. 24, no. 1, pp. 1–18, 2008.',
+      },
+      {
+        index: 31,
+        citation:
+          'R. Tibshirani, "Regression shrinkage and selection via the lasso," Journal of the Royal Statistical Society: Series B, vol. 58, no. 1, pp. 267–288, 1996.',
+      },
+      {
+        index: 32,
+        citation:
+          'M. Wooldridge, An Introduction to MultiAgent Systems, 2nd ed. John Wiley & Sons, Chichester, 2009.',
+      },
     ],
   },
 };

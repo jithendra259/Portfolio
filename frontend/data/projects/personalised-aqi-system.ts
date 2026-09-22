@@ -5,16 +5,23 @@ export const personalisedAqiSystem: Project = {
   title: 'Personalised AQI – Global Air Quality Forecasting',
   category: 'Full-Stack',
   period: 'Feb 2023 – Mar 2025',
-  tagline: 'End-to-end global air quality forecasting platform combining live AQICN data across 14,107 cities, adaptive multi-model forecasting (LSTM, XGBoost, ARIMA, Markov Chains), and interactive dashboards.',
-  description: 'Engineered a cloud-native platform predicting city-level air quality and pollutant trends across 14,107 cities globally with dual Ensemble-AQI & Dominant-Pollutant forecasting and 95% uncertainty intervals.',
-  overview: 'M.Tech AI & Data Science research project at K. J. Somaiya School of Engineering ingesting hourly pollutant readings across 14,107 cities globally via Google Cloud Run, training four complementary forecasting models (XGBoost, LSTM, ARIMA, Markov Chain), and delivering Ensemble-AQI & Dominant-Pollutant forecasts with 95% confidence intervals.',
-  problemStatement: 'Standard air quality indexes report raw retrospective figures without predictive foresight, and single-model approaches fail because distinct atmospheric pollutants exhibit vastly different volatility, persistence, and chemical half-lives.',
-  solution: 'Developed an automated per-pollutant model selection architecture on Google Cloud Run and MongoDB, training four distinct model paradigms (XGBoost, LSTM/BiLSTM, ARIMA, Discrete Markov Chains) and calculating both Ensemble-AQI and Dominant-Pollutant forecasts.',
+  tagline:
+    'End-to-end global air quality forecasting platform combining live AQICN data across 14,107 cities, adaptive multi-model forecasting (LSTM, XGBoost, ARIMA, Markov Chains), and interactive dashboards.',
+  description:
+    'Engineered a cloud-native platform predicting city-level air quality and pollutant trends across 14,107 cities globally with dual Ensemble-AQI & Dominant-Pollutant forecasting and 95% uncertainty intervals.',
+  overview:
+    'M.Tech AI & Data Science research project at K. J. Somaiya School of Engineering ingesting hourly pollutant readings across 14,107 cities globally via Google Cloud Run, training four complementary forecasting models (XGBoost, LSTM, ARIMA, Markov Chain), and delivering Ensemble-AQI & Dominant-Pollutant forecasts with 95% confidence intervals.',
+  problemStatement:
+    'Standard air quality indexes report raw retrospective figures without predictive foresight, and single-model approaches fail because distinct atmospheric pollutants exhibit vastly different volatility, persistence, and chemical half-lives.',
+  solution:
+    'Developed an automated per-pollutant model selection architecture on Google Cloud Run and MongoDB, training four distinct model paradigms (XGBoost, LSTM/BiLSTM, ARIMA, Discrete Markov Chains) and calculating both Ensemble-AQI and Dominant-Pollutant forecasts.',
   status: 'M.Tech Mini Project (Batch 2024–2026)',
   githubUrl: 'https://github.com/jithendra259',
   liveUrl: 'https://aqicn.org',
-  researchLink: '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
-  pdfUrl: '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
+  researchLink:
+    '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
+  pdfUrl:
+    '/documents/personalised-aqi-system/mtech-miniproject-aqi-forecasting-kandula-subramanyam.pdf',
   featured: true,
   highlights: [
     'Hourly automated ingestion for PM2.5, PM10, CO, SO2, NO2, and O3 covering 14,107 cities worldwide from AQICN.org',
@@ -37,79 +44,137 @@ export const personalisedAqiSystem: Project = {
     'AQICN API',
   ],
   metrics: [
-    { label: 'Global Scale', value: '14,107 Cities', detail: 'Hourly live IAQI ingestion from AQICN.org into MongoDB' },
-    { label: 'Forecast Accuracy', value: 'R² = 0.909', detail: 'Overall AQI R² score with up to 99% band classification accuracy' },
-    { label: 'Model Architectures', value: '4 Frameworks', detail: 'XGBoost + Monte Carlo, LSTM, ARIMA, Discrete-State Markov Chains' },
-    { label: 'Forecast Horizon', value: '48 Hours', detail: '24-hour historical window + 24-hour forward projection' },
+    {
+      label: 'Global Scale',
+      value: '14,107 Cities',
+      detail: 'Hourly live IAQI ingestion from AQICN.org into MongoDB',
+    },
+    {
+      label: 'Forecast Accuracy',
+      value: 'R² = 0.909',
+      detail: 'Overall AQI R² score with up to 99% band classification accuracy',
+    },
+    {
+      label: 'Model Architectures',
+      value: '4 Frameworks',
+      detail: 'XGBoost + Monte Carlo, LSTM, ARIMA, Discrete-State Markov Chains',
+    },
+    {
+      label: 'Forecast Horizon',
+      value: '48 Hours',
+      detail: '24-hour historical window + 24-hour forward projection',
+    },
   ],
   architectureSteps: [
     {
       step: '01',
       title: 'Global Sensor Ingestion via Cloud Run',
-      description: 'Google Cloud Run service triggers hourly cron jobs ingesting individual IAQI pollutant readings across 14,107 cities into MongoDB time-series collections. Retrieves hourly pollutant data (PM2.5, PM10, CO, SO2, NO2, O3) from AQICN.org for over 14,000 cities using a unique station identifier (idx). Data is stored in MongoDB via an automated Google Cloud Run service triggered hourly using Cloud Scheduler.',
+      description:
+        'Google Cloud Run service triggers hourly cron jobs ingesting individual IAQI pollutant readings across 14,107 cities into MongoDB time-series collections. Retrieves hourly pollutant data (PM2.5, PM10, CO, SO2, NO2, O3) from AQICN.org for over 14,000 cities using a unique station identifier (idx). Data is stored in MongoDB via an automated Google Cloud Run service triggered hourly using Cloud Scheduler.',
       tech: 'Google Cloud Run, Python, AQICN API, MongoDB Time-Series',
     },
     {
       step: '02',
       title: 'Breakpoint & Preprocessing Pipeline',
-      description: 'Cleans raw readings, performs linear interpolation for intermittent sensor drops (short gaps < 2 hours: linear interpolation; long gaps: forward-fill or mean imputation), and computes pollutant-specific IAQI values using EPA-based linear interpolation methods with standardized AQI breakpoints for all 6 pollutants.',
+      description:
+        'Cleans raw readings, performs linear interpolation for intermittent sensor drops (short gaps < 2 hours: linear interpolation; long gaps: forward-fill or mean imputation), and computes pollutant-specific IAQI values using EPA-based linear interpolation methods with standardized AQI breakpoints for all 6 pollutants.',
       tech: 'Pandas, NumPy, EPA/CPCB Breakpoints',
     },
     {
       step: '03',
       title: 'Multi-Model Training Engine',
-      description: 'Trains 4 parallel frameworks: XGBoost (lag features + Monte Carlo confidence intervals), LSTM/BiLSTM (multivariate temporal dynamics, 64/128 units, dropout=0.2, epochs=50), ARIMA (grid search p,d,q after stationarity check), and Markov Chains (probabilistic AQI state transition prediction). Each model independently trained per pollutant.',
+      description:
+        'Trains 4 parallel frameworks: XGBoost (lag features + Monte Carlo confidence intervals), LSTM/BiLSTM (multivariate temporal dynamics, 64/128 units, dropout=0.2, epochs=50), ARIMA (grid search p,d,q after stationarity check), and Markov Chains (probabilistic AQI state transition prediction). Each model independently trained per pollutant.',
       tech: 'XGBoost, TensorFlow/Keras, Statsmodels, Scikit-learn',
     },
     {
       step: '04',
       title: 'Dynamic Selection & Dual Aggregations',
-      description: 'Automatically cross-validates each pollutant to select its best model (lowest MAE/RMSE, highest R²). Generates Ensemble-AQI (worst-case maximum across pollutants) and Dominant-Pollutant AQI with 95% confidence bands from XGBoost Monte Carlo simulation.',
+      description:
+        'Automatically cross-validates each pollutant to select its best model (lowest MAE/RMSE, highest R²). Generates Ensemble-AQI (worst-case maximum across pollutants) and Dominant-Pollutant AQI with 95% confidence bands from XGBoost Monte Carlo simulation.',
       tech: 'Cross-Validation, Monte Carlo Bounds, Error Minimization',
     },
     {
       step: '05',
       title: 'Interactive Multi-Tier Dashboard',
-      description: 'Interactive visualization platform displaying historic trends, 48-hour forward projections (24h historical + 24h future), side-by-side model overlays with line charts and heatmaps, quantitative error tables (RMSE, MAE, R²), and AQI band heatmaps. Dropdowns for location, pollutant, and time window selection.',
+      description:
+        'Interactive visualization platform displaying historic trends, 48-hour forward projections (24h historical + 24h future), side-by-side model overlays with line charts and heatmaps, quantitative error tables (RMSE, MAE, R²), and AQI band heatmaps. Dropdowns for location, pollutant, and time window selection.',
       tech: 'Streamlit, Next.js, Flask REST API, Recharts / Plotly',
     },
   ],
   keyCapabilities: [
     {
       title: 'Per-Pollutant Best Model Selection',
-      description: 'Automatically benchmarks ARIMA, XGBoost, LSTM, and Markov Chains for each pollutant to pick the model with lowest MAE/RMSE and highest R². Different pollutants exhibit different dynamics — LSTM handles long-term dependencies (e.g., PM2.5) while ARIMA/XGBoost handle seasonal and reactive gases like O3 and NO2.',
+      description:
+        'Automatically benchmarks ARIMA, XGBoost, LSTM, and Markov Chains for each pollutant to pick the model with lowest MAE/RMSE and highest R². Different pollutants exhibit different dynamics — LSTM handles long-term dependencies (e.g., PM2.5) while ARIMA/XGBoost handle seasonal and reactive gases like O3 and NO2.',
     },
     {
       title: 'Ensemble-AQI & Dominant-Pollutant Formulations',
-      description: 'Computes parallel forecasts: Ensemble-AQI (worst-case maximum across all pollutants\' best model forecasts) and Dominant-Pollutant AQI which flags whichever pollutant has the highest individual AQI at that time, with 95% uncertainty bounds from XGBoost Monte Carlo simulation.',
+      description:
+        "Computes parallel forecasts: Ensemble-AQI (worst-case maximum across all pollutants' best model forecasts) and Dominant-Pollutant AQI which flags whichever pollutant has the highest individual AQI at that time, with 95% uncertainty bounds from XGBoost Monte Carlo simulation.",
     },
     {
       title: '48-Hour Historical & Forward Visualization',
-      description: 'Interactive overlay plotting 24 hours of actual historical readings alongside 24-hour predictive trajectories from all 4 models. Forecast vs. actual comparison with line charts, AQI category heatmaps, and pollutant-wise trend analysis.',
+      description:
+        'Interactive overlay plotting 24 hours of actual historical readings alongside 24-hour predictive trajectories from all 4 models. Forecast vs. actual comparison with line charts, AQI category heatmaps, and pollutant-wise trend analysis.',
     },
     {
       title: 'Cloud-Native Automated Pipeline',
-      description: 'Dockerized microservices deployed on Google Cloud Run ensure scalability and fast inference. CI/CD pipelines using GitHub Actions ensure code updates are tested and deployed seamlessly. MongoDB backend with daily automated backups and replication.',
+      description:
+        'Dockerized microservices deployed on Google Cloud Run ensure scalability and fast inference. CI/CD pipelines using GitHub Actions ensure code updates are tested and deployed seamlessly. MongoDB backend with daily automated backups and replication.',
     },
   ],
   challenges: [
     {
       challenge: 'Non-linear atmospheric dynamics across disparate pollutants',
-      solution: 'Rather than forcing a single model on all pollutants, implemented decoupled model selection where LSTM handles long-term dependencies (e.g., PM2.5) while ARIMA/XGBoost handle seasonal and reactive gases. Hybrid CNN-LSTM approach further improves performance by learning spatial and temporal features simultaneously.',
+      solution:
+        'Rather than forcing a single model on all pollutants, implemented decoupled model selection where LSTM handles long-term dependencies (e.g., PM2.5) while ARIMA/XGBoost handle seasonal and reactive gases. Hybrid CNN-LSTM approach further improves performance by learning spatial and temporal features simultaneously.',
     },
     {
       challenge: 'Handling intermittent sensor dropouts across 14,107 cities',
-      solution: 'Constructed linear interpolation pipelines for short gaps (< 2 hours) and mean-imputation for longer gaps, with automated breakpoint computation conforming to EPA and CPCB air quality standards.',
+      solution:
+        'Constructed linear interpolation pipelines for short gaps (< 2 hours) and mean-imputation for longer gaps, with automated breakpoint computation conforming to EPA and CPCB air quality standards.',
     },
     {
       challenge: 'Integrating real-time forecasting models with interactive dashboards',
-      solution: 'Real-time AQI forecasting models integrated with an interactive Streamlit/Next.js dashboard offering explainability, trend comparison, and personalized health alerts. Models served via Flask REST API endpoints consumed in real-time by the frontend.',
+      solution:
+        'Real-time AQI forecasting models integrated with an interactive Streamlit/Next.js dashboard offering explainability, trend comparison, and personalized health alerts. Models served via Flask REST API endpoints consumed in real-time by the frontend.',
     },
   ],
   techStackCategories: [
-    { category: 'Machine Learning & Time Series', items: ['XGBoost', 'LSTM / BiLSTM', 'ARIMA', 'Markov Chains', 'Monte Carlo Simulation', 'Scikit-learn'] },
-    { category: 'Data & Cloud Pipeline', items: ['Google Cloud Run', 'MongoDB Time-Series', 'AQICN API', 'Pandas', 'NumPy', 'Cloud Scheduler'] },
-    { category: 'Web & Visualization', items: ['Streamlit', 'Next.js', 'Flask REST API', 'Recharts', 'Plotly', 'Matplotlib / Seaborn'] },
+    {
+      category: 'Machine Learning & Time Series',
+      items: [
+        'XGBoost',
+        'LSTM / BiLSTM',
+        'ARIMA',
+        'Markov Chains',
+        'Monte Carlo Simulation',
+        'Scikit-learn',
+      ],
+    },
+    {
+      category: 'Data & Cloud Pipeline',
+      items: [
+        'Google Cloud Run',
+        'MongoDB Time-Series',
+        'AQICN API',
+        'Pandas',
+        'NumPy',
+        'Cloud Scheduler',
+      ],
+    },
+    {
+      category: 'Web & Visualization',
+      items: [
+        'Streamlit',
+        'Next.js',
+        'Flask REST API',
+        'Recharts',
+        'Plotly',
+        'Matplotlib / Seaborn',
+      ],
+    },
   ],
   reportSections: [
     {
@@ -398,16 +463,28 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
   ],
   ieeePaper: {
     venue: 'M.Tech Research Thesis / Applied Environmental Computing & Smart Cities',
-    paperTitle: 'Deep Learning and Ensemble Spatiotemporal Forecasting for Personalised Air Quality Index (AQI) Prediction Across Global Sensor Networks',
+    paperTitle:
+      'Deep Learning and Ensemble Spatiotemporal Forecasting for Personalised Air Quality Index (AQI) Prediction Across Global Sensor Networks',
     authors: [
-      { name: 'Kandula Jithendra Subramanyam', affiliationIndex: 1, isCorresponding: true, email: 'jithendrasubramanyam@gmail.com' },
+      {
+        name: 'Kandula Jithendra Subramanyam',
+        affiliationIndex: 1,
+        isCorresponding: true,
+        email: 'jithendrasubramanyam@gmail.com',
+      },
       { name: 'Deepti Patole', affiliationIndex: 1 },
       { name: 'Dr. Ashwini Dalvi', affiliationIndex: 1 },
     ],
     affiliations: [
-      { index: 1, institution: 'K. J. Somaiya School of Engineering', department: 'Dept. of Information Technology – AI & Data Science', location: 'Mumbai, India' },
+      {
+        index: 1,
+        institution: 'K. J. Somaiya School of Engineering',
+        department: 'Dept. of Information Technology – AI & Data Science',
+        location: 'Mumbai, India',
+      },
     ],
-    abstract: 'Ambient air pollution poses acute respiratory risks globally, yet contemporary municipal monitoring frameworks remain largely retrospective and fail to capture localized pollutant volatility. In this paper, we develop a scalable cloud-native spatiotemporal forecasting system ingesting hourly ambient readings across 14,107 worldwide monitoring stations. We formulate a per-pollutant optimal model selection framework combining deep recurrent networks (LSTM/BiLSTM), gradient boosting with Monte Carlo confidence estimation (XGBoost), seasonal autoregression (SARIMA), and probabilistic discrete-state Markov chains. The system introduces a dual-mode aggregation engine computing conservative Ensemble-AQI and granular Dominant-Pollutant forecasts with 95% prediction intervals. Empirical evaluations across continuous monitoring stations demonstrate an aggregate AQI determination coefficient of R² = 0.909 and up to 99% classification accuracy within regulated health alert tiers.',
+    abstract:
+      'Ambient air pollution poses acute respiratory risks globally, yet contemporary municipal monitoring frameworks remain largely retrospective and fail to capture localized pollutant volatility. In this paper, we develop a scalable cloud-native spatiotemporal forecasting system ingesting hourly ambient readings across 14,107 worldwide monitoring stations. We formulate a per-pollutant optimal model selection framework combining deep recurrent networks (LSTM/BiLSTM), gradient boosting with Monte Carlo confidence estimation (XGBoost), seasonal autoregression (SARIMA), and probabilistic discrete-state Markov chains. The system introduces a dual-mode aggregation engine computing conservative Ensemble-AQI and granular Dominant-Pollutant forecasts with 95% prediction intervals. Empirical evaluations across continuous monitoring stations demonstrate an aggregate AQI determination coefficient of R² = 0.909 and up to 99% classification accuracy within regulated health alert tiers.',
     keywords: [
       'Air Quality Index (AQI)',
       'Spatiotemporal Forecasting',
@@ -422,7 +499,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig1-architecture',
         figureNumber: 'Fig. 1',
         title: 'End-to-End System Architecture',
-        caption: 'Schematic representation of the global air quality forecasting pipeline comprising automated Google Cloud Run ingestion, EPA piecewise breakpoint normalization, parallel multi-model training, and interactive client dashboard rendering.',
+        caption:
+          'Schematic representation of the global air quality forecasting pipeline comprising automated Google Cloud Run ingestion, EPA piecewise breakpoint normalization, parallel multi-model training, and interactive client dashboard rendering.',
         src: '/images/projects/personalised-aqi-system/fig1-system-architecture.png',
         alt: 'AQI System Architecture',
       },
@@ -430,7 +508,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig2-historic-trends',
         figureNumber: 'Fig. 2',
         title: 'Historical Multi-Pollutant Timeseries Trajectory',
-        caption: 'Multi-year historical concentration dynamics and seasonal variance across criteria air pollutants (PM2.5, PM10, NO2, SO2, CO, O3) recorded at urban monitoring stations.',
+        caption:
+          'Multi-year historical concentration dynamics and seasonal variance across criteria air pollutants (PM2.5, PM10, NO2, SO2, CO, O3) recorded at urban monitoring stations.',
         src: '/images/projects/personalised-aqi-system/fig2-historic-aqi-trends.png',
         alt: 'Historical Pollutant Trajectories',
       },
@@ -438,7 +517,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig3-xgboost-forecast',
         figureNumber: 'Fig. 3',
         title: '48-Hour XGBoost Forecast Trajectory',
-        caption: 'Continuous 48-hour forecasting window generated by the XGBoost regression engine showing 24-hour historical calibration aligned with 24-hour out-of-sample forward projections and ground truth validation.',
+        caption:
+          'Continuous 48-hour forecasting window generated by the XGBoost regression engine showing 24-hour historical calibration aligned with 24-hour out-of-sample forward projections and ground truth validation.',
         src: '/images/projects/personalised-aqi-system/fig3-xgboost-48h-forecast.png',
         alt: 'XGBoost 48-Hour Air Quality Forecast',
       },
@@ -446,7 +526,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig4-markov-forecast',
         figureNumber: 'Fig. 4',
         title: 'Markov State-Transition Probabilistic Forecast',
-        caption: 'Probabilistic AQI category transition trajectory predicted via discrete-state Markov chains against empirical pollution transitions.',
+        caption:
+          'Probabilistic AQI category transition trajectory predicted via discrete-state Markov chains against empirical pollution transitions.',
         src: '/images/projects/personalised-aqi-system/fig4-markov-48h-forecast.png',
         alt: 'Markov Chain Forecast',
       },
@@ -454,7 +535,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig5-arima-forecast',
         figureNumber: 'Fig. 5',
         title: 'Seasonal ARIMA Linear Forecast Baseline',
-        caption: 'Classical SARIMA time-series model projections capturing linear cyclic diurnal periodicity across baseline pollutant monitoring channels.',
+        caption:
+          'Classical SARIMA time-series model projections capturing linear cyclic diurnal periodicity across baseline pollutant monitoring channels.',
         src: '/images/projects/personalised-aqi-system/fig5-arima-48h-forecast.png',
         alt: 'ARIMA Linear Forecast Baseline',
       },
@@ -462,7 +544,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig6-model-comparison',
         figureNumber: 'Fig. 6',
         title: 'Multi-Model Performance Comparison (Aggregate AQI)',
-        caption: 'Empirical comparison of R², Mean Absolute Error (MAE), and Root Mean Square Error (RMSE) across deep learning, ensemble tree, and autoregressive architectures.',
+        caption:
+          'Empirical comparison of R², Mean Absolute Error (MAE), and Root Mean Square Error (RMSE) across deep learning, ensemble tree, and autoregressive architectures.',
         src: '/images/projects/personalised-aqi-system/fig6-model-comparison-aqi.png',
         alt: 'Multi-Model Comparison for Aggregate AQI',
       },
@@ -470,7 +553,8 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig7-pm25-comparison',
         figureNumber: 'Fig. 7',
         title: 'Fine Particulate Matter (PM2.5) Model Benchmarking',
-        caption: 'Sub-pollutant forecasting fidelity comparison highlighting superior capture of non-linear micro-spikes by LSTM and XGBoost frameworks.',
+        caption:
+          'Sub-pollutant forecasting fidelity comparison highlighting superior capture of non-linear micro-spikes by LSTM and XGBoost frameworks.',
         src: '/images/projects/personalised-aqi-system/fig7-model-comparison-pm25.png',
         alt: 'PM2.5 Sub-Pollutant Model Benchmarking',
       },
@@ -478,16 +562,37 @@ Under guidance of: Ms. Deepti Patole & Dr. Ashwini Dalvi.`,
         id: 'fig8-residuals',
         figureNumber: 'Fig. 8',
         title: 'Residual Error Distribution & Prediction Bounds',
-        caption: 'Normalized forecast error residual distribution demonstrating zero-centered symmetry and robust 95% empirical confidence intervals.',
+        caption:
+          'Normalized forecast error residual distribution demonstrating zero-centered symmetry and robust 95% empirical confidence intervals.',
         src: '/images/projects/personalised-aqi-system/fig8-performance-distribution.png',
         alt: 'Error Residual Distribution and Bounds',
       },
     ],
     references: [
-      { index: 1, citation: 'A. K. Gupta, N. Chauhan, and T. Thakur, "Air Quality Prediction using Deep Learning - A Review," SSRN Electronic Journal, 2024.', doi: '10.2139/ssrn.4487002' },
-      { index: 2, citation: 'A. Binbusayyis, M. A. Khan, M. M. Ahmed, and W. R. Sam Emmanuel, "A deep learning approach for prediction of air quality index in smart city," Journal of Big Data, vol. 11, no. 1, 2024.', doi: '10.1007/s43621-024-00272-9' },
-      { index: 3, citation: 'R. Zayed and M. Abbod, "Air Quality Index Prediction Using DNN-Markov Modeling," Applied Artificial Intelligence, vol. 38, no. 1, p. 2371540, 2024.', doi: '10.1080/08839514.2024.2371540' },
-      { index: 4, citation: 'M. H. Sowlat, H. Gharibi, M. Yunesian, M. T. Mahmoudi, and S. Lotfi, "A novel, fuzzy-based air quality index (FAQI) for air quality assessment," Atmospheric Environment, vol. 45, no. 12, pp. 2050–2059, 2011.', doi: '10.1016/j.atmosenv.2011.01.060' },
+      {
+        index: 1,
+        citation:
+          'A. K. Gupta, N. Chauhan, and T. Thakur, "Air Quality Prediction using Deep Learning - A Review," SSRN Electronic Journal, 2024.',
+        doi: '10.2139/ssrn.4487002',
+      },
+      {
+        index: 2,
+        citation:
+          'A. Binbusayyis, M. A. Khan, M. M. Ahmed, and W. R. Sam Emmanuel, "A deep learning approach for prediction of air quality index in smart city," Journal of Big Data, vol. 11, no. 1, 2024.',
+        doi: '10.1007/s43621-024-00272-9',
+      },
+      {
+        index: 3,
+        citation:
+          'R. Zayed and M. Abbod, "Air Quality Index Prediction Using DNN-Markov Modeling," Applied Artificial Intelligence, vol. 38, no. 1, p. 2371540, 2024.',
+        doi: '10.1080/08839514.2024.2371540',
+      },
+      {
+        index: 4,
+        citation:
+          'M. H. Sowlat, H. Gharibi, M. Yunesian, M. T. Mahmoudi, and S. Lotfi, "A novel, fuzzy-based air quality index (FAQI) for air quality assessment," Atmospheric Environment, vol. 45, no. 12, pp. 2050–2059, 2011.',
+        doi: '10.1016/j.atmosenv.2011.01.060',
+      },
     ],
   },
 };

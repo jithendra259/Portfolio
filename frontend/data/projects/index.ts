@@ -1,11 +1,11 @@
-import { Project } from './types';
-import { regimeAdaptiveSupervisoryGovernance } from './regime-adaptive-supervisory-governance';
 import { adaptivePortfolioGovernance } from './adaptive-portfolio-governance';
-import { supervisoryPortfolioXaiGovernance } from './supervisory-portfolio-xai-governance';
 import { agenticPortfolioChatbot } from './agentic-portfolio-chatbot';
-import { voiceAgentPortfolioArchitecture } from './voice-agent-portfolio-architecture';
 import { personalisedAqiSystem } from './personalised-aqi-system';
+import { regimeAdaptiveSupervisoryGovernance } from './regime-adaptive-supervisory-governance';
+import { supervisoryPortfolioXaiGovernance } from './supervisory-portfolio-xai-governance';
 import { swarmRobotsAgriculture } from './swarm-robots-agriculture';
+import { Project } from './types';
+import { voiceAgentPortfolioArchitecture } from './voice-agent-portfolio-architecture';
 
 export * from './types';
 

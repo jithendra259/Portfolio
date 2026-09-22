@@ -100,13 +100,7 @@ export const SlideDownloadButton: React.FC<SlideDownloadButtonProps> = ({
         }
       `}</style>
 
-      <button
-        type={type}
-        className="button"
-        onClick={onClick}
-        title={title}
-        aria-label={label}
-      >
+      <button type={type} className="button" onClick={onClick} title={title} aria-label={label}>
         <span className="button__text">{label}</span>
         <span className="button__icon">
           <svg

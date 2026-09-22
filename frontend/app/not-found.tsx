@@ -6,8 +6,7 @@ import { ArrowLeft, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black text-white px-4 relative overflow-hidden select-none">
-      
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-black px-4 text-white select-none">
       <div className="not-found-tv-wrapper relative flex flex-col items-center justify-center">
         <style>{`
           .not-found-tv-wrapper .text_404 {
@@ -570,10 +569,10 @@ export default function NotFound() {
       </div>
 
       {/* Return Home Button */}
-      <div className="mt-8 z-20">
+      <div className="z-20 mt-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold text-xs tracking-wider uppercase hover:bg-neutral-200 transition-all shadow-xl cursor-pointer"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold tracking-wider text-black uppercase shadow-xl transition-all hover:bg-neutral-200"
         >
           <Home className="size-4" />
           <span>Return to Home</span>

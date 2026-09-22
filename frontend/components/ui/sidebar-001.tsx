@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 import {
   createContext,
   memo,
@@ -11,14 +11,14 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+} from 'react';
+import { ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 
 const MotionChevron = motion.create(ChevronRight);
 
-const EFFECTS_KEY = "sidebar-001-effects";
+const EFFECTS_KEY = 'sidebar-001-effects';
 
 const EffectsContext = createContext<{ enabled: boolean; toggle: () => void }>({
   enabled: true,
@@ -33,9 +33,9 @@ function EffectsProvider({
   defaultEnabled?: boolean;
 }) {
   const [enabled, setEnabled] = useState(() => {
-    if (typeof window === "undefined") return defaultEnabled;
+    if (typeof window === 'undefined') return defaultEnabled;
     const stored = localStorage.getItem(EFFECTS_KEY);
-    return stored !== null ? stored === "true" : defaultEnabled;
+    return stored !== null ? stored === 'true' : defaultEnabled;
   });
 
   const toggle = useCallback(() => {
@@ -47,9 +47,7 @@ function EffectsProvider({
   }, []);
 
   const value = useMemo(() => ({ enabled, toggle }), [enabled, toggle]);
-  return (
-    <EffectsContext.Provider value={value}>{children}</EffectsContext.Provider>
-  );
+  return <EffectsContext.Provider value={value}>{children}</EffectsContext.Provider>;
 }
 
 export function useSidebar001Effects() {
@@ -86,22 +84,17 @@ function HoverProvider({
   const [hovered, setHoveredId] = useState<string | null>(null);
   const [hoverRect, setHoverRect] = useState<HoverRect | null>(null);
 
-  const setHovered = useCallback(
-    (id: string | null, rect?: HoverRect | null) => {
-      setHoveredId(id);
-      setHoverRect(rect ?? null);
-    },
-    [],
-  );
+  const setHovered = useCallback((id: string | null, rect?: HoverRect | null) => {
+    setHoveredId(id);
+    setHoverRect(rect ?? null);
+  }, []);
 
   const value = useMemo(
     () => ({ hovered, hoverRect, containerRef, setHovered }),
-    [hovered, hoverRect, containerRef, setHovered],
+    [hovered, hoverRect, containerRef, setHovered]
   );
 
-  return (
-    <HoverContext.Provider value={value}>{children}</HoverContext.Provider>
-  );
+  return <HoverContext.Provider value={value}>{children}</HoverContext.Provider>;
 }
 
 // ─── Scroll to active ─────────────────────────────────────────────────────────
@@ -115,22 +108,17 @@ function useScrollToActive(active: boolean) {
     scrolled.current = true;
     const el = ref.current;
     const schedule =
-      typeof requestIdleCallback !== "undefined"
+      typeof requestIdleCallback !== 'undefined'
         ? (cb: () => void) => requestIdleCallback(cb)
         : (cb: () => void) => setTimeout(cb, 100);
-    const cancel =
-      typeof cancelIdleCallback !== "undefined"
-        ? cancelIdleCallback
-        : clearTimeout;
+    const cancel = typeof cancelIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
     const id = schedule(() => {
-      const viewport = el.closest("[data-scroll-viewport]");
+      const viewport = el.closest('[data-scroll-viewport]');
       if (!(viewport instanceof HTMLElement)) return;
       const vpRect = viewport.getBoundingClientRect();
       const elRect = el.getBoundingClientRect();
-      const offset =
-        elRect.top - vpRect.top - vpRect.height / 2 + elRect.height / 2;
-      if (Math.abs(offset) > 40)
-        viewport.scrollBy({ top: offset, behavior: "smooth" });
+      const offset = elRect.top - vpRect.top - vpRect.height / 2 + elRect.height / 2;
+      if (Math.abs(offset) > 40) viewport.scrollBy({ top: offset, behavior: 'smooth' });
     });
     return () => cancel(id as number);
   }, [active]);
@@ -153,7 +141,7 @@ function HoverHighlight() {
       {enabled && hovered && hoverRect && (
         <motion.div
           key="sb001-hover-bg"
-          className="pointer-events-none absolute z-0 rounded-md bg-accent/50"
+          className="bg-accent/50 pointer-events-none absolute z-0 rounded-md"
           style={{ right: 0 }}
           initial={false}
           animate={{
@@ -163,7 +151,7 @@ function HoverHighlight() {
             opacity: 1,
           }}
           exit={{ opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       )}
     </AnimatePresence>
@@ -193,13 +181,7 @@ export const Sidebar001Item = memo(function Sidebar001Item({
   const isHovered = hovered === href;
   const itemRef = useScrollToActive(isActive);
 
-  const opacity = isActive
-    ? 1
-    : hovered !== null
-      ? isHovered
-        ? 1
-        : 0.3
-      : 0.55;
+  const opacity = isActive ? 1 : hovered !== null ? (isHovered ? 1 : 0.3) : 0.55;
   const x = isActive ? 8 : isHovered ? 6 : 0;
 
   return (
@@ -207,26 +189,26 @@ export const Sidebar001Item = memo(function Sidebar001Item({
       {isActive && (
         <motion.span
           layoutId="sb001-active-bar"
-          className="pointer-events-none absolute z-10 left-[4px] top-1/2 h-[1.8px] -translate-y-1/2 rounded-full bg-accent-pro"
+          className="bg-accent-pro pointer-events-none absolute top-1/2 left-[4px] z-10 h-[1.8px] -translate-y-1/2 rounded-full"
           animate={{ width: 23 }}
-          transition={{ type: "spring", stiffness: 800, damping: 40 }}
+          transition={{ type: 'spring', stiffness: 800, damping: 40 }}
         />
       )}
 
       <motion.span
-        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-px bg-foreground/50"
+        className="bg-foreground/50 pointer-events-none absolute top-1/2 left-0 h-px -translate-y-1/2"
         animate={{ width: isActive ? 0 : isHovered ? 26 : 18 }}
-        transition={{ type: "spring", stiffness: 600, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 600, damping: 30 }}
       />
-      <motion.span className="pointer-events-none absolute w-[13px] left-0 top-1/4 h-px bg-foreground/30" />
-      <motion.span className="pointer-events-none absolute w-[16px] left-0 top-0 h-px bg-foreground/30" />
-      <motion.span className="pointer-events-none absolute w-[13px] left-0 top-3/4 h-px bg-foreground/30" />
+      <motion.span className="bg-foreground/30 pointer-events-none absolute top-1/4 left-0 h-px w-[13px]" />
+      <motion.span className="bg-foreground/30 pointer-events-none absolute top-0 left-0 h-px w-[16px]" />
+      <motion.span className="bg-foreground/30 pointer-events-none absolute top-3/4 left-0 h-px w-[13px]" />
 
       <motion.div
         ref={itemRef}
         animate={{ opacity, x }}
-        transition={{ type: "spring", stiffness: 700, damping: 30 }}
-        style={{ transformOrigin: "left center" }}
+        transition={{ type: 'spring', stiffness: 700, damping: 30 }}
+        style={{ transformOrigin: 'left center' }}
       >
         <a
           href={href}
@@ -248,14 +230,12 @@ export const Sidebar001Item = memo(function Sidebar001Item({
           }}
           onMouseLeave={() => setHovered(null)}
           className={cn(
-            "relative flex items-center gap-2 ml-2 pl-4 py-1.5 text-sm select-none",
-            className,
+            'relative ml-2 flex items-center gap-2 py-1.5 pl-4 text-sm select-none',
+            className
           )}
         >
           <span className="relative z-1 truncate">{label}</span>
-          {isNew && (
-            <span className="size-1.5 rounded-full bg-accent-pro shrink-0" />
-          )}
+          {isNew && <span className="bg-accent-pro size-1.5 shrink-0 rounded-full" />}
         </a>
       </motion.div>
     </div>
@@ -272,12 +252,7 @@ export function Sidebar001Separator({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "px-0 py-3.5 mt-2 text-sm font-medium text-foreground/40",
-        className,
-      )}
-    >
+    <div className={cn('text-foreground/40 mt-2 px-0 py-3.5 text-sm font-medium', className)}>
       {children}
     </div>
   );
@@ -331,29 +306,27 @@ export function Sidebar001Group({
   }, [setHovered]);
 
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn('flex flex-col', className)}>
       <button
         ref={buttonRef}
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="relative z-1 flex items-center gap-1.5 py-1.5 pr-2 select-none text-left w-full group"
+        className="group relative z-1 flex w-full items-center gap-1.5 py-1.5 pr-2 text-left select-none"
       >
         {icon ? (
           <>
-            <span className="shrink-0 text-foreground/35 [&_svg]:size-3.5">
-              {icon}
-            </span>
-            <span className="text-sm text-foreground/45 group-hover:text-foreground/70 transition-colors duration-150 flex-1">
+            <span className="text-foreground/35 shrink-0 [&_svg]:size-3.5">{icon}</span>
+            <span className="text-foreground/45 group-hover:text-foreground/70 flex-1 text-sm transition-colors duration-150">
               {label}
             </span>
             <MotionChevron
               size={14}
               strokeWidth={2.5}
-              className="shrink-0 text-foreground/25 mr-1"
+              className="text-foreground/25 mr-1 shrink-0"
               animate={{ rotate: isOpen ? 90 : 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />
           </>
         ) : (
@@ -361,11 +334,11 @@ export function Sidebar001Group({
             <MotionChevron
               size={11}
               strokeWidth={2.5}
-              className="shrink-0 text-foreground/35"
+              className="text-foreground/35 shrink-0"
               animate={{ rotate: isOpen ? 90 : 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />
-            <span className="text-sm text-foreground/45 group-hover:text-foreground/70 transition-colors duration-150">
+            <span className="text-foreground/45 group-hover:text-foreground/70 text-sm transition-colors duration-150">
               {label}
             </span>
           </>
@@ -376,10 +349,10 @@ export function Sidebar001Group({
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 34 }}
-            style={{ overflow: "hidden" }}
+            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+            style={{ overflow: 'hidden' }}
           >
             <div className="flex flex-col pl-3">{children}</div>
           </motion.div>
@@ -401,7 +374,7 @@ export function Sidebar001Section({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn('flex flex-col', className)}>
       {label && <Sidebar001Separator>{label}</Sidebar001Separator>}
       {children}
     </div>
@@ -420,10 +393,7 @@ export function Sidebar001Content({
   const containerRef = useContext(HoverContext).containerRef;
 
   return (
-    <div
-      className={cn("flex-1 overflow-y-auto py-4 no-scrollbar", className)}
-      data-scroll-viewport
-    >
+    <div className={cn('no-scrollbar flex-1 overflow-y-auto py-4', className)} data-scroll-viewport>
       <div ref={containerRef} className="relative px-1">
         <HoverHighlight />
         {children}
@@ -468,7 +438,7 @@ export function Sidebar001({
       startW.current = width;
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
     },
-    [width],
+    [width]
   );
 
   const onPointerMove = useCallback(
@@ -476,11 +446,11 @@ export function Sidebar001({
       if (!dragging.current) return;
       const next = Math.min(
         maxWidth,
-        Math.max(minWidth, startW.current + e.clientX - startX.current),
+        Math.max(minWidth, startW.current + e.clientX - startX.current)
       );
       setWidth(next);
     },
-    [minWidth, maxWidth],
+    [minWidth, maxWidth]
   );
 
   const onPointerUp = useCallback(() => {
@@ -491,22 +461,19 @@ export function Sidebar001({
     <EffectsProvider defaultEnabled={defaultEffectsEnabled}>
       <HoverProvider containerRef={containerRef}>
         <aside
-          className={cn(
-            "relative flex flex-col h-full shrink-0 bg-background",
-            className,
-          )}
+          className={cn('bg-background relative flex h-full shrink-0 flex-col', className)}
           style={{ width }}
         >
           {children}
 
           {/* Resize handle */}
           <div
-            className="absolute top-0 right-0 h-full w-1 cursor-col-resize group/handle z-20"
+            className="group/handle absolute top-0 right-0 z-20 h-full w-1 cursor-col-resize"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
           >
-            <div className="absolute right-0 top-0 h-full w-px bg-border/50 group-hover/handle:bg-border transition-colors duration-150" />
+            <div className="bg-border/50 group-hover/handle:bg-border absolute top-0 right-0 h-full w-px transition-colors duration-150" />
           </div>
         </aside>
       </HoverProvider>
@@ -523,9 +490,7 @@ export function Sidebar001Header({
   children?: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={cn("shrink-0 px-3 pt-4 pb-2", className)}>{children}</div>
-  );
+  return <div className={cn('shrink-0 px-3 pt-4 pb-2', className)}>{children}</div>;
 }
 
 // ─── Sidebar001Footer ─────────────────────────────────────────────────────────
@@ -538,12 +503,7 @@ export function Sidebar001Footer({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "shrink-0 px-3 pb-4 pt-2 border-t border-border/50",
-        className,
-      )}
-    >
+    <div className={cn('border-border/50 shrink-0 border-t px-3 pt-2 pb-4', className)}>
       {children}
     </div>
   );

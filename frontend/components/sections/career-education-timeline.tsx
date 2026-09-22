@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Award, Briefcase, GraduationCap } from 'lucide-react';
 import Timeline3D, { TimelineEvent } from '@/components/ui/widgets/3d-interactive-timeline';
-import { Briefcase, GraduationCap, Award } from 'lucide-react';
 
 export function CareerEducationTimeline() {
   const [filter, setFilter] = useState<'All' | 'Professional' | 'Education'>('All');
@@ -16,7 +16,8 @@ export function CareerEducationTimeline() {
       subtitle: 'K J Somaiya College of Engineering • Mumbai, India',
       badge: 'CGPA: 8.06',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
       description:
         'Thesis research on Agentic AI Framework for Stock Portfolio Management. Specialized in Multi-Agent Swarms, Convex Portfolio Optimization (CVXPY/CLARABEL), Market Regime Adaptation, and Explainable AI.',
       highlights: [
@@ -32,7 +33,8 @@ export function CareerEducationTimeline() {
       subtitle: 'K J Somaiya College of Engineering • Mumbai, India',
       badge: 'Thesis & Research',
       category: 'Professional',
-      image: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1642790106117-e829e14a795f?auto=format&fit=crop&w=1200&q=80',
       description:
         'Architected an autonomous multi-agent quantitative financial system with CVXPY convex solvers, real-time instability detection, and compliance-aware validation.',
       highlights: [
@@ -48,7 +50,8 @@ export function CareerEducationTimeline() {
       subtitle: 'ScholarRankAI • Remote',
       badge: 'Production Systems',
       category: 'Professional',
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
       description:
         'Engineered responsive React interfaces and integrated high-throughput REST APIs for production enterprise workflows.',
       highlights: [
@@ -64,7 +67,8 @@ export function CareerEducationTimeline() {
       subtitle: 'MNJ Software Pvt. Ltd. • India',
       badge: 'Frontend Engineering',
       category: 'Professional',
-      image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
       description:
         'Translated complex UI/UX designs and wireframes into highly optimized, accessible frontend components.',
       highlights: [
@@ -80,7 +84,8 @@ export function CareerEducationTimeline() {
       subtitle: 'IIT Organizing Institute • National Qualification',
       badge: 'National Ranker',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80',
       description:
         'Demonstrated strong theoretical, mathematical, and algorithmic mastery in national-level Graduate Aptitude Test in Engineering.',
       highlights: [
@@ -97,7 +102,8 @@ export function CareerEducationTimeline() {
       subtitle: 'Presidency University • Bangalore, India',
       badge: 'CGPA: 7.77',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
       description:
         'Rigorous engineering foundation in signal processing, embedded systems, microcontrollers, and IoT sensor networks.',
       highlights: [
@@ -113,7 +119,8 @@ export function CareerEducationTimeline() {
       subtitle: 'National Testing Agency (NTA)',
       badge: '85.6 Percentile',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
       description:
         'Secured competitive 85.6 Percentile in the Joint Entrance Examination (Main), testing nationwide aptitude in advanced Mathematics, Physics, and Chemistry.',
       highlights: [
@@ -129,7 +136,8 @@ export function CareerEducationTimeline() {
       subtitle: 'Sri Chaitanya Junior College • India',
       badge: 'CGPA: 9.28',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80',
       description:
         'Intensive focus on Mathematics, Physics, and Chemistry, laying theoretical foundations for quantitative modeling, calculus, and algorithms.',
       highlights: [
@@ -145,7 +153,8 @@ export function CareerEducationTimeline() {
       subtitle: 'T V N R M National High School • India',
       badge: 'CGPA: 9.5 / 10.0',
       category: 'Education',
-      image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
+      image:
+        'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
       description:
         'Completed secondary schooling with High Academic Distinction (9.5 CGPA), excelling in mathematics, sciences, and foundational computing.',
       highlights: [
@@ -160,28 +169,36 @@ export function CareerEducationTimeline() {
     filter === 'All' ? allEvents : allEvents.filter((ev) => ev.category === filter);
 
   return (
-    <section className="pt-20 pb-10 px-4 sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto" id="experience">
-      <div className="flex flex-col items-center text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+    <section
+      className="mx-auto max-w-7xl px-4 pt-20 pb-10 sm:px-6 md:px-12 lg:px-20"
+      id="experience"
+    >
+      <div className="mb-12 flex flex-col items-center text-center">
+        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl dark:text-white">
           Experience &amp; Education
         </h2>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 max-w-2xl mt-3">
-          Interactive 3D timeline tracking engineering milestones, academic degrees, national exam benchmarks, and research breakthroughs.
+        <p className="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base dark:text-neutral-400">
+          Interactive 3D timeline tracking engineering milestones, academic degrees, national exam
+          benchmarks, and research breakthroughs.
         </p>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2 p-1 rounded-full bg-slate-200/80 dark:bg-[#1e1e1e] border border-slate-300 dark:border-[#3c3c3c] mt-8 backdrop-blur-md">
+        <div className="mt-8 flex items-center gap-2 rounded-full border border-slate-300 bg-slate-200/80 p-1 backdrop-blur-md dark:border-[#3c3c3c] dark:bg-[#1e1e1e]">
           {(['All', 'Professional', 'Education'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-5 py-2 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
+              className={`cursor-pointer rounded-full px-5 py-2 font-mono text-xs font-bold transition-all ${
                 filter === tab
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-black shadow-md'
-                  : 'text-slate-700 dark:text-neutral-400 hover:text-slate-950 dark:hover:text-white'
+                  ? 'bg-slate-900 text-white shadow-md dark:bg-white dark:text-black'
+                  : 'text-slate-700 hover:text-slate-950 dark:text-neutral-400 dark:hover:text-white'
               }`}
             >
-              {tab === 'All' ? 'All Milestones' : tab === 'Professional' ? 'Career & Research' : 'Academic & Exams'}
+              {tab === 'All'
+                ? 'All Milestones'
+                : tab === 'Professional'
+                  ? 'Career & Research'
+                  : 'Academic & Exams'}
             </button>
           ))}
         </div>

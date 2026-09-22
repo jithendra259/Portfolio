@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { Bell, BookMarked, BookOpen, Layers, PanelLeft } from 'lucide-react';
 import {
   Sidebar001,
   Sidebar001Content,
@@ -11,9 +12,8 @@ import {
   Sidebar001Item,
   Sidebar001Section,
 } from '@/components/ui/sidebar-001';
-import { BookMarked, BookOpen, Layers, Bell, PanelLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { PaperSection } from '@/data/projects/types';
+import { cn } from '@/lib/utils';
 
 // ─── Sidebar Context for Navbar Toggle ──────────────────────────────────────
 
@@ -60,9 +60,7 @@ export function CaseStudySidebarProvider({
   );
 
   return (
-    <CaseStudySidebarContext.Provider value={value}>
-      {children}
-    </CaseStudySidebarContext.Provider>
+    <CaseStudySidebarContext.Provider value={value}>{children}</CaseStudySidebarContext.Provider>
   );
 }
 
@@ -76,10 +74,10 @@ export function CaseStudySidebarToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggle}
       className={cn(
-        'hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition-all duration-200 shrink-0 cursor-pointer select-none',
+        'hidden shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-xs font-semibold transition-all duration-200 select-none md:inline-flex',
         isOpen
-          ? 'bg-[#f12e54]/15 text-[#f12e54] border border-[#f12e54]/40 hover:bg-[#f12e54]/25'
-          : 'text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10',
+          ? 'border border-[#f12e54]/40 bg-[#f12e54]/15 text-[#f12e54] hover:bg-[#f12e54]/25'
+          : 'border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white',
         className
       )}
       title={isOpen ? 'Hide Table of Contents' : 'Show Table of Contents'}
@@ -143,10 +141,7 @@ function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSe
     return [
       {
         label: 'Getting Started',
-        items: [
-          { href: '#sec-abstract', label: 'Abstract & Terms' },
-          ...topItems,
-        ],
+        items: [{ href: '#sec-abstract', label: 'Abstract & Terms' }, ...topItems],
       },
       {
         label: 'Paper Sections',
@@ -155,9 +150,7 @@ function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSe
       },
       {
         label: 'Resources',
-        items: [
-          { href: '#sec-references', label: 'Scholarly References' },
-        ],
+        items: [{ href: '#sec-references', label: 'Scholarly References' }],
       },
     ];
   }
@@ -173,9 +166,7 @@ function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSe
     },
     {
       label: 'Paper Sections',
-      items: [
-        { href: '#sec-math', label: 'Formulation' },
-      ],
+      items: [{ href: '#sec-math', label: 'Formulation' }],
       groups: [
         {
           label: 'Formulation Equations',
@@ -213,9 +204,7 @@ function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSe
                 label: 'Ablations & Analysis',
                 defaultOpen: false,
                 icon: <Layers />,
-                items: [
-                  { href: '#sec-ablation', label: 'Sensitivity Analysis' },
-                ],
+                items: [{ href: '#sec-ablation', label: 'Sensitivity Analysis' }],
               },
             ]
           : []),
@@ -223,17 +212,13 @@ function getCaseStudyNav(hasAblation: boolean, sections?: PaperSection[]): NavSe
           label: 'Conclusion',
           defaultOpen: false,
           icon: <Layers />,
-          items: [
-            { href: '#sec-conclusion', label: 'Directions & Outlook' },
-          ],
+          items: [{ href: '#sec-conclusion', label: 'Directions & Outlook' }],
         },
       ],
     },
     {
       label: 'Resources',
-      items: [
-        { href: '#sec-references', label: 'Scholarly References' },
-      ],
+      items: [{ href: '#sec-references', label: 'Scholarly References' }],
     },
   ];
 }
@@ -292,10 +277,7 @@ export function CaseStudyTocSidebar({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [NAV]);
 
-  const handleItemClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
-  ) => {
+  const handleItemClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setActive(href);
     const target = document.querySelector(href);
@@ -311,13 +293,13 @@ export function CaseStudyTocSidebar({
   return (
     <Sidebar001
       defaultWidth={defaultW}
-      className={cn('border-r border-border/40 font-mono select-none overflow-y-auto', className)}
+      className={cn('border-border/40 overflow-y-auto border-r font-mono select-none', className)}
     >
       {!hideHeader && (
-        <Sidebar001Header className="pb-2 border-b border-border/30">
+        <Sidebar001Header className="border-border/30 border-b pb-2">
           <div className="flex items-center gap-2 px-2 py-1">
             <BookOpen className="size-4 text-[#f12e54]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+            <span className="text-foreground text-xs font-bold tracking-wider uppercase">
               Table of Contents
             </span>
           </div>
@@ -361,7 +343,7 @@ export function CaseStudyTocSidebar({
       </Sidebar001Content>
 
       <Sidebar001Footer>
-        <span className="text-xs text-foreground/40">v1.0.0</span>
+        <span className="text-foreground/40 text-xs">v1.0.0</span>
       </Sidebar001Footer>
     </Sidebar001>
   );
@@ -383,20 +365,20 @@ export function CaseStudyLayout({
   const { isOpen } = useCaseStudySidebar();
 
   return (
-    <div className="relative flex w-full min-h-[calc(100vh-4rem)] bg-background">
+    <div className="bg-background relative flex min-h-[calc(100vh-4rem)] w-full">
       {/* DESKTOP TOC SIDEBAR - SIDE BY SIDE ON >= 768px (md) ONLY */}
       {isOpen && (
-        <aside className="hidden md:block sticky top-16 self-start h-[calc(100vh-4rem)] shrink-0 z-20 bg-background">
+        <aside className="bg-background sticky top-16 z-20 hidden h-[calc(100vh-4rem)] shrink-0 self-start md:block">
           <CaseStudyTocSidebar
             hasAblation={hasAblation}
             sections={sections}
-            className="h-full bg-background"
+            className="bg-background h-full"
           />
         </aside>
       )}
 
       {/* MATTER / MAIN CONTENT - FULL WIDTH ON MOBILE, SIDE BY SIDE WITH BORDER-L ON DESKTOP */}
-      <div className="flex-1 min-w-0 md:border-l border-border/50 bg-background py-4 sm:py-8 lg:py-10 px-3 sm:px-6 lg:px-8">
+      <div className="border-border/50 bg-background min-w-0 flex-1 px-3 py-4 sm:px-6 sm:py-8 md:border-l lg:px-8 lg:py-10">
         {children}
       </div>
     </div>

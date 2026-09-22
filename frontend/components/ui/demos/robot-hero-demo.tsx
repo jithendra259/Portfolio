@@ -1,9 +1,9 @@
-import { RobotHero } from "@/components/ui/widgets/robot-hero";
+import { RobotHero } from '@/components/ui/widgets/robot-hero';
 
 const settings = {
-  color: "#c4c4c4",
+  color: '#c4c4c4',
   scale: 1,
-  pantallaColor: "#00ffc6",
+  pantallaColor: '#00ffc6',
   pantallaBrillo: 1.2,
   blinkCycle: 3.0,
   metalness: 0.0,

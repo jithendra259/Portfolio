@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
-import { RoomConfiguration, RoomAgentDispatch } from '@livekit/protocol';
+import { RoomAgentDispatch, RoomConfiguration } from '@livekit/protocol';
 
 // Default LiveKit Cloud credentials for Jithendra's Portfolio
 const DEFAULT_LIVEKIT_URL = 'wss://portfolio-jezy7ize.livekit.cloud';
@@ -12,7 +12,8 @@ const DEFAULT_AGENT_NAME = 'my-agent';
 const API_KEY = process.env.LIVEKIT_API_KEY || DEFAULT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET || DEFAULT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL || DEFAULT_LIVEKIT_URL;
-const AGENT_NAME = process.env.NEXT_PUBLIC_AGENT_NAME || process.env.AGENT_NAME || DEFAULT_AGENT_NAME;
+const AGENT_NAME =
+  process.env.NEXT_PUBLIC_AGENT_NAME || process.env.AGENT_NAME || DEFAULT_AGENT_NAME;
 
 // don't cache the results
 export const revalidate = 0;
@@ -37,7 +38,15 @@ async function handleTokenRequest(req: Request) {
     }
 
     // Parse body safely (supports empty body, GET, or malformed JSON)
-    let body: any = {};
+    let body: {
+      room_name?: string;
+      roomName?: string;
+      participant_name?: string;
+      participantName?: string;
+      agent_name?: string;
+      agentName?: string;
+      room_config?: unknown;
+    } = {};
     if (req.method === 'POST') {
       try {
         const text = await req.text();
@@ -56,14 +65,17 @@ async function handleTokenRequest(req: Request) {
 
     try {
       const url = new URL(req.url);
-      if (!requestedRoom && url.searchParams.get('room')) {
-        requestedRoom = url.searchParams.get('room');
+      const searchRoom = url.searchParams.get('room');
+      if (!requestedRoom && searchRoom) {
+        requestedRoom = searchRoom;
       }
-      if (!requestedParticipant && url.searchParams.get('name')) {
-        requestedParticipant = url.searchParams.get('name');
+      const searchName = url.searchParams.get('name');
+      if (!requestedParticipant && searchName) {
+        requestedParticipant = searchName;
       }
-      if (url.searchParams.get('agent')) {
-        requestedAgent = url.searchParams.get('agent');
+      const searchAgent = url.searchParams.get('agent');
+      if (searchAgent) {
+        requestedAgent = searchAgent;
       }
     } catch {
       // ignore url parsing error
@@ -72,7 +84,9 @@ async function handleTokenRequest(req: Request) {
     // Parse room config from request body
     let roomConfig: RoomConfiguration;
     if (body?.room_config) {
-      roomConfig = RoomConfiguration.fromJson(body.room_config, { ignoreUnknownFields: true });
+      roomConfig = RoomConfiguration.fromJson(body.room_config as never, {
+        ignoreUnknownFields: true,
+      });
     } else {
       roomConfig = new RoomConfiguration();
     }

@@ -1,21 +1,22 @@
 import type { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
+import 'katex/dist/katex.min.css';
+import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
 import { Toaster } from '@/components/ui/primitives/sonner';
+import { NetworkErrorTV } from '@/components/ui/widgets/network-error-tv';
+import { App as VoiceAgentApp } from '@/components/voice-agent/app';
 import { cn } from '@/lib/shadcn/utils';
 import { getStyles } from '@/lib/utils';
-import { APP_CONFIG_DEFAULTS } from '@/app-config';
-import { App as VoiceAgentApp } from '@/components/voice-agent/app';
 import '@/styles/globals.css';
-import 'katex/dist/katex.min.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://jithendra-portfolio.vercel.app'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://jithendra-portfolio.vercel.app'
+  ),
 };
-
 
 const publicSans = Public_Sans({
   variable: '--font-public-sans',

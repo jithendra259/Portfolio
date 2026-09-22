@@ -1,1 +1,1 @@
-export * from "@/components/blocks/sidebar";
+export * from '@/components/blocks/sidebar';

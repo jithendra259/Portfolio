@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function Example() {
   return (
@@ -18,10 +18,10 @@ export default function Example() {
       <form>
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground dark:text-foreground">
+            <h2 className="text-foreground dark:text-foreground font-semibold">
               Personal information
             </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground dark:text-muted-foreground">
+            <p className="text-muted-foreground dark:text-muted-foreground mt-1 text-sm leading-6">
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
             </p>
           </div>
@@ -30,7 +30,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="first-name"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   First name
                 </Label>
@@ -46,7 +46,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="last-name"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Last name
                 </Label>
@@ -62,7 +62,7 @@ export default function Example() {
               <div className="col-span-full">
                 <Label
                   htmlFor="email"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Email
                 </Label>
@@ -78,7 +78,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="birthyear"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Birth year
                 </Label>
@@ -93,7 +93,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="role"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Role
                 </Label>
@@ -105,7 +105,7 @@ export default function Example() {
                   disabled
                   className="mt-2"
                 />
-                <p className="mt-2 text-xs text-muted-foreground dark:text-muted-foreground">
+                <p className="text-muted-foreground dark:text-muted-foreground mt-2 text-xs">
                   Roles can only be changed by system admin.
                 </p>
               </div>
@@ -115,10 +115,10 @@ export default function Example() {
         <Separator className="my-8" />
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground dark:text-foreground">
+            <h2 className="text-foreground dark:text-foreground font-semibold">
               Workspace settings
             </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground dark:text-muted-foreground">
+            <p className="text-muted-foreground dark:text-muted-foreground mt-1 text-sm leading-6">
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
             </p>
           </div>
@@ -127,7 +127,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="workspace-name"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Workspace name
                 </Label>
@@ -142,7 +142,7 @@ export default function Example() {
               <div className="col-span-full sm:col-span-3">
                 <Label
                   htmlFor="visibility"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Visibility
                 </Label>
@@ -159,7 +159,7 @@ export default function Example() {
               <div className="col-span-full">
                 <Label
                   htmlFor="workspace-description"
-                  className="text-sm font-medium text-foreground dark:text-foreground"
+                  className="text-foreground dark:text-foreground text-sm font-medium"
                 >
                   Workspace description
                 </Label>
@@ -169,7 +169,7 @@ export default function Example() {
                   className="mt-2"
                   rows={4}
                 />
-                <p className="mt-2 text-xs text-muted-foreground dark:text-muted-foreground">
+                <p className="text-muted-foreground dark:text-muted-foreground mt-2 text-xs">
                   Note: description provided will not be displayed externally.
                 </p>
               </div>
@@ -179,43 +179,36 @@ export default function Example() {
         <Separator className="my-8" />
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground dark:text-foreground">
+            <h2 className="text-foreground dark:text-foreground font-semibold">
               Notification settings
             </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground dark:text-muted-foreground">
+            <p className="text-muted-foreground dark:text-muted-foreground mt-1 text-sm leading-6">
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
             </p>
           </div>
           <div className="sm:max-w-3xl md:col-span-2">
             <fieldset>
-              <legend className="text-sm font-medium text-foreground dark:text-foreground">
+              <legend className="text-foreground dark:text-foreground text-sm font-medium">
                 Team
               </legend>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground dark:text-muted-foreground">
+              <p className="text-muted-foreground dark:text-muted-foreground mt-1 text-sm leading-6">
                 Configure the types of team alerts you want to receive.
               </p>
               <div className="mt-2">
                 <div className="flex items-center gap-x-3 py-1">
-                  <Checkbox
-                    id="team-requests"
-                    name="team-requests"
-                    defaultChecked
-                  />
+                  <Checkbox id="team-requests" name="team-requests" defaultChecked />
                   <Label
                     htmlFor="team-requests"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     Team join requests
                   </Label>
                 </div>
                 <div className="flex items-center gap-x-3 py-1">
-                  <Checkbox
-                    id="team-activity-digest"
-                    name="team-activity-digest"
-                  />
+                  <Checkbox id="team-activity-digest" name="team-activity-digest" />
                   <Label
                     htmlFor="team-activity-digest"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     Weekly team activity digest
                   </Label>
@@ -223,10 +216,10 @@ export default function Example() {
               </div>
             </fieldset>
             <fieldset className="mt-6">
-              <legend className="text-sm font-medium text-foreground dark:text-foreground">
+              <legend className="text-foreground dark:text-foreground text-sm font-medium">
                 Usage
               </legend>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground dark:text-muted-foreground">
+              <p className="text-muted-foreground dark:text-muted-foreground mt-1 text-sm leading-6">
                 Configure the types of usage alerts you want to receive.
               </p>
               <div className="mt-2">
@@ -234,32 +227,25 @@ export default function Example() {
                   <Checkbox id="api-requests" name="api-requests" />
                   <Label
                     htmlFor="api-requests"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     API requests
                   </Label>
                 </div>
                 <div className="flex items-center gap-x-3 py-1">
-                  <Checkbox
-                    id="workspace-execution"
-                    name="workspace-execution"
-                  />
+                  <Checkbox id="workspace-execution" name="workspace-execution" />
                   <Label
                     htmlFor="workspace-execution"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     Workspace loading times
                   </Label>
                 </div>
                 <div className="flex items-center gap-x-3 py-1">
-                  <Checkbox
-                    id="query-caching"
-                    name="query-caching"
-                    defaultChecked
-                  />
+                  <Checkbox id="query-caching" name="query-caching" defaultChecked />
                   <Label
                     htmlFor="query-caching"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     Query caching
                   </Label>
@@ -268,7 +254,7 @@ export default function Example() {
                   <Checkbox id="storage" name="storage" defaultChecked />
                   <Label
                     htmlFor="storage"
-                    className="text-sm font-medium text-foreground dark:text-foreground"
+                    className="text-foreground dark:text-foreground text-sm font-medium"
                   >
                     Storage
                   </Label>

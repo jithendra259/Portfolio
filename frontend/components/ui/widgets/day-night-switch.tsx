@@ -209,7 +209,10 @@ export function DayNightSwitch({ className = '', size = '7px' }: DayNightSwitchP
         }
       `}</style>
 
-      <label className="theme-switch" title={isDark ? "Switch to Day / Light mode" : "Switch to Night / Dark mode"}>
+      <label
+        className="theme-switch"
+        title={isDark ? 'Switch to Day / Light mode' : 'Switch to Night / Dark mode'}
+      >
         <input
           type="checkbox"
           className="theme-switch__checkbox"

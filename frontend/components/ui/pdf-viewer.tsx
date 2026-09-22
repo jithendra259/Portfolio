@@ -1,44 +1,32 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Document, Page, Thumbnail, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import { CircleMinus, CirclePlus, Loader2, RotateCcw, RotateCw, Search } from 'lucide-react';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+  Sidebar,
+  SidebarContent,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+} from '@/components/blocks/sidebar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarRail,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/blocks/sidebar";
-import { cn } from "@/lib/utils";
-import {
-  CircleMinus,
-  CirclePlus,
-  Loader2,
-  RotateCcw,
-  RotateCw,
-  Search,
-} from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Document, Page, pdfjs, Thumbnail } from "react-pdf";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
-
-if (typeof window !== "undefined" && pdfjs?.GlobalWorkerOptions) {
+if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
   pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 }
 
@@ -58,7 +46,7 @@ function Component({ url }: { url: string }) {
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   const textRenderer = useCallback(
     (textItem: { str: string; itemIndex: number }) =>
@@ -75,7 +63,7 @@ function Component({ url }: { url: string }) {
 
     const options = {
       root: viewportRef.current,
-      rootMargin: "0px",
+      rootMargin: '0px',
       threshold: 0.5,
     };
 
@@ -83,12 +71,9 @@ function Component({ url }: { url: string }) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           // Get the page number from the closest parent with data-page-number
-          const pageElement = entry.target.closest("[data-page-number]");
+          const pageElement = entry.target.closest('[data-page-number]');
           if (pageElement) {
-            const pageNumber = parseInt(
-              pageElement.getAttribute("data-page-number") || "1",
-              10
-            );
+            const pageNumber = parseInt(pageElement.getAttribute('data-page-number') || '1', 10);
             setCurrentPage(pageNumber);
           }
         }
@@ -99,7 +84,7 @@ function Component({ url }: { url: string }) {
 
     // Use a mutation observer to watch for when pages are added
     const mutationObserver = new MutationObserver(() => {
-      const pages = viewportRef.current?.querySelectorAll(".react-pdf__Page");
+      const pages = viewportRef.current?.querySelectorAll('.react-pdf__Page');
       if (pages) {
         pages.forEach((page) => {
           observer.observe(page);
@@ -131,55 +116,55 @@ function Component({ url }: { url: string }) {
         file={url}
         onLoadSuccess={onDocumentLoadSuccess}
         onContextMenu={(e: React.MouseEvent) => e.preventDefault()}
-        className={"w-full flex flex-row h-full select-none"}
+        className={'flex h-full w-full flex-row select-none'}
         loading={
-          <div className="flex flex-col items-center justify-center h-full w-full min-h-[300px] text-muted-foreground gap-2">
-            <Loader2 className="size-6 animate-spin text-primary" />
-            <span className="text-xs font-mono">Loading PDF document...</span>
+          <div className="text-muted-foreground flex h-full min-h-[300px] w-full flex-col items-center justify-center gap-2">
+            <Loader2 className="text-primary size-6 animate-spin" />
+            <span className="font-mono text-xs">Loading PDF document...</span>
           </div>
         }
       >
         <Sidebar>
           <SidebarRail />
-          <SidebarContent className="flex flex-col p-8 items-center">
+          <SidebarContent className="flex flex-col items-center p-8">
             {Array.from(new Array(numPages || 0), (el, index) => (
               <div
                 className={cn(
-                  "flex flex-col gap-2 mb-4 w-48 hover:bg-muted transition p-2 rounded-lg cursor-pointer",
-                  index + 1 === currentPage && "bg-muted ring-1 ring-border"
+                  'hover:bg-muted mb-4 flex w-48 cursor-pointer flex-col gap-2 rounded-lg p-2 transition',
+                  index + 1 === currentPage && 'bg-muted ring-border ring-1'
                 )}
                 key={`thumbnail_${index + 1}`}
                 onClick={() => {
                   const el = viewportRef.current?.querySelector(
                     `[data-page-number="${index + 1}"]`
                   );
-                  el?.scrollIntoView({ behavior: "smooth" });
+                  el?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
                 <Thumbnail
                   pageNumber={index + 1}
-                  className="border shadow-xs rounded-sm overflow-hidden"
+                  className="overflow-hidden rounded-sm border shadow-xs"
                   width={170}
                   height={100}
                   rotate={rotation}
                 />
                 <div className="flex flex-row justify-center">
-                  <span className="text-xs font-mono text-muted-foreground">{index + 1}</span>
+                  <span className="text-muted-foreground font-mono text-xs">{index + 1}</span>
                 </div>
               </div>
             ))}
           </SidebarContent>
         </Sidebar>
-        <div className="flex-row w-full flex-1 min-w-0">
-          <div className="w-full h-full flex flex-col grow">
-            <div className="flex p-2 border-b justify-between items-center bg-card/40 backdrop-blur-xs">
-              <div className="flex flex-row gap-2 items-center">
+        <div className="w-full min-w-0 flex-1 flex-row">
+          <div className="flex h-full w-full grow flex-col">
+            <div className="bg-card/40 flex items-center justify-between border-b p-2 backdrop-blur-xs">
+              <div className="flex flex-row items-center gap-2">
                 <SidebarTrigger />
-                <div className="text-xs font-mono text-muted-foreground">
-                  Page {currentPage} of {numPages ?? "..."}
+                <div className="text-muted-foreground font-mono text-xs">
+                  Page {currentPage} of {numPages ?? '...'}
                 </div>
               </div>
-              <div className="flex flex-row gap-1.5 sm:gap-2 items-center">
+              <div className="flex flex-row items-center gap-1.5 sm:gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -214,24 +199,25 @@ function Component({ url }: { url: string }) {
                   size="icon"
                   className="size-7"
                   disabled={zoom >= ZOOM_OPTIONS[ZOOM_OPTIONS.length - 1]}
-                  onClick={() => setZoom(Math.min(ZOOM_OPTIONS[ZOOM_OPTIONS.length - 1], zoom + 0.25))}
+                  onClick={() =>
+                    setZoom(Math.min(ZOOM_OPTIONS[ZOOM_OPTIONS.length - 1], zoom + 0.25))
+                  }
                   title="Zoom In"
                 >
                   <CirclePlus className="size-4" />
                 </Button>
 
-                <Select
-                  value={zoom.toString()}
-                  onValueChange={(value) => setZoom(Number(value))}
-                >
-                  <SelectTrigger className="h-7 rounded-sm w-20 sm:w-24 text-xs font-mono">
-                    <SelectValue placeholder="Zoom">
-                      {`${Math.round(zoom * 100)}%`}
-                    </SelectValue>
+                <Select value={zoom.toString()} onValueChange={(value) => setZoom(Number(value))}>
+                  <SelectTrigger className="h-7 w-20 rounded-sm font-mono text-xs sm:w-24">
+                    <SelectValue placeholder="Zoom">{`${Math.round(zoom * 100)}%`}</SelectValue>
                   </SelectTrigger>
                   <SelectContent align="end">
                     {ZOOM_OPTIONS.map((option) => (
-                      <SelectItem key={option} value={option.toString()} className="text-xs font-mono">
+                      <SelectItem
+                        key={option}
+                        value={option.toString()}
+                        className="font-mono text-xs"
+                      >
                         {`${option * 100}%`}
                       </SelectItem>
                     ))}
@@ -256,22 +242,22 @@ function Component({ url }: { url: string }) {
               </div>
             </div>
 
-            <ScrollArea className="grow w-full h-[calc(100vh-160px)] min-h-[400px]">
-              <div className="flex flex-row grow h-full">
-                <ScrollArea className="grow w-full h-full" ref={viewportRef}>
+            <ScrollArea className="h-[calc(100vh-160px)] min-h-[400px] w-full grow">
+              <div className="flex h-full grow flex-row">
+                <ScrollArea className="h-full w-full grow" ref={viewportRef}>
                   <ScrollBar orientation="horizontal" />
-                  <div className="items-center flex p-4 sm:p-8 flex-col grow w-full bg-neutral-100/60 dark:bg-[#0b0d12]">
+                  <div className="flex w-full grow flex-col items-center bg-neutral-100/60 p-4 sm:p-8 dark:bg-[#0b0d12]">
                     {Array.from(new Array(numPages || 0), (el, index) => (
                       <Page
                         key={`page_${index + 1}`}
                         pageNumber={index + 1}
-                        className="border border-border/80 shadow-md mb-8 bg-white dark:bg-neutral-900 rounded-sm overflow-hidden"
+                        className="border-border/80 mb-8 overflow-hidden rounded-sm border bg-white shadow-md dark:bg-neutral-900"
                         data-page-number={index + 1}
                         renderAnnotationLayer={false}
                         scale={zoom}
                         rotate={rotation}
                         loading={
-                          <div className="h-96 w-72 flex items-center justify-center bg-card border border-border/40 rounded-sm mb-8 animate-pulse text-muted-foreground text-xs font-mono">
+                          <div className="bg-card border-border/40 text-muted-foreground mb-8 flex h-96 w-72 animate-pulse items-center justify-center rounded-sm border font-mono text-xs">
                             Loading page {index + 1}...
                           </div>
                         }

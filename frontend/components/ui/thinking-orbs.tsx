@@ -12,17 +12,12 @@ export function ThinkingOrb(props: ThinkingOrbProps) {
   }, []);
 
   if (!mounted) {
-    return <span className="inline-block size-12 rounded-full bg-white/5 animate-pulse" />;
+    return <span className="inline-block size-12 animate-pulse rounded-full bg-white/5" />;
   }
 
   return <BaseThinkingOrb {...props} />;
 }
 
-export type {
-  ThinkingOrbProps,
-  OrbState,
-  OrbSize,
-  OrbTheme,
-} from 'thinking-orbs';
+export type { ThinkingOrbProps, OrbState, OrbSize, OrbTheme } from 'thinking-orbs';
 
 export default ThinkingOrb;

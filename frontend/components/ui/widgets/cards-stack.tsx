@@ -1,32 +1,32 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { HTMLMotionProps, motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import * as React from 'react';
+import { type MotionProps, motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
-interface CardStickyProps extends HTMLMotionProps<"div"> {
-  index: number
-  incrementY?: number
-  incrementZ?: number
-  topOffset?: number
+interface CardStickyProps extends MotionProps {
+  index: number;
+  incrementY?: number;
+  incrementZ?: number;
+  topOffset?: number;
+  className?: string;
 }
 
-const ContainerScroll = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLProps<HTMLDivElement>
->(({ children, className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn("relative w-full", className)}
-      style={{ perspective: "1200px", ...props.style }}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-})
-ContainerScroll.displayName = "ContainerScroll"
+const ContainerScroll = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('relative w-full', className)}
+        style={{ perspective: '1200px', ...props.style }}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+ContainerScroll.displayName = 'ContainerScroll';
 
 const CardSticky = React.forwardRef<HTMLDivElement, CardStickyProps>(
   (
@@ -42,8 +42,8 @@ const CardSticky = React.forwardRef<HTMLDivElement, CardStickyProps>(
     },
     ref
   ) => {
-    const y = topOffset + index * incrementY
-    const z = index * incrementZ
+    const y = topOffset + index * incrementY;
+    const z = index * incrementZ;
 
     return (
       <motion.div
@@ -53,19 +53,19 @@ const CardSticky = React.forwardRef<HTMLDivElement, CardStickyProps>(
           top: `${y}px`,
           zIndex: 10 + index,
           transform: `translateZ(${z}px)`,
-          backfaceVisibility: "hidden",
+          backfaceVisibility: 'hidden',
           ...style,
         }}
-        className={cn("sticky", className)}
+        className={cn('sticky', className)}
         {...props}
       >
         {children}
       </motion.div>
-    )
+    );
   }
-)
+);
 
-CardSticky.displayName = "CardSticky"
+CardSticky.displayName = 'CardSticky';
 
-export { ContainerScroll, CardSticky }
-export type { CardStickyProps }
+export { ContainerScroll, CardSticky };
+export type { CardStickyProps };

@@ -1,4 +1,11 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const invoices = [
   {
@@ -9,7 +16,7 @@ const invoices = [
     email: 'alice@example.com',
     location: 'United States',
     lastaccess: '12/16/2021',
-    salary: '$120,000'
+    salary: '$120,000',
   },
   {
     id: 2,
@@ -19,7 +26,7 @@ const invoices = [
     email: 'bob@example.com',
     location: 'Canada',
     lastaccess: '11/05/2021',
-    salary: '$100,000'
+    salary: '$100,000',
   },
   {
     id: 3,
@@ -29,7 +36,7 @@ const invoices = [
     email: 'charlie@example.com',
     location: 'United Kingdom',
     lastaccess: '09/20/2022',
-    salary: '$75,000'
+    salary: '$75,000',
   },
   {
     id: 4,
@@ -39,7 +46,7 @@ const invoices = [
     email: 'dora@example.com',
     location: 'Australia',
     lastaccess: '08/10/2020',
-    salary: '$40,000'
+    salary: '$40,000',
   },
   {
     id: 5,
@@ -49,7 +56,7 @@ const invoices = [
     email: 'ethan@example.com',
     location: 'India',
     lastaccess: '11/20/2021',
-    salary: '$220,000'
+    salary: '$220,000',
   },
   {
     id: 6,
@@ -59,7 +66,7 @@ const invoices = [
     email: 'fiona@example.com',
     location: 'France',
     lastaccess: '07/05/2021',
-    salary: '$150,000'
+    salary: '$150,000',
   },
   {
     id: 7,
@@ -69,19 +76,19 @@ const invoices = [
     email: 'george@example.com',
     location: 'Brazil',
     lastaccess: '05/25/2021',
-    salary: '$135,000'
-  }
-]
+    salary: '$135,000',
+  },
+];
 
 const StickyColumnTableDemo = () => {
   return (
-    <div className='w-full'>
-      <div className='mx-auto max-w-2xl [&>div]:rounded-sm [&>div]:border'>
+    <div className="w-full">
+      <div className="mx-auto max-w-2xl [&>div]:rounded-sm [&>div]:border">
         <Table>
           <TableHeader>
-            <TableRow className='hover:bg-transparent'>
-              <TableHead className='bg-background sticky left-0'>ID</TableHead>
-              <TableHead className='bg-background sticky left-7.5'>Name</TableHead>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="bg-background sticky left-0">ID</TableHead>
+              <TableHead className="bg-background sticky left-7.5">Name</TableHead>
               <TableHead>Occupation</TableHead>
               <TableHead>Employer</TableHead>
               <TableHead>Email</TableHead>
@@ -91,10 +98,12 @@ const StickyColumnTableDemo = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invoices.map(invoice => (
-              <TableRow key={invoice.id} className='hover:bg-transparent'>
-                <TableCell className='bg-background sticky left-0 font-medium'>{invoice.id}</TableCell>
-                <TableCell className='bg-background sticky left-7.5'>{invoice.name}</TableCell>
+            {invoices.map((invoice) => (
+              <TableRow key={invoice.id} className="hover:bg-transparent">
+                <TableCell className="bg-background sticky left-0 font-medium">
+                  {invoice.id}
+                </TableCell>
+                <TableCell className="bg-background sticky left-7.5">{invoice.name}</TableCell>
                 <TableCell>{invoice.occupation}</TableCell>
                 <TableCell>{invoice.employer}</TableCell>
                 <TableCell>{invoice.email}</TableCell>
@@ -106,9 +115,9 @@ const StickyColumnTableDemo = () => {
           </TableBody>
         </Table>
       </div>
-      <p className='text-muted-foreground mt-4 text-center text-sm'>Sticky column table</p>
+      <p className="text-muted-foreground mt-4 text-center text-sm">Sticky column table</p>
     </div>
-  )
-}
+  );
+};
 
-export default StickyColumnTableDemo
+export default StickyColumnTableDemo;

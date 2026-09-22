@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { FloatingIconsHero } from '@/components/ui/widgets/floating-icons-hero-section';
+import { PearlButton } from '@/components/ui/pearl-button';
 import { contactIcons } from '@/components/ui/widgets/contact-floating-icons';
 import { EmailRevealButton } from '@/components/ui/widgets/email-reveal-button';
-import { PearlButton } from '@/components/ui/pearl-button';
+import { FloatingIconsHero } from '@/components/ui/widgets/floating-icons-hero-section';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
 
 export function ContactSection() {
@@ -21,14 +21,11 @@ export function ContactSection() {
         title="Let's Build Intelligent Systems Together"
         subtitle="Open for AI Engineering & Quantitative Research roles, thesis collaborations, and technical discussions in multi-agent swarms, convex portfolio risk, and real-time voice architectures."
         icons={contactIcons}
-        className="bg-transparent h-auto min-h-[780px] py-24"
+        className="h-auto min-h-[780px] bg-transparent py-24"
       >
-        <div className="py-4 flex flex-col items-center justify-center gap-5 w-full max-w-md mx-auto">
+        <div className="mx-auto flex w-full max-w-md flex-col items-center justify-center gap-5 py-4">
           {/* Pearl Button redirects directly to /book-appointment with exact original UI */}
-          <PearlButton
-            label="Book Appointment"
-            onClick={() => router.push('/book-appointment')}
-          />
+          <PearlButton label="Book Appointment" onClick={() => router.push('/book-appointment')} />
 
           {/* Gmail Copy Button placed BELOW */}
           <EmailRevealButton

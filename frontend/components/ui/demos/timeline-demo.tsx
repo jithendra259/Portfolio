@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
+import { FiAward, FiBook, FiBriefcase, FiCode, FiGlobe } from 'react-icons/fi';
 import Timeline3D, { TimelineEvent } from '@/components/ui/widgets/3d-interactive-timeline';
-import { FiAward, FiCode, FiBriefcase, FiGlobe, FiBook } from 'react-icons/fi';
 
 export const TimelineDemo: React.FC = () => {
   const timelineEvents: TimelineEvent[] = [

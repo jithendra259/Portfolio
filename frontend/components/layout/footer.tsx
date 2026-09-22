@@ -1,14 +1,10 @@
 'use client';
 
 import React from 'react';
+import { ArrowUp, ArrowUpRight, BookOpen } from 'lucide-react';
 import { NoiseTexture } from '@/components/ui/effects/noise-texture';
 import { SocialTooltipIcons } from '@/components/ui/widgets/social-tooltip-icons';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
-import {
-  ArrowUp,
-  ArrowUpRight,
-  BookOpen,
-} from 'lucide-react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -55,21 +51,20 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-slate-300/80 dark:border-white/10 bg-[#eaedf3] dark:bg-[#07080b] text-slate-900 dark:text-white transition-colors duration-300 pt-16 pb-28 sm:pb-14">
+    <footer className="relative overflow-hidden border-t border-slate-300/80 bg-[#eaedf3] pt-16 pb-28 text-slate-900 transition-colors duration-300 sm:pb-14 dark:border-white/10 dark:bg-[#07080b] dark:text-white">
       {/* Top subtle ambient highlight gradient line */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 dark:via-purple-500/30 to-transparent pointer-events-none" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent dark:via-purple-500/30" />
 
       {/* Official Noise Texture */}
       <NoiseTexture id="footer-noise-texture" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 md:px-14 lg:px-16 space-y-12">
+      <div className="relative z-10 mx-auto max-w-7xl space-y-12 px-6 sm:px-10 md:px-14 lg:px-16">
         {/* Main Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
-          
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-12">
           {/* Column 1: Identity, Role, Status & Social Tooltips (6 cols) */}
-          <div className="lg:col-span-6 space-y-5">
+          <div className="space-y-5 lg:col-span-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 dark:from-white dark:to-neutral-200 text-white dark:text-black font-black text-sm shadow-md">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-sm font-black text-white shadow-md dark:from-white dark:to-neutral-200 dark:text-black">
                 J
               </div>
               <div>
@@ -82,8 +77,10 @@ export function Footer() {
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-400 leading-relaxed max-w-lg">
-              M.Tech AI & Data Science researcher and full-stack systems engineer focused on autonomous multi-agent systems, quantitative finance risk analytics, and explainable AI.
+            <p className="max-w-lg text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-neutral-400">
+              M.Tech AI & Data Science researcher and full-stack systems engineer focused on
+              autonomous multi-agent systems, quantitative finance risk analytics, and explainable
+              AI.
             </p>
 
             {/* 3D Tooltip Social Icons */}
@@ -92,14 +89,12 @@ export function Footer() {
             </div>
 
             {/* Contact Number */}
-            <p className="text-xs text-slate-500 dark:text-neutral-500">
-              Contact: 9704400336
-            </p>
+            <p className="text-xs text-slate-500 dark:text-neutral-500">Contact: 9704400336</p>
           </div>
 
           {/* Column 2: Navigation Sitemap (3 cols) */}
-          <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-mono font-bold tracking-widest uppercase text-slate-400 dark:text-neutral-500">
+          <div className="space-y-4 lg:col-span-3">
+            <h4 className="font-mono text-xs font-bold tracking-widest text-slate-400 uppercase dark:text-neutral-500">
               Navigation
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
@@ -107,7 +102,7 @@ export function Footer() {
                 <li key={item.name}>
                   <a
                     href={item.href}
-                    className="text-slate-600 dark:text-neutral-400 hover:text-slate-950 dark:hover:text-white transition-colors duration-200 inline-block py-0.5"
+                    className="inline-block py-0.5 text-slate-600 transition-colors duration-200 hover:text-slate-950 dark:text-neutral-400 dark:hover:text-white"
                   >
                     {item.name}
                   </a>
@@ -117,8 +112,8 @@ export function Footer() {
           </div>
 
           {/* Column 3: Research & Publications (3 cols) */}
-          <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-mono font-bold tracking-widest uppercase text-slate-400 dark:text-neutral-500 flex items-center gap-1.5">
+          <div className="space-y-4 lg:col-span-3">
+            <h4 className="flex items-center gap-1.5 font-mono text-xs font-bold tracking-widest text-slate-400 uppercase dark:text-neutral-500">
               <BookOpen className="size-3.5" />
               <span>Research & Publications</span>
             </h4>
@@ -127,13 +122,13 @@ export function Footer() {
                 <li key={pub.title}>
                   <a
                     href={pub.href}
-                    className="group block text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-colors"
+                    className="group block text-slate-700 transition-colors hover:text-slate-950 dark:text-neutral-300 dark:hover:text-white"
                   >
-                    <div className="font-semibold text-slate-900 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex items-center gap-1">
+                    <div className="flex items-center gap-1 font-semibold text-slate-900 group-hover:text-blue-600 dark:text-neutral-200 dark:group-hover:text-blue-400">
                       <span>{pub.title}</span>
-                      <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowUpRight className="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
                     </div>
-                    <div className="text-[11px] text-slate-500 dark:text-neutral-500 mt-0.5">
+                    <div className="mt-0.5 text-[11px] text-slate-500 dark:text-neutral-500">
                       {pub.desc}
                     </div>
                   </a>
@@ -144,24 +139,24 @@ export function Footer() {
         </div>
 
         {/* Bottom Sub-Footer Bar */}
-        <div className="pt-8 border-t border-slate-300/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-neutral-500 font-sans">
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-300/80 pt-8 font-sans text-xs text-slate-500 sm:flex-row dark:border-white/10 dark:text-neutral-500">
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
             <p>
               © {currentYear} {PORTFOLIO_DATA.developer.fullName}. All rights reserved.
             </p>
-            <span className="hidden sm:inline text-slate-300 dark:text-neutral-700">·</span>
+            <span className="hidden text-slate-300 sm:inline dark:text-neutral-700">·</span>
             <span className="text-slate-400 dark:text-neutral-600">9704400336</span>
           </div>
 
           <div className="flex items-center gap-6">
-            <span className="hidden md:inline text-slate-400 dark:text-neutral-600">
+            <span className="hidden text-slate-400 md:inline dark:text-neutral-600">
               Built with Next.js, React & Tailwind CSS
             </span>
 
             {/* Back to Top Button */}
             <button
               onClick={scrollToTop}
-              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-300/80 dark:border-white/15 bg-white/70 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-all duration-200 cursor-pointer text-xs font-medium"
+              className="group inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-300/80 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-200 hover:bg-slate-100 hover:text-slate-950 dark:border-white/15 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
             >
               <span>Back to top</span>
               <ArrowUp className="size-3.5 transition-transform duration-200 group-hover:-translate-y-0.5" />

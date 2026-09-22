@@ -1,28 +1,36 @@
 'use client';
 
-import { type ReactNode, useMemo, useEffect } from 'react';
-import { TokenSource, Room, AudioPresets } from 'livekit-client';
-import { useSession } from '@livekit/components-react';
+import { type ReactNode, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
+import { AudioPresets, Room } from 'livekit-client';
+import { useSession } from '@livekit/components-react';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionProvider } from '@/components/agents-ui/agent-session-provider';
 import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
 import { ViewController } from '@/components/voice-agent/view-controller';
-import { useAgentErrors } from '@/hooks/useAgentErrors';
 import { useDebugMode } from '@/hooks/useDebug';
-import { getSandboxTokenSource, getMultiUserTokenSource } from '@/lib/utils';
+import { getMultiUserTokenSource, getSandboxTokenSource } from '@/lib/utils';
 
 // Guard against duplicate topic stream handler crashes in React StrictMode & Turbopack
+interface PatchedRoom extends Room {
+  __safe_handler_patched?: boolean;
+}
+type LiveKitTextStreamHandler = Parameters<
+  NonNullable<typeof Room.prototype.registerTextStreamHandler>
+>[1];
 if (typeof window !== 'undefined' && typeof Room !== 'undefined' && Room.prototype) {
   const originalRegister = Room.prototype.registerTextStreamHandler;
   const originalUnregister = Room.prototype.unregisterTextStreamHandler;
 
-  if (originalRegister && !(Room.prototype as any).__safe_handler_patched) {
-    (Room.prototype as any).__safe_handler_patched = true;
+  if (originalRegister && !(Room.prototype as PatchedRoom).__safe_handler_patched) {
+    (Room.prototype as PatchedRoom).__safe_handler_patched = true;
 
-    const roomSubscribers = new WeakMap<Room, Map<string, Set<any>>>();
+    const roomSubscribers = new WeakMap<Room, Map<string, Set<LiveKitTextStreamHandler>>>();
 
-    Room.prototype.registerTextStreamHandler = function (topic: string, callback: any) {
+    Room.prototype.registerTextStreamHandler = function (
+      topic: string,
+      callback: LiveKitTextStreamHandler
+    ) {
       let topicMap = roomSubscribers.get(this);
       if (!topicMap) {
         topicMap = new Map();
@@ -42,12 +50,12 @@ if (typeof window !== 'undefined' && typeof Room !== 'undefined' && Room.prototy
         // ignore
       }
 
-      return originalRegister.call(this, topic, (reader: any, participant: any) => {
+      return originalRegister.call(this, topic, (reader: unknown, participant: unknown) => {
         const currentSubs = topicMap?.get(topic);
         if (currentSubs) {
           for (const sub of Array.from(currentSubs)) {
             try {
-              sub(reader, participant);
+              sub(reader as never, participant as never);
             } catch (e) {
               console.warn('Error in text stream handler:', e);
             }
@@ -125,16 +133,14 @@ export function App({ appConfig, children }: AppProps) {
 
   const session = useSession(
     tokenSource,
-    appConfig.agentName
-      ? { agentName: appConfig.agentName, room }
-      : { room }
+    appConfig.agentName ? { agentName: appConfig.agentName, room } : { room }
   );
-
 
   // Best-effort wake-up for a sleeping Render instance. LiveKit remains the
   // connection path, so this must never block the visitor from starting a room.
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
+    const backendUrl =
+      process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
 
     void fetch(backendUrl, { mode: 'cors', cache: 'no-store' }).catch((error) => {
       console.warn('--> [Render Backend Warmup]', error?.message || error);
@@ -155,14 +161,18 @@ export function App({ appConfig, children }: AppProps) {
           timestamp: Date.now(),
         });
         const encoded = new TextEncoder().encode(payload);
-        room.localParticipant.publishData(encoded, {
-          topic: 'client_context',
-          reliable: true,
-        }).catch((err) => console.warn('Failed to publish client_context:', err));
-        room.localParticipant.publishData(encoded, {
-          topic: 'page_context',
-          reliable: true,
-        }).catch(() => {});
+        room.localParticipant
+          .publishData(encoded, {
+            topic: 'client_context',
+            reliable: true,
+          })
+          .catch((err) => console.warn('Failed to publish client_context:', err));
+        room.localParticipant
+          .publishData(encoded, {
+            topic: 'page_context',
+            reliable: true,
+          })
+          .catch(() => {});
       } catch (e) {
         console.warn('Error serializing page_context:', e);
       }
@@ -175,7 +185,12 @@ export function App({ appConfig, children }: AppProps) {
     const timer = setTimeout(publishCurrentPage, 600);
 
     // Listen for agent's query_page pings
-    const handleData = (payload: Uint8Array, participant?: any, kind?: any, topic?: string) => {
+    const handleData = (
+      payload: Uint8Array,
+      _participant?: unknown,
+      _kind?: unknown,
+      topic?: string
+    ) => {
       if (topic === 'query_page') {
         publishCurrentPage();
       }

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useMemo, useRef, useState, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, ContactShadows } from "@react-three/drei";
-import * as THREE from "three";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { PiShoppingBagBold } from "react-icons/pi";
-import { cn } from "@/lib/shadcn/utils";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { PiShoppingBagBold } from 'react-icons/pi';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import * as THREE from 'three';
+import { ContactShadows, Environment } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { cn } from '@/lib/shadcn/utils';
 
 class HeartCurve extends THREE.Curve<THREE.Vector3> {
   constructor() {
@@ -15,11 +15,7 @@ class HeartCurve extends THREE.Curve<THREE.Vector3> {
   getPoint(t: number, optionalTarget = new THREE.Vector3()) {
     t = t * Math.PI * 2;
     const x = 16 * Math.pow(Math.sin(t), 3);
-    const y =
-      13 * Math.cos(t) -
-      5 * Math.cos(2 * t) -
-      2 * Math.cos(3 * t) -
-      Math.cos(4 * t);
+    const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
 
     return optionalTarget.set(x * 0.002, (y + 6) * 0.002, 0);
   }
@@ -27,13 +23,7 @@ class HeartCurve extends THREE.Curve<THREE.Vector3> {
 
 const sharedHeartCurve = new HeartCurve();
 
-function ResponsiveGroup({
-  children,
-  scale = 1,
-}: {
-  children: React.ReactNode;
-  scale?: number;
-}) {
+function ResponsiveGroup({ children, scale = 1 }: { children: React.ReactNode; scale?: number }) {
   const { viewport } = useThree();
   const s = Math.min(1.05, viewport.width / 3.6) * scale;
   return <group scale={s}>{children}</group>;
@@ -52,16 +42,16 @@ function GlassCapsule({
 
   const uniforms = useMemo(
     () => ({
-      color: { value: new THREE.Color("#00ffc6") },
+      color: { value: new THREE.Color('#00ffc6') },
       power: { value: 2.5 },
       intensity: { value: 0.6 },
     }),
-    [],
+    []
   );
 
   useFrame(() => {
     if (materialRef.current) {
-      if (typeof color === "string") {
+      if (typeof color === 'string') {
         materialRef.current.uniforms.color.value.set(color);
       } else {
         materialRef.current.uniforms.color.value.copy(color);
@@ -110,30 +100,30 @@ function GlassCapsule({
 }
 
 const earBaseMat = new THREE.MeshStandardMaterial({
-  color: "#f0f0f0",
+  color: '#f0f0f0',
   roughness: 0.5,
 });
 const earRingMat = new THREE.MeshStandardMaterial({
-  color: "#ffffff",
+  color: '#ffffff',
   roughness: 0.3,
 });
 const earCenterMat = new THREE.MeshStandardMaterial({
-  color: "#cccccc",
+  color: '#cccccc',
   roughness: 0.8,
 });
 const antennaBaseMat = new THREE.MeshStandardMaterial({
-  color: "#999999",
+  color: '#999999',
   roughness: 0.4,
   metalness: 0.5,
 });
 const antennaStickMat = new THREE.MeshStandardMaterial({
-  color: "#d0d0d0",
+  color: '#d0d0d0',
   roughness: 0.4,
   metalness: 0.2,
 });
 const antennaTipMat = new THREE.MeshStandardMaterial({
-  color: "#00ffc6",
-  emissive: new THREE.Color("#00ffc6"),
+  color: '#00ffc6',
+  emissive: new THREE.Color('#00ffc6'),
   emissiveIntensity: 0.8,
   roughness: 0.2,
   toneMapped: false,
@@ -152,12 +142,7 @@ function RobotEar({
 
   return (
     <group position={position} scale={scale}>
-      <mesh
-        rotation={[0, 0, Math.PI / 2]}
-        castShadow
-        receiveShadow
-        material={earBaseMat}
-      >
+      <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow material={earBaseMat}>
         <cylinderGeometry args={[0.04, 0.04, 0.025, 32]} />
       </mesh>
 
@@ -182,28 +167,13 @@ function RobotEar({
       </mesh>
 
       <group position={[dir * 0.015, 0.035, 0]} rotation={[-0.4, 0, 0]}>
-        <mesh
-          position={[0, 0.01, 0]}
-          castShadow
-          receiveShadow
-          material={antennaBaseMat}
-        >
+        <mesh position={[0, 0.01, 0]} castShadow receiveShadow material={antennaBaseMat}>
           <cylinderGeometry args={[0.006, 0.008, 0.02, 16]} />
         </mesh>
-        <mesh
-          position={[0, 0.06, 0]}
-          castShadow
-          receiveShadow
-          material={antennaStickMat}
-        >
+        <mesh position={[0, 0.06, 0]} castShadow receiveShadow material={antennaStickMat}>
           <cylinderGeometry args={[0.003, 0.003, 0.1, 8]} />
         </mesh>
-        <mesh
-          position={[0, 0.11, 0]}
-          castShadow
-          receiveShadow
-          material={antennaTipMat}
-        >
+        <mesh position={[0, 0.11, 0]} castShadow receiveShadow material={antennaTipMat}>
           <sphereGeometry args={[0.006, 16, 16]} />
         </mesh>
       </group>
@@ -218,7 +188,7 @@ const eyeMat = new THREE.MeshBasicMaterial({
   depthTest: false,
 });
 const heartMat = new THREE.MeshBasicMaterial({
-  color: new THREE.Color("#ff0066"),
+  color: new THREE.Color('#ff0066'),
   toneMapped: false,
   transparent: true,
   depthTest: false,
@@ -245,8 +215,7 @@ function RobotEye({
   const heartEyeRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!groupRef.current || !normalEyesRef.current || !heartEyeRef.current)
-      return;
+    if (!groupRef.current || !normalEyesRef.current || !heartEyeRef.current) return;
 
     const isHeart = isLovedRef.current;
 
@@ -256,11 +225,7 @@ function RobotEye({
     if (isHeart) {
       // Animated beating heart pulse
       const heartPulse = Math.sin(clock.getElapsedTime() * 12) * 0.18 + 1.15;
-      groupRef.current.scale.set(
-        scale * heartPulse,
-        scale * heartPulse,
-        scale * heartPulse,
-      );
+      groupRef.current.scale.set(scale * heartPulse, scale * heartPulse, scale * heartPulse);
     } else {
       const cycle = clock.getElapsedTime() % blinkCycle;
       let targetScaleY = 1;
@@ -282,72 +247,48 @@ function RobotEye({
     const g = 0.005;
 
     const tPath = new THREE.CurvePath<THREE.Vector3>();
-    tPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(-w, g, 0),
-        new THREE.Vector3(-w, h - r, 0),
-      ),
-    );
+    tPath.add(new THREE.LineCurve3(new THREE.Vector3(-w, g, 0), new THREE.Vector3(-w, h - r, 0)));
     tPath.add(
       new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(-w, h - r, 0),
         new THREE.Vector3(-w, h, 0),
-        new THREE.Vector3(-w + r, h, 0),
-      ),
+        new THREE.Vector3(-w + r, h, 0)
+      )
     );
     tPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(-w + r, h, 0),
-        new THREE.Vector3(w - r, h, 0),
-      ),
+      new THREE.LineCurve3(new THREE.Vector3(-w + r, h, 0), new THREE.Vector3(w - r, h, 0))
     );
     tPath.add(
       new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(w - r, h, 0),
         new THREE.Vector3(w, h, 0),
-        new THREE.Vector3(w, h - r, 0),
-      ),
+        new THREE.Vector3(w, h - r, 0)
+      )
     );
-    tPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(w, h - r, 0),
-        new THREE.Vector3(w, g, 0),
-      ),
-    );
+    tPath.add(new THREE.LineCurve3(new THREE.Vector3(w, h - r, 0), new THREE.Vector3(w, g, 0)));
 
     const bPath = new THREE.CurvePath<THREE.Vector3>();
     bPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(-w, -g, 0),
-        new THREE.Vector3(-w, -(h - r), 0),
-      ),
+      new THREE.LineCurve3(new THREE.Vector3(-w, -g, 0), new THREE.Vector3(-w, -(h - r), 0))
     );
     bPath.add(
       new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(-w, -(h - r), 0),
         new THREE.Vector3(-w, -h, 0),
-        new THREE.Vector3(-w + r, -h, 0),
-      ),
+        new THREE.Vector3(-w + r, -h, 0)
+      )
     );
     bPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(-w + r, -h, 0),
-        new THREE.Vector3(w - r, -h, 0),
-      ),
+      new THREE.LineCurve3(new THREE.Vector3(-w + r, -h, 0), new THREE.Vector3(w - r, -h, 0))
     );
     bPath.add(
       new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(w - r, -h, 0),
         new THREE.Vector3(w, -h, 0),
-        new THREE.Vector3(w, -(h - r), 0),
-      ),
+        new THREE.Vector3(w, -(h - r), 0)
+      )
     );
-    bPath.add(
-      new THREE.LineCurve3(
-        new THREE.Vector3(w, -(h - r), 0),
-        new THREE.Vector3(w, -g, 0),
-      ),
-    );
+    bPath.add(new THREE.LineCurve3(new THREE.Vector3(w, -(h - r), 0), new THREE.Vector3(w, -g, 0)));
 
     return { topPath: tPath, bottomPath: bPath };
   }, []);
@@ -364,7 +305,13 @@ function RobotEye({
 
   return (
     <group ref={groupRef} position={position} rotation={rotation} scale={scale}>
-      <mesh ref={heartEyeRef} visible={false} material={heartMat} renderOrder={999} position={[0, 0, 0.008]}>
+      <mesh
+        ref={heartEyeRef}
+        visible={false}
+        material={heartMat}
+        renderOrder={999}
+        position={[0, 0, 0.008]}
+      >
         <shapeGeometry args={[heartShape]} />
       </mesh>
 
@@ -387,17 +334,17 @@ function generatePbrTexturesAsync(): Promise<{
   return new Promise((resolve) => {
     setTimeout(() => {
       const size = 512;
-      const canvasC = document.createElement("canvas");
-      const canvasB = document.createElement("canvas");
+      const canvasC = document.createElement('canvas');
+      const canvasB = document.createElement('canvas');
       canvasC.width = canvasB.width = size;
       canvasC.height = canvasB.height = size;
-      const ctxC = canvasC.getContext("2d");
-      const ctxB = canvasB.getContext("2d");
+      const ctxC = canvasC.getContext('2d');
+      const ctxB = canvasB.getContext('2d');
 
       if (ctxC && ctxB) {
-        ctxC.fillStyle = "#dcdcdc";
+        ctxC.fillStyle = '#dcdcdc';
         ctxC.fillRect(0, 0, size, size);
-        ctxB.fillStyle = "#808080";
+        ctxB.fillStyle = '#808080';
         ctxB.fillRect(0, 0, size, size);
 
         for (let i = 0; i < 10000; i++) {
@@ -408,12 +355,12 @@ function generatePbrTexturesAsync(): Promise<{
 
           ctxC.beginPath();
           ctxC.arc(x, y, r, 0, Math.PI * 2);
-          ctxC.fillStyle = isDark ? "#222222" : "#dddddd";
+          ctxC.fillStyle = isDark ? '#222222' : '#dddddd';
           ctxC.fill();
 
           ctxB.beginPath();
           ctxB.arc(x, y, r, 0, Math.PI * 2);
-          ctxB.fillStyle = isDark ? "#000000" : "#ffffff";
+          ctxB.fillStyle = isDark ? '#000000' : '#ffffff';
           ctxB.fill();
         }
       }
@@ -452,8 +399,8 @@ function RobotPrototype({
     innerDropH: 0.03,
   },
   bodyParams = { bodyBevelR: 0.21, bodyBevelY: 0.38, bodyBevelT: 0.015 },
-  color = "#c4c4c4",
-  pantallaColor = "#00ffc6",
+  color = '#c4c4c4',
+  pantallaColor = '#00ffc6',
   pantallaBrillo = 1.2,
   blinkCycle = 3.0,
   metalness = 0.0,
@@ -493,11 +440,11 @@ function RobotPrototype({
       }, 3500);
     };
 
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("trigger-robot-love", handleLoveTrigger);
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('trigger-robot-love', handleLoveTrigger);
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("trigger-robot-love", handleLoveTrigger);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('trigger-robot-love', handleLoveTrigger);
     };
   }, []);
 
@@ -531,7 +478,7 @@ function RobotPrototype({
       const dynamicColor = new THREE.Color().setHSL(hue, 0.95, 0.55);
 
       if (isLovedRef.current) {
-        dynamicColor.set("#ff0066");
+        dynamicColor.set('#ff0066');
       }
 
       currentPantallaColor.copy(dynamicColor);
@@ -556,7 +503,7 @@ function RobotPrototype({
     bodyRef.current.position.x = THREE.MathUtils.lerp(
       bodyRef.current.position.x,
       targetPosX,
-      3.5 * dt,
+      3.5 * dt
     );
 
     // Subtle natural floating idle animation on Y
@@ -564,7 +511,7 @@ function RobotPrototype({
     bodyRef.current.position.y = -0.3 + floatY;
 
     // Relative offset between cursor and robot body position
-    const relativeX = tx - (bodyRef.current.position.x / 1.5);
+    const relativeX = tx - bodyRef.current.position.x / 1.5;
 
     const bodyTargetRotY = -relativeX * 0.75;
     const bodyTargetRotX = -ty * 0.22;
@@ -573,17 +520,17 @@ function RobotPrototype({
     bodyRef.current.rotation.y = THREE.MathUtils.lerp(
       bodyRef.current.rotation.y,
       bodyTargetRotY,
-      6.0 * dt,
+      6.0 * dt
     );
     bodyRef.current.rotation.x = THREE.MathUtils.lerp(
       bodyRef.current.rotation.x,
       bodyTargetRotX,
-      6.0 * dt,
+      6.0 * dt
     );
     bodyRef.current.rotation.z = THREE.MathUtils.lerp(
       bodyRef.current.rotation.z,
       bodyTargetRotZ,
-      6.0 * dt,
+      6.0 * dt
     );
 
     const headTargetRotY = relativeX * 1.35;
@@ -592,21 +539,19 @@ function RobotPrototype({
     headRef.current.rotation.y = THREE.MathUtils.lerp(
       headRef.current.rotation.y,
       headTargetRotY,
-      10.0 * dt,
+      10.0 * dt
     );
     headRef.current.rotation.x = THREE.MathUtils.lerp(
       headRef.current.rotation.x,
       headTargetRotX,
-      10.0 * dt,
+      10.0 * dt
     );
   });
 
-  const handlePointerDown = (
-    e?: import("@react-three/fiber").ThreeEvent<PointerEvent>,
-  ) => {
+  const handlePointerDown = (e?: import('@react-three/fiber').ThreeEvent<PointerEvent>) => {
     if (e) e.stopPropagation();
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("trigger-robot-love"));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('trigger-robot-love'));
     }
   };
 
@@ -637,7 +582,6 @@ function RobotPrototype({
     };
   }, []);
 
-
   const neckProfile = useMemo(() => {
     const points = [];
 
@@ -647,26 +591,19 @@ function RobotPrototype({
 
     points.push(new THREE.Vector2(neckParams.midR, neckParams.midH));
 
-    points.push(
-      new THREE.Vector2(neckParams.lipBottomR, neckParams.lipBottomH),
-    );
+    points.push(new THREE.Vector2(neckParams.lipBottomR, neckParams.lipBottomH));
 
     points.push(new THREE.Vector2(neckParams.lipTopR, neckParams.lipTopH));
 
     points.push(new THREE.Vector2(neckParams.innerR, neckParams.lipTopH));
 
-    points.push(
-      new THREE.Vector2(
-        neckParams.innerR,
-        neckParams.lipTopH - neckParams.innerDropH,
-      ),
-    );
+    points.push(new THREE.Vector2(neckParams.innerR, neckParams.lipTopH - neckParams.innerDropH));
     return points;
   }, [neckParams]);
 
   const headMat = useMemo(() => {
     return new THREE.MeshStandardMaterial({
-      color: "#111111",
+      color: '#111111',
       roughness: 1.0,
       metalness: 0.0,
     });
@@ -679,13 +616,11 @@ function RobotPrototype({
       ref={bodyRef}
       position={[0, -0.3, 0]}
       onPointerDown={handlePointerDown}
-      onPointerOver={() => (document.body.style.cursor = "pointer")}
-      onPointerOut={() => (document.body.style.cursor = "auto")}
+      onPointerOver={() => (document.body.style.cursor = 'pointer')}
+      onPointerOut={() => (document.body.style.cursor = 'auto')}
     >
       <mesh castShadow receiveShadow>
-        <sphereGeometry
-          args={[0.43, 64, 64, 0, Math.PI * 2, Math.PI * 0.15, Math.PI * 0.85]}
-        />
+        <sphereGeometry args={[0.43, 64, 64, 0, Math.PI * 2, Math.PI * 0.15, Math.PI * 0.85]} />
         <meshStandardMaterial
           color={design.colorChasis}
           map={textures.colorMap || undefined}
@@ -704,9 +639,7 @@ function RobotPrototype({
           castShadow
           receiveShadow
         >
-          <torusGeometry
-            args={[bodyParams.bodyBevelR, bodyParams.bodyBevelT, 32, 64]}
-          />
+          <torusGeometry args={[bodyParams.bodyBevelR, bodyParams.bodyBevelT, 32, 64]} />
           <meshStandardMaterial
             color={design.colorChasis}
             map={textures.colorMap || undefined}
@@ -762,16 +695,8 @@ function RobotPrototype({
           />
         </group>
 
-        <RobotEar
-          position={[-0.29, 0, 0]}
-          isLeft={true}
-          scale={design.tamañoOrejas}
-        />
-        <RobotEar
-          position={[0.29, 0, 0]}
-          isLeft={false}
-          scale={design.tamañoOrejas}
-        />
+        <RobotEar position={[-0.29, 0, 0]} isLeft={true} scale={design.tamañoOrejas} />
+        <RobotEar position={[0.29, 0, 0]} isLeft={false} scale={design.tamañoOrejas} />
       </group>
     </group>
   );
@@ -820,62 +745,58 @@ function AntennaNavbar({
   const lineOpacity = useTransform(scrollY, [0, 50], [1, 0]);
 
   return (
-    <nav className="sticky top-0 z-50 w-full pt-8 px-8 pointer-events-none">
-      <div className="w-full max-w-[1400px] mx-auto flex flex-col relative pointer-events-auto">
-        <div className="flex flex-col lg:flex-row items-center justify-between relative gap-4 lg:gap-0">
-          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-2 sm:gap-3 z-20">
+    <nav className="pointer-events-none sticky top-0 z-50 w-full px-8 pt-8">
+      <div className="pointer-events-auto relative mx-auto flex w-full max-w-[1400px] flex-col">
+        <div className="relative flex flex-col items-center justify-between gap-4 lg:flex-row lg:gap-0">
+          <div className="z-20 flex flex-wrap items-center justify-center gap-2 sm:gap-3 lg:justify-start">
             {leftItems.map((item, idx) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.target}
-                rel={
-                  item.target === "_blank" ? "noopener noreferrer" : undefined
-                }
+                rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
                 onMouseEnter={() => setHoveredIndex(idx)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                className="relative px-7 py-2.5 rounded-full bg-white text-black hover:bg-zinc-200 text-sm font-bold transition-all overflow-hidden shadow-[0_4px_14px_rgba(255,255,255,0.15)]"
+                className="relative overflow-hidden rounded-full bg-white px-7 py-2.5 text-sm font-bold text-black shadow-[0_4px_14px_rgba(255,255,255,0.15)] transition-all hover:bg-zinc-200"
               >
                 {item.label}
                 {hoveredIndex === idx && (
                   <motion.div
                     layoutId="navbar-indicator-left"
                     className="absolute inset-0 border-b-[3px] border-black"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
               </a>
             ))}
           </div>
 
-          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center pointer-events-auto cursor-pointer group z-10">
-            <div className="relative flex items-center justify-center h-12 w-16">
-              <div className="absolute left-2 w-1.5 h-4 bg-zinc-300 rounded-l-md transition-transform duration-300 group-hover:-translate-x-1" />
-              <div className="absolute right-2 w-1.5 h-4 bg-zinc-300 rounded-r-md transition-transform duration-300 group-hover:translate-x-1" />
+          <div className="group pointer-events-auto absolute top-1/2 left-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center lg:flex">
+            <div className="relative flex h-12 w-16 items-center justify-center">
+              <div className="absolute left-2 h-4 w-1.5 rounded-l-md bg-zinc-300 transition-transform duration-300 group-hover:-translate-x-1" />
+              <div className="absolute right-2 h-4 w-1.5 rounded-r-md bg-zinc-300 transition-transform duration-300 group-hover:translate-x-1" />
 
-              <div className="z-10 w-10 h-10 bg-white/10 border-2 border-white/20 backdrop-blur-md rounded-[12px] flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.3)] transition-all duration-300 group-hover:bg-white/20 group-hover:shadow-[0_4px_25px_rgba(255,255,255,0.15)]">
-                <div className="w-[70%] h-[60%] bg-[#0a0a0a] rounded-lg flex items-center justify-center gap-1.5 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
-                  <div className="w-1.5 h-3 bg-[#00ffc6] rounded-[2px] shadow-[0_0_8px_#00ffc6] transition-transform duration-200 group-hover:scale-y-[0.2]" />
-                  <div className="w-1.5 h-3 bg-[#00ffc6] rounded-[2px] shadow-[0_0_8px_#00ffc6] transition-transform duration-200 group-hover:scale-y-[0.2]" />
+              <div className="z-10 flex h-10 w-10 items-center justify-center rounded-[12px] border-2 border-white/20 bg-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transition-all duration-300 group-hover:bg-white/20 group-hover:shadow-[0_4px_25px_rgba(255,255,255,0.15)]">
+                <div className="flex h-[60%] w-[70%] items-center justify-center gap-1.5 overflow-hidden rounded-lg bg-[#0a0a0a] shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+                  <div className="h-3 w-1.5 rounded-[2px] bg-[#00ffc6] shadow-[0_0_8px_#00ffc6] transition-transform duration-200 group-hover:scale-y-[0.2]" />
+                  <div className="h-3 w-1.5 rounded-[2px] bg-[#00ffc6] shadow-[0_0_8px_#00ffc6] transition-transform duration-200 group-hover:scale-y-[0.2]" />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center lg:justify-end items-center gap-2 sm:gap-3 w-full lg:w-auto mt-4 lg:mt-0 z-20">
+          <div className="z-20 mt-4 flex w-full flex-wrap items-center justify-center gap-2 sm:gap-3 lg:mt-0 lg:w-auto lg:justify-end">
             <a
               href={contactHref}
               target={contactTarget}
-              rel={
-                contactTarget === "_blank" ? "noopener noreferrer" : undefined
-              }
-              className="px-5 sm:px-7 py-2.5 rounded-full bg-white text-black hover:bg-zinc-200 text-xs sm:text-sm font-bold transition-all shadow-[0_4px_14px_rgba(255,255,255,0.15)]"
+              rel={contactTarget === '_blank' ? 'noopener noreferrer' : undefined}
+              className="rounded-full bg-white px-5 py-2.5 text-xs font-bold text-black shadow-[0_4px_14px_rgba(255,255,255,0.15)] transition-all hover:bg-zinc-200 sm:px-7 sm:text-sm"
             >
               {contactText}
             </a>
             <button
               onClick={onCtaClick}
-              className="px-5 sm:px-7 py-2.5 rounded-full bg-[#00ffc6] text-black text-xs sm:text-sm font-black hover:bg-[#00e5b2] transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(0,255,198,0.4)]"
+              className="flex items-center gap-2 rounded-full bg-[#00ffc6] px-5 py-2.5 text-xs font-black text-black shadow-[0_0_20px_rgba(0,255,198,0.4)] transition-colors hover:bg-[#00e5b2] sm:px-7 sm:text-sm"
             >
               {ctaText}
               <PiShoppingBagBold size={18} />
@@ -885,7 +806,7 @@ function AntennaNavbar({
 
         <motion.div
           style={{ opacity: lineOpacity }}
-          className="w-full mt-6 border-b-2 border-dotted border-white/30"
+          className="mt-6 w-full border-b-2 border-dotted border-white/30"
         />
       </div>
     </nav>
@@ -893,21 +814,21 @@ function AntennaNavbar({
 }
 
 export function RobotHero({
-  backgroundText = "UITHEFACTORY",
+  backgroundText = 'UITHEFACTORY',
   navItemsLeft = [
-    { label: "Product", href: "#" },
-    { label: "About", href: "#" },
-    { label: "Specs", href: "#" },
-    { label: "Reviews", href: "#" },
+    { label: 'Product', href: '#' },
+    { label: 'About', href: '#' },
+    { label: 'Specs', href: '#' },
+    { label: 'Reviews', href: '#' },
   ],
-  contactText = "Contact",
-  contactHref = "#",
+  contactText = 'Contact',
+  contactHref = '#',
   contactTarget,
-  ctaText = "Buy Now",
+  ctaText = 'Buy Now',
   onCtaClick,
-  color = "#c4c4c4",
+  color = '#c4c4c4',
   scale = 1,
-  pantallaColor = "#00ffc6",
+  pantallaColor = '#00ffc6',
   pantallaBrillo = 1.2,
   blinkCycle = 3.0,
   metalness = 0.0,
@@ -915,14 +836,14 @@ export function RobotHero({
   const containerRef = useRef<HTMLElement>(null);
 
   const entorno = {
-    fondoArriba: "#cecbcb",
-    fondoMedio: "#9a9a9a",
-    fondoAbajo: "#bebebe",
+    fondoArriba: '#cecbcb',
+    fondoMedio: '#9a9a9a',
+    fondoAbajo: '#bebebe',
     luzAmbiente: 0.75,
     luzPrincipal: 0.0,
-    luzPrincipalColor: "#00ffe2",
+    luzPrincipalColor: '#00ffe2',
     luzRelleno: 0.0,
-    luzRellenoColor: "#dbdbdb",
+    luzRellenoColor: '#dbdbdb',
     sombraOpacidad: 0.85,
     sombraBlur: 1.7,
   };
@@ -930,22 +851,22 @@ export function RobotHero({
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-dvh min-h-[600px] overflow-hidden"
+      className="relative h-dvh min-h-[600px] w-full overflow-hidden"
       style={{
         background: `linear-gradient(to bottom, ${entorno.fondoArriba} 0%, ${entorno.fondoArriba} 55%, ${entorno.fondoMedio} 65%, ${entorno.fondoAbajo} 100%)`,
       }}
     >
       <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
         style={{ zIndex: 0 }}
       >
         <h1
-          className="font-sans font-black select-none whitespace-nowrap"
+          className="font-sans font-black whitespace-nowrap select-none"
           style={{
-            color: "#000000",
+            color: '#000000',
             opacity: 0.13,
-            letterSpacing: "-0.05em",
-            fontSize: "clamp(4rem, 15vw, 14rem)",
+            letterSpacing: '-0.05em',
+            fontSize: 'clamp(4rem, 15vw, 14rem)',
             lineHeight: 1,
             transform: `translate(0px, 40px) rotate(0deg)`,
           }}
@@ -966,10 +887,7 @@ export function RobotHero({
             shadow-mapSize={[2048, 2048]}
             shadow-bias={-0.0005}
           >
-            <orthographicCamera
-              attach="shadow-camera"
-              args={[-1.5, 1.5, 1.5, -1.5, 0.1, 20]}
-            />
+            <orthographicCamera attach="shadow-camera" args={[-1.5, 1.5, 1.5, -1.5, 0.1, 20]} />
           </directionalLight>
 
           <directionalLight
@@ -1018,7 +936,7 @@ export function RobotHero({
         </Canvas>
       </div>
 
-      <div className="absolute inset-0 z-20 pointer-events-none flex flex-col">
+      <div className="pointer-events-none absolute inset-0 z-20 flex flex-col">
         <AntennaNavbar
           leftItems={navItemsLeft}
           contactText={contactText}
@@ -1028,8 +946,8 @@ export function RobotHero({
           onCtaClick={onCtaClick}
         />
 
-        <div className="relative w-full max-w-[1400px] mx-auto px-8 flex-1 flex flex-col">
-          <div className="mt-auto flex justify-between items-end pb-12 w-full"></div>
+        <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-8">
+          <div className="mt-auto flex w-full items-end justify-between pb-12"></div>
         </div>
       </div>
     </section>
@@ -1038,8 +956,8 @@ export function RobotHero({
 
 export function RobotCanvas({
   scale = 1,
-  color = "#c4c4c4",
-  pantallaColor = "#00ffc6",
+  color = '#c4c4c4',
+  pantallaColor = '#00ffc6',
   pantallaBrillo = 1.2,
   blinkCycle = 3.0,
   metalness = 0.0,
@@ -1060,8 +978,8 @@ export function RobotCanvas({
 
   const triggerLove = () => {
     lovedRef.current = true;
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("trigger-robot-love"));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('trigger-robot-love'));
     }
     if (lovedTimeoutRef.current) clearTimeout(lovedTimeoutRef.current);
     lovedTimeoutRef.current = setTimeout(() => {
@@ -1072,9 +990,9 @@ export function RobotCanvas({
   const entorno = {
     luzAmbiente: 0.85,
     luzPrincipal: 0.4,
-    luzPrincipalColor: "#00ffe2",
+    luzPrincipalColor: '#00ffe2',
     luzRelleno: 0.2,
-    luzRellenoColor: "#dbdbdb",
+    luzRellenoColor: '#dbdbdb',
     sombraOpacidad: 0.75,
     sombraBlur: 1.7,
   };
@@ -1083,7 +1001,7 @@ export function RobotCanvas({
     <div
       onClick={triggerLove}
       onPointerDown={triggerLove}
-      className={cn("relative w-full h-full min-h-[300px] cursor-pointer select-none", className)}
+      className={cn('relative h-full min-h-[300px] w-full cursor-pointer select-none', className)}
     >
       <Canvas
         shadows
@@ -1100,10 +1018,7 @@ export function RobotCanvas({
           shadow-mapSize={[1024, 1024]}
           shadow-bias={-0.0005}
         >
-          <orthographicCamera
-            attach="shadow-camera"
-            args={[-1.8, 1.8, 1.8, -1.8, 0.1, 20]}
-          />
+          <orthographicCamera attach="shadow-camera" args={[-1.8, 1.8, 1.8, -1.8, 0.1, 20]} />
         </directionalLight>
 
         <directionalLight

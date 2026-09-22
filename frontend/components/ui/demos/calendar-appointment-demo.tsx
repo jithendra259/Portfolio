@@ -22,13 +22,13 @@ const CalendarAppointmentBookingDemo = () => {
   const bookedDates = Array.from({ length: 3 }, (_, i) => new Date(2025, 5, 17 + i));
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4">
+    <div className="mx-auto w-full max-w-2xl p-4">
       <Card className="gap-0 p-0">
         <CardHeader className="flex h-max justify-center border-b !p-4">
           <CardTitle>Book your appointment</CardTitle>
         </CardHeader>
         <CardContent className="relative p-0 md:pr-48">
-          <div className="p-6 flex justify-center">
+          <div className="flex justify-center p-6">
             <Calendar
               mode="single"
               selected={date}
@@ -71,7 +71,7 @@ const CalendarAppointmentBookingDemo = () => {
           <div className="flex items-center gap-2 text-sm">
             {date && selectedTime ? (
               <>
-                <CircleCheckIcon className="size-5 stroke-green-600 dark:stroke-green-400 shrink-0" />
+                <CircleCheckIcon className="size-5 shrink-0 stroke-green-600 dark:stroke-green-400" />
                 <span>
                   Your meeting is booked for{' '}
                   <span className="font-medium">

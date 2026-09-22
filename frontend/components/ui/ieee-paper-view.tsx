@@ -1,33 +1,39 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  FileText,
+  BarChart3,
+  BookOpen,
+  Bookmark,
+  Check,
+  ChevronRight,
+  Copy,
+  Cpu,
   Download,
   ExternalLink,
-  BookOpen,
-  Share2,
-  Copy,
-  Check,
-  ZoomIn,
-  X,
-  ChevronRight,
-  Sparkles,
-  ShieldCheck,
-  Cpu,
+  FileText,
   Layers,
-  BarChart3,
-  Bookmark,
   Maximize2,
   Minimize2,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  X,
+  ZoomIn,
 } from 'lucide-react';
-import { Project, PaperFigure } from '@/data/projects/types';
-import { MathBlock, FormattedLatexText } from '@/components/ui/math-display';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-import dynamic from 'next/dynamic';
+import { FormattedLatexText, MathBlock } from '@/components/ui/math-display';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { PaperFigure, Project } from '@/data/projects/types';
 import { cn } from '@/lib/utils';
 
 const ProjectCharts = dynamic(
@@ -80,35 +86,35 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
   };
 
   return (
-    <article className={cn("relative w-full max-w-4xl mx-auto py-2 sm:py-6", className)}>
+    <article className={cn('relative mx-auto w-full max-w-4xl py-2 sm:py-6', className)}>
       {/* 1. TOP READING PROGRESS BAR */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-slate-200/50 dark:bg-neutral-800/50 z-50">
+      <div className="fixed top-0 right-0 left-0 z-50 h-1 bg-slate-200/50 dark:bg-neutral-800/50">
         <div
-          className="h-full bg-cyan-600 dark:bg-cyan-400 transition-all duration-150"
+          className="h-full bg-cyan-600 transition-all duration-150 dark:bg-cyan-400"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
 
       {/* 2. ACADEMIC TOOLBAR */}
-      <div className="mb-8 flex flex-wrap items-center justify-end gap-3 pb-4 border-b border-border/40 text-xs">
+      <div className="border-border/40 mb-8 flex flex-wrap items-center justify-end gap-3 border-b pb-4 text-xs">
         {/* Font switcher */}
-        <div className="flex items-center rounded-lg bg-slate-100 dark:bg-white/5 p-0.5 border border-slate-200 dark:border-white/10">
+        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 dark:border-white/10 dark:bg-white/5">
           <button
             onClick={() => setFontFamily('serif')}
-            className={`px-2.5 py-1 rounded-md transition-colors font-serif text-xs font-semibold ${
+            className={`rounded-md px-2.5 py-1 font-serif text-xs font-semibold transition-colors ${
               fontFamily === 'serif'
-                ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
+                ? 'bg-white text-slate-900 shadow-xs dark:bg-[#1e2330] dark:text-white'
+                : 'text-slate-500 hover:text-slate-900 dark:text-neutral-400'
             }`}
           >
             Classic Serif
           </button>
           <button
             onClick={() => setFontFamily('sans')}
-            className={`px-2.5 py-1 rounded-md transition-colors font-sans text-xs font-semibold ${
+            className={`rounded-md px-2.5 py-1 font-sans text-xs font-semibold transition-colors ${
               fontFamily === 'sans'
-                ? 'bg-white dark:bg-[#1e2330] text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-500 dark:text-neutral-400 hover:text-slate-900'
+                ? 'bg-white text-slate-900 shadow-xs dark:bg-[#1e2330] dark:text-white'
+                : 'text-slate-500 hover:text-slate-900 dark:text-neutral-400'
             }`}
           >
             Modern Sans
@@ -123,29 +129,29 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
         }`}
       >
         {/* JOURNAL BANNER & MASTHEAD */}
-        <div className="border-b-2 border-slate-900 dark:border-white/20 pb-6 mb-8 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-neutral-400 font-semibold mb-3">
+        <div className="mb-8 border-b-2 border-slate-900 pb-6 text-center sm:text-left dark:border-white/20">
+          <div className="mb-3 flex flex-col justify-between gap-2 font-mono text-xs font-semibold tracking-widest text-slate-500 uppercase sm:flex-row sm:items-center dark:text-neutral-400">
             <span>{paper?.venue || 'Peer-Reviewed Technical Research Case Study'}</span>
-            <span className="text-cyan-600 dark:text-cyan-400 font-bold">{project.status}</span>
+            <span className="font-bold text-cyan-600 dark:text-cyan-400">{project.status}</span>
           </div>
 
           {/* ARTICLE TITLE */}
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 dark:text-white tracking-tight leading-snug mt-2 mb-4 font-serif">
+          <h1 className="mt-2 mb-4 font-serif text-2xl leading-snug font-extrabold tracking-tight text-slate-950 sm:text-3xl lg:text-4xl dark:text-white">
             <FormattedLatexText text={paper?.paperTitle || project.title} />
           </h1>
 
           {/* AUTHORS & AFFILIATIONS */}
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:text-base font-medium text-slate-900 dark:text-neutral-200">
+          <div className="mt-4 border-t border-slate-100 pt-4 dark:border-white/10">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-slate-900 sm:text-base dark:text-neutral-200">
               {paper?.authors && paper.authors.length > 0 ? (
                 paper.authors.map((author, idx) => (
                   <span key={idx} className="inline-flex items-baseline">
                     <span className="font-bold">{author.name}</span>
-                    <sup className="text-cyan-600 dark:text-cyan-400 font-bold text-xs ml-0.5">
+                    <sup className="ml-0.5 text-xs font-bold text-cyan-600 dark:text-cyan-400">
                       {author.affiliationIndex}
                     </sup>
                     {author.isCorresponding && (
-                      <sup className="text-emerald-600 dark:text-emerald-400 font-bold text-xs ml-0.5">
+                      <sup className="ml-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         *
                       </sup>
                     )}
@@ -155,18 +161,20 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
               ) : (
                 <span className="inline-flex items-baseline">
                   <span className="font-bold">Kandula Jithendra Subramanyam</span>
-                  <sup className="text-cyan-600 dark:text-cyan-400 font-bold text-xs ml-0.5">1</sup>
-                  <sup className="text-emerald-600 dark:text-emerald-400 font-bold text-xs ml-0.5">*</sup>
+                  <sup className="ml-0.5 text-xs font-bold text-cyan-600 dark:text-cyan-400">1</sup>
+                  <sup className="ml-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    *
+                  </sup>
                 </span>
               )}
             </div>
 
             {/* Institutional Affiliations */}
-            <div className="mt-2 text-xs text-slate-600 dark:text-neutral-400 space-y-0.5 italic">
+            <div className="mt-2 space-y-0.5 text-xs text-slate-600 italic dark:text-neutral-400">
               {paper?.affiliations && paper.affiliations.length > 0 ? (
                 paper.affiliations.map((aff, idx) => (
                   <div key={idx}>
-                    <sup className="text-cyan-600 dark:text-cyan-400 font-bold mr-1">
+                    <sup className="mr-1 font-bold text-cyan-600 dark:text-cyan-400">
                       {aff.index}
                     </sup>
                     {aff.department}, {aff.institution}, {aff.location}
@@ -174,11 +182,11 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                 ))
               ) : (
                 <div>
-                  <sup className="text-cyan-600 dark:text-cyan-400 font-bold mr-1">1</sup>
+                  <sup className="mr-1 font-bold text-cyan-600 dark:text-cyan-400">1</sup>
                   Dept. of Artificial Intelligence &amp; Data Science, Bangalore, India
                 </div>
               )}
-              <div className="text-slate-500 dark:text-neutral-500 pt-1 not-italic font-mono text-[11px]">
+              <div className="pt-1 font-mono text-[11px] text-slate-500 not-italic dark:text-neutral-500">
                 *Corresponding Author: jithendrasubramanyam@gmail.com
               </div>
             </div>
@@ -186,20 +194,23 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
         </div>
 
         {/* ABSTRACT & INDEX TERMS (CLASSICAL IEEE STYLE) */}
-        <div id="sec-abstract" className="my-8 py-2 pl-4 sm:pl-6 border-l-2 border-[#f12e54]/70 dark:border-[#f12e54]/80 text-sm leading-relaxed">
-          <div className="text-slate-800 dark:text-neutral-200 text-justify">
-            <span className="font-bold italic text-slate-950 dark:text-white mr-1.5">
+        <div
+          id="sec-abstract"
+          className="my-8 border-l-2 border-[#f12e54]/70 py-2 pl-4 text-sm leading-relaxed sm:pl-6 dark:border-[#f12e54]/80"
+        >
+          <div className="text-justify text-slate-800 dark:text-neutral-200">
+            <span className="mr-1.5 font-bold text-slate-950 italic dark:text-white">
               Abstract—
             </span>
             <FormattedLatexText text={paper?.abstract || project.overview} />
           </div>
 
           {paper?.keywords && paper.keywords.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-white/10 text-xs">
-              <span className="font-bold italic text-slate-900 dark:text-neutral-200 mr-2">
+            <div className="mt-4 border-t border-slate-200/70 pt-3 text-xs dark:border-white/10">
+              <span className="mr-2 font-bold text-slate-900 italic dark:text-neutral-200">
                 Index Terms—
               </span>
-              <span className="text-slate-600 dark:text-neutral-400 italic">
+              <span className="text-slate-600 italic dark:text-neutral-400">
                 {paper.keywords.join(', ')}
               </span>
             </div>
@@ -213,16 +224,14 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
           <div className="space-y-12">
             {paper.sections.map((sec, secIdx) => {
               const isResultsSec =
-                sec.id.includes('eval') ||
-                sec.id.includes('result') ||
-                sec.id.includes('empiric');
+                sec.id.includes('eval') || sec.id.includes('result') || sec.id.includes('empiric');
 
               return (
                 <section id={sec.id} key={sec.id} className="scroll-mt-24">
                   {/* SECTION TITLE */}
-                  <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono flex items-baseline gap-2">
+                  <h2 className="mb-4 flex items-baseline gap-2 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                     {sec.number && (
-                      <span className="text-cyan-600 dark:text-cyan-400 font-bold shrink-0">
+                      <span className="shrink-0 font-bold text-cyan-600 dark:text-cyan-400">
                         {sec.number}
                       </span>
                     )}
@@ -233,12 +242,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
                   {/* SECTION TOP PARAGRAPHS */}
                   {sec.paragraphs && sec.paragraphs.length > 0 && (
-                    <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+                    <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                       {sec.paragraphs.map((p, pIdx) => (
                         <p key={pIdx}>
                           {secIdx === 0 && pIdx === 0 ? (
                             <>
-                              <span className="text-3xl font-bold font-serif float-left mr-2 leading-none text-slate-950 dark:text-white">
+                              <span className="float-left mr-2 font-serif text-3xl leading-none font-bold text-slate-950 dark:text-white">
                                 {p.charAt(0)}
                               </span>
                               <FormattedLatexText text={p.slice(1)} />
@@ -258,13 +267,13 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                         <div
                           id={eq.id}
                           key={eqIdx}
-                          className="scroll-mt-24 py-3 px-4 flex items-center justify-between overflow-x-auto bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 rounded-lg"
+                          className="flex scroll-mt-24 items-center justify-between overflow-x-auto rounded-lg border border-slate-200/60 bg-slate-50/70 px-4 py-3 dark:border-white/5 dark:bg-white/[0.02]"
                         >
                           <div className="grow overflow-x-auto text-center font-normal text-slate-900 dark:text-neutral-100">
                             <MathBlock math={eq.latex.replace(/^\$\$?|\$\$?$/g, '')} />
                           </div>
                           {eq.number && (
-                            <span className="font-mono text-xs text-slate-500 dark:text-neutral-400 pl-4 font-bold shrink-0">
+                            <span className="shrink-0 pl-4 font-mono text-xs font-bold text-slate-500 dark:text-neutral-400">
                               {eq.number}
                             </span>
                           )}
@@ -278,18 +287,18 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                     <div className="my-8 space-y-8 font-sans">
                       {sec.tables.map((tbl, tIdx) => (
                         <div id={tbl.id} key={tIdx} className="scroll-mt-24">
-                          <div className="text-center font-bold text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider mb-2 font-mono">
+                          <div className="mb-2 text-center font-mono text-xs font-bold tracking-wider text-slate-900 uppercase sm:text-sm dark:text-white">
                             {tbl.number && <span className="mr-1">{tbl.number}:</span>}
                             <span>{tbl.title}</span>
                           </div>
-                          <div className="overflow-x-auto my-3 border-y border-border/60">
+                          <div className="border-border/60 my-3 overflow-x-auto border-y">
                             <Table className="w-full text-xs sm:text-sm">
                               <TableHeader className="border-b-2 border-slate-900 dark:border-white/20">
                                 <TableRow>
                                   {tbl.headers.map((h, hIdx) => (
                                     <TableHead
                                       key={hIdx}
-                                      className="font-mono text-xs uppercase font-bold text-slate-900 dark:text-white"
+                                      className="font-mono text-xs font-bold text-slate-900 uppercase dark:text-white"
                                     >
                                       {h}
                                     </TableHead>
@@ -300,7 +309,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                 {tbl.rows.map((row, rIdx) => (
                                   <TableRow
                                     key={rIdx}
-                                    className="hover:bg-slate-50 dark:hover:bg-white/[0.02] border-b border-slate-100 dark:border-white/5"
+                                    className="border-b border-slate-100 hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/[0.02]"
                                   >
                                     {row.map((cell, cIdx) => (
                                       <TableCell
@@ -320,7 +329,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                             </Table>
                           </div>
                           {tbl.note && (
-                            <p className="text-[11px] text-slate-500 dark:text-neutral-400 italic text-center mt-1">
+                            <p className="mt-1 text-center text-[11px] text-slate-500 italic dark:text-neutral-400">
                               {tbl.note}
                             </p>
                           )}
@@ -333,12 +342,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   {sec.figures && sec.figures.length > 0 && (
                     <div className="my-8 space-y-8">
                       {sec.figures.map((fig, fIdx) => (
-                        <figure id={fig.id} key={fIdx} className="scroll-mt-24 group">
+                        <figure id={fig.id} key={fIdx} className="group scroll-mt-24">
                           <div
                             onClick={() => setSelectedFigure(fig)}
-                            className="relative cursor-pointer w-full flex items-center justify-center py-2"
+                            className="relative flex w-full cursor-pointer items-center justify-center py-2"
                           >
-                            <div className="relative w-full aspect-video sm:aspect-[16/9] flex items-center justify-center">
+                            <div className="relative flex aspect-video w-full items-center justify-center sm:aspect-[16/9]">
                               <Image
                                 src={fig.src}
                                 alt={fig.alt || fig.title}
@@ -347,12 +356,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                 sizes="(max-width: 896px) 100vw, 896px"
                               />
                             </div>
-                            <div className="absolute top-2 right-2 bg-slate-900/80 dark:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                            <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-slate-900/80 px-2.5 py-1 text-xs text-white opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100 dark:bg-black/80">
                               <ZoomIn className="size-3" />
                               <span>Click to Zoom</span>
                             </div>
                           </div>
-                          <figcaption className="mt-3 text-xs sm:text-sm text-center text-slate-600 dark:text-neutral-400 font-sans">
+                          <figcaption className="mt-3 text-center font-sans text-xs text-slate-600 sm:text-sm dark:text-neutral-400">
                             <span className="font-bold text-slate-900 dark:text-white">
                               {fig.figureNumber}.{' '}
                             </span>
@@ -368,9 +377,9 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                     <div className="mt-8 space-y-8">
                       {sec.subsections.map((sub) => (
                         <div id={sub.id} key={sub.id} className="scroll-mt-24">
-                          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-3 font-mono flex items-baseline gap-2">
+                          <h3 className="mb-3 flex items-baseline gap-2 font-mono text-sm font-bold text-slate-900 sm:text-base dark:text-white">
                             {sub.number && (
-                              <span className="text-cyan-600 dark:text-cyan-400 font-bold shrink-0">
+                              <span className="shrink-0 font-bold text-cyan-600 dark:text-cyan-400">
                                 {sub.number}
                               </span>
                             )}
@@ -381,7 +390,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
                           {/* SUBSECTION PARAGRAPHS */}
                           {sub.paragraphs && sub.paragraphs.length > 0 && (
-                            <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+                            <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                               {sub.paragraphs.map((p, pIdx) => (
                                 <p key={pIdx}>
                                   <FormattedLatexText text={p} />
@@ -397,13 +406,13 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                 <div
                                   id={eq.id}
                                   key={eqIdx}
-                                  className="scroll-mt-24 py-3 px-4 flex items-center justify-between overflow-x-auto bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 rounded-lg"
+                                  className="flex scroll-mt-24 items-center justify-between overflow-x-auto rounded-lg border border-slate-200/60 bg-slate-50/70 px-4 py-3 dark:border-white/5 dark:bg-white/[0.02]"
                                 >
                                   <div className="grow overflow-x-auto text-center font-normal text-slate-900 dark:text-neutral-100">
                                     <MathBlock math={eq.latex.replace(/^\$\$?|\$\$?$/g, '')} />
                                   </div>
                                   {eq.number && (
-                                    <span className="font-mono text-xs text-slate-500 dark:text-neutral-400 pl-4 font-bold shrink-0">
+                                    <span className="shrink-0 pl-4 font-mono text-xs font-bold text-slate-500 dark:text-neutral-400">
                                       {eq.number}
                                     </span>
                                   )}
@@ -417,18 +426,18 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                             <div className="my-8 space-y-8 font-sans">
                               {sub.tables.map((tbl, tIdx) => (
                                 <div id={tbl.id} key={tIdx} className="scroll-mt-24">
-                                  <div className="text-center font-bold text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider mb-2 font-mono">
+                                  <div className="mb-2 text-center font-mono text-xs font-bold tracking-wider text-slate-900 uppercase sm:text-sm dark:text-white">
                                     {tbl.number && <span className="mr-1">{tbl.number}:</span>}
                                     <span>{tbl.title}</span>
                                   </div>
-                                  <div className="overflow-x-auto my-3 border-y border-border/60">
+                                  <div className="border-border/60 my-3 overflow-x-auto border-y">
                                     <Table className="w-full text-xs sm:text-sm">
                                       <TableHeader className="border-b-2 border-slate-900 dark:border-white/20">
                                         <TableRow>
                                           {tbl.headers.map((h, hIdx) => (
                                             <TableHead
                                               key={hIdx}
-                                              className="font-mono text-xs uppercase font-bold text-slate-900 dark:text-white"
+                                              className="font-mono text-xs font-bold text-slate-900 uppercase dark:text-white"
                                             >
                                               {h}
                                             </TableHead>
@@ -439,7 +448,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                         {tbl.rows.map((row, rIdx) => (
                                           <TableRow
                                             key={rIdx}
-                                            className="hover:bg-slate-50 dark:hover:bg-white/[0.02] border-b border-slate-100 dark:border-white/5"
+                                            className="border-b border-slate-100 hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/[0.02]"
                                           >
                                             {row.map((cell, cIdx) => (
                                               <TableCell
@@ -459,7 +468,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                     </Table>
                                   </div>
                                   {tbl.note && (
-                                    <p className="text-[11px] text-slate-500 dark:text-neutral-400 italic text-center mt-1">
+                                    <p className="mt-1 text-center text-[11px] text-slate-500 italic dark:text-neutral-400">
                                       {tbl.note}
                                     </p>
                                   )}
@@ -472,12 +481,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                           {sub.figures && sub.figures.length > 0 && (
                             <div className="my-8 space-y-8">
                               {sub.figures.map((fig, fIdx) => (
-                                <figure id={fig.id} key={fIdx} className="scroll-mt-24 group">
+                                <figure id={fig.id} key={fIdx} className="group scroll-mt-24">
                                   <div
                                     onClick={() => setSelectedFigure(fig)}
-                                    className="relative cursor-pointer w-full flex items-center justify-center py-2"
+                                    className="relative flex w-full cursor-pointer items-center justify-center py-2"
                                   >
-                                    <div className="relative w-full aspect-video sm:aspect-[16/9] flex items-center justify-center">
+                                    <div className="relative flex aspect-video w-full items-center justify-center sm:aspect-[16/9]">
                                       <Image
                                         src={fig.src}
                                         alt={fig.alt || fig.title}
@@ -486,12 +495,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                                         sizes="(max-width: 896px) 100vw, 896px"
                                       />
                                     </div>
-                                    <div className="absolute top-2 right-2 bg-slate-900/80 dark:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                                    <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-slate-900/80 px-2.5 py-1 text-xs text-white opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100 dark:bg-black/80">
                                       <ZoomIn className="size-3" />
                                       <span>Click to Zoom</span>
                                     </div>
                                   </div>
-                                  <figcaption className="mt-3 text-xs sm:text-sm text-center text-slate-600 dark:text-neutral-400 font-sans">
+                                  <figcaption className="mt-3 text-center font-sans text-xs text-slate-600 sm:text-sm dark:text-neutral-400">
                                     <span className="font-bold text-slate-900 dark:text-white">
                                       {fig.figureNumber}.{' '}
                                     </span>
@@ -504,7 +513,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
                           {/* SUBSECTION PARAGRAPHS AFTER */}
                           {sub.paragraphsAfter && sub.paragraphsAfter.length > 0 && (
-                            <div className="mt-4 text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+                            <div className="mt-4 space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                               {sub.paragraphsAfter.map((p, pIdx) => (
                                 <p key={pIdx}>
                                   <FormattedLatexText text={p} />
@@ -519,7 +528,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
                   {/* SECTION PARAGRAPHS AFTER */}
                   {sec.paragraphsAfter && sec.paragraphsAfter.length > 0 && (
-                    <div className="mt-6 text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+                    <div className="mt-6 space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                       {sec.paragraphsAfter.map((p, pIdx) => (
                         <p key={pIdx}>
                           <FormattedLatexText text={p} />
@@ -530,7 +539,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
                   {/* EMBED INTERACTIVE CHARTS AT RESULTS / EMPIRICAL EVALUATION */}
                   {isResultsSec && (
-                    <div id="subsec-eval-charts" className="pt-8 scroll-mt-24 font-sans">
+                    <div id="subsec-eval-charts" className="scroll-mt-24 pt-8 font-sans">
                       <ProjectCharts projectId={project.id} />
                     </div>
                   )}
@@ -545,12 +554,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
           <>
             {/* I. INTRODUCTION & PROBLEM MOTIVATION */}
             <section id="sec-intro" className="mb-12 scroll-mt-24">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+              <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                 I. Introduction &amp; Problem Motivation
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+              <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                 <div id="subsec-intro-problem" className="scroll-mt-24">
-                  <span className="text-3xl font-bold font-serif float-left mr-2 leading-none text-slate-950 dark:text-white">
+                  <span className="float-left mr-2 font-serif text-3xl leading-none font-bold text-slate-950 dark:text-white">
                     T
                   </span>
                   <FormattedLatexText text={project.problemStatement} />
@@ -563,19 +572,22 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
             {/* II. MATHEMATICAL FORMULATION */}
             <section id="sec-math" className="mb-12 scroll-mt-24">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+              <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                 II. Mathematical Formulation &amp; Theoretical Framework
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+              <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                 <p>
                   <FormattedLatexText text="Formally, we express the core algorithmic and optimization dynamics of the proposed framework. Let the convex objective function be defined over feasible parameter simplex $\Delta$:" />
                 </p>
 
-                <div id="subsec-math-cvar" className="my-6 scroll-mt-24 py-3 px-2 flex items-center justify-between font-sans overflow-x-auto">
+                <div
+                  id="subsec-math-cvar"
+                  className="my-6 flex scroll-mt-24 items-center justify-between overflow-x-auto px-2 py-3 font-sans"
+                >
                   <div className="grow overflow-x-auto text-center font-normal">
                     <FormattedLatexText text="$\text{CVaR}_\alpha(w) = \min_{\gamma \in \mathbb{R}} \left\{ \gamma + \frac{1}{1-\alpha} \mathbb{E}\left[ \left( -w^\top r_t - \gamma \right)^+ \right] \right\}$" />
                   </div>
-                  <span className="font-mono text-xs text-slate-500 dark:text-neutral-400 pl-4 font-bold">
+                  <span className="pl-4 font-mono text-xs font-bold text-slate-500 dark:text-neutral-400">
                     (1)
                   </span>
                 </div>
@@ -584,11 +596,14 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   <FormattedLatexText text="Under extreme regime fluctuations, dynamic structural penalization $\lambda_t \in [0, 1]$ is activated across the communication and risk graph:" />
                 </p>
 
-                <div id="subsec-math-graph" className="my-6 scroll-mt-24 py-3 px-2 flex items-center justify-between font-sans overflow-x-auto">
+                <div
+                  id="subsec-math-graph"
+                  className="my-6 flex scroll-mt-24 items-center justify-between overflow-x-auto px-2 py-3 font-sans"
+                >
                   <div className="grow overflow-x-auto text-center font-normal">
                     <FormattedLatexText text="$\min_{w \in \Delta} \; \text{CVaR}_\alpha(w) + \lambda_t \cdot w^\top \mathcal{L}_{\text{network}} w + \kappa \|w - w_{\text{prev}}\|_1$" />
                   </div>
-                  <span className="font-mono text-xs text-slate-500 dark:text-neutral-400 pl-4 font-bold">
+                  <span className="pl-4 font-mono text-xs font-bold text-slate-500 dark:text-neutral-400">
                     (2)
                   </span>
                 </div>
@@ -597,22 +612,22 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
             {/* III. SYSTEM ARCHITECTURE */}
             <section id="sec-arch" className="mb-12 scroll-mt-24">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+              <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                 III. System Architecture &amp; Experimental Pipeline
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+              <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                 <p>
-                  The architecture is structured into decoupled autonomous modules, ensuring deterministic
-                  reliability, audit compliance, and end-to-end provenance.
+                  The architecture is structured into decoupled autonomous modules, ensuring
+                  deterministic reliability, audit compliance, and end-to-end provenance.
                 </p>
 
                 {figures.length > 0 && (
-                  <figure id="subsec-arch-fig1" className="my-8 scroll-mt-24 group">
+                  <figure id="subsec-arch-fig1" className="group my-8 scroll-mt-24">
                     <div
                       onClick={() => setSelectedFigure(figures[0])}
-                      className="relative cursor-pointer w-full flex items-center justify-center py-2"
+                      className="relative flex w-full cursor-pointer items-center justify-center py-2"
                     >
-                      <div className="relative w-full aspect-video sm:aspect-[16/9] flex items-center justify-center">
+                      <div className="relative flex aspect-video w-full items-center justify-center sm:aspect-[16/9]">
                         <Image
                           src={figures[0].src}
                           alt={figures[0].alt || figures[0].title}
@@ -622,12 +637,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                           priority
                         />
                       </div>
-                      <div className="absolute top-2 right-2 bg-slate-900/80 dark:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+                      <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-slate-900/80 px-2.5 py-1 text-xs text-white opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100 dark:bg-black/80">
                         <ZoomIn className="size-3" />
                         <span>Click to Zoom</span>
                       </div>
                     </div>
-                    <figcaption className="mt-3 text-xs sm:text-sm text-center text-slate-600 dark:text-neutral-400 font-sans">
+                    <figcaption className="mt-3 text-center font-sans text-xs text-slate-600 sm:text-sm dark:text-neutral-400">
                       <span className="font-bold text-slate-900 dark:text-white">
                         {figures[0].figureNumber}.{' '}
                       </span>
@@ -640,14 +655,16 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   {project.architectureSteps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="pl-4 border-l-2 border-border/70 dark:border-white/10 py-1.5"
+                      className="border-border/70 border-l-2 py-1.5 pl-4 dark:border-white/10"
                     >
-                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 mb-1">
+                      <div className="mb-1 flex items-center gap-2 font-mono text-xs font-bold text-cyan-600 dark:text-cyan-400">
                         <span>STAGE {step.step}</span>
                         <span>•</span>
-                        <span className="text-slate-900 dark:text-white font-semibold">{step.title}</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">
+                          {step.title}
+                        </span>
                       </div>
-                      <div className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed font-normal">
+                      <div className="text-xs leading-relaxed font-normal text-slate-600 sm:text-sm dark:text-neutral-300">
                         <FormattedLatexText text={step.description} />
                       </div>
                     </div>
@@ -658,25 +675,25 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
             {/* IV. EMPIRICAL EVALUATION */}
             <section id="sec-eval" className="mb-12 scroll-mt-24">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+              <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                 IV. Empirical Benchmark Evaluation &amp; Results
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-6 text-justify">
+              <div className="space-y-6 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                 <div id="subsec-eval-table" className="my-6 scroll-mt-24 font-sans">
-                  <div className="text-center font-bold text-xs sm:text-sm text-slate-900 dark:text-white uppercase tracking-wider mb-2 font-mono">
+                  <div className="mb-2 text-center font-mono text-xs font-bold tracking-wider text-slate-900 uppercase sm:text-sm dark:text-white">
                     TABLE I: EMPIRICAL PERFORMANCE &amp; STRESS BENCHMARKS
                   </div>
-                  <div className="overflow-x-auto my-4 border-y border-border/60">
+                  <div className="border-border/60 my-4 overflow-x-auto border-y">
                     <Table className="w-full">
                       <TableHeader className="border-b-2 border-slate-900 dark:border-white/20">
                         <TableRow>
-                          <TableHead className="font-mono text-xs uppercase font-bold text-slate-900 dark:text-white">
+                          <TableHead className="font-mono text-xs font-bold text-slate-900 uppercase dark:text-white">
                             Evaluation Dimension
                           </TableHead>
-                          <TableHead className="font-mono text-xs uppercase font-bold text-cyan-600 dark:text-cyan-400">
+                          <TableHead className="font-mono text-xs font-bold text-cyan-600 uppercase dark:text-cyan-400">
                             Observed Metric
                           </TableHead>
-                          <TableHead className="font-mono text-xs uppercase font-bold text-slate-900 dark:text-white">
+                          <TableHead className="font-mono text-xs font-bold text-slate-900 uppercase dark:text-white">
                             Empirical Benchmark Significance
                           </TableHead>
                         </TableRow>
@@ -685,15 +702,15 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                         {project.metrics.map((metric, idx) => (
                           <TableRow
                             key={idx}
-                            className="hover:bg-slate-50 dark:hover:bg-white/[0.02] border-b border-slate-100 dark:border-white/5"
+                            className="border-b border-slate-100 hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/[0.02]"
                           >
-                            <TableCell className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
+                            <TableCell className="text-xs font-semibold text-slate-900 sm:text-sm dark:text-white">
                               {metric.label}
                             </TableCell>
-                            <TableCell className="font-mono font-bold text-cyan-600 dark:text-cyan-400 text-xs sm:text-sm">
+                            <TableCell className="font-mono text-xs font-bold text-cyan-600 sm:text-sm dark:text-cyan-400">
                               {metric.value}
                             </TableCell>
-                            <TableCell className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300">
+                            <TableCell className="text-xs text-slate-600 sm:text-sm dark:text-neutral-300">
                               {metric.detail}
                             </TableCell>
                           </TableRow>
@@ -704,14 +721,17 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                 </div>
 
                 {figures.length > 1 && (
-                  <div id="subsec-eval-figures" className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8 scroll-mt-24">
+                  <div
+                    id="subsec-eval-figures"
+                    className="my-8 grid scroll-mt-24 grid-cols-1 gap-6 sm:grid-cols-2"
+                  >
                     {figures.slice(1, 5).map((fig, idx) => (
                       <figure key={idx} className="group flex flex-col justify-between">
                         <div
                           onClick={() => setSelectedFigure(fig)}
-                          className="relative cursor-pointer w-full flex items-center justify-center py-2"
+                          className="relative flex w-full cursor-pointer items-center justify-center py-2"
                         >
-                          <div className="relative w-full aspect-[4/3] flex items-center justify-center">
+                          <div className="relative flex aspect-[4/3] w-full items-center justify-center">
                             <Image
                               src={fig.src}
                               alt={fig.alt || fig.title}
@@ -720,12 +740,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                               sizes="(max-width: 768px) 100vw, 400px"
                             />
                           </div>
-                          <div className="absolute top-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-slate-900/80 px-2 py-0.5 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
                             <ZoomIn className="size-3" />
                             <span>Enlarge</span>
                           </div>
                         </div>
-                        <figcaption className="mt-2 text-xs text-slate-600 dark:text-neutral-400 font-sans">
+                        <figcaption className="mt-2 font-sans text-xs text-slate-600 dark:text-neutral-400">
                           <span className="font-bold text-slate-900 dark:text-white">
                             {fig.figureNumber}.{' '}
                           </span>
@@ -736,7 +756,7 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                   </div>
                 )}
 
-                <div id="subsec-eval-charts" className="pt-6 scroll-mt-24 font-sans">
+                <div id="subsec-eval-charts" className="scroll-mt-24 pt-6 font-sans">
                   <ProjectCharts projectId={project.id} />
                 </div>
               </div>
@@ -745,23 +765,23 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             {/* V. ABLATION STUDIES */}
             {figures.length > 5 && (
               <section id="sec-ablation" className="mb-12 scroll-mt-24">
-                <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+                <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                   V. Ablation Studies &amp; Sensitivity Analysis
                 </h2>
-                <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-6 text-justify">
+                <div className="space-y-6 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                   <p>
-                    To isolate component contributions, comprehensive ablation and sensitivity analyses were
-                    conducted across varying stress parameters and network densities.
+                    To isolate component contributions, comprehensive ablation and sensitivity
+                    analyses were conducted across varying stress parameters and network densities.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
+                  <div className="my-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {figures.slice(5, 9).map((fig, idx) => (
                       <figure key={idx} className="group flex flex-col justify-between">
                         <div
                           onClick={() => setSelectedFigure(fig)}
-                          className="relative cursor-pointer w-full flex items-center justify-center py-2"
+                          className="relative flex w-full cursor-pointer items-center justify-center py-2"
                         >
-                          <div className="relative w-full aspect-[4/3] flex items-center justify-center">
+                          <div className="relative flex aspect-[4/3] w-full items-center justify-center">
                             <Image
                               src={fig.src}
                               alt={fig.alt || fig.title}
@@ -770,12 +790,12 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
                               sizes="(max-width: 768px) 100vw, 400px"
                             />
                           </div>
-                          <div className="absolute top-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-slate-900/80 px-2 py-0.5 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
                             <ZoomIn className="size-3" />
                             <span>Enlarge</span>
                           </div>
                         </div>
-                        <figcaption className="mt-2 text-xs text-slate-600 dark:text-neutral-400 font-sans">
+                        <figcaption className="mt-2 font-sans text-xs text-slate-600 dark:text-neutral-400">
                           <span className="font-bold text-slate-900 dark:text-white">
                             {fig.figureNumber}.{' '}
                           </span>
@@ -790,14 +810,15 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
 
             {/* VI. CONCLUSION */}
             <section id="sec-conclusion" className="mb-12 scroll-mt-24">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/10 pb-2 font-mono">
+              <h2 className="mb-4 border-b border-slate-200 pb-2 font-mono text-base font-bold tracking-wider text-slate-950 uppercase sm:text-lg dark:border-white/10 dark:text-white">
                 VI. Conclusion &amp; Future Directions
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-slate-800 dark:text-neutral-300 space-y-4 text-justify">
+              <div className="space-y-4 text-justify text-sm leading-relaxed text-slate-800 sm:text-base dark:text-neutral-300">
                 <p>
-                  In this study, we presented an autonomous, auditable, and mathematically grounded framework
-                  that successfully couples empirical data observation with constrained convex optimization.
-                  Future work will focus on continuous cross-domain adaptation and federated governance.
+                  In this study, we presented an autonomous, auditable, and mathematically grounded
+                  framework that successfully couples empirical data observation with constrained
+                  convex optimization. Future work will focus on continuous cross-domain adaptation
+                  and federated governance.
                 </p>
               </div>
             </section>
@@ -805,21 +826,24 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
         )}
 
         {/* REFERENCES (IEEE FORMAT) */}
-        <section id="sec-references" className="pt-8 scroll-mt-24 border-t-2 border-slate-900 dark:border-white/20">
-          <h2 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white uppercase tracking-wider mb-4 font-mono">
+        <section
+          id="sec-references"
+          className="scroll-mt-24 border-t-2 border-slate-900 pt-8 dark:border-white/20"
+        >
+          <h2 className="mb-4 font-mono text-sm font-bold tracking-wider text-slate-950 uppercase sm:text-base dark:text-white">
             References
           </h2>
-          <ol className="list-none space-y-2.5 text-xs text-slate-600 dark:text-neutral-400 font-sans leading-relaxed">
+          <ol className="list-none space-y-2.5 font-sans text-xs leading-relaxed text-slate-600 dark:text-neutral-400">
             {paper?.references && paper.references.length > 0 ? (
               paper.references.map((ref, idx) => (
                 <li key={idx} className="flex gap-2">
-                  <span className="font-mono font-bold text-slate-900 dark:text-white min-w-[28px]">
+                  <span className="min-w-[28px] font-mono font-bold text-slate-900 dark:text-white">
                     [{ref.index}]
                   </span>
                   <span>
                     <FormattedLatexText text={ref.citation} />
                     {ref.doi && (
-                      <span className="ml-1 text-cyan-600 dark:text-cyan-400 font-mono text-[11px]">
+                      <span className="ml-1 font-mono text-[11px] text-cyan-600 dark:text-cyan-400">
                         DOI: {ref.doi}
                       </span>
                     )}
@@ -829,31 +853,43 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
             ) : (
               <>
                 <li className="flex gap-2">
-                  <span className="font-mono font-bold text-slate-900 dark:text-white min-w-[28px]">[1]</span>
+                  <span className="min-w-[28px] font-mono font-bold text-slate-900 dark:text-white">
+                    [1]
+                  </span>
                   <span>
-                    R. T. Rockafellar and S. Uryasev, &quot;Optimization of conditional value-at-risk,&quot;{' '}
-                    <em className="italic">Journal of Risk</em>, vol. 2, no. 3, pp. 21–41, 2000.
+                    R. T. Rockafellar and S. Uryasev, &quot;Optimization of conditional
+                    value-at-risk,&quot; <em className="italic">Journal of Risk</em>, vol. 2, no. 3,
+                    pp. 21–41, 2000.
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="font-mono font-bold text-slate-900 dark:text-white min-w-[28px]">[2]</span>
+                  <span className="min-w-[28px] font-mono font-bold text-slate-900 dark:text-white">
+                    [2]
+                  </span>
                   <span>
                     F. Allen and D. Gale, &quot;Financial contagion,&quot;{' '}
-                    <em className="italic">Journal of Political Economy</em>, vol. 108, no. 1, pp. 1–33, 2000.
+                    <em className="italic">Journal of Political Economy</em>, vol. 108, no. 1, pp.
+                    1–33, 2000.
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="font-mono font-bold text-slate-900 dark:text-white min-w-[28px]">[3]</span>
+                  <span className="min-w-[28px] font-mono font-bold text-slate-900 dark:text-white">
+                    [3]
+                  </span>
                   <span>
                     P. Bonacich, &quot;Power and centrality: A family of measures,&quot;{' '}
-                    <em className="italic">American Journal of Sociology</em>, vol. 92, no. 5, pp. 1170–1182, 1987.
+                    <em className="italic">American Journal of Sociology</em>, vol. 92, no. 5, pp.
+                    1170–1182, 1987.
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="font-mono font-bold text-slate-900 dark:text-white min-w-[28px]">[4]</span>
+                  <span className="min-w-[28px] font-mono font-bold text-slate-900 dark:text-white">
+                    [4]
+                  </span>
                   <span>
-                    M. Lopez de Prado, &quot;Building diversified portfolios that outperform out of sample,&quot;{' '}
-                    <em className="italic">The Journal of Portfolio Management</em>, vol. 42, no. 4, pp. 59–69, 2016.
+                    M. Lopez de Prado, &quot;Building diversified portfolios that outperform out of
+                    sample,&quot; <em className="italic">The Journal of Portfolio Management</em>,
+                    vol. 42, no. 4, pp. 59–69, 2016.
                   </span>
                 </li>
               </>
@@ -866,42 +902,44 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
       {selectedFigure && (
         <div
           onClick={() => setSelectedFigure(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 sm:p-8 animate-in fade-in duration-200"
+          className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md duration-200 sm:p-8"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-5xl w-full max-h-[90vh] flex flex-col bg-white dark:bg-[#12151d] rounded-3xl overflow-hidden border border-white/20 shadow-2xl"
+            className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/20 bg-white shadow-2xl dark:bg-[#12151d]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 px-6 border-b border-slate-200 dark:border-white/10">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase font-bold text-cyan-600 dark:text-cyan-400">
+            <div className="flex items-center justify-between border-b border-slate-200 p-4 px-6 dark:border-white/10">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-cyan-600 uppercase dark:text-cyan-400">
                 <span>{selectedFigure.figureNumber}</span>
                 <span>•</span>
-                <span className="text-slate-900 dark:text-white font-semibold">High-Resolution Inspection</span>
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  High-Resolution Inspection
+                </span>
               </div>
               <button
                 onClick={() => setSelectedFigure(null)}
-                className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white transition-colors"
+                className="rounded-full bg-slate-100 p-1.5 text-slate-700 transition-colors hover:bg-slate-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
               >
                 <X className="size-4" />
               </button>
             </div>
 
             {/* Modal Image Area */}
-            <div className="relative grow p-6 bg-transparent flex items-center justify-center min-h-[400px] overflow-auto">
+            <div className="relative flex min-h-[400px] grow items-center justify-center overflow-auto bg-transparent p-6">
               <Image
                 src={selectedFigure.src}
                 alt={selectedFigure.alt || selectedFigure.title}
                 width={1600}
                 height={1000}
-                className="max-h-[65vh] w-auto object-contain mx-auto"
+                className="mx-auto max-h-[65vh] w-auto object-contain"
                 priority
               />
             </div>
 
             {/* Modal Caption */}
-            <div className="p-4 px-6 bg-slate-50 dark:bg-[#0e1117] border-t border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-700 dark:text-neutral-300">
-              <span className="font-bold text-slate-900 dark:text-white mr-1">
+            <div className="border-t border-slate-200 bg-slate-50 p-4 px-6 text-xs text-slate-700 sm:text-sm dark:border-white/10 dark:bg-[#0e1117] dark:text-neutral-300">
+              <span className="mr-1 font-bold text-slate-900 dark:text-white">
                 {selectedFigure.figureNumber}:
               </span>
               <FormattedLatexText text={selectedFigure.caption} />
@@ -914,33 +952,33 @@ export function IeeePaperView({ project, className }: IeeePaperViewProps) {
       {showBibtexModal && (
         <div
           onClick={() => setShowBibtexModal(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150"
+          className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm duration-150"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="max-w-xl w-full bg-white dark:bg-[#12151d] rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-2xl"
+            className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#12151d]"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10 mb-4">
-              <div className="flex items-center gap-2 font-mono text-xs uppercase font-bold text-cyan-600 dark:text-cyan-400">
+            <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3 dark:border-white/10">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-cyan-600 uppercase dark:text-cyan-400">
                 <Bookmark className="size-4" />
                 <span>BibTeX Citation</span>
               </div>
               <button
                 onClick={() => setShowBibtexModal(false)}
-                className="p-1 rounded-full text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                className="rounded-full p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"
               >
                 <X className="size-4" />
               </button>
             </div>
 
-            <pre className="p-4 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800 select-all">
+            <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900 p-4 font-mono text-xs leading-relaxed text-slate-100 select-all">
               {bibtexCitation}
             </pre>
 
             <div className="mt-4 flex items-center justify-end gap-2">
               <button
                 onClick={copyToClipboard}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold shadow-md transition-all"
+                className="flex items-center gap-1.5 rounded-xl bg-cyan-600 px-4 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-cyan-500"
               >
                 {copiedBibtex ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
                 <span>{copiedBibtex ? 'Copied to Clipboard!' : 'Copy BibTeX'}</span>

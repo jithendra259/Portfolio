@@ -2,11 +2,13 @@ import { cache } from 'react';
 import { TokenSource } from 'livekit-client';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import type { AppConfig } from '@/app-config';
+
 export { cn } from '@/lib/shadcn/utils';
 
 export const CONFIG_ENDPOINT = process.env.NEXT_PUBLIC_APP_CONFIG_ENDPOINT;
 export const SANDBOX_ID = process.env.SANDBOX_ID;
-export const BACKEND_URL = process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
+export const BACKEND_URL =
+  process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
 
 export interface SandboxConfig {
   [key: string]:
@@ -136,7 +138,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
 export function getMultiUserTokenSource() {
   return TokenSource.custom(async () => {
     let roomName: string;
-    
+
     // Step 1: Try to create a room on the backend
     try {
       const createRoomResp = await fetch(`${BACKEND_URL}/create_room`, {
@@ -152,7 +154,10 @@ export function getMultiUserTokenSource() {
         throw new Error('Backend returned non-ok status');
       }
     } catch (backendError) {
-      console.warn('Backend /create_room unavailable, generating room UUID client-side:', backendError);
+      console.warn(
+        'Backend /create_room unavailable, generating room UUID client-side:',
+        backendError
+      );
       // Fallback: generate UUID client-side
       roomName = crypto.randomUUID();
     }

@@ -11,7 +11,7 @@ export const CERTIFICATES_DATA: InfinitePerspectiveSliderItemData[] = [
     number: '02',
     src: '/certificates/coursera/coursera-cloud-computing-specialization.jpg',
     title: 'Cloud Computing Specialization',
-    desc: 'Illinois Institute of Technology — 3 Master\'s Level Cloud Architecture Courses',
+    desc: "Illinois Institute of Technology — 3 Master's Level Cloud Architecture Courses",
   },
   {
     number: '03',
@@ -23,19 +23,19 @@ export const CERTIFICATES_DATA: InfinitePerspectiveSliderItemData[] = [
     number: '04',
     src: '/certificates/coursera/coursera-data-networks-internet.jpg',
     title: 'Data Networks & Internet',
-    desc: 'Illinois Institute of Technology — Master\'s Network Engineering',
+    desc: "Illinois Institute of Technology — Master's Network Engineering",
   },
   {
     number: '05',
     src: '/certificates/coursera/coursera-operating-system-virtualization.jpg',
     title: 'OS Virtualization',
-    desc: 'Illinois Institute of Technology — Master\'s Level Virtualization Systems',
+    desc: "Illinois Institute of Technology — Master's Level Virtualization Systems",
   },
   {
     number: '06',
     src: '/certificates/coursera/coursera-cloud-computing-technologies.jpg',
     title: 'Cloud Technologies',
-    desc: 'Illinois Institute of Technology — Master\'s Cloud Infrastructure & Services',
+    desc: "Illinois Institute of Technology — Master's Cloud Infrastructure & Services",
   },
   {
     number: '07',

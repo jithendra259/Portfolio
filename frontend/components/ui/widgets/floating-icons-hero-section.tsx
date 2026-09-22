@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/primitives/button';
+import { cn } from '@/lib/utils';
 
 // Interface for the props of each individual icon.
 export interface IconProps {
@@ -92,7 +92,7 @@ const Icon = ({
     >
       {/* Inner wrapper for the continuous floating animation */}
       <motion.div
-        className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 p-3 rounded-3xl shadow-xl bg-card/80 backdrop-blur-md border border-border/10 hover:border-emerald-500/40 hover:scale-105 transition-all cursor-pointer group"
+        className="bg-card/80 border-border/10 group flex h-16 w-16 cursor-pointer items-center justify-center rounded-3xl border p-3 shadow-xl backdrop-blur-md transition-all hover:scale-105 hover:border-emerald-500/40 md:h-20 md:w-20"
         animate={{
           y: [0, -8, 0, 8, 0],
           x: [0, 6, 0, -6, 0],
@@ -107,7 +107,11 @@ const Icon = ({
         title={iconData.title}
         onClick={() => {
           if (iconData.href) {
-            if (iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') || iconData.href.startsWith('sms:')) {
+            if (
+              iconData.href.startsWith('mailto:') ||
+              iconData.href.startsWith('tel:') ||
+              iconData.href.startsWith('sms:')
+            ) {
               window.location.href = iconData.href;
             } else {
               window.open(iconData.href, '_blank', 'noopener,noreferrer');
@@ -118,17 +122,23 @@ const Icon = ({
         {iconData.href ? (
           <a
             href={iconData.href}
-            target={iconData.href.startsWith('mailto:') || iconData.href.startsWith('tel:') || iconData.href.startsWith('sms:') ? undefined : '_blank'}
+            target={
+              iconData.href.startsWith('mailto:') ||
+              iconData.href.startsWith('tel:') ||
+              iconData.href.startsWith('sms:')
+                ? undefined
+                : '_blank'
+            }
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-full h-full"
+            className="flex h-full w-full items-center justify-center"
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110 pointer-events-none" />
+            <iconData.icon className="text-foreground pointer-events-none h-8 w-8 transition-transform group-hover:scale-110 md:h-10 md:w-10" />
           </a>
         ) : (
-          <iconData.icon className="w-8 h-8 md:w-10 md:h-10 text-foreground transition-transform group-hover:scale-110 pointer-events-none" />
+          <iconData.icon className="text-foreground pointer-events-none h-8 w-8 transition-transform group-hover:scale-110 md:h-10 md:w-10" />
         )}
       </motion.div>
     </motion.div>
@@ -153,13 +163,13 @@ const FloatingIconsHero = React.forwardRef<
       ref={ref}
       onMouseMove={handleMouseMove}
       className={cn(
-        'relative w-full h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-background',
+        'bg-background relative flex h-screen min-h-[700px] w-full items-center justify-center overflow-hidden',
         className
       )}
       {...props}
     >
       {/* Container for the background floating icons */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="absolute inset-0 h-full w-full">
         {icons.map((iconData, index) => (
           <Icon
             key={iconData.id}
@@ -172,17 +182,13 @@ const FloatingIconsHero = React.forwardRef<
       </div>
 
       {/* Container for the foreground content */}
-      <div className="relative z-10 text-center px-4 flex flex-col items-center justify-center">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 text-transparent bg-clip-text">
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 text-center">
+        <h1 className="from-foreground to-foreground/70 bg-gradient-to-b bg-clip-text text-5xl font-bold tracking-tight text-transparent md:text-7xl">
           {title}
         </h1>
-        <p className="mt-6 max-w-xl mx-auto text-lg text-muted-foreground">
-          {subtitle}
-        </p>
+        <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-lg">{subtitle}</p>
         {children && (
-          <div className="mt-6 flex flex-col items-center justify-center w-full">
-            {children}
-          </div>
+          <div className="mt-6 flex w-full flex-col items-center justify-center">{children}</div>
         )}
         {ctaText && ctaHref && (
           <div className="mt-6">

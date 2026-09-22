@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
-import { cn } from "@/lib/shadcn/utils";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { SplitText } from 'gsap/SplitText';
+import { cn } from '@/lib/shadcn/utils';
 
 gsap.registerPlugin(SplitText);
 
-const DEFAULT_ROOT_MARGIN = "256px";
+const DEFAULT_ROOT_MARGIN = '256px';
 
 type RafRoot = Element | null | { current: Element | null } | (() => Element | null);
 
 function resolveElement(root: RafRoot): Element | null {
   if (!root) return null;
-  if (typeof root === "function") return root() ?? null;
-  if (typeof root === "object" && "current" in root) return root.current ?? null;
+  if (typeof root === 'function') return root() ?? null;
+  if (typeof root === 'object' && 'current' in root) return root.current ?? null;
   return root;
 }
 
@@ -41,8 +41,7 @@ function createVisibilityGate({
   observeOffscreen = true,
   onChange,
 }: VisibilityGateOptions = {}): VisibilityGate {
-  let tabVisible =
-    typeof document === "undefined" ? true : !document.hidden;
+  let tabVisible = typeof document === 'undefined' ? true : !document.hidden;
   // Match border-beam: assume onscreen until the observer reports otherwise.
   let onscreen = true;
   let destroyed = false;
@@ -70,12 +69,12 @@ function createVisibilityGate({
     emit();
   };
 
-  if (observeTab && typeof document !== "undefined") {
-    document.addEventListener("visibilitychange", onVisibilityChange);
+  if (observeTab && typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
 
   const bindObserver = () => {
-    if (!observeOffscreen || typeof IntersectionObserver === "undefined") {
+    if (!observeOffscreen || typeof IntersectionObserver === 'undefined') {
       return;
     }
 
@@ -89,7 +88,7 @@ function createVisibilityGate({
         }
         emit();
       },
-      { rootMargin, threshold },
+      { rootMargin, threshold }
     );
 
     observer.observe(el);
@@ -122,8 +121,8 @@ function createVisibilityGate({
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      if (observeTab && typeof document !== "undefined") {
-        document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (observeTab && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibilityChange);
       }
       if (observer) {
         observer.disconnect();
@@ -163,8 +162,8 @@ function createSuspendedRaf({
   observeTab = true,
   observeOffscreen = true,
 }: SuspendedRafOptions): SuspendedRaf {
-  if (typeof onFrame !== "function") {
-    throw new TypeError("createSuspendedRaf: onFrame is required");
+  if (typeof onFrame !== 'function') {
+    throw new TypeError('createSuspendedRaf: onFrame is required');
   }
 
   let rafId: number | null = null;
@@ -249,36 +248,36 @@ function createSuspendedRaf({
 }
 
 const IMAGES = [
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1511497584788-87676104235f?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop&q=80",
+  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1511497584788-87676104235f?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop&q=80',
 ];
 
 const defaultImages: InfinitePerspectiveSliderItem[] = [
-  { number: "01", src: IMAGES[0], title: "Inspire", desc: "Nature and calm beginnings" },
-  { number: "02", src: IMAGES[1], title: "Stillness", desc: "Moments of quiet and beauty" },
-  { number: "03", src: IMAGES[2], title: "Texture", desc: "Light, grain and motion" },
-  { number: "04", src: IMAGES[3], title: "Flow", desc: "Soft forms and gentle tone" },
-  { number: "05", src: IMAGES[4], title: "Depth", desc: "Warmth and perspective" },
-  { number: "06", src: IMAGES[5], title: "Motion", desc: "Energy, waves and drift" },
-  { number: "07", src: IMAGES[6], title: "Distort", desc: "Abstract visuals" },
-  { number: "08", src: IMAGES[7], title: "Frame", desc: "A cinematic still" },
-  { number: "09", src: IMAGES[8], title: "Contrast", desc: "A study in light" },
-  { number: "10", src: IMAGES[9], title: "Minimal", desc: "Pared-back composition" },
+  { number: '01', src: IMAGES[0], title: 'Inspire', desc: 'Nature and calm beginnings' },
+  { number: '02', src: IMAGES[1], title: 'Stillness', desc: 'Moments of quiet and beauty' },
+  { number: '03', src: IMAGES[2], title: 'Texture', desc: 'Light, grain and motion' },
+  { number: '04', src: IMAGES[3], title: 'Flow', desc: 'Soft forms and gentle tone' },
+  { number: '05', src: IMAGES[4], title: 'Depth', desc: 'Warmth and perspective' },
+  { number: '06', src: IMAGES[5], title: 'Motion', desc: 'Energy, waves and drift' },
+  { number: '07', src: IMAGES[6], title: 'Distort', desc: 'Abstract visuals' },
+  { number: '08', src: IMAGES[7], title: 'Frame', desc: 'A cinematic still' },
+  { number: '09', src: IMAGES[8], title: 'Contrast', desc: 'A study in light' },
+  { number: '10', src: IMAGES[9], title: 'Minimal', desc: 'Pared-back composition' },
 ];
 
 // True when the user has asked the OS to minimise animation. Safe to call
 // during render - returns false on the server.
 function prefersReducedMotion() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
 }
 
 const DEFAULT_CARD_WIDTH = 320;
@@ -303,10 +302,8 @@ export interface InfinitePerspectiveSliderItemData {
 
 export type InfinitePerspectiveSliderItem = string | InfinitePerspectiveSliderItemData;
 
-const getItemData = (
-  item: InfinitePerspectiveSliderItem
-): InfinitePerspectiveSliderItemData =>
-  typeof item === "string" ? { src: item } : item;
+const getItemData = (item: InfinitePerspectiveSliderItem): InfinitePerspectiveSliderItemData =>
+  typeof item === 'string' ? { src: item } : item;
 
 interface CardSetter {
   x: (value: number | string) => void;
@@ -384,8 +381,7 @@ function InfinitePerspectiveSliderComp({
   const [viewportWidth, setViewportWidth] = useState(DEFAULT_CARD_WIDTH * 4);
 
   const isMobileViewport = viewportWidth < MOBILE_BREAKPOINT;
-  const isTabletViewport =
-    viewportWidth >= MOBILE_BREAKPOINT && viewportWidth < TABLET_BREAKPOINT;
+  const isTabletViewport = viewportWidth >= MOBILE_BREAKPOINT && viewportWidth < TABLET_BREAKPOINT;
 
   const resolvedCardWidth = isMobileViewport
     ? MOBILE_CARD_WIDTH
@@ -402,10 +398,10 @@ function InfinitePerspectiveSliderComp({
   const cardStep = resolvedCardWidth + resolvedCardGap;
 
   const cardHeight = isMobileViewport
-    ? "calc(40vh + 72px)"
+    ? 'calc(40vh + 72px)'
     : isTabletViewport
-      ? "calc(45vh + 84px)"
-      : "calc(50vh + 96px)";
+      ? 'calc(45vh + 84px)'
+      : 'calc(50vh + 96px)';
 
   const stateRef = useRef({
     current: 0,
@@ -449,8 +445,7 @@ function InfinitePerspectiveSliderComp({
   };
 
   const lerp = (a: number, b: number, n: number) => a + (b - a) * n;
-  const clamp = (value: number, min: number, max: number) =>
-    Math.max(min, Math.min(max, value));
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
   const clearActiveContent = useCallback(() => {
     const activeIndex = activeHoverIndexRef.current;
@@ -496,8 +491,8 @@ function InfinitePerspectiveSliderComp({
     settersRef.current = Array.from(stripRef.current.children).map(
       (element) =>
         ({
-          x: gsap.quickSetter(element, "x", "px"),
-          rotateY: gsap.quickSetter(element, "rotateY", "deg"),
+          x: gsap.quickSetter(element, 'x', 'px'),
+          rotateY: gsap.quickSetter(element, 'rotateY', 'deg'),
         }) as CardSetter
     );
   };
@@ -541,10 +536,10 @@ function InfinitePerspectiveSliderComp({
 
     updateViewport();
 
-    window.addEventListener("resize", updateViewport);
+    window.addEventListener('resize', updateViewport);
 
     return () => {
-      window.removeEventListener("resize", updateViewport);
+      window.removeEventListener('resize', updateViewport);
     };
   }, []);
 
@@ -572,30 +567,22 @@ function InfinitePerspectiveSliderComp({
         state.current = lerp(state.current, state.target, config.scrollLerp);
         state.velocity = state.target - state.current;
 
-        state.smoothVelocity = lerp(
-          state.smoothVelocity,
-          state.velocity,
-          config.velocityLerp
-        );
+        state.smoothVelocity = lerp(state.smoothVelocity, state.velocity, config.velocityLerp);
 
-        state.rotationVelocity = lerp(
-          state.rotationVelocity,
-          state.velocity,
-          config.rotationDamp
-        );
+        state.rotationVelocity = lerp(state.rotationVelocity, state.velocity, config.rotationDamp);
 
         const absVel = Math.abs(state.rotationVelocity);
         const sign = Math.sign(state.rotationVelocity);
         const targetRotation = sign * absVel * config.rotationSensitivity;
 
-        state.currentRotation = lerp(
-          state.currentRotation,
-          targetRotation,
-          config.rotationLerp
-        );
+        state.currentRotation = lerp(state.currentRotation, targetRotation, config.rotationLerp);
       }
 
-      const finalRotation = clamp(state.currentRotation, -configRef.current.maxRotation, configRef.current.maxRotation);
+      const finalRotation = clamp(
+        state.currentRotation,
+        -configRef.current.maxRotation,
+        configRef.current.maxRotation
+      );
 
       if (Math.abs(state.current - state.target) < 0.05) {
         const shift = Math.round(state.current / loopWidth) * loopWidth;
@@ -645,10 +632,8 @@ function InfinitePerspectiveSliderComp({
     const handleMouseMove = (event: MouseEvent) => onMove(event.clientX);
     const handleMouseUp = () => onUp();
 
-    const handleTouchStart = (event: TouchEvent) =>
-      onDown(event.touches[0].clientX);
-    const handleTouchMove = (event: TouchEvent) =>
-      onMove(event.touches[0].clientX);
+    const handleTouchStart = (event: TouchEvent) => onDown(event.touches[0].clientX);
+    const handleTouchMove = (event: TouchEvent) => onMove(event.touches[0].clientX);
     const handleTouchEnd = () => onUp();
 
     const onResize = () => {
@@ -678,16 +663,16 @@ function InfinitePerspectiveSliderComp({
     });
     loop.start();
 
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("resize", onResize);
+    window.addEventListener('wheel', onWheel, { passive: true });
+    window.addEventListener('resize', onResize);
 
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       loop.destroy();
@@ -696,16 +681,16 @@ function InfinitePerspectiveSliderComp({
         window.clearTimeout(scrollStopTimerRef.current);
       }
 
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('resize', onResize);
 
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
 
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [cardStep, images, positionCards, markScrolling]);
 
@@ -737,18 +722,18 @@ function InfinitePerspectiveSliderComp({
       if (!card || !image || !number || !title || !description) return;
 
       const numberSplit = SplitText.create(number, {
-        type: "lines",
-        mask: "lines",
+        type: 'lines',
+        mask: 'lines',
       });
 
       const titleSplit = SplitText.create(title, {
-        type: "lines",
-        mask: "lines",
+        type: 'lines',
+        mask: 'lines',
       });
 
       const descriptionSplit = SplitText.create(description, {
-        type: "lines",
-        mask: "lines",
+        type: 'lines',
+        mask: 'lines',
       });
 
       const numberLines = numberSplit.lines;
@@ -768,12 +753,8 @@ function InfinitePerspectiveSliderComp({
       const enter = () => {
         if (isScrollingRef.current) return;
 
-        if (
-          activeHoverIndexRef.current !== null &&
-          activeHoverIndexRef.current !== index
-        ) {
-          const previousLeave =
-            leaveHandlersRef.current[activeHoverIndexRef.current];
+        if (activeHoverIndexRef.current !== null && activeHoverIndexRef.current !== index) {
+          const previousLeave = leaveHandlersRef.current[activeHoverIndexRef.current];
 
           if (previousLeave) {
             previousLeave();
@@ -788,8 +769,8 @@ function InfinitePerspectiveSliderComp({
         gsap
           .timeline({
             defaults: {
-              ease: "power3.out",
-              overwrite: "auto",
+              ease: 'power3.out',
+              overwrite: 'auto',
             },
           })
           .set([number, title, description], { autoAlpha: 1 })
@@ -824,8 +805,8 @@ function InfinitePerspectiveSliderComp({
         gsap
           .timeline({
             defaults: {
-              ease: "power3.in",
-              overwrite: "auto",
+              ease: 'power3.in',
+              overwrite: 'auto',
             },
           })
           .to(
@@ -868,8 +849,8 @@ function InfinitePerspectiveSliderComp({
       enterHandlersRef.current[index] = enter;
       leaveHandlersRef.current[index] = leave;
 
-      image.addEventListener("mouseenter", handleImageEnter);
-      image.addEventListener("mouseleave", handleImageLeave);
+      image.addEventListener('mouseenter', handleImageEnter);
+      image.addEventListener('mouseleave', handleImageLeave);
 
       animations.push({
         image,
@@ -891,8 +872,8 @@ function InfinitePerspectiveSliderComp({
           titleSplit,
           descriptionSplit,
         }) => {
-          image.removeEventListener("mouseenter", handleImageEnter);
-          image.removeEventListener("mouseleave", handleImageLeave);
+          image.removeEventListener('mouseenter', handleImageEnter);
+          image.removeEventListener('mouseleave', handleImageLeave);
 
           numberSplit.revert();
           titleSplit.revert();
@@ -908,13 +889,17 @@ function InfinitePerspectiveSliderComp({
   }, [images]);
 
   return (
-    <div className={cn("w-full overflow-hidden relative", heightClassName || "h-[540px] sm:h-[600px] lg:h-[640px]")}>
-      <div className="pointer-events-none relative flex h-full items-start pt-2 sm:pt-4 overflow-hidden" style={{ perspective }}>
-        <div
-          ref={stripRef}
-          className="transform-3d relative w-full"
-          style={{ height: cardHeight }}
-        >
+    <div
+      className={cn(
+        'relative w-full overflow-hidden',
+        heightClassName || 'h-[540px] sm:h-[600px] lg:h-[640px]'
+      )}
+    >
+      <div
+        className="pointer-events-none relative flex h-full items-start overflow-hidden pt-2 sm:pt-4"
+        style={{ perspective }}
+      >
+        <div ref={stripRef} className="relative w-full transform-3d" style={{ height: cardHeight }}>
           {images.map((item, index) => {
             const { src, number, title, desc, description } = getItemData(item);
 
@@ -924,19 +909,19 @@ function InfinitePerspectiveSliderComp({
                 ref={(element) => {
                   cardRefs.current[index] = element;
                 }}
-                className="pointer-events-auto absolute left-0 top-0 opacity-0 will-change-transform"
+                className="pointer-events-auto absolute top-0 left-0 opacity-0 will-change-transform"
                 style={{
                   width: resolvedCardWidth,
                   height: cardHeight,
-                  transformOrigin: "center center",
-                  transform: "translateZ(1px)",
+                  transformOrigin: 'center center',
+                  transform: 'translateZ(1px)',
                 }}
               >
                 <div
                   ref={(element) => {
                     numberRefs.current[index] = element;
                   }}
-                  className="mb-2 text-2xl leading-none tracking-tight text-foreground opacity-0 max-[1025px]:text-xl max-md:mb-1 max-md:text-lg"
+                  className="text-foreground mb-2 text-2xl leading-none tracking-tight opacity-0 max-[1025px]:text-xl max-md:mb-1 max-md:text-lg"
                 >
                   {number}
                 </div>
@@ -945,12 +930,12 @@ function InfinitePerspectiveSliderComp({
                   ref={(element) => {
                     imageRefs.current[index] = element;
                   }}
-                  className="relative h-[50vh] w-full overflow-hidden bg-slate-950/90 rounded-2xl border border-slate-800/40 p-2 max-[1025px]:h-[45vh] max-md:h-[40vh] shadow-xl"
+                  className="relative h-[50vh] w-full overflow-hidden rounded-2xl border border-slate-800/40 bg-slate-950/90 p-2 shadow-xl max-[1025px]:h-[45vh] max-md:h-[40vh]"
                 >
                   <img
                     src={src}
                     alt={`slide-${index}`}
-                    className="h-full w-full object-contain rounded-xl"
+                    className="h-full w-full rounded-xl object-contain"
                     draggable={false}
                   />
                 </div>
@@ -960,7 +945,7 @@ function InfinitePerspectiveSliderComp({
                     ref={(element) => {
                       titleRefs.current[index] = element;
                     }}
-                    className="text-xl uppercase leading-none tracking-[0.04em] text-foreground opacity-0 max-[1025px]:text-lg max-md:text-base"
+                    className="text-foreground text-xl leading-none tracking-[0.04em] uppercase opacity-0 max-[1025px]:text-lg max-md:text-base"
                   >
                     {title}
                   </div>
@@ -969,9 +954,9 @@ function InfinitePerspectiveSliderComp({
                     ref={(element) => {
                       descriptionRefs.current[index] = element;
                     }}
-                    className="text-sm leading-none text-muted-foreground opacity-0 max-[1025px]:text-xs max-md:text-xs"
+                    className="text-muted-foreground text-sm leading-none opacity-0 max-[1025px]:text-xs max-md:text-xs"
                   >
-                    {desc || description || ""}
+                    {desc || description || ''}
                   </div>
                 </div>
               </div>
@@ -980,9 +965,8 @@ function InfinitePerspectiveSliderComp({
         </div>
       </div>
 
-      <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 flex-col items-center justify-center gap-[1vw] text-foreground">
+      <div className="text-foreground absolute bottom-2 left-1/2 flex -translate-x-1/2 flex-col items-center justify-center gap-[1vw]">
         scroll
-
         <svg
           width="20"
           height="28"
@@ -1063,7 +1047,7 @@ export default function InfinitePerspectiveSlider({
   ...props
 }: InfinitePerspectiveSliderProps) {
   return (
-    <div className={cn("flex w-full flex-col justify-center bg-transparent", className)}>
+    <div className={cn('flex w-full flex-col justify-center bg-transparent', className)}>
       <InfinitePerspectiveSliderComp {...props} />
     </div>
   );

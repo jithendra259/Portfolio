@@ -1,13 +1,16 @@
-"use client";
+'use client';
 
 import * as React from 'react';
-import type { IconProps } from './floating-icons-hero-section';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import type { IconProps } from './floating-icons-hero-section';
 
 // --- 1. Gmail / Google Mail SVG ---
 const IconGmail = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M2 5.5V18.5C2 19.33 2.67 20 3.5 20H6V11.5L12 15.5L18 11.5V20H20.5C21.33 20 22 19.33 22 18.5V5.5C22 4.67 21.33 4 20.5 4H19.5L12 9.5L4.5 4H3.5C2.67 4 2 4.67 2 5.5Z" fill="#EA4335" />
+    <path
+      d="M2 5.5V18.5C2 19.33 2.67 20 3.5 20H6V11.5L12 15.5L18 11.5V20H20.5C21.33 20 22 19.33 22 18.5V5.5C22 4.67 21.33 4 20.5 4H19.5L12 9.5L4.5 4H3.5C2.67 4 2 4.67 2 5.5Z"
+      fill="#EA4335"
+    />
     <path d="M22 5.5L18 8.5V20H20.5C21.33 20 22 19.33 22 18.5V5.5Z" fill="#FBBC05" />
     <path d="M2 5.5L6 8.5V20H3.5C2.67 20 2 19.33 2 18.5V5.5Z" fill="#4285F4" />
     <path d="M6 11.5L12 15.5L18 11.5V4.5L12 9L6 4.5V11.5Z" fill="#34A853" />
@@ -30,7 +33,13 @@ const IconLinkedIn = (props: React.SVGProps<SVGSVGElement>) => (
 
 // --- 3. GitHub SVG ---
 const IconGitHub = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="text-foreground/90" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="text-foreground/90"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
   </svg>
 );
@@ -71,13 +80,22 @@ const IconPhoneCall = (props: React.SVGProps<SVGSVGElement>) => (
 // --- 7. Discord SVG ---
 const IconDiscord = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M20.317 4.482a1.88 1.88 0 0 0-1.635-.482C17.398 3.42 16.02 3 12 3s-5.398.42-6.682 1.001a1.88 1.88 0 0 0-1.635.483c-1.875 1.2-2.325 3.61-1.568 5.711 1.62 4.47 5.063 7.8 9.885 7.8s8.265-3.33 9.885-7.8c.757-2.1-.307-4.51-1.568-5.711ZM8.45 13.4c-.825 0-1.5-.75-1.5-1.65s.675-1.65 1.5-1.65c.825 0 1.5.75 1.5 1.65s-.675 1.65-1.5 1.65Zm7.1 0c-.825 0-1.5-.75-1.5-1.65s.675-1.65 1.5-1.65c.825 0 1.5.75 1.5 1.65s-.675 1.65-1.5 1.65Z" fill="#5865F2" />
+    <path
+      d="M20.317 4.482a1.88 1.88 0 0 0-1.635-.482C17.398 3.42 16.02 3 12 3s-5.398.42-6.682 1.001a1.88 1.88 0 0 0-1.635.483c-1.875 1.2-2.325 3.61-1.568 5.711 1.62 4.47 5.063 7.8 9.885 7.8s8.265-3.33 9.885-7.8c.757-2.1-.307-4.51-1.568-5.711ZM8.45 13.4c-.825 0-1.5-.75-1.5-1.65s.675-1.65 1.5-1.65c.825 0 1.5.75 1.5 1.65s-.675 1.65-1.5 1.65Zm7.1 0c-.825 0-1.5-.75-1.5-1.65s.675-1.65 1.5-1.65c.825 0 1.5.75 1.5 1.65s-.675 1.65-1.5 1.65Z"
+      fill="#5865F2"
+    />
   </svg>
 );
 
 // --- 8. X / Twitter SVG ---
 const IconXTwitter = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="text-foreground/90" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="text-foreground/90"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231L18.244 2.25zM17.03 19.75h1.866L7.156 4.25H5.16l11.874 15.5z" />
   </svg>
 );
@@ -99,7 +117,10 @@ const IconSlack = (props: React.SVGProps<SVGSVGElement>) => (
 // --- 10. Google Meet Video Call SVG ---
 const IconGoogleMeet = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M15 11.5V6.5C15 5.67 14.33 5 13.5 5H4.5C3.67 5 3 5.67 3 6.5V17.5C3 18.33 3.67 19 4.5 19H13.5C14.33 19 15 18.33 15 17.5V12.5L21 17V7L15 11.5Z" fill="#00832D" />
+    <path
+      d="M15 11.5V6.5C15 5.67 14.33 5 13.5 5H4.5C3.67 5 3 5.67 3 6.5V17.5C3 18.33 3.67 19 4.5 19H13.5C14.33 19 15 18.33 15 17.5V12.5L21 17V7L15 11.5Z"
+      fill="#00832D"
+    />
     <path d="M15 11.5L21 7V17L15 12.5V11.5Z" fill="#00AC47" />
     <path d="M3 6.5C3 5.67 3.67 5 4.5 5H13.5V11H3V6.5Z" fill="#2684FC" />
     <path d="M3 11H13.5V19H4.5C3.67 19 3 18.33 3 17.5V11Z" fill="#FFBA00" />
@@ -135,12 +156,7 @@ const IconChatBubble = (props: React.SVGProps<SVGSVGElement>) => (
 const IconLiveKit = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect x="2" y="2" width="20" height="20" rx="6" fill="#FF6B00" />
-    <path
-      d="M8 8V16M12 6V18M16 9V15"
-      stroke="white"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
+    <path d="M8 8V16M12 6V18M16 9V15" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -148,16 +164,8 @@ const IconLiveKit = (props: React.SVGProps<SVGSVGElement>) => (
 const IconPaperPlane = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <circle cx="12" cy="12" r="10" fill="#0EA5E9" />
-    <path
-      d="M6.5 12L17.5 7L13 17.5L11 13L6.5 12Z"
-      fill="white"
-    />
-    <path
-      d="M11 13L17.5 7"
-      stroke="#0284C7"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-    />
+    <path d="M6.5 12L17.5 7L13 17.5L11 13L6.5 12Z" fill="white" />
+    <path d="M11 13L17.5 7" stroke="#0284C7" strokeWidth="1.2" strokeLinecap="round" />
   </svg>
 );
 

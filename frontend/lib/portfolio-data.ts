@@ -1,6 +1,6 @@
 import { ALL_PROJECTS, Project } from '@/data/projects';
-export type { Project } from '@/data/projects';
 
+export type { Project } from '@/data/projects';
 
 export interface ResearchPaper {
   title: string;
@@ -14,7 +14,6 @@ export interface ResearchPaper {
   focusAreas: string[];
   pdfUrl?: string;
 }
-
 
 export interface SkillCategory {
   category: string;
@@ -80,7 +79,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
     fullName: 'Kandula Jithendra Subramanyam',
     shortName: 'Jithendra Subramanyam',
     headline: 'Agentic AI & Multi-Agent Systems Engineer',
-    subheadline: 'M.Tech AI & Data Science | Quantitative Finance | Explainable AI | Full-Stack Dev',
+    subheadline:
+      'M.Tech AI & Data Science | Quantitative Finance | Explainable AI | Full-Stack Dev',
     bio: 'M.Tech Artificial Intelligence & Data Science researcher at K J Somaiya College of Engineering (Somaiya Vidyavihar University, Mumbai) specializing in autonomous agentic AI, multi-agent portfolio governance, quantitative finance risk analytics, and verifiable explainable AI. First & corresponding author of 3 research publications across Elsevier EAAI, Elsevier Computers & Operations Research, and Springer Nature LNCS. Architect of modular LangGraph agent swarms combined with CVXPY convex solvers, deterministic regime switching, and real-time WebRTC voice pipelines.',
     location: 'Mumbai, India',
     phone: '+91 9704400336',
@@ -108,22 +108,26 @@ export const PORTFOLIO_DATA: PortfolioData = {
   promptSuggestions: [
     {
       title: '🤖 Agentic AI Governance',
-      prompt: 'Can you explain your Agentic AI Portfolio Governance Chatbot architecture and multi-agent roles?',
+      prompt:
+        'Can you explain your Agentic AI Portfolio Governance Chatbot architecture and multi-agent roles?',
       category: 'projects',
     },
     {
       title: '📈 Quantitative Finance',
-      prompt: 'How do you perform portfolio optimization, CVaR analysis, and market regime detection?',
+      prompt:
+        'How do you perform portfolio optimization, CVaR analysis, and market regime detection?',
       category: 'finance',
     },
     {
       title: '📚 Research Papers',
-      prompt: 'Tell me about your three research papers submitted to Elsevier EAAI, Elsevier CAS, and presented at IJCACI (Springer).',
+      prompt:
+        'Tell me about your three research papers submitted to Elsevier EAAI, Elsevier CAS, and presented at IJCACI (Springer).',
       category: 'research',
     },
     {
       title: '⚡ Technical Skills',
-      prompt: 'What are your core technical capabilities in LangGraph, Python, CVXPY, and Full-Stack?',
+      prompt:
+        'What are your core technical capabilities in LangGraph, Python, CVXPY, and Full-Stack?',
       category: 'skills',
     },
     {
@@ -134,36 +138,66 @@ export const PORTFOLIO_DATA: PortfolioData = {
   ],
   researchPapers: [
     {
-      title: 'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization',
+      title:
+        'Multi-Agent Governance for Graph-Regularized Conditional Value-at-Risk Portfolio Optimization with Adaptive Contagion Penalization',
       publisher: 'Elsevier – Engineering Applications of Artificial Intelligence (EAAI)',
       status: 'Under Review, 2026',
       year: '2026',
       authors: 'K. J. Subramanyam (First & Corresponding Author), Sunayana Jadhav',
       manuscriptId: 'EAAI-26-14280',
-      description: 'Formulates a five-agent blackboard architecture for institutional portfolio optimization addressing fire-sale contagion and cross-sector spillovers via bipartite co-holding graphs. Integrates graph-regularized Conditional Value-at-Risk (G-CVaR) with adaptive Laplacian penalty, explainability, and human-in-the-loop governance auditing.',
-      focusAreas: ['Multi-Agent Blackboard Architecture', 'Graph-Regularized CVaR', 'Institutional Contagion Networks', 'Laplacian Penalty', 'Human-in-the-Loop Governance', 'Systemic Risk Mitigation'],
+      description:
+        'Formulates a five-agent blackboard architecture for institutional portfolio optimization addressing fire-sale contagion and cross-sector spillovers via bipartite co-holding graphs. Integrates graph-regularized Conditional Value-at-Risk (G-CVaR) with adaptive Laplacian penalty, explainability, and human-in-the-loop governance auditing.',
+      focusAreas: [
+        'Multi-Agent Blackboard Architecture',
+        'Graph-Regularized CVaR',
+        'Institutional Contagion Networks',
+        'Laplacian Penalty',
+        'Human-in-the-Loop Governance',
+        'Systemic Risk Mitigation',
+      ],
       pdfUrl: '/documents/adaptive-portfolio-governance/multi-agent-governance-graph-cvar-eaai.pdf',
     },
     {
       title: 'Regime-Adaptive Supervisory Governance for Instability-Aware Portfolio Stabilization',
-      publisher: '5th Int. Joint Conf. on Advances in Computational Intelligence (IJCACI 2026) / Springer Nature LNCS',
+      publisher:
+        '5th Int. Joint Conf. on Advances in Computational Intelligence (IJCACI 2026) / Springer Nature LNCS',
       status: 'Presented & Accepted, 2026',
       year: '2026',
-      authors: 'K. J. Subramanyam (First & Corresponding Author), Sunayana Vilas Jadhav, Ashwini Dalvi',
+      authors:
+        'K. J. Subramanyam (First & Corresponding Author), Sunayana Vilas Jadhav, Ashwini Dalvi',
       conferenceLocation: 'Washington University of Science and Technology (WUST), Alexandria, USA',
-      description: 'Proposes an interpretable regime-adaptive supervisory governance framework integrating covariance drift, rolling volatility, and correlation stress into an instability index ($I_t$). Dynamically switches concentration limits and shrinkage estimation over 218 U.S. equities across 2005–2025.',
-      focusAreas: ['Supervisory Governance', 'Composite Instability Index', 'Regime Adaptation', 'Ledoit-Wolf Shrinkage', 'Drawdown Containment', '20-Year Empirical Study (2005–2025)'],
-      pdfUrl: '/documents/regime-adaptive-supervisory-governance/regime-adaptive-supervisory-governance.pdf',
+      description:
+        'Proposes an interpretable regime-adaptive supervisory governance framework integrating covariance drift, rolling volatility, and correlation stress into an instability index ($I_t$). Dynamically switches concentration limits and shrinkage estimation over 218 U.S. equities across 2005–2025.',
+      focusAreas: [
+        'Supervisory Governance',
+        'Composite Instability Index',
+        'Regime Adaptation',
+        'Ledoit-Wolf Shrinkage',
+        'Drawdown Containment',
+        '20-Year Empirical Study (2005–2025)',
+      ],
+      pdfUrl:
+        '/documents/regime-adaptive-supervisory-governance/regime-adaptive-supervisory-governance.pdf',
     },
     {
-      title: 'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching, and Conversational Explainability',
+      title:
+        'A Supervisory Portfolio Governance Framework: Composite Instability Detection, Deterministic Regime Switching, and Conversational Explainability',
       publisher: 'Elsevier – Computers & Operations Research / CAS Journal',
       status: 'Under Review / Prepared, 2026',
       year: '2026',
       authors: 'K. J. Subramanyam (First & Corresponding Author), Sunayana Jadhav',
-      description: 'Seven-agent Directed Acyclic Graph (DAG) supervisory architecture coupling deterministic regime switching with local quantized Mistral-7B conversational explainability. Binds conversational narratives directly to verified mathematical blackboard vectors to achieve 0% numerical hallucination and regulatory audit compliance.',
-      focusAreas: ['Seven-Agent DAG Pipeline', 'Conversational XAI', 'Mistral-7B (Ollama)', 'Zero-Hallucination Governance', 'MiFID II Article 25', 'EU AI Act Compliance'],
-      pdfUrl: '/documents/supervisory-portfolio-xai-governance/supervisory-portfolio-framework-xai.pdf',
+      description:
+        'Seven-agent Directed Acyclic Graph (DAG) supervisory architecture coupling deterministic regime switching with local quantized Mistral-7B conversational explainability. Binds conversational narratives directly to verified mathematical blackboard vectors to achieve 0% numerical hallucination and regulatory audit compliance.',
+      focusAreas: [
+        'Seven-Agent DAG Pipeline',
+        'Conversational XAI',
+        'Mistral-7B (Ollama)',
+        'Zero-Hallucination Governance',
+        'MiFID II Article 25',
+        'EU AI Act Compliance',
+      ],
+      pdfUrl:
+        '/documents/supervisory-portfolio-xai-governance/supervisory-portfolio-framework-xai.pdf',
     },
   ],
   projects: ALL_PROJECTS,
@@ -220,21 +254,32 @@ export const PORTFOLIO_DATA: PortfolioData = {
       role: 'Thesis Researcher – Agentic AI Portfolio Governance',
       company: 'K J Somaiya College of Engineering',
       location: 'Mumbai, India',
-      description: 'Conducted master thesis research developing modular multi-agent architectures for stock portfolio management, risk analytics, and compliance-aware financial intelligence.',
+      description:
+        'Conducted master thesis research developing modular multi-agent architectures for stock portfolio management, risk analytics, and compliance-aware financial intelligence.',
       achievements: [
         'Designed 10+ specialized agents for planning, data retrieval, technical analysis, regime detection, instability analysis, portfolio optimization, governance validation, explainability, and verification.',
         'Implemented audit logging, confidence scoring, evidence tracking, source grounding, and anti-hallucination controls.',
         'Integrated CVXPY, CLARABEL, NetworkX, LangGraph, MongoDB, Ollama (Mistral-7B), YFinance, NumPy, Pandas, and SciPy.',
         'Submitted research papers to Elsevier EAAI and Springer conference proceedings.',
       ],
-      technologies: ['LangGraph', 'CVXPY', 'Python', 'Mistral-7B', 'NetworkX', 'MongoDB', 'Gradio', 'YFinance'],
+      technologies: [
+        'LangGraph',
+        'CVXPY',
+        'Python',
+        'Mistral-7B',
+        'NetworkX',
+        'MongoDB',
+        'Gradio',
+        'YFinance',
+      ],
     },
     {
       period: 'May 2025 – Aug 2025',
       role: 'Full-Stack Developer Intern',
       company: 'ScholarRankAI',
       location: 'Remote',
-      description: 'Engineered responsive React-based user interfaces and integrated third-party REST APIs for production workflows.',
+      description:
+        'Engineered responsive React-based user interfaces and integrated third-party REST APIs for production workflows.',
       achievements: [
         'Delivered responsive frontend interfaces and eliminated performance bottlenecks across application screens.',
         'Collaborated in Agile sprints, stand-ups, code reviews, and debugging cycles.',
@@ -247,7 +292,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
       role: 'UI/UX Developer Intern',
       company: 'MNJ Software Pvt. Ltd.',
       location: 'India',
-      description: 'Translated UI/UX wireframes into production-ready web interfaces with rigorous cross-browser consistency.',
+      description:
+        'Translated UI/UX wireframes into production-ready web interfaces with rigorous cross-browser consistency.',
       achievements: [
         'Improved page-load speed by 25% and increased user engagement metrics by 15% through frontend optimizations.',
         'Collaborated closely with backend engineers on seamless API integration.',
@@ -262,7 +308,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
       location: 'Mumbai, India',
       period: 'Aug 2024 – Apr 2026',
       score: 'CGPA: 8.06',
-      details: 'Thesis: Personal Chatbot for Stock Portfolio Management with Agentic AI Framework. Research focus on multi-agent governance, explainable AI, portfolio optimization (CVXPY), and compliance-aware financial intelligence.',
+      details:
+        'Thesis: Personal Chatbot for Stock Portfolio Management with Agentic AI Framework. Research focus on multi-agent governance, explainable AI, portfolio optimization (CVXPY), and compliance-aware financial intelligence.',
     },
     {
       degree: 'B.Tech in Electronics and Communication Engineering',
@@ -270,7 +317,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
       location: 'Bangalore, India',
       period: 'Aug 2019 – Jul 2023',
       score: 'CGPA: 7.77',
-      details: 'Final-year project: Swarm Robots for Agriculture using embedded systems, image processing, IoT sensors, and autonomous multi-robot coordination.',
+      details:
+        'Final-year project: Swarm Robots for Agriculture using embedded systems, image processing, IoT sensors, and autonomous multi-robot coordination.',
     },
     {
       degree: 'Intermediate (MPC)',

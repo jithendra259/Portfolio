@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+import React, { useCallback, useRef, useState } from 'react';
 import { Download } from 'lucide-react';
+import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
+
 export function ResumePrinter({ className }: { className?: string }) {
   const [isPrinting, setIsPrinting] = useState(false);
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -28,7 +29,9 @@ export function ResumePrinter({ className }: { className?: string }) {
   }, [isPrinting]);
 
   return (
-    <div className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${isPrinting ? 'is-active' : ''} ${className || ''}`}>
+    <div
+      className={`resume-printer-scope relative z-20 flex flex-col items-center justify-center ${isPrinting ? 'is-active' : ''} ${className || ''}`}
+    >
       <style>{`
         .resume-printer-scope .wrapper {
           --printer-color: #dcdac4;
@@ -372,7 +375,7 @@ export function ResumePrinter({ className }: { className?: string }) {
 
       <div className={`wrapper ${isPrinting ? 'is-active' : ''}`}>
         <div className="printer" />
-        
+
         {/* LCD Display */}
         <div className="printer-display">
           <span className="printer-message"> Click to print</span>
@@ -406,33 +409,31 @@ export function ResumePrinter({ className }: { className?: string }) {
           <div className="receipt">
             {/* Receipt Header */}
             <div className="receipt-header flex flex-col items-center text-center">
-              <div className="font-bold text-[12px] tracking-tight text-black font-mono">
+              <div className="font-mono text-[12px] font-bold tracking-tight text-black">
                 {PORTFOLIO_DATA.developer.fullName.toUpperCase()}
               </div>
-              <div className="text-[9.5px] font-bold text-stone-700 mt-0.5 tracking-wide">
+              <div className="mt-0.5 text-[9.5px] font-bold tracking-wide text-stone-700">
                 AI &amp; DATA SCIENCE ENGINEER
               </div>
-              <div className="text-[8.5px] text-stone-600 font-mono mt-0.5 font-bold">
+              <div className="mt-0.5 font-mono text-[8.5px] font-bold text-stone-600">
                 📞 {PORTFOLIO_DATA.developer.phone}
               </div>
-              <div className="text-[8px] text-stone-500 font-mono truncate max-w-[220px]">
+              <div className="max-w-[220px] truncate font-mono text-[8px] text-stone-500">
                 ✉️ {PORTFOLIO_DATA.developer.email}
               </div>
-              <div className="text-[8px] text-stone-500 font-mono">
+              <div className="font-mono text-[8px] text-stone-500">
                 📍 {PORTFOLIO_DATA.developer.location} • github.com/jithendra259
               </div>
             </div>
 
             {/* Receipt Subheader */}
-            <div className="receipt-subheader text-[8.5px] text-stone-600 font-mono">
+            <div className="receipt-subheader font-mono text-[8.5px] text-stone-600">
               <span>REF: #RESUME-KJS-2026</span>
               <span>{new Date().toISOString().slice(0, 10)}</span>
             </div>
 
             {/* Receipt Section: Education */}
-            <div className="receipt-section-title">
-              -- EDUCATION &amp; QUALIFICATIONS --
-            </div>
+            <div className="receipt-section-title">-- EDUCATION &amp; QUALIFICATIONS --</div>
             <table className="receipt-table text-[9px]">
               <tbody>
                 <tr>
@@ -455,9 +456,7 @@ export function ResumePrinter({ className }: { className?: string }) {
             </table>
 
             {/* Receipt Section: Research Publications */}
-            <div className="receipt-section-title">
-              -- RESEARCH PUBLICATIONS --
-            </div>
+            <div className="receipt-section-title">-- RESEARCH PUBLICATIONS --</div>
             <table className="receipt-table text-[9px]">
               <tbody>
                 <tr>
@@ -480,9 +479,7 @@ export function ResumePrinter({ className }: { className?: string }) {
             </table>
 
             {/* Receipt Section: Core Technical Stack */}
-            <div className="receipt-section-title">
-              -- CORE SYSTEMS &amp; TECH STACK --
-            </div>
+            <div className="receipt-section-title">-- CORE SYSTEMS &amp; TECH STACK --</div>
             <table className="receipt-table text-[9px]">
               <tbody>
                 <tr>
@@ -509,9 +506,7 @@ export function ResumePrinter({ className }: { className?: string }) {
             </table>
 
             {/* Receipt Section: Experience */}
-            <div className="receipt-section-title">
-              -- EXPERIENCE &amp; LEADERSHIP --
-            </div>
+            <div className="receipt-section-title">-- EXPERIENCE &amp; LEADERSHIP --</div>
             <table className="receipt-table text-[9px]">
               <tbody>
                 <tr>
@@ -526,7 +521,7 @@ export function ResumePrinter({ className }: { className?: string }) {
             </table>
 
             {/* Receipt Footer */}
-            <div className="receipt-footer flex flex-col items-center gap-1.5 pt-1.5 relative z-50 pointer-events-auto">
+            <div className="receipt-footer pointer-events-auto relative z-50 flex flex-col items-center gap-1.5 pt-1.5">
               <a
                 href="/documents/resume/kandula_jithendra_subramanyam_resume.pdf"
                 download="Kandula_Jithendra_Subramanyam_Resume.pdf"
@@ -546,11 +541,11 @@ export function ResumePrinter({ className }: { className?: string }) {
                     console.error('Download trigger error:', err);
                   }
                 }}
-                className="w-full py-1.5 px-2 rounded bg-black text-white text-[9px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 hover:bg-stone-800 transition-colors cursor-pointer text-center pointer-events-auto select-none shadow-sm active:scale-95"
+                className="pointer-events-auto flex w-full cursor-pointer items-center justify-center gap-1 rounded bg-black px-2 py-1.5 text-center text-[9px] font-bold tracking-wider text-white uppercase shadow-sm transition-colors select-none hover:bg-stone-800 active:scale-95"
               >
                 <Download className="size-3" /> Download Official PDF
               </a>
-              <div className="text-[7.5px] text-stone-500 font-mono tracking-tight">
+              <div className="font-mono text-[7.5px] tracking-tight text-stone-500">
                 VERIFIED CANDIDATE • +91 9704400336
               </div>
             </div>

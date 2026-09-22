@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { notify } from '@/components/ui/widgets/notification-card';
 
 interface EmailRevealButtonProps {
@@ -24,7 +24,11 @@ export function EmailRevealButton({
 
   const copyToClipboard = async (text: string): Promise<boolean> => {
     // 1. Try modern navigator.clipboard
-    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === 'function'
+    ) {
       try {
         await navigator.clipboard.writeText(text);
         return true;
@@ -58,7 +62,9 @@ export function EmailRevealButton({
     return false;
   };
 
-  const handleInteraction = async (e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
+  const handleInteraction = async (
+    e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
     setIsRevealed(true);
 
@@ -83,7 +89,7 @@ export function EmailRevealButton({
   const longestText = name.length > email.length ? name : email;
 
   return (
-    <div className="email-reveal-wrapper my-8 pb-4 flex justify-center w-full px-4">
+    <div className="email-reveal-wrapper my-8 flex w-full justify-center px-4 pb-4">
       <style>{`
         .email-reveal-wrapper .btn-wrapper {
           --color: #b5faff31;

@@ -36,12 +36,12 @@ export function NetworkErrorTV({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+    <div className="animate-in fade-in fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 backdrop-blur-xl duration-300">
       <div className="relative flex flex-col items-center justify-center">
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="absolute -top-12 right-0 cursor-pointer rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
             aria-label="Close"
           >
             <X className="size-5" />
@@ -526,13 +526,13 @@ export function NetworkErrorTV({
         </div>
 
         {/* Retry Button */}
-        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
           <button
             onClick={() => {
               if (onRetry) onRetry();
               else window.location.reload();
             }}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black font-semibold text-xs tracking-wider uppercase hover:bg-neutral-200 transition-all cursor-pointer shadow-lg"
+            className="flex cursor-pointer items-center gap-2 rounded-full bg-white px-6 py-2.5 text-xs font-semibold tracking-wider text-black uppercase shadow-lg transition-all hover:bg-neutral-200"
           >
             <RefreshCw className="size-3.5" />
             <span>Reconnect / Retry</span>

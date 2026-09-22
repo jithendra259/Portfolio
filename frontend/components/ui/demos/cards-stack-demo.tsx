@@ -1,107 +1,105 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { ContainerScroll, CardSticky } from "@/components/ui/widgets/cards-stack"
+import * as React from 'react';
+import { CardSticky, ContainerScroll } from '@/components/ui/widgets/cards-stack';
 
 const PROCESS_PHASES = [
   {
-    id: "process-1",
-    title: "Research and Analysis",
+    id: 'process-1',
+    title: 'Research and Analysis',
     description:
-      "With your vision in mind, we enter the Research and Analysis phase. Here, we examine your competitors, industry trends, and user preferences. This informed approach ensures your website stands out and provides an excellent user experience.",
+      'With your vision in mind, we enter the Research and Analysis phase. Here, we examine your competitors, industry trends, and user preferences. This informed approach ensures your website stands out and provides an excellent user experience.',
   },
   {
-    id: "process-2",
-    title: "Wireframing and Prototyping",
+    id: 'process-2',
+    title: 'Wireframing and Prototyping',
     description:
       "We move on to Wireframing and Prototyping, where we create skeletal representations of your website's pages. These visual indigoprints allow us to test and refine the user experience before diving into design.",
   },
   {
-    id: "process-3",
-    title: "Design Creation",
+    id: 'process-3',
+    title: 'Design Creation',
     description:
       "Now, it's time for the Design Creation phase. Our talented designers bring your vision to life. We focus on aesthetics, ensuring your website not only looks stunning but also aligns perfectly with your brand identity.",
   },
   {
-    id: "process-4",
-    title: "Development and Testing",
+    id: 'process-4',
+    title: 'Development and Testing',
     description:
-      "In the Development and Testing phase, our skilled developers turn designs into a fully functional website. Rigorous testing ensures everything works seamlessly, providing an exceptional user experience.",
+      'In the Development and Testing phase, our skilled developers turn designs into a fully functional website. Rigorous testing ensures everything works seamlessly, providing an exceptional user experience.',
   },
   {
-    id: "process-5",
-    title: "Launch and Support",
+    id: 'process-5',
+    title: 'Launch and Support',
     description:
       "Our commitment continues beyond launch. We offer post-launch support to address questions, provide assistance, and ensure your website remains updated and optimized. The Website Design Process isn't just about creating a website; it's about crafting a digital experience that resonates, engages, and converts.",
   },
-]
+];
 
 const WORK_PROJECTS = [
   {
-    id: "work-project-3",
-    title: "YCF DEV",
-    services: ["Portfolio", "Partnership", "UI UX Design"],
+    id: 'work-project-3',
+    title: 'YCF DEV',
+    services: ['Portfolio', 'Partnership', 'UI UX Design'],
     imageUrl:
-      "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3",
+      'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3',
   },
   {
-    id: "work-project-1",
-    title: "Stridath Ecommerce",
-    services: ["E-Commerce", "Branding", "UI UX Design", "Development"],
+    id: 'work-project-1',
+    title: 'Stridath Ecommerce',
+    services: ['E-Commerce', 'Branding', 'UI UX Design', 'Development'],
     imageUrl:
-      "https://images.unsplash.com/photo-1688561808434-886a6dd97b8c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3",
+      'https://images.unsplash.com/photo-1688561808434-886a6dd97b8c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3',
   },
   {
-    id: "work-project-2",
-    title: "Marketing Agency",
-    services: ["Partnership", "UI UX Design", "Development"],
+    id: 'work-project-2',
+    title: 'Marketing Agency',
+    services: ['Partnership', 'UI UX Design', 'Development'],
     imageUrl:
-      "https://images.unsplash.com/photo-1683803055067-1ca1c17cb2b9?q=80&w=2342&auto=format&fit=crop&ixlib=rb-4.0.3",
+      'https://images.unsplash.com/photo-1683803055067-1ca1c17cb2b9?q=80&w=2342&auto=format&fit=crop&ixlib=rb-4.0.3',
   },
-]
+];
 
 const ACHIEVEMENTS = [
   {
-    id: "achivement-1",
-    title: "4",
-    description: "site of the day",
-    bg: "rgb(58,148,118)",
+    id: 'achivement-1',
+    title: '4',
+    description: 'site of the day',
+    bg: 'rgb(58,148,118)',
   },
   {
-    id: "achivement-2",
-    title: "60+",
-    description: "website created",
-    bg: "rgb(195,97,158)",
+    id: 'achivement-2',
+    title: '60+',
+    description: 'website created',
+    bg: 'rgb(195,97,158)',
   },
   {
-    id: "achivement-3",
-    title: "5+",
-    description: "years of experience",
-    bg: "rgb(202,128,53)",
+    id: 'achivement-3',
+    title: '5+',
+    description: 'years of experience',
+    bg: 'rgb(202,128,53)',
   },
   {
-    id: "achivement-4",
-    title: "6+",
-    description: "component created",
-    bg: "rgb(135,95,195)",
+    id: 'achivement-4',
+    title: '6+',
+    description: 'component created',
+    bg: 'rgb(135,95,195)',
   },
-]
+];
 
 const Process = () => {
   return (
-    <div className="container min-h-svh place-content-center bg-stone-50 dark:bg-[#111111] px-6 text-stone-900 dark:text-white xl:px-12">
+    <div className="container min-h-svh place-content-center bg-stone-50 px-6 text-stone-900 xl:px-12 dark:bg-[#111111] dark:text-white">
       <div className="grid md:grid-cols-2 md:gap-8 xl:gap-12">
-        <div className="left-0 top-0 md:sticky md:h-svh md:py-12">
-          <h5 className="text-xs uppercase tracking-wide font-mono text-stone-500">our process</h5>
-          <h2 className="mb-6 mt-4 text-4xl font-bold tracking-tight">
-            Planning your{" "}
-            <span className="text-indigo-500">project development</span> journey
+        <div className="top-0 left-0 md:sticky md:h-svh md:py-12">
+          <h5 className="font-mono text-xs tracking-wide text-stone-500 uppercase">our process</h5>
+          <h2 className="mt-4 mb-6 text-4xl font-bold tracking-tight">
+            Planning your <span className="text-indigo-500">project development</span> journey
           </h2>
           <p className="max-w-prose text-sm text-stone-600 dark:text-neutral-300">
-            Our journey begins with a deep dive into your vision. In the
-            Discovery phase, we engage in meaningful conversations to grasp your
-            brand identity, goals, and the essence you want to convey. This
-            phase sets the stage for all that follows.
+            Our journey begins with a deep dive into your vision. In the Discovery phase, we engage
+            in meaningful conversations to grasp your brand identity, goals, and the essence you
+            want to convey. This phase sets the stage for all that follows.
           </p>
         </div>
         <ContainerScroll className="min-h-[400vh] space-y-8 py-12">
@@ -109,14 +107,12 @@ const Process = () => {
             <CardSticky
               key={phase.id}
               index={index + 2}
-              className="rounded-2xl border border-slate-200 dark:border-[#3c3c3c] bg-white/90 dark:bg-[#1e1e1e]/90 p-8 shadow-md backdrop-blur-md"
+              className="rounded-2xl border border-slate-200 bg-white/90 p-8 shadow-md backdrop-blur-md dark:border-[#3c3c3c] dark:bg-[#1e1e1e]/90"
             >
               <div className="flex items-center justify-between gap-4">
-                <h2 className="my-6 text-2xl font-bold tracking-tighter">
-                  {phase.title}
-                </h2>
-                <h3 className="text-2xl font-bold text-indigo-500 font-mono">
-                  {String(index + 1).padStart(2, "0")}
+                <h2 className="my-6 text-2xl font-bold tracking-tighter">{phase.title}</h2>
+                <h3 className="font-mono text-2xl font-bold text-indigo-500">
+                  {String(index + 1).padStart(2, '0')}
                 </h3>
               </div>
 
@@ -126,21 +122,22 @@ const Process = () => {
         </ContainerScroll>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Work = () => {
   return (
     <div className="container min-h-svh place-content-center bg-slate-900 p-12 text-stone-50">
       <div className="text-center">
-        <h5 className="text-xs uppercase tracking-wide font-mono text-stone-400">latest projects</h5>
-        <h2 className="mb-4 mt-1 text-4xl font-bold tracking-tight">
+        <h5 className="font-mono text-xs tracking-wide text-stone-400 uppercase">
+          latest projects
+        </h5>
+        <h2 className="mt-1 mb-4 text-4xl font-bold tracking-tight">
           Get a glimpse of <span className="text-indigo-500">our work</span>
         </h2>
         <p className="mx-auto max-w-prose text-sm text-neutral-400">
-          From ecommerce to startup landing pages and single/multi-page websites,
-          building fully responsive and functional websites that showcase your
-          product and your unique identity.
+          From ecommerce to startup landing pages and single/multi-page websites, building fully
+          responsive and functional websites that showcase your product and your unique identity.
         </p>
       </div>
       <ContainerScroll className="min-h-[500vh] py-12">
@@ -153,16 +150,11 @@ const Work = () => {
             incrementZ={5}
           >
             <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
-              <h2 className="text-2xl font-bold tracking-tighter text-white">
-                {project.title}
-              </h2>
+              <h2 className="text-2xl font-bold tracking-tighter text-white">{project.title}</h2>
               <div className="flex flex-wrap gap-1.5">
                 {project.services.map((service) => (
-                  <div
-                    key={service}
-                    className="flex rounded-xl bg-indigo-900/80 px-2.5 py-1"
-                  >
-                    <span className="text-xs tracking-tight text-indigo-200 font-mono">
+                  <div key={service} className="flex rounded-xl bg-indigo-900/80 px-2.5 py-1">
+                    <span className="font-mono text-xs tracking-tight text-indigo-200">
                       {service}
                     </span>
                   </div>
@@ -171,7 +163,7 @@ const Work = () => {
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="size-full object-cover max-h-[480px]"
+              className="size-full max-h-[480px] object-cover"
               width="100%"
               height="100%"
               src={project.imageUrl}
@@ -182,8 +174,8 @@ const Work = () => {
         ))}
       </ContainerScroll>
     </div>
-  )
-}
+  );
+};
 
 const Achievements = () => {
   return (
@@ -196,18 +188,18 @@ const Achievements = () => {
           className="flex h-72 w-[420px] flex-col place-content-center justify-evenly rounded-2xl border border-white/20 p-8 shadow-xl backdrop-blur-md"
           style={{ rotate: index + 2, background: achievement.bg }}
         >
-          <h1 className="text-left text-6xl font-semibold opacity-90 font-mono">
+          <h1 className="text-left font-mono text-6xl font-semibold opacity-90">
             {achievement.title}
           </h1>
           <div className="place-items-end text-right">
-            <h3 className="max-w-[10ch] text-wrap text-4xl font-semibold capitalize tracking-tight text-white">
+            <h3 className="max-w-[10ch] text-4xl font-semibold tracking-tight text-wrap text-white capitalize">
               {achievement.description}
             </h3>
           </div>
         </CardSticky>
       ))}
     </ContainerScroll>
-  )
-}
+  );
+};
 
-export { Process, Work, Achievements }
+export { Process, Work, Achievements };

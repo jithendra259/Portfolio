@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { motion, useAnimation } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 
 export interface TimelineEvent {
@@ -83,7 +83,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
   return (
     <motion.div
       ref={ref}
-      className={`relative mb-10 md:mb-16 w-full ${isEven ? 'md:ml-auto' : 'md:mr-auto'} md:w-1/2 flex ${
+      className={`relative mb-10 w-full md:mb-16 ${isEven ? 'md:ml-auto' : 'md:mr-auto'} flex md:w-1/2 ${
         isEven ? 'md:justify-start' : 'md:justify-end'
       }`}
       initial="hidden"
@@ -107,12 +107,12 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       <div
         className={`absolute left-6 md:left-auto ${
           isEven ? 'md:left-0' : 'md:right-0'
-        } top-0 transform -translate-x-1/2 ${
+        } top-0 -translate-x-1/2 transform ${
           isEven ? 'md:-translate-x-1/2' : 'md:translate-x-1/2'
         } z-20`}
       >
         <motion.div
-          className="size-10 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black flex items-center justify-center border-4 border-[#f8fafc] dark:border-[#000000] cursor-pointer shadow-lg transition-transform"
+          className="flex size-10 cursor-pointer items-center justify-center rounded-full border-4 border-[#f8fafc] bg-slate-900 text-white shadow-lg transition-transform dark:border-[#000000] dark:bg-white dark:text-black"
           whileHover={{ scale: 1.15 }}
           onClick={() => setActiveEvent(isExpanded ? null : event.id)}
           animate={{
@@ -129,19 +129,15 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
             duration: 1.5,
           }}
         >
-          {event.icon || (
-            <span className="font-bold text-xs font-mono">
-              {index + 1}
-            </span>
-          )}
+          {event.icon || <span className="font-mono text-xs font-bold">{index + 1}</span>}
         </motion.div>
       </div>
 
       {/* Content card */}
       <motion.div
-        className={`relative z-10 bg-white/95 dark:bg-[#1e1e1e] backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg hover:shadow-xl w-[calc(100%-3.5rem)] ml-14 md:ml-0 md:w-[calc(100%-2.5rem)] ${
+        className={`relative z-10 ml-14 w-[calc(100%-3.5rem)] overflow-hidden rounded-2xl bg-white/95 shadow-lg backdrop-blur-xl hover:shadow-xl md:ml-0 md:w-[calc(100%-2.5rem)] dark:bg-[#1e1e1e] ${
           isEven ? 'md:ml-8' : 'md:mr-8'
-        } border border-slate-200 dark:border-[#3c3c3c] transition-colors`}
+        } border border-slate-200 transition-colors dark:border-[#3c3c3c]`}
         whileHover={{
           y: -4,
           transition: { duration: 0.2 },
@@ -155,12 +151,12 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
         onMouseEnter={() => setActiveEvent(event.id)}
       >
         {showImages && event.image && (
-          <div className="relative h-40 sm:h-44 overflow-hidden group">
+          <div className="group relative h-40 overflow-hidden sm:h-44">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <motion.img
               src={event.image}
               alt={event.title}
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+              className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
               initial={{ scale: 1.1 }}
               animate={{
                 scale: isExpanded ? 1.05 : 1,
@@ -169,10 +165,10 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            
+
             {event.category && (
               <div className="absolute top-3 right-3">
-                <span className="bg-black/75 backdrop-blur-md border border-white/20 text-white px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase">
+                <span className="rounded-full border border-white/20 bg-black/75 px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider text-white uppercase backdrop-blur-md">
                   {event.category}
                 </span>
               </div>
@@ -180,7 +176,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
 
             {event.badge && (
               <div className="absolute bottom-3 left-3">
-                <span className="bg-white text-black dark:bg-white dark:text-black px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold tracking-tight">
+                <span className="rounded-full bg-white px-2.5 py-0.5 font-mono text-[10px] font-extrabold tracking-tight text-black dark:bg-white dark:text-black">
                   {event.badge}
                 </span>
               </div>
@@ -189,53 +185,56 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
         )}
 
         <div className="p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-xs font-mono font-bold tracking-wider text-slate-700 dark:text-neutral-300">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="font-mono text-xs font-bold tracking-wider text-slate-700 dark:text-neutral-300">
               {event.date}
             </span>
-            
-            <div className="size-2 rounded-full bg-slate-900 dark:bg-white animate-pulse" />
+
+            <div className="size-2 animate-pulse rounded-full bg-slate-900 dark:bg-white" />
           </div>
 
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug">
+          <h3 className="text-lg leading-snug font-bold text-slate-900 sm:text-xl dark:text-white">
             {event.title}
           </h3>
 
           {event.subtitle && (
-            <div className="text-xs font-mono text-slate-500 dark:text-neutral-400 mt-1">
+            <div className="mt-1 font-mono text-xs text-slate-500 dark:text-neutral-400">
               {event.subtitle}
             </div>
           )}
-          
+
           <motion.div
             initial={false}
             animate={{
               height: isExpanded ? 'auto' : 'auto',
               opacity: 1,
             }}
-            className="overflow-hidden mt-3"
+            className="mt-3 overflow-hidden"
           >
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-300 leading-relaxed">
+            <p className="text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-neutral-300">
               {event.description}
             </p>
 
             {event.highlights && event.highlights.length > 0 && (
-              <ul className="mt-3 space-y-1.5 border-t border-slate-100 dark:border-[#2a2a2a] pt-3">
+              <ul className="mt-3 space-y-1.5 border-t border-slate-100 pt-3 dark:border-[#2a2a2a]">
                 {event.highlights.map((h, hIdx) => (
-                  <li key={hIdx} className="text-xs text-slate-600 dark:text-neutral-400 flex items-start gap-1.5">
-                    <span className="text-slate-900 dark:text-white font-bold shrink-0">›</span>
+                  <li
+                    key={hIdx}
+                    className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-neutral-400"
+                  >
+                    <span className="shrink-0 font-bold text-slate-900 dark:text-white">›</span>
                     <span>{h}</span>
                   </li>
                 ))}
               </ul>
             )}
-            
+
             {event.link && (
               <a
                 href={event.link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 mt-4 px-3.5 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-black"
               >
                 <span>{event.link.text}</span>
                 <ExternalLink className="size-3" />
@@ -243,7 +242,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
             )}
           </motion.div>
         </div>
-        
+
         <motion.div
           className="absolute bottom-0 left-0 h-0.5 bg-slate-900 dark:bg-white"
           initial={{ width: '0%' }}
@@ -294,10 +293,10 @@ export const Timeline3D: React.FC<Timeline3DProps> = ({
 
   return (
     <div
-      className={`w-full ${backgroundColor} py-8 overflow-hidden ${textColor} ${className}`}
+      className={`w-full ${backgroundColor} overflow-hidden py-8 ${textColor} ${className}`}
       ref={containerRef}
     >
-      <div className="max-w-6xl mx-auto relative">
+      <div className="relative mx-auto max-w-6xl">
         {/* Main timeline content */}
         <motion.div
           className="relative z-10"
@@ -306,14 +305,14 @@ export const Timeline3D: React.FC<Timeline3DProps> = ({
           transition={{ duration: 0.6 }}
         >
           {(title || subtitle) && (
-            <div className="text-center mb-12">
+            <div className="mb-12 text-center">
               {subtitle && (
-                <span className="text-xs font-mono uppercase text-slate-600 dark:text-neutral-400 font-bold tracking-widest block mb-2">
+                <span className="mb-2 block font-mono text-xs font-bold tracking-widest text-slate-600 uppercase dark:text-neutral-400">
                   {subtitle}
                 </span>
               )}
               {title && (
-                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
                   {title}
                 </h2>
               )}
@@ -322,7 +321,7 @@ export const Timeline3D: React.FC<Timeline3DProps> = ({
 
           <div className="relative">
             {/* Central line */}
-            <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 h-full w-[2px] bg-slate-300 dark:bg-[#3c3c3c] rounded-full" />
+            <div className="absolute left-6 h-full w-[2px] -translate-x-1/2 transform rounded-full bg-slate-300 md:left-1/2 dark:bg-[#3c3c3c]" />
 
             {/* Timeline events */}
             {events.map((event, index) => (

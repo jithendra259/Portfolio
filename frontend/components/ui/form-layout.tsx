@@ -1,74 +1,74 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from 'react';
+import { Check, CircleCheck, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { Check, CircleCheck, ExternalLink } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const highlights = [
   {
     id: 1,
-    feature: "Used by top design teams worldwide",
+    feature: 'Used by top design teams worldwide',
   },
   {
     id: 2,
-    feature: "Seamless integration with design tools",
+    feature: 'Seamless integration with design tools',
   },
   {
     id: 3,
-    feature: "Real-time collaboration features",
+    feature: 'Real-time collaboration features',
   },
 ];
 
 const plans = [
   {
-    name: "Creator",
+    name: 'Creator',
     features: [
-      { feature: "Up to 3 design projects" },
-      { feature: "Basic collaboration tools" },
-      { feature: "5GB cloud storage" },
-      { feature: "Community forum support" },
+      { feature: 'Up to 3 design projects' },
+      { feature: 'Basic collaboration tools' },
+      { feature: '5GB cloud storage' },
+      { feature: 'Community forum support' },
     ],
-    price: "$15",
-    href: "#",
+    price: '$15',
+    href: '#',
     isRecommended: false,
   },
   {
-    name: "Team",
+    name: 'Team',
     features: [
-      { feature: "Unlimited design projects" },
-      { feature: "Advanced collaboration suite" },
-      { feature: "50GB cloud storage" },
-      { feature: "Priority email support" },
+      { feature: 'Unlimited design projects' },
+      { feature: 'Advanced collaboration suite' },
+      { feature: '50GB cloud storage' },
+      { feature: 'Priority email support' },
     ],
-    price: "$49",
-    href: "#",
+    price: '$49',
+    href: '#',
     isRecommended: true,
   },
   {
-    name: "Agency",
+    name: 'Agency',
     features: [
-      { feature: "Unlimited projects and team members" },
-      { feature: "Client portal access" },
-      { feature: "250GB cloud storage" },
-      { feature: "White-labeling options" },
-      { feature: "Dedicated account manager" },
+      { feature: 'Unlimited projects and team members' },
+      { feature: 'Client portal access' },
+      { feature: '250GB cloud storage' },
+      { feature: 'White-labeling options' },
+      { feature: 'Dedicated account manager' },
     ],
-    price: "$99",
-    href: "#",
+    price: '$99',
+    href: '#',
     isRecommended: false,
   },
 ];
@@ -79,9 +79,7 @@ export default function WorkspaceForm() {
   return (
     <div className="flex items-center justify-center p-10">
       <form className="sm:mx-auto sm:max-w-7xl">
-        <h3 className="text-xl font-semibold text-foreground">
-          Create new design workspace
-        </h3>
+        <h3 className="text-foreground text-xl font-semibold">Create new design workspace</h3>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="mt-6 lg:col-span-7">
             <div className="space-y-4 md:space-y-6">
@@ -91,11 +89,7 @@ export default function WorkspaceForm() {
                     Organization
                   </Label>
                   <Select defaultValue="1">
-                    <SelectTrigger
-                      id="organization"
-                      name="organization"
-                      className="mt-2 w-full"
-                    >
+                    <SelectTrigger id="organization" name="organization" className="mt-2 w-full">
                       <SelectValue placeholder="Select organization" />
                     </SelectTrigger>
                     <SelectContent>
@@ -121,26 +115,15 @@ export default function WorkspaceForm() {
                     <SelectValue placeholder="Select region" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="fra1">
-                      eu-central-1 (Frankfurt, Germany)
-                    </SelectItem>
-                    <SelectItem value="iad1">
-                      us-east-1 (Washington, D.C., USA)
-                    </SelectItem>
-                    <SelectItem value="lhr1">
-                      eu-west-2 (London, United Kingdom)
-                    </SelectItem>
-                    <SelectItem value="sfo1">
-                      us-west-1 (San Francisco, USA)
-                    </SelectItem>
-                    <SelectItem value="sin1">
-                      ap-southeast-1 (Singapore)
-                    </SelectItem>
+                    <SelectItem value="fra1">eu-central-1 (Frankfurt, Germany)</SelectItem>
+                    <SelectItem value="iad1">us-east-1 (Washington, D.C., USA)</SelectItem>
+                    <SelectItem value="lhr1">eu-west-2 (London, United Kingdom)</SelectItem>
+                    <SelectItem value="sfo1">us-west-1 (San Francisco, USA)</SelectItem>
+                    <SelectItem value="sin1">ap-southeast-1 (Singapore)</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  For best performance, choose a region closest to your
-                  operations
+                <p className="text-muted-foreground mt-2 text-sm">
+                  For best performance, choose a region closest to your operations
                 </p>
               </div>
             </div>
@@ -150,9 +133,7 @@ export default function WorkspaceForm() {
             <RadioGroup
               value={selected.name}
               onValueChange={(value) =>
-                setSelected(
-                  plans.find((plan) => plan.name === value) || plans[0]
-                )
+                setSelected(plans.find((plan) => plan.name === value) || plans[0])
               }
               className="mt-4 space-y-4"
             >
@@ -161,10 +142,10 @@ export default function WorkspaceForm() {
                   key={plan.name}
                   htmlFor={plan.name}
                   className={cn(
-                    "relative block cursor-pointer rounded-md border bg-background transition",
+                    'bg-background relative block cursor-pointer rounded-md border transition',
                     selected.name === plan.name
-                      ? "border-primary/20 ring-2 ring-primary/20"
-                      : "border-border"
+                      ? 'border-primary/20 ring-primary/20 ring-2'
+                      : 'border-border'
                   )}
                 >
                   <div className="flex items-start space-x-4 px-6 py-4">
@@ -173,9 +154,7 @@ export default function WorkspaceForm() {
                     </div>
                     <div className="w-full">
                       <p className="leading-6">
-                        <span className="font-semibold text-foreground">
-                          {plan.name}
-                        </span>
+                        <span className="text-foreground font-semibold">{plan.name}</span>
                         {plan.isRecommended && (
                           <Badge variant="secondary" className="ml-2">
                             recommended
@@ -184,33 +163,25 @@ export default function WorkspaceForm() {
                       </p>
                       <ul className="mt-2 space-y-1">
                         {plan.features.map((feature, index) => (
-                          <li
-                            key={index}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <Check
-                              className="h-4 w-4 text-muted-foreground"
-                              aria-hidden={true}
-                            />
+                          <li key={index} className="flex items-center gap-2 text-sm">
+                            <Check className="text-muted-foreground h-4 w-4" aria-hidden={true} />
                             {feature.feature}
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between rounded-b-md border-t border-border bg-muted px-6 py-3">
+                  <div className="border-border bg-muted flex items-center justify-between rounded-b-md border-t px-6 py-3">
                     <a
                       href={plan.href}
-                      className="inline-flex items-center gap-1 text-sm text-primary hover:underline hover:underline-offset-4"
+                      className="text-primary inline-flex items-center gap-1 text-sm hover:underline hover:underline-offset-4"
                     >
                       Learn more
                       <ExternalLink className="h-4 w-4" aria-hidden={true} />
                     </a>
                     <div>
-                      <span className="text-lg font-semibold text-foreground">
-                        {plan.price}
-                      </span>
-                      <span className="text-sm text-muted-foreground">/mo</span>
+                      <span className="text-foreground text-lg font-semibold">{plan.price}</span>
+                      <span className="text-muted-foreground text-sm">/mo</span>
                     </div>
                   </div>
                 </label>
@@ -220,29 +191,26 @@ export default function WorkspaceForm() {
           <div className="lg:col-span-5">
             <Card className="bg-muted">
               <CardContent>
-                <h4 className="text-sm font-semibold text-foreground">
+                <h4 className="text-foreground text-sm font-semibold">
                   Choose the right plan for your design team
                 </h4>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Our flexible plans are designed to scale with your team&apos;s
-                  needs. All plans include core design collaboration features
-                  with varying levels of storage and support.
+                <p className="text-muted-foreground mt-2 text-sm leading-6">
+                  Our flexible plans are designed to scale with your team&apos;s needs. All plans
+                  include core design collaboration features with varying levels of storage and
+                  support.
                 </p>
                 <ul className="mt-4 space-y-1">
                   {highlights.map((item) => (
                     <li
                       key={item.id}
-                      className="flex items-center space-x-2 py-1.5 text-foreground"
+                      className="text-foreground flex items-center space-x-2 py-1.5"
                     >
-                      <CircleCheck className="h-5 w-5 text-primary" />
+                      <CircleCheck className="text-primary h-5 w-5" />
                       <span className="truncate text-sm">{item.feature}</span>
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="#"
-                  className="mt-4 inline-flex items-center gap-1 text-sm text-primary"
-                >
+                <a href="#" className="text-primary mt-4 inline-flex items-center gap-1 text-sm">
                   Learn more
                   <ExternalLink className="h-4 w-4" aria-hidden={true} />
                 </a>

@@ -290,12 +290,7 @@ function parseNotificationArgs(
 /**
  * Trigger function to display a custom notification card as a toast
  */
-function showNotify(
-  type: NotificationType,
-  title: string,
-  subtitle?: string,
-  duration = 4000
-) {
+function showNotify(type: NotificationType, title: string, subtitle?: string, duration = 4000) {
   return sonnerToast.custom(
     (t) => (
       <NotificationCard

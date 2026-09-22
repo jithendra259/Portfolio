@@ -6,6 +6,7 @@ Each project in this directory is defined in its own standalone file, exporting 
 
 1. **Create a new file**: e.g. `data/projects/my-new-project.ts`.
 2. **Define your project**:
+
 ```ts
 import { Project } from './types';
 
@@ -23,14 +24,9 @@ export const myNewProject: Project = {
   githubUrl: 'https://github.com/jithendra259/...',
   liveUrl: 'https://...',
   featured: true,
-  highlights: [
-    'Key feature 1',
-    'Key feature 2',
-  ],
+  highlights: ['Key feature 1', 'Key feature 2'],
   techStack: ['Python', 'Next.js', 'LangGraph'],
-  metrics: [
-    { label: 'Latency', value: '<200ms', detail: 'Real-time response time' },
-  ],
+  metrics: [{ label: 'Latency', value: '<200ms', detail: 'Real-time response time' }],
   architectureSteps: [
     {
       step: '01',
@@ -39,18 +35,14 @@ export const myNewProject: Project = {
       tech: 'Python / WebSockets',
     },
   ],
-  keyCapabilities: [
-    { title: 'Core Feature', description: 'Deep technical capability.' },
-  ],
-  challenges: [
-    { challenge: 'Complex state sync', solution: 'Used optimistic concurrency.' },
-  ],
-  techStackCategories: [
-    { category: 'Frontend', items: ['Next.js', 'Tailwind CSS'] },
-  ],
+  keyCapabilities: [{ title: 'Core Feature', description: 'Deep technical capability.' }],
+  challenges: [{ challenge: 'Complex state sync', solution: 'Used optimistic concurrency.' }],
+  techStackCategories: [{ category: 'Frontend', items: ['Next.js', 'Tailwind CSS'] }],
 };
 ```
+
 3. **Register it in `data/projects/index.ts`**:
+
 ```ts
 import { myNewProject } from './my-new-project';
 
@@ -59,4 +51,5 @@ export const ALL_PROJECTS: Project[] = [
   myNewProject,
 ];
 ```
+
 4. **Done!** The landing page Bento Grid, category filters, case study `/projects/my-new-project`, breadcrumbs, and previous/next project carousels will update automatically.

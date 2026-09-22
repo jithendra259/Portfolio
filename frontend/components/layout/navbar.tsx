@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { TextAlignJustify } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +10,6 @@ import {
 } from '@/components/ui/primitives/dropdown-menu';
 import { DayNightSwitch } from '@/components/ui/widgets/day-night-switch';
 import { cn } from '@/lib/utils';
-import { TextAlignJustify } from 'lucide-react';
 
 export type NavigationSection = {
   title: string;
@@ -49,46 +49,48 @@ export const Navbar = ({
   }, [handleResize]);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] flex justify-center pointer-events-none">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-[100] flex justify-center">
       {/* Top-Docked Sticky Glassmorphism Navigation Bar */}
       <nav
         className={cn(
-          'pointer-events-auto relative flex items-center justify-between gap-4 sm:gap-6 lg:gap-8 px-6 sm:px-8 py-3 sm:py-3.5 transition-all duration-300',
-          'bg-white/60 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
-          'rounded-b-[2rem] border-b border-x border-slate-200/80 dark:border-white/10',
+          'pointer-events-auto relative flex items-center justify-between gap-4 px-6 py-3 transition-all duration-300 sm:gap-6 sm:px-8 sm:py-3.5 lg:gap-8',
+          'bg-white/60 backdrop-blur-2xl backdrop-saturate-150 dark:bg-black/40',
+          'rounded-b-[2rem] border-x border-b border-slate-200/80 dark:border-white/10',
           'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_0_rgba(0,0,0,0.65)]',
-          'max-w-[95vw] xl:max-w-6xl w-auto mx-auto'
+          'mx-auto w-auto max-w-[95vw] xl:max-w-6xl'
         )}
       >
         {/* Top subtle highlight reflection line */}
-        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 dark:via-white/20 to-transparent pointer-events-none" />
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/20" />
 
         {/* Brand Logo & Name (Click to Replay Opening Animation) */}
         <button
           type="button"
           onClick={() => {
-            if (typeof window !== "undefined") {
-              window.dispatchEvent(new CustomEvent("replay-cinematic-intro"));
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('replay-cinematic-intro'));
             }
           }}
           title="Replay Opening Animation"
-          className="flex items-center gap-2.5 text-slate-900 dark:text-white group hover:opacity-90 transition-opacity cursor-pointer bg-transparent border-0 p-0 text-left shrink-0"
+          className="group flex shrink-0 cursor-pointer items-center gap-2.5 border-0 bg-transparent p-0 text-left text-slate-900 transition-opacity hover:opacity-90 dark:text-white"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm group-hover:scale-105 transition-transform">
-            <span className="text-xs font-black tracking-widest text-slate-900 dark:text-white">J</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300/80 bg-slate-200/80 shadow-sm transition-transform group-hover:scale-105 dark:border-white/15 dark:bg-white/10">
+            <span className="text-xs font-black tracking-widest text-slate-900 dark:text-white">
+              J
+            </span>
           </div>
-          <span className="text-xs font-bold tracking-[0.2em] font-mono text-slate-900 dark:text-neutral-200 hidden sm:inline">
+          <span className="hidden font-mono text-xs font-bold tracking-[0.2em] text-slate-900 sm:inline dark:text-neutral-200">
             JITHENDRA
           </span>
         </button>
 
         {/* Center Navigation Links with Glassy Floating Feel */}
-        <div className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium tracking-wide">
+        <div className="hidden items-center gap-4 text-sm font-medium tracking-wide md:flex lg:gap-6">
           {navigationData.map((navItem) => (
             <a
               key={navItem.title}
               href={navItem.href}
-              className="text-slate-700 dark:text-neutral-300 hover:text-slate-950 dark:hover:text-white transition-colors duration-200 text-[13.5px] font-sans tracking-wide shrink-0"
+              className="shrink-0 font-sans text-[13.5px] tracking-wide text-slate-700 transition-colors duration-200 hover:text-slate-950 dark:text-neutral-300 dark:hover:text-white"
             >
               {navItem.title}
             </a>
@@ -104,7 +106,7 @@ export const Navbar = ({
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger
                 id="navbar-mobile-menu-trigger"
-                className="flex cursor-pointer items-center justify-center rounded-full border border-slate-300/80 dark:border-white/15 bg-slate-100/80 dark:bg-white/10 p-2 text-slate-900 dark:text-white outline-none transition hover:border-slate-400 dark:hover:border-white/30"
+                className="flex cursor-pointer items-center justify-center rounded-full border border-slate-300/80 bg-slate-100/80 p-2 text-slate-900 transition outline-none hover:border-slate-400 dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/30"
               >
                 <TextAlignJustify size={16} />
                 <span className="sr-only">Menu</span>
@@ -112,12 +114,12 @@ export const Navbar = ({
 
               <DropdownMenuContent
                 align="end"
-                className="mt-3 w-52 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c0c0e]/95 p-2 text-slate-900 dark:text-white backdrop-blur-2xl shadow-2xl"
+                className="mt-3 w-52 rounded-2xl border border-slate-200/80 bg-white/90 p-2 text-slate-900 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-[#0c0c0e]/95 dark:text-white"
               >
                 {navigationData.map((item) => (
                   <DropdownMenuItem
                     key={item.title}
-                    className="rounded-xl px-3 py-2 text-sm font-medium text-slate-800 dark:text-neutral-200 focus:bg-slate-100 dark:focus:bg-neutral-800 cursor-pointer"
+                    className="cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-slate-800 focus:bg-slate-100 dark:text-neutral-200 dark:focus:bg-neutral-800"
                     onClick={() => setIsOpen(false)}
                   >
                     <a href={item.href} className="w-full">

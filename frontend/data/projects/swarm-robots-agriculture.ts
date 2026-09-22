@@ -5,11 +5,16 @@ export const swarmRobotsAgriculture: Project = {
   title: 'Swarm Robots for Precision Agriculture',
   category: 'Robotics & IoT',
   period: 'Aug 2022 – Jul 2023',
-  tagline: 'Autonomous multi-robot coordination system for real-time crop health monitoring and automated plant disease diagnosis.',
-  description: 'Built a swarm robotics agriculture system using embedded hardware, IoT sensors, autonomous inter-robot coordination, and image-processing concepts for precision farming.',
-  overview: 'An embedded robotics and computer vision project demonstrating decentralized swarm intelligence in agriculture, utilizing coordinated mobile robots to autonomously inspect crops and flag foliage pathology. Submitted as B.Tech final-year capstone project at Presidency University (2022-23) under the guidance of Dr. M.S. Divya Rani. Also funded and accepted under the Karnataka State Council for Science and Technology (KSCST) 46th Student Project Programme (SPP).',
-  problemStatement: 'Manual crop disease scouting is labor-intensive, slow, and often catches fungal or bacterial infections after irreversible crop yield loss has already occurred. Current mechanized solutions are product-specific and unable to handle multitasking — they cannot simultaneously perform irrigation, ploughing, seeding, and disease detection.',
-  solution: 'Constructed an autonomous swarm of ground rovers equipped with optical cameras, DHT11 environmental sensors, DC motor-based ploughing tools, seed sowing mechanisms, and NRF-based inter-robot communication to survey agricultural plots autonomously. Integrated DenseNet-121 CNN for leaf disease classification and cloud connectivity via Blynk IoT for remote monitoring.',
+  tagline:
+    'Autonomous multi-robot coordination system for real-time crop health monitoring and automated plant disease diagnosis.',
+  description:
+    'Built a swarm robotics agriculture system using embedded hardware, IoT sensors, autonomous inter-robot coordination, and image-processing concepts for precision farming.',
+  overview:
+    'An embedded robotics and computer vision project demonstrating decentralized swarm intelligence in agriculture, utilizing coordinated mobile robots to autonomously inspect crops and flag foliage pathology. Submitted as B.Tech final-year capstone project at Presidency University (2022-23) under the guidance of Dr. M.S. Divya Rani. Also funded and accepted under the Karnataka State Council for Science and Technology (KSCST) 46th Student Project Programme (SPP).',
+  problemStatement:
+    'Manual crop disease scouting is labor-intensive, slow, and often catches fungal or bacterial infections after irreversible crop yield loss has already occurred. Current mechanized solutions are product-specific and unable to handle multitasking — they cannot simultaneously perform irrigation, ploughing, seeding, and disease detection.',
+  solution:
+    'Constructed an autonomous swarm of ground rovers equipped with optical cameras, DHT11 environmental sensors, DC motor-based ploughing tools, seed sowing mechanisms, and NRF-based inter-robot communication to survey agricultural plots autonomously. Integrated DenseNet-121 CNN for leaf disease classification and cloud connectivity via Blynk IoT for remote monitoring.',
   status: 'B.Tech Capstone Project | Presidency University | KSCST 46th SPP Funded',
   githubUrl: 'https://github.com/jithendra259',
   pdfUrl: '/documents/swarm-robots-agriculture/swarm-robotics-kscst-proposal.pdf',
@@ -37,79 +42,131 @@ export const swarmRobotsAgriculture: Project = {
     'Camera Module',
   ],
   metrics: [
-    { label: 'Disease Classification', value: '93.4% Accuracy', detail: 'DenseNet-121 trained on agricultural leaf pathology datasets' },
-    { label: 'Robot Architecture', value: 'Master-Slave', detail: 'Decentralized multi-robot swarm with NRF24L01 inter-communication' },
-    { label: 'Field Functions', value: '5 Capabilities', detail: 'Ploughing, seeding, pesticide spraying, irrigation, disease monitoring' },
-    { label: 'KSCST SPP', value: '46th Series', detail: 'Funded project under Karnataka State Council for Science and Technology' },
+    {
+      label: 'Disease Classification',
+      value: '93.4% Accuracy',
+      detail: 'DenseNet-121 trained on agricultural leaf pathology datasets',
+    },
+    {
+      label: 'Robot Architecture',
+      value: 'Master-Slave',
+      detail: 'Decentralized multi-robot swarm with NRF24L01 inter-communication',
+    },
+    {
+      label: 'Field Functions',
+      value: '5 Capabilities',
+      detail: 'Ploughing, seeding, pesticide spraying, irrigation, disease monitoring',
+    },
+    {
+      label: 'KSCST SPP',
+      value: '46th Series',
+      detail: 'Funded project under Karnataka State Council for Science and Technology',
+    },
   ],
   architectureSteps: [
     {
       step: '01',
       title: 'Autonomous Field Navigation',
-      description: 'Master robot leads field navigation while slave robots follow coordinated paths. Differential-drive rovers navigate crop furrows using ultrasonic collision avoidance sensors (range up to 100 cm). Motor control via L293D motor driver interfaced with Raspberry Pi GPIO pins.',
+      description:
+        'Master robot leads field navigation while slave robots follow coordinated paths. Differential-drive rovers navigate crop furrows using ultrasonic collision avoidance sensors (range up to 100 cm). Motor control via L293D motor driver interfaced with Raspberry Pi GPIO pins.',
       tech: 'Raspberry Pi, L293D Motor Driver, Ultrasonic Sensors',
     },
     {
       step: '02',
       title: 'Swarm Communication Protocol (NRF24L01)',
-      description: 'Master-slave inter-robot communication via NRF24L01 RF modules. Master robot broadcasts task assignments and terrain boundaries to slave robots. Decentralized mesh networking enables spatial partitioning of the field among the swarm.',
+      description:
+        'Master-slave inter-robot communication via NRF24L01 RF modules. Master robot broadcasts task assignments and terrain boundaries to slave robots. Decentralized mesh networking enables spatial partitioning of the field among the swarm.',
       tech: 'NRF24L01 RF Modules, Raspberry Pi, Wi-Fi (Blynk Cloud)',
     },
     {
       step: '03',
       title: 'Multi-Function Agricultural Actuators',
-      description: 'Ploughing: 12V DC servomotor-operated adjustable plough tool. Seed sowing: automated seed dispenser with adjustable spacing. Pesticide spraying: precision water pump relay triggered upon disease detection. Irrigation: water pump activated when DHT11 temperature/humidity crosses threshold.',
+      description:
+        'Ploughing: 12V DC servomotor-operated adjustable plough tool. Seed sowing: automated seed dispenser with adjustable spacing. Pesticide spraying: precision water pump relay triggered upon disease detection. Irrigation: water pump activated when DHT11 temperature/humidity crosses threshold.',
       tech: 'DC Servomotor, Relay Module, Water Pump, DHT11 Sensor',
     },
     {
       step: '04',
       title: 'Computer Vision Foliage Capture',
-      description: 'High-resolution Raspberry Pi camera modules capture leaf samples under varied ambient solar illumination. Images are preprocessed and fed into the DenseNet-121 CNN classifier for plant disease detection.',
+      description:
+        'High-resolution Raspberry Pi camera modules capture leaf samples under varied ambient solar illumination. Images are preprocessed and fed into the DenseNet-121 CNN classifier for plant disease detection.',
       tech: 'Raspberry Pi Camera Module, OpenCV, Python',
     },
     {
       step: '05',
       title: 'DenseNet-121 Pathology Inference & Alert',
-      description: 'DenseNet-121 CNN classifies captured leaf images as Healthy or Disease. Each layer in the DenseNet architecture connects to every other layer directly, alleviating the vanishing gradient problem. Disease detections trigger pesticide spraying and geo-tag infection hotspots. Results transmitted to Blynk IoT cloud dashboard for remote farmer monitoring.',
+      description:
+        'DenseNet-121 CNN classifies captured leaf images as Healthy or Disease. Each layer in the DenseNet architecture connects to every other layer directly, alleviating the vanishing gradient problem. Disease detections trigger pesticide spraying and geo-tag infection hotspots. Results transmitted to Blynk IoT cloud dashboard for remote farmer monitoring.',
       tech: 'DenseNet-121, TensorFlow / Keras, Blynk IoT Cloud',
     },
   ],
   keyCapabilities: [
     {
       title: 'Decentralized Swarm Coordination',
-      description: 'Master robot orchestrates task allocation and field partitioning among slave robots without a single point of failure central server. Robots autonomously self-organize to cover the entire agricultural field, drawing inspiration from ant and bee colony collective behaviour.',
+      description:
+        'Master robot orchestrates task allocation and field partitioning among slave robots without a single point of failure central server. Robots autonomously self-organize to cover the entire agricultural field, drawing inspiration from ant and bee colony collective behaviour.',
     },
     {
       title: 'DenseNet-121 Leaf Disease Diagnosis',
-      description: 'DenseNet-121 architecture — with dense connections between all layers in each block — classifies early-stage plant diseases (rust, blight, pest damage) from leaf imagery. Enables micro-targeted pesticide application only where disease is detected, reducing chemical usage.',
+      description:
+        'DenseNet-121 architecture — with dense connections between all layers in each block — classifies early-stage plant diseases (rust, blight, pest damage) from leaf imagery. Enables micro-targeted pesticide application only where disease is detected, reducing chemical usage.',
     },
     {
       title: 'Micro-Climate IoT Telemetry',
-      description: 'DHT11 sensors log soil moisture, ambient temperature, and humidity in real-time. When environmental thresholds are exceeded, irrigation is automatically triggered. All field data streamed to Blynk cloud for remote monitoring via Android smartphone.',
+      description:
+        'DHT11 sensors log soil moisture, ambient temperature, and humidity in real-time. When environmental thresholds are exceeded, irrigation is automatically triggered. All field data streamed to Blynk cloud for remote monitoring via Android smartphone.',
     },
     {
       title: 'Solar-Powered Autonomous Operation',
-      description: 'Both master and slave robots are equipped with solar panels and battery systems for sustained field operation. Energy-efficient sleep/wake cycles and optimized motor PWM curves maximize battery longevity in extended field missions.',
+      description:
+        'Both master and slave robots are equipped with solar panels and battery systems for sustained field operation. Energy-efficient sleep/wake cycles and optimized motor PWM curves maximize battery longevity in extended field missions.',
     },
   ],
   challenges: [
     {
       challenge: 'Varying natural sunlight degrading computer vision accuracy',
-      solution: 'Implemented adaptive histogram equalization and HSV color-space normalization before feeding images to the DenseNet-121 classifier. The dense connections within DenseNet also improve robustness to varying illumination conditions.',
+      solution:
+        'Implemented adaptive histogram equalization and HSV color-space normalization before feeding images to the DenseNet-121 classifier. The dense connections within DenseNet also improve robustness to varying illumination conditions.',
     },
     {
       challenge: 'Power constraints on mobile rovers in rough terrain',
-      solution: 'Designed an energy-efficient sleep/wake sensing cycle and optimized motor PWM curves to maximize battery longevity. Solar panels on each robot provide continuous charge during daylight field operations.',
+      solution:
+        'Designed an energy-efficient sleep/wake sensing cycle and optimized motor PWM curves to maximize battery longevity. Solar panels on each robot provide continuous charge during daylight field operations.',
     },
     {
       challenge: 'Inter-robot coordination and collision avoidance in dense crop rows',
-      solution: 'NRF24L01 RF modules enable real-time master-slave position broadcasting. Ultrasonic sensors with 100 cm detection range prevent collisions. Field partitioned algorithmically by master robot to eliminate territory overlap between slave robots.',
+      solution:
+        'NRF24L01 RF modules enable real-time master-slave position broadcasting. Ultrasonic sensors with 100 cm detection range prevent collisions. Field partitioned algorithmically by master robot to eliminate territory overlap between slave robots.',
     },
   ],
   techStackCategories: [
-    { category: 'Hardware & Embedded', items: ['Raspberry Pi', 'L293D Motor Driver', 'DC Servo Motor', 'Ultrasonic Sensors', 'DHT11 Sensor', 'Solar Panel', 'Water Pump Relay'] },
-    { category: 'Computer Vision & AI', items: ['Python', 'OpenCV', 'DenseNet-121', 'TensorFlow / Keras', 'CNN', 'Image Classification'] },
-    { category: 'Networking & IoT', items: ['NRF24L01 RF', 'Blynk IoT Cloud', 'Wi-Fi Module', 'Android Remote Control'] },
+    {
+      category: 'Hardware & Embedded',
+      items: [
+        'Raspberry Pi',
+        'L293D Motor Driver',
+        'DC Servo Motor',
+        'Ultrasonic Sensors',
+        'DHT11 Sensor',
+        'Solar Panel',
+        'Water Pump Relay',
+      ],
+    },
+    {
+      category: 'Computer Vision & AI',
+      items: [
+        'Python',
+        'OpenCV',
+        'DenseNet-121',
+        'TensorFlow / Keras',
+        'CNN',
+        'Image Classification',
+      ],
+    },
+    {
+      category: 'Networking & IoT',
+      items: ['NRF24L01 RF', 'Blynk IoT Cloud', 'Wi-Fi Module', 'Android Remote Control'],
+    },
   ],
   reportSections: [
     {
@@ -472,15 +529,27 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
   ],
   ieeePaper: {
     venue: 'KSCST 46th SPP Grant / B.Tech Engineering Research Capstone',
-    paperTitle: 'Autonomous Swarm Robotics System for Soil Ploughing, Precision Irrigation, and In-Situ Foliar Pathogen Diagnosis',
+    paperTitle:
+      'Autonomous Swarm Robotics System for Soil Ploughing, Precision Irrigation, and In-Situ Foliar Pathogen Diagnosis',
     authors: [
-      { name: 'Kandula Jithendra Subramanyam', affiliationIndex: 1, isCorresponding: true, email: 'jithendrasubramanyam@gmail.com' },
+      {
+        name: 'Kandula Jithendra Subramanyam',
+        affiliationIndex: 1,
+        isCorresponding: true,
+        email: 'jithendrasubramanyam@gmail.com',
+      },
       { name: 'Dr. M. S. Divya Rani', affiliationIndex: 1 },
     ],
     affiliations: [
-      { index: 1, institution: 'Presidency University', department: 'Dept. of Electronics and Communication Engineering', location: 'Bengaluru, India' },
+      {
+        index: 1,
+        institution: 'Presidency University',
+        department: 'Dept. of Electronics and Communication Engineering',
+        location: 'Bengaluru, India',
+      },
     ],
-    abstract: 'Agricultural operations face acute labor deficits and imprecise chemical distribution across emerging agricultural economies. In this paper, we engineer and field-validate an autonomous cooperative swarm robotics platform for multi-stage mechanized farming. The hardware framework integrates a master-slave communication architecture over 2.4 GHz NRF24L01 transceivers with Blynk IoT cloud monitoring. Each node deploys custom dual-wheel differential drive chassis equipped with depth-adjustable ploughing implements, ultrasonic obstacle avoidance, and Raspberry Pi edge computing. For foliar disease detection, we deploy an optimized DenseNet-121 convolutional neural network featuring direct feature concatenation across layers. Field evaluations demonstrate a 93.4% disease classification accuracy and a 60% reduction in manual labor hours with zero inter-robot collision incidents.',
+    abstract:
+      'Agricultural operations face acute labor deficits and imprecise chemical distribution across emerging agricultural economies. In this paper, we engineer and field-validate an autonomous cooperative swarm robotics platform for multi-stage mechanized farming. The hardware framework integrates a master-slave communication architecture over 2.4 GHz NRF24L01 transceivers with Blynk IoT cloud monitoring. Each node deploys custom dual-wheel differential drive chassis equipped with depth-adjustable ploughing implements, ultrasonic obstacle avoidance, and Raspberry Pi edge computing. For foliar disease detection, we deploy an optimized DenseNet-121 convolutional neural network featuring direct feature concatenation across layers. Field evaluations demonstrate a 93.4% disease classification accuracy and a 60% reduction in manual labor hours with zero inter-robot collision incidents.',
     keywords: [
       'Swarm Robotics',
       'Precision Agriculture',
@@ -495,7 +564,8 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig1-mechanical',
         figureNumber: 'Fig. 1',
         title: 'Robot Mechanical Chassis & Ploughing Tool',
-        caption: 'CAD schematic and mechanical chassis assembly showing differential drive motors, depth-adjustable furrow opener plough, and seed dispensing hopper.',
+        caption:
+          'CAD schematic and mechanical chassis assembly showing differential drive motors, depth-adjustable furrow opener plough, and seed dispensing hopper.',
         src: '/images/projects/swarm-robots-agriculture/fig1-robot-mechanical-cad.png',
         alt: 'Robot Mechanical Chassis Assembly',
       },
@@ -503,7 +573,8 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig2-circuit',
         figureNumber: 'Fig. 2',
         title: 'Microcontroller & Motor Driver Circuit Wiring',
-        caption: 'Electrical schematic showing Raspberry Pi 4 GPIO pinout, L298N dual H-bridge motor driver interface, 12V lead-acid battery regulation, and ultrasonic sensor array.',
+        caption:
+          'Electrical schematic showing Raspberry Pi 4 GPIO pinout, L298N dual H-bridge motor driver interface, 12V lead-acid battery regulation, and ultrasonic sensor array.',
         src: '/images/projects/swarm-robots-agriculture/fig2-circuit-hardware-pinout.png',
         alt: 'Hardware Circuit and Pinout Schematic',
       },
@@ -511,7 +582,8 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig3-mesh',
         figureNumber: 'Fig. 3',
         title: 'Inter-Robot RF Mesh Communication Topology',
-        caption: 'Decentralized master-slave communication architecture over 2.4 GHz NRF24L01 transceivers enabling collision-free grid furrow traversal.',
+        caption:
+          'Decentralized master-slave communication architecture over 2.4 GHz NRF24L01 transceivers enabling collision-free grid furrow traversal.',
         src: '/images/projects/swarm-robots-agriculture/fig3-communication-mesh.png',
         alt: 'Inter-Robot Communication Mesh',
       },
@@ -519,7 +591,8 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig4-densenet',
         figureNumber: 'Fig. 4',
         title: 'DenseNet-121 Foliar Disease Diagnosis Architecture',
-        caption: 'Deep convolutional neural network architecture with dense skip-connections connecting every layer directly to subsequent layers, preserving feature reuse.',
+        caption:
+          'Deep convolutional neural network architecture with dense skip-connections connecting every layer directly to subsequent layers, preserving feature reuse.',
         src: '/images/projects/swarm-robots-agriculture/fig4-densenet121-architecture.png',
         alt: 'DenseNet-121 CNN Architecture',
       },
@@ -527,7 +600,8 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig5-prototype',
         figureNumber: 'Fig. 5',
         title: 'Autonomous Swarm Robot Physical Prototype in Field Deployment',
-        caption: 'Fabricated autonomous robot unit undergoing real-world field trials for in-situ soil furrowing and edge camera disease inference.',
+        caption:
+          'Fabricated autonomous robot unit undergoing real-world field trials for in-situ soil furrowing and edge camera disease inference.',
         src: '/images/projects/swarm-robots-agriculture/fig5-field-testing-prototype.png',
         alt: 'Physical Field Testing Prototype',
       },
@@ -535,16 +609,33 @@ KSCST SPP: 46th Series, 2022-23. Karnataka State Council for Science and Technol
         id: 'fig6-confusion',
         figureNumber: 'Fig. 6',
         title: 'Disease Classification Confusion Matrix',
-        caption: 'Multi-class foliar pathology confusion matrix verifying 93.4% accuracy across healthy, bacterial blight, and early rust foliar samples.',
+        caption:
+          'Multi-class foliar pathology confusion matrix verifying 93.4% accuracy across healthy, bacterial blight, and early rust foliar samples.',
         src: '/images/projects/swarm-robots-agriculture/fig6-disease-classification-confusion.png',
         alt: 'Disease Classification Confusion Matrix',
       },
     ],
     references: [
-      { index: 1, citation: 'K. Narayanan, V. Honkote, D. Ghosh, and S. Baldev, "Energy Efficient Communication with Lossless Data Encoding for Swarm Robot Coordination," IEEE Transactions on Industrial Informatics, 2019.' },
-      { index: 2, citation: 'D. Albiero, A. P. Garcia, C. K. Umezu, and R. L. de Paulo, "Swarm Robots in Mechanized Agricultural Operations: Roadmap for Research," Computers and Electronics in Agriculture, 2020.' },
-      { index: 3, citation: 'G. Huang, Z. Liu, L. van der Maaten, and K. Q. Weinberger, "Densely Connected Convolutional Networks," in IEEE CVPR, 2017, pp. 4700–4708.' },
-      { index: 4, citation: 'F. Arvin, K. Samsudin, and A. Ramli, "Development of IR-based short-range communication techniques for swarm robot applications," Advances in Electrical and Computer Engineering, vol. 10, pp. 61–68, 2010.' },
+      {
+        index: 1,
+        citation:
+          'K. Narayanan, V. Honkote, D. Ghosh, and S. Baldev, "Energy Efficient Communication with Lossless Data Encoding for Swarm Robot Coordination," IEEE Transactions on Industrial Informatics, 2019.',
+      },
+      {
+        index: 2,
+        citation:
+          'D. Albiero, A. P. Garcia, C. K. Umezu, and R. L. de Paulo, "Swarm Robots in Mechanized Agricultural Operations: Roadmap for Research," Computers and Electronics in Agriculture, 2020.',
+      },
+      {
+        index: 3,
+        citation:
+          'G. Huang, Z. Liu, L. van der Maaten, and K. Q. Weinberger, "Densely Connected Convolutional Networks," in IEEE CVPR, 2017, pp. 4700–4708.',
+      },
+      {
+        index: 4,
+        citation:
+          'F. Arvin, K. Samsudin, and A. Ramli, "Development of IR-based short-range communication techniques for swarm robot applications," Advances in Electrical and Computer Engineering, vol. 10, pp. 61–68, 2010.',
+      },
     ],
   },
 };

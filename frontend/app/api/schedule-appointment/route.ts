@@ -1,5 +1,7 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+﻿import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
+import { google } from 'googleapis';
+import nodemailer from 'nodemailer';
 import { createClient } from '@/utils/supabase/server';
 
 const BACKEND_URL = 'https://portfolio-backend-fx8o.onrender.com';
@@ -14,7 +16,10 @@ function generateMeetCode(): string {
 }
 
 function formatUtcForCalendar(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return d
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 }
 
 async function createGoogleCalendarEvent({
@@ -65,9 +70,10 @@ async function createGoogleCalendarEvent({
           dateTime: endDate.toISOString(),
           timeZone: 'Asia/Kolkata',
         },
-        attendees: attendeeEmail && attendeeEmail.includes('@')
-          ? [{ email: attendeeEmail, displayName: attendeeName }]
-          : [],
+        attendees:
+          attendeeEmail && attendeeEmail.includes('@')
+            ? [{ email: attendeeEmail, displayName: attendeeName }]
+            : [],
         conferenceData: {
           createRequest: {
             requestId: `meet-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -81,7 +87,7 @@ async function createGoogleCalendarEvent({
 
     const meetUrl =
       response.data.hangoutLink ||
-      response.data.conferenceData?.entryPoints?.find((e) => e.entryPointType === 'video')?.uri;
+      response.data.conferenceData?.entryPoints?.find((e) => e?.entryPointType === 'video')?.uri;
 
     if (meetUrl) {
       return { meetUrl, eventId: response.data.id || undefined };
@@ -108,7 +114,12 @@ export async function POST(req: NextRequest) {
       attachments: rawAttachments,
     } = body;
 
-    const fileList: Array<{ filename: string; content: string; contentType?: string; size?: number }> = [];
+    const fileList: Array<{
+      filename: string;
+      content: string;
+      contentType?: string;
+      size?: number;
+    }> = [];
     if (Array.isArray(rawAttachments)) {
       fileList.push(...rawAttachments);
     } else if (attachment && attachment.filename && attachment.content) {
@@ -160,7 +171,11 @@ export async function POST(req: NextRequest) {
     });
 
     // Permanent Google Meet link or fallback
-    const customMeetUrl = (process.env.GOOGLE_MEET_LINK || process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK || '').trim();
+    const customMeetUrl = (
+      process.env.GOOGLE_MEET_LINK ||
+      process.env.NEXT_PUBLIC_GOOGLE_MEET_LINK ||
+      ''
+    ).trim();
     const meetUrl = gcalResult?.meetUrl || customMeetUrl || `https://meet.google.com/uvd-rnah-jgh`;
     const meetCode = meetUrl.split('/').pop() || 'uvd-rnah-jgh';
 
@@ -204,7 +219,9 @@ export async function POST(req: NextRequest) {
       `DTEND:${endIso}`,
       'STATUS:CONFIRMED',
       `ORGANIZER;CN=${HOST_NAME}:mailto:${HOST_EMAIL}`,
-      attendeeEmail ? `ATTENDEE;CN=${attendeeName};ROLE=REQ-PARTICIPANT:mailto:${attendeeEmail}` : '',
+      attendeeEmail
+        ? `ATTENDEE;CN=${attendeeName};ROLE=REQ-PARTICIPANT:mailto:${attendeeEmail}`
+        : '',
       `ATTENDEE;CN=${HOST_NAME};ROLE=REQ-PARTICIPANT:mailto:${HOST_EMAIL}`,
       'END:VEVENT',
       'END:VCALENDAR',
@@ -213,8 +230,14 @@ export async function POST(req: NextRequest) {
       .join('\r\n');
 
     // SMTP Configuration
-    const smtpUser = (process.env.SMTP_USER || process.env.GMAIL_USER || process.env.EMAIL_USER || HOST_EMAIL).trim();
-    const rawPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || '';
+    const smtpUser = (
+      process.env.SMTP_USER ||
+      process.env.GMAIL_USER ||
+      process.env.EMAIL_USER ||
+      HOST_EMAIL
+    ).trim();
+    const rawPass =
+      process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.EMAIL_PASS || '';
     const smtpPass = rawPass.replace(/\s+/g, '');
     const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
     const smtpPort = Number(process.env.SMTP_PORT || 465);
@@ -312,10 +335,7 @@ export async function POST(req: NextRequest) {
           <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94a3b8; vertical-align: top;">Attached Files (${fileList.length}):</td>
           <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #34d399; font-weight: 600;">
             ${fileList
-              .map(
-                (f) =>
-                  `&#128206; ${f.filename} (${Math.round((f.size || 0) / 1024)} KB)`
-              )
+              .map((f) => `&#128206; ${f.filename} (${Math.round((f.size || 0) / 1024)} KB)`)
               .join('<br>')}
           </td>
         </tr>
@@ -346,7 +366,12 @@ export async function POST(req: NextRequest) {
 </html>
         `;
 
-        const mailAttachments: any[] = [
+        const mailAttachments: {
+          filename: string;
+          method?: string;
+          content: string | Buffer;
+          contentType?: string;
+        }[] = [
           {
             filename: 'invite.ics',
             method: 'REQUEST',
@@ -382,9 +407,10 @@ export async function POST(req: NextRequest) {
         });
 
         emailSent = true;
-      } catch (err: any) {
+      } catch (err) {
+        const e = err as Error;
         console.error('Failed to send confirmation email via SMTP:', err);
-        emailError = err.message || 'SMTP delivery failed';
+        emailError = e.message || 'SMTP delivery failed';
       }
     } else {
       console.warn(
@@ -427,12 +453,12 @@ export async function POST(req: NextRequest) {
         meetUrl,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const e = error as Error;
     console.error('Error in schedule-appointment API:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to schedule appointment' },
+      { error: e.message || 'Failed to schedule appointment' },
       { status: 500 }
     );
   }
 }
-

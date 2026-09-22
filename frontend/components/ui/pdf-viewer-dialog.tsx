@@ -1,27 +1,19 @@
-"use client";
+'use client';
 
-import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import dynamic from "next/dynamic";
-import { Loader2 } from "lucide-react";
+import React from 'react';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const PdfViewer = dynamic(
-  () => import("@/components/ui/pdf-viewer").then((m) => m.Component),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex flex-col items-center justify-center h-full w-full min-h-[400px] gap-3 text-muted-foreground">
-        <Loader2 className="size-6 animate-spin text-primary" />
-        <span className="text-xs font-mono">Initializing PDF Engine...</span>
-      </div>
-    ),
-  }
-);
+const PdfViewer = dynamic(() => import('@/components/ui/pdf-viewer').then((m) => m.Component), {
+  ssr: false,
+  loading: () => (
+    <div className="text-muted-foreground flex h-full min-h-[400px] w-full flex-col items-center justify-center gap-3">
+      <Loader2 className="text-primary size-6 animate-spin" />
+      <span className="font-mono text-xs">Initializing PDF Engine...</span>
+    </div>
+  ),
+});
 
 interface PdfViewerDialogProps {
   open: boolean;
@@ -35,22 +27,22 @@ export function PdfViewerDialog({
   open,
   onOpenChange,
   url,
-  title = "Document Viewer",
+  title = 'Document Viewer',
   subtitle,
 }: PdfViewerDialogProps) {
   if (!url) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 flex flex-col gap-0 overflow-hidden bg-background border-border shadow-2xl">
+      <DialogContent className="bg-background border-border flex h-[90vh] w-[95vw] max-w-6xl flex-col gap-0 overflow-hidden p-0 shadow-2xl">
         {/* Header Bar */}
-        <DialogHeader className="px-5 py-3 border-b border-border flex flex-row items-center justify-between space-y-0 shrink-0 bg-card/80 backdrop-blur-sm">
-          <div className="flex flex-col min-w-0 pr-8">
-            <DialogTitle className="text-sm font-semibold truncate text-foreground font-sans">
+        <DialogHeader className="border-border bg-card/80 flex shrink-0 flex-row items-center justify-between space-y-0 border-b px-5 py-3 backdrop-blur-sm">
+          <div className="flex min-w-0 flex-col pr-8">
+            <DialogTitle className="text-foreground truncate font-sans text-sm font-semibold">
               {title}
             </DialogTitle>
             {subtitle && (
-              <span className="text-[11px] font-mono text-muted-foreground truncate">
+              <span className="text-muted-foreground truncate font-mono text-[11px]">
                 {subtitle}
               </span>
             )}
@@ -59,7 +51,7 @@ export function PdfViewerDialog({
 
         {/* PDF Viewer Body */}
         <div
-          className="flex-1 min-h-0 w-full overflow-hidden relative select-none"
+          className="relative min-h-0 w-full flex-1 overflow-hidden select-none"
           onContextMenu={(e) => e.preventDefault()}
         >
           <PdfViewer url={url} />

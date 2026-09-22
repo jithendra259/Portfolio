@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   Calendar as CalendarIcon,
+  Check,
   Clock,
   ExternalLink,
-  Video,
-  RotateCcw,
   FileText,
   Link2,
-  Check,
+  RotateCcw,
+  Video,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import { FileUploadDropzone, UploadedFileMeta } from '@/components/ui/file-upload-dropzone';
 import { FlightSendButton } from '@/components/ui/flight-send-button';
 import { SlideDownloadButton } from '@/components/ui/slide-download-button';
-import { FileUploadDropzone, UploadedFileMeta } from '@/components/ui/file-upload-dropzone';
 import { toast } from '@/components/ui/widgets/notification-card';
 
 interface AppointmentBookingProps {
@@ -63,7 +63,10 @@ const SUGGESTED_TOPICS = [
 ];
 
 function formatUtcForCalendar(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return d
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 }
 
 function buildGoogleCalendarUrl({
@@ -90,7 +93,9 @@ function buildGoogleCalendarUrl({
     dates: `${startIso}/${endIso}`,
     details: description,
     location: location,
-    add: guestEmail ? `${guestEmail},kandulajithendrasubramanyam@gmail.com` : 'kandulajithendrasubramanyam@gmail.com',
+    add: guestEmail
+      ? `${guestEmail},kandulajithendrasubramanyam@gmail.com`
+      : 'kandulajithendrasubramanyam@gmail.com',
   });
 
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -257,7 +262,7 @@ export const CalendarAppointmentBooking = ({
 
       setMeetUrl(generatedMeetUrl);
 
-      const meetingTitle = `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`;
+      const calendarTitle = `Discussion: Kandula Jithendra Subramanyam & ${name.trim() || 'Guest'}`;
       const meetingDescription = [
         `Appointment / Discussion with Kandula Jithendra Subramanyam`,
         `Topic: ${DEFAULT_PURPOSE}`,
@@ -278,7 +283,7 @@ export const CalendarAppointmentBooking = ({
       const url =
         generatedCalendarUrl ||
         buildGoogleCalendarUrl({
-          title: meetingTitle,
+          title: calendarTitle,
           description: meetingDescription,
           location: generatedMeetUrl,
           startDate,
@@ -290,8 +295,8 @@ export const CalendarAppointmentBooking = ({
       setBookingDetails({
         startDate,
         endDate,
-        title: meetingTitle,
-        meetingTopic: meetingTitle.trim() || DEFAULT_PURPOSE,
+        title: calendarTitle,
+        meetingTopic: calendarTitle.trim() || DEFAULT_PURPOSE,
         description: meetingDescription,
         location: generatedMeetUrl,
       });
@@ -330,64 +335,74 @@ export const CalendarAppointmentBooking = ({
   /* ============================================================ */
   if (isBooked && bookingDetails) {
     return (
-      <div className={`w-full max-w-4xl mx-auto p-6 sm:p-10 ${className}`}>
-        <div className="rounded-lg border border-border bg-card text-card-foreground p-6 sm:p-10 space-y-6 shadow-sm">
+      <div className={`mx-auto w-full max-w-4xl p-6 sm:p-10 ${className}`}>
+        <div className="border-border bg-card text-card-foreground space-y-6 rounded-lg border p-6 shadow-sm sm:p-10">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="bg-foreground text-background flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold">
               <Check className="h-4 w-4 stroke-[3]" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-foreground">
-                Session confirmed
-              </h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-foreground text-lg font-semibold">Session confirmed</h2>
+              <p className="text-muted-foreground text-sm">
                 Your 1-on-1 meeting has been scheduled and calendar invites dispatched.
               </p>
             </div>
           </div>
 
-          <div className="border-t border-border my-6" />
+          <div className="border-border my-6 border-t" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
-              <span className="text-xs uppercase text-muted-foreground font-medium">Date & time</span>
-              <p className="mt-1 text-sm font-semibold text-foreground">
-                {date?.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+              <span className="text-muted-foreground text-xs font-medium uppercase">
+                Date & time
+              </span>
+              <p className="text-foreground mt-1 text-sm font-semibold">
+                {date?.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {selectedTime} ({Intl.DateTimeFormat().resolvedOptions().timeZone || 'IST'})
               </p>
             </div>
 
             <div>
-              <span className="text-xs uppercase text-muted-foreground font-medium">Attendee</span>
-              <p className="mt-1 text-sm font-semibold text-foreground">{name}</p>
-              <p className="text-sm text-muted-foreground">{email}</p>
+              <span className="text-muted-foreground text-xs font-medium uppercase">Attendee</span>
+              <p className="text-foreground mt-1 text-sm font-semibold">{name}</p>
+              <p className="text-muted-foreground text-sm">{email}</p>
             </div>
 
             <div>
-              <span className="text-xs uppercase text-muted-foreground font-medium">Meeting Title / Topic</span>
-              <p className="mt-1 text-sm font-semibold text-foreground truncate" title={bookingDetails?.meetingTopic || meetingTitle || DEFAULT_PURPOSE}>
+              <span className="text-muted-foreground text-xs font-medium uppercase">
+                Meeting Title / Topic
+              </span>
+              <p
+                className="text-foreground mt-1 truncate text-sm font-semibold"
+                title={bookingDetails?.meetingTopic || meetingTitle || DEFAULT_PURPOSE}
+              >
                 {bookingDetails?.meetingTopic || meetingTitle || DEFAULT_PURPOSE}
               </p>
             </div>
           </div>
 
           {/* Google Meet Room Card */}
-          <div className="rounded-md border border-border bg-muted/60 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="border-border bg-muted/60 flex flex-col items-start justify-between gap-4 rounded-md border p-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-md bg-background flex items-center justify-center text-foreground border border-border">
+              <div className="bg-background text-foreground border-border flex h-9 w-9 items-center justify-center rounded-md border">
                 <Video className="h-4 w-4" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-xs text-muted-foreground uppercase font-medium block">
+                <span className="text-muted-foreground block text-xs font-medium uppercase">
                   Google Meet room
                 </span>
                 <a
                   href={meetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-semibold text-foreground underline hover:opacity-80 transition-opacity truncate block"
+                  className="text-foreground block truncate text-sm font-semibold underline transition-opacity hover:opacity-80"
                 >
                   {meetUrl}
                 </a>
@@ -398,7 +413,7 @@ export const CalendarAppointmentBooking = ({
               href={meetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md bg-foreground text-background hover:opacity-90 px-4 py-2 text-sm font-medium transition-opacity whitespace-nowrap"
+              className="bg-foreground text-background rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-90"
             >
               Join Google Meet
             </a>
@@ -406,8 +421,10 @@ export const CalendarAppointmentBooking = ({
 
           {notes && (
             <div className="space-y-1">
-              <span className="text-xs uppercase text-muted-foreground font-medium">Notes / Agenda</span>
-              <p className="p-3 rounded-md border border-border bg-muted/40 text-foreground text-sm">
+              <span className="text-muted-foreground text-xs font-medium uppercase">
+                Notes / Agenda
+              </span>
+              <p className="border-border bg-muted/40 text-foreground rounded-md border p-3 text-sm">
                 {notes}
               </p>
             </div>
@@ -415,26 +432,26 @@ export const CalendarAppointmentBooking = ({
 
           {(attachedFiles.length > 0 || documentLink) && (
             <div className="space-y-2 text-sm">
-              <span className="text-xs uppercase text-muted-foreground font-medium">
+              <span className="text-muted-foreground text-xs font-medium uppercase">
                 Attached Files ({attachedFiles.length})
               </span>
               {attachedFiles.map((file) => (
-                <div key={file.id} className="flex items-center gap-2 text-foreground text-sm">
-                  <FileText className="h-4 w-4 text-emerald-400 shrink-0" />
+                <div key={file.id} className="text-foreground flex items-center gap-2 text-sm">
+                  <FileText className="h-4 w-4 shrink-0 text-emerald-400" />
                   <span className="font-medium">{file.filename}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     ({Math.round(file.size / 1024)} KB)
                   </span>
                 </div>
               ))}
               {documentLink && (
-                <div className="flex items-center gap-2 text-foreground text-sm pt-1">
-                  <Link2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                <div className="text-foreground flex items-center gap-2 pt-1 text-sm">
+                  <Link2 className="text-muted-foreground h-4 w-4 shrink-0" />
                   <a
                     href={documentLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline truncate text-cyan-400"
+                    className="truncate text-cyan-400 underline"
                   >
                     {documentLink}
                   </a>
@@ -443,19 +460,15 @@ export const CalendarAppointmentBooking = ({
             </div>
           )}
 
-          {emailStatus && (
-            <p className="text-xs text-muted-foreground">
-              {emailStatus}
-            </p>
-          )}
+          {emailStatus && <p className="text-muted-foreground text-xs">{emailStatus}</p>}
 
-          <div className="border-t border-border my-6" />
+          <div className="border-border my-6 border-t" />
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <button
               type="button"
               onClick={() => setIsBooked(false)}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5 text-sm transition-colors"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Book another session</span>
@@ -478,7 +491,7 @@ export const CalendarAppointmentBooking = ({
                 href={googleCalendarUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md bg-foreground text-background hover:opacity-90 px-4 py-2 text-sm font-medium transition-opacity inline-flex items-center gap-1.5"
+                className="bg-foreground text-background inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
               >
                 <span>Add to Google Calendar</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -494,25 +507,20 @@ export const CalendarAppointmentBooking = ({
   /* MAIN FORM                                                    */
   /* ============================================================ */
   return (
-    <div className={`w-full max-w-7xl mx-auto p-6 sm:p-10 ${className}`}>
+    <div className={`mx-auto w-full max-w-7xl p-6 sm:p-10 ${className}`}>
       <form onSubmit={handleBooking}>
         {/* ROW 1: PERSONAL INFORMATION */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground">
-              Personal information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            <h2 className="text-foreground font-semibold">Personal information</h2>
+            <p className="text-muted-foreground mt-1 text-sm leading-6">
               Provide your details so we can send the meeting invite and Google Meet link.
             </p>
           </div>
           <div className="sm:max-w-3xl md:col-span-2">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
               <div className="col-span-full sm:col-span-3">
-                <label
-                  htmlFor="booking-name"
-                  className="text-sm font-medium text-foreground"
-                >
+                <label htmlFor="booking-name" className="text-foreground text-sm font-medium">
                   Full name
                 </label>
                 <input
@@ -523,16 +531,13 @@ export const CalendarAppointmentBooking = ({
                   placeholder="Emma Crown"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                   required
                 />
               </div>
 
               <div className="col-span-full sm:col-span-3">
-                <label
-                  htmlFor="booking-role"
-                  className="text-sm font-medium text-foreground"
-                >
+                <label htmlFor="booking-role" className="text-foreground text-sm font-medium">
                   Role / Company
                 </label>
                 <input
@@ -542,18 +547,15 @@ export const CalendarAppointmentBooking = ({
                   placeholder="Senior Manager"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                 />
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mt-2 text-xs">
                   Optional: recruiter, engineering lead, or founder context.
                 </p>
               </div>
 
               <div className="col-span-full">
-                <label
-                  htmlFor="booking-email"
-                  className="text-sm font-medium text-foreground"
-                >
+                <label htmlFor="booking-email" className="text-foreground text-sm font-medium">
                   Email address
                 </label>
                 <input
@@ -564,7 +566,7 @@ export const CalendarAppointmentBooking = ({
                   placeholder="emma@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                   required
                 />
               </div>
@@ -573,29 +575,30 @@ export const CalendarAppointmentBooking = ({
         </div>
 
         {/* SEPARATOR */}
-        <div className="border-t border-border my-8" />
+        <div className="border-border my-8 border-t" />
 
         {/* ROW 2: MEETING SCHEDULE */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground">
-              Meeting schedule
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Select your preferred date and 30-minute time slot. All times are displayed in IST (UTC+5:30).
+            <h2 className="text-foreground font-semibold">Meeting schedule</h2>
+            <p className="text-muted-foreground mt-1 text-sm leading-6">
+              Select your preferred date and 30-minute time slot. All times are displayed in IST
+              (UTC+5:30).
             </p>
           </div>
           <div className="sm:max-w-3xl md:col-span-2">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               {/* Calendar Date Picker */}
-              <div className="lg:col-span-6 rounded-md border border-border bg-card p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-foreground">
-                    Select date
-                  </span>
+              <div className="border-border bg-card rounded-md border p-4 lg:col-span-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-foreground text-sm font-medium">Select date</span>
                   {date && (
-                    <span className="text-xs text-muted-foreground font-mono">
-                      {date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                    <span className="text-muted-foreground font-mono text-xs">
+                      {date.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
                     </span>
                   )}
                 </div>
@@ -609,15 +612,17 @@ export const CalendarAppointmentBooking = ({
                     return day < today;
                   }}
                   showOutsideDays={false}
-                  className="w-full text-foreground"
+                  className="text-foreground w-full"
                   classNames={{
                     months: 'w-full',
                     month: 'w-full space-y-3',
                     month_caption: 'flex justify-center pt-1 relative items-center mb-3',
                     caption_label: 'text-sm font-medium text-foreground',
                     nav: 'flex items-center justify-between absolute w-full px-1',
-                    button_previous: 'size-7 rounded-md border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground flex items-center justify-center transition-colors',
-                    button_next: 'size-7 rounded-md border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground flex items-center justify-center transition-colors',
+                    button_previous:
+                      'size-7 rounded-md border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground flex items-center justify-center transition-colors',
+                    button_next:
+                      'size-7 rounded-md border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground flex items-center justify-center transition-colors',
                     weekday: 'size-8 p-0 text-xs font-normal text-muted-foreground text-center',
                     day: 'group size-8 px-0 text-xs',
                     day_button:
@@ -627,14 +632,12 @@ export const CalendarAppointmentBooking = ({
               </div>
 
               {/* Time Slots Grid */}
-              <div className="lg:col-span-6 rounded-md border border-border bg-card p-4 flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-foreground">
-                    Select time slot
-                  </span>
-                  <span className="text-xs text-muted-foreground">30-min &bull; IST</span>
+              <div className="border-border bg-card flex flex-col rounded-md border p-4 lg:col-span-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-foreground text-sm font-medium">Select time slot</span>
+                  <span className="text-muted-foreground text-xs">30-min &bull; IST</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 max-h-[290px] overflow-y-auto pr-1">
+                <div className="grid max-h-[290px] grid-cols-2 gap-2 overflow-y-auto pr-1">
                   {AVAILABLE_SLOTS.map((time) => {
                     const isSelected = selectedTime === time;
                     const hourNum = parseInt(time.split(':')[0], 10);
@@ -644,14 +647,16 @@ export const CalendarAppointmentBooking = ({
                         key={time}
                         type="button"
                         onClick={() => setSelectedTime(time)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-md border text-xs transition cursor-pointer ${
+                        className={`flex cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-xs transition ${
                           isSelected
                             ? 'border-foreground bg-foreground text-background font-semibold shadow-xs'
-                            : 'border-border bg-transparent hover:bg-muted text-foreground'
+                            : 'border-border hover:bg-muted text-foreground bg-transparent'
                         }`}
                       >
-                        <span className="font-medium text-sm">{time}</span>
-                        <span className={`text-[10px] ${isSelected ? 'opacity-80' : 'text-muted-foreground'}`}>
+                        <span className="text-sm font-medium">{time}</span>
+                        <span
+                          className={`text-[10px] ${isSelected ? 'opacity-80' : 'text-muted-foreground'}`}
+                        >
                           {ampm}
                         </span>
                       </button>
@@ -664,16 +669,15 @@ export const CalendarAppointmentBooking = ({
         </div>
 
         {/* SEPARATOR */}
-        <div className="border-t border-border my-8" />
+        <div className="border-border my-8 border-t" />
 
         {/* ROW 3: DISCUSSION DETAILS */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
-            <h2 className="font-semibold text-foreground">
-              Discussion details
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Specify what the meeting is about, share job description highlights, or attach files to discuss during our call.
+            <h2 className="text-foreground font-semibold">Discussion details</h2>
+            <p className="text-muted-foreground mt-1 text-sm leading-6">
+              Specify what the meeting is about, share job description highlights, or attach files
+              to discuss during our call.
             </p>
           </div>
           <div className="sm:max-w-3xl md:col-span-2">
@@ -682,10 +686,10 @@ export const CalendarAppointmentBooking = ({
               <div className="col-span-full">
                 <label
                   htmlFor="booking-title"
-                  className="text-sm font-medium text-foreground flex items-center justify-between"
+                  className="text-foreground flex items-center justify-between text-sm font-medium"
                 >
                   <span>Meeting title / What is this meeting about?</span>
-                  <span className="text-xs text-muted-foreground font-normal">Recommended</span>
+                  <span className="text-muted-foreground text-xs font-normal">Recommended</span>
                 </label>
                 <input
                   type="text"
@@ -694,16 +698,12 @@ export const CalendarAppointmentBooking = ({
                   placeholder="e.g., Technical Interview for AI Engineer, Research Discussion, or Project Collab"
                   value={meetingTitle}
                   onChange={(e) => setMeetingTitle(e.target.value)}
-                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                 />
-
               </div>
 
               <div className="col-span-full">
-                <label
-                  htmlFor="booking-notes"
-                  className="text-sm font-medium text-foreground"
-                >
+                <label htmlFor="booking-notes" className="text-foreground text-sm font-medium">
                   Message / Notes for Jithendra (Optional)
                 </label>
                 <textarea
@@ -713,16 +713,16 @@ export const CalendarAppointmentBooking = ({
                   placeholder="Share job description highlights, company context, interview stage (Technical Screen, System Design), or specific questions you'd like to dive into..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="mt-2 flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                 />
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mt-2 text-xs">
                   Note: description provided will not be displayed externally.
                 </p>
               </div>
 
               {/* File Attachment */}
               <div className="col-span-full">
-                <label className="text-sm font-medium text-foreground block mb-2">
+                <label className="text-foreground mb-2 block text-sm font-medium">
                   Attach Documents / Resumes / Job Specs (Optional)
                 </label>
                 <FileUploadDropzone
@@ -733,10 +733,7 @@ export const CalendarAppointmentBooking = ({
 
               {/* Document Link */}
               <div className="col-span-full">
-                <label
-                  htmlFor="booking-doclink"
-                  className="text-sm font-medium text-foreground"
-                >
+                <label htmlFor="booking-doclink" className="text-foreground text-sm font-medium">
                   Or Paste Document / Notion / JD Link (Optional)
                 </label>
                 <input
@@ -745,7 +742,7 @@ export const CalendarAppointmentBooking = ({
                   placeholder="https://notion.so/... or Greenhouse / Drive link"
                   value={documentLink}
                   onChange={(e) => setDocumentLink(e.target.value)}
-                  className="mt-2 flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition"
+                  className="border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring mt-2 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm transition focus-visible:ring-1 focus-visible:outline-none"
                 />
               </div>
             </div>
@@ -753,21 +750,22 @@ export const CalendarAppointmentBooking = ({
         </div>
 
         {/* SEPARATOR */}
-        <div className="border-t border-border my-8" />
+        <div className="border-border my-8 border-t" />
 
         {/* ROW 4: ACTION FOOTER */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="text-muted-foreground text-sm">
             {date && selectedTime ? (
               <span>
                 Meeting on{' '}
                 <strong className="text-foreground font-medium">
-                  {date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                  {date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </strong>{' '}
-                at{' '}
-                <strong className="text-foreground font-medium">
-                  {selectedTime} IST
-                </strong>
+                at <strong className="text-foreground font-medium">{selectedTime} IST</strong>
               </span>
             ) : (
               <span>Please select a date and time slot above</span>

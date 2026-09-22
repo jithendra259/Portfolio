@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from '@/components/ui/widgets/notification-card';
 
 export interface UploadedFileMeta {
@@ -70,9 +70,8 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
 
       // 2. Check duplicate file
       const isDuplicate =
-        attachedFilesRef.current.some(
-          (f) => f.filename === file.name && f.size === file.size
-        ) || acceptedFiles.some((f) => f.name === file.name && f.size === file.size);
+        attachedFilesRef.current.some((f) => f.filename === file.name && f.size === file.size) ||
+        acceptedFiles.some((f) => f.name === file.name && f.size === file.size);
 
       if (isDuplicate) {
         toast.warning('Already Attached', `"${file.name}" is already in your upload list.`);
@@ -346,10 +345,10 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
             <svg height="1em" viewBox="0 0 640 512">
               <path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z" />
             </svg>
-            <p className="text-sm font-medium text-foreground">
+            <p className="text-foreground text-sm font-medium">
               {hasItems ? 'Drop all files at once or browse' : 'Drag and Drop'}
             </p>
-            <p className="text-xs text-muted-foreground">or</p>
+            <p className="text-muted-foreground text-xs">or</p>
             <span className="custom-browse-button">
               {hasItems ? 'Add more files' : 'Browse files'}
             </span>
@@ -357,8 +356,9 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
         </label>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground">
-        Supported: PDF, DOC, DOCX, JPG, PNG (Max {maxFileSizeMb}MB per file, up to {maxFilesCount} files)
+      <p className="text-muted-foreground text-center text-xs">
+        Supported: PDF, DOC, DOCX, JPG, PNG (Max {maxFileSizeMb}MB per file, up to {maxFilesCount}{' '}
+        files)
       </p>
 
       {/* LIST OF UPLOADING AND ATTACHED DOCUMENTS (SNIPPET 1 FLOW) */}
@@ -372,7 +372,7 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 truncate">
-                  <div className="rounded-lg bg-cyan-500/15 p-2 text-cyan-400 shrink-0">
+                  <div className="shrink-0 rounded-lg bg-cyan-500/15 p-2 text-cyan-400">
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
@@ -383,34 +383,39 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
                     </svg>
                   </div>
                   <div className="truncate">
-                    <p className="font-medium text-sm text-foreground truncate">{file.filename}</p>
+                    <p className="text-foreground truncate text-sm font-medium">{file.filename}</p>
                     <p className="text-xs text-slate-400">
                       {formatFileSize(file.size)} • Uploading...
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex shrink-0 items-center gap-3">
                   <span className="text-sm font-semibold text-cyan-400">{file.progress}%</span>
                   <button
                     type="button"
                     onClick={() => cancelUpload(file.id)}
-                    className="text-slate-400 hover:text-white p-1 rounded transition-colors cursor-pointer"
+                    className="cursor-pointer rounded p-1 text-slate-400 transition-colors hover:text-white"
                     title="Cancel upload"
                   >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
               </div>
 
               {/* PROGRESS BAR WITH REALISTIC SHIMMER ANIMATION */}
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-800 relative">
+              <div className="relative mt-3 h-1.5 overflow-hidden rounded-full bg-slate-800">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-sky-500 transition-all duration-200"
                   style={{ width: `${file.progress}%` }}
                 >
-                  <div className="h-full w-full upload-shimmer-bar bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                  <div className="upload-shimmer-bar h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                 </div>
               </div>
             </div>
@@ -422,12 +427,17 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
             return (
               <div
                 key={file.id}
-                className="rounded-xl border border-border bg-slate-900/60 p-4 shadow-md hover:border-slate-700 transition-all"
+                className="border-border rounded-xl border bg-slate-900/60 p-4 shadow-md transition-all hover:border-slate-700"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 truncate">
-                    <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 shrink-0">
-                      <svg className="h-6 w-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="shrink-0 rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
+                      <svg
+                        className="h-6 w-6 text-emerald-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -437,28 +447,50 @@ export const FileUploadDropzone: React.FC<FileUploadDropzoneProps> = ({
                       </svg>
                     </div>
                     <div className="truncate">
-                      <p className="font-medium text-sm text-foreground truncate">{file.filename}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-foreground truncate text-sm font-medium">
+                        {file.filename}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
                         {formatFileSize(file.size)} • {ext}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="flex items-center gap-1.5 text-emerald-400 text-xs sm:text-sm font-medium">
-                      <svg className="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <div className="flex shrink-0 items-center gap-3">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 sm:text-sm">
+                      <svg
+                        className="h-5 w-5 text-emerald-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                       <span>Complete</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeFile(file.id)}
-                      className="text-muted-foreground hover:text-destructive p-1 rounded-md transition-colors cursor-pointer"
+                      className="text-muted-foreground hover:text-destructive cursor-pointer rounded-md p-1 transition-colors"
                       title="Remove file"
                     >
-                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>

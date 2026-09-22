@@ -5,7 +5,6 @@ import { Streamdown } from 'streamdown';
 import { type AgentState, type ReceivedMessage } from '@livekit/components-react';
 import { AgentChatIndicator } from '@/components/agents-ui/agent-chat-indicator';
 import { Bubble, BubbleContent } from '@/components/ui/chat/bubble';
-import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/effects/marker';
 import { Message, MessageContent } from '@/components/ui/chat/message';
 import {
   MessageScroller,
@@ -15,6 +14,7 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
 } from '@/components/ui/chat/message-scroller';
+import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/effects/marker';
 
 /**
  * Props for the AgentChatTranscript component.

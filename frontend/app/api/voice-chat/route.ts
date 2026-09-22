@@ -58,13 +58,15 @@ const NAVIGATION_TOOL = {
   function_declarations: [
     {
       name: 'navigate_portfolio',
-      description: "Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study.",
+      description:
+        "Auto-navigate the visitor's screen in real time to a specific portfolio section or research paper case study.",
       parameters: {
         type: 'OBJECT',
         properties: {
           target: {
             type: 'STRING',
-            description: "Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'",
+            description:
+              "Target destination: 'projects', 'research', 'about', 'resume', 'contact', 'skills', 'certificates', 'experience', 'home', 'case_study_adaptive_governance', 'case_study_regime_supervisory', 'case_study_supervisory_xai', 'case_study_aqi', 'case_study_swarm_robotics'",
           },
         },
         required: ['target'],
@@ -72,7 +74,8 @@ const NAVIGATION_TOOL = {
     },
     {
       name: 'get_current_page_context',
-      description: "Inspect and get detailed information about the exact page, research paper, or project case study the visitor is currently viewing on their screen.",
+      description:
+        'Inspect and get detailed information about the exact page, research paper, or project case study the visitor is currently viewing on their screen.',
       parameters: {
         type: 'OBJECT',
         properties: {},
@@ -105,17 +108,17 @@ function generateLocalPortfolioResponse(
     }
     if (currentPage.includes('regime-adaptive-supervisory-governance')) {
       return {
-        text: "You are viewing the Regime-Adaptive Supervisory Governance case study for his Springer Nature LNCS research publication on market instability indices.",
+        text: 'You are viewing the Regime-Adaptive Supervisory Governance case study for his Springer Nature LNCS research publication on market instability indices.',
       };
     }
     if (currentPage.includes('supervisory-portfolio-xai-governance')) {
       return {
-        text: "You are looking at the Supervisory Portfolio XAI Governance case study for his Elsevier Computers & Operations Research paper featuring CLARABEL and Mistral-7B.",
+        text: 'You are looking at the Supervisory Portfolio XAI Governance case study for his Elsevier Computers & Operations Research paper featuring CLARABEL and Mistral-7B.',
       };
     }
     if (currentPage.includes('voice-agent-portfolio-architecture')) {
       return {
-        text: "You are on the Voice AI Portfolio Architecture case study detailing the sub-90 millisecond Groq LPU and LiveKit WebRTC pipeline powering this portfolio.",
+        text: 'You are on the Voice AI Portfolio Architecture case study detailing the sub-90 millisecond Groq LPU and LiveKit WebRTC pipeline powering this portfolio.',
       };
     }
     if (currentPage.includes('agentic-portfolio-chatbot')) {
@@ -125,17 +128,17 @@ function generateLocalPortfolioResponse(
     }
     if (currentPage.includes('personalised-aqi-system')) {
       return {
-        text: "You are on the Personalised AQI Global Air Quality Forecasting case study evaluating XGBoost across 10 Delhi CPCB stations.",
+        text: 'You are on the Personalised AQI Global Air Quality Forecasting case study evaluating XGBoost across 10 Delhi CPCB stations.',
       };
     }
     if (currentPage.includes('swarm-robots-agriculture')) {
       return {
-        text: "You are exploring the Autonomous Swarm Robots for Precision Agriculture case study funded by the Karnataka State Council for Science and Technology.",
+        text: 'You are exploring the Autonomous Swarm Robots for Precision Agriculture case study funded by the Karnataka State Council for Science and Technology.',
       };
     }
     if (currentPage.includes('book-appointment')) {
       return {
-        text: "You are on the meeting booking page where you can schedule a 30-minute consultation or recruiter interview with Jithendra.",
+        text: 'You are on the meeting booking page where you can schedule a 30-minute consultation or recruiter interview with Jithendra.',
       };
     }
     return {
@@ -160,12 +163,12 @@ function generateLocalPortfolioResponse(
     }
     if (query.includes('regime') || query.includes('supervisory') || query.includes('ijcaci')) {
       return {
-        text: "Presented at IJCACI 2026 and published in Springer Nature LNCS, this research demonstrates regime-adaptive supervisory governance containing maximum drawdown to 32.5 percent across 20 years of market regimes. Here is the case study.",
+        text: 'Presented at IJCACI 2026 and published in Springer Nature LNCS, this research demonstrates regime-adaptive supervisory governance containing maximum drawdown to 32.5 percent across 20 years of market regimes. Here is the case study.',
         navigationTarget: 'case_study_regime_supervisory',
       };
     }
     return {
-      text: "Jithendra has authored three peer-reviewed research papers in 2026 across Elsevier and Springer Nature, focusing on multi-agent financial governance and convex optimization. Guiding your screen to the research publications section.",
+      text: 'Jithendra has authored three peer-reviewed research papers in 2026 across Elsevier and Springer Nature, focusing on multi-agent financial governance and convex optimization. Guiding your screen to the research publications section.',
       navigationTarget: 'research',
     };
   }
@@ -179,13 +182,18 @@ function generateLocalPortfolioResponse(
   }
   if (query.includes('swarm') || query.includes('robot') || query.includes('agriculture')) {
     return {
-      text: "The Autonomous Swarm Robotics project was funded by the Karnataka State Council for Science and Technology, using ESP-NOW mesh networking and DenseNet for precision plant pathology. Here is the case study.",
+      text: 'The Autonomous Swarm Robotics project was funded by the Karnataka State Council for Science and Technology, using ESP-NOW mesh networking and DenseNet for precision plant pathology. Here is the case study.',
       navigationTarget: 'case_study_swarm_robotics',
     };
   }
 
   // 3. Projects
-  if (query.includes('project') || query.includes('work') || query.includes('built') || query.includes('portfolio')) {
+  if (
+    query.includes('project') ||
+    query.includes('work') ||
+    query.includes('built') ||
+    query.includes('portfolio')
+  ) {
     return {
       text: "Jithendra's key projects include autonomous agentic AI governance systems, machine learning forecasting engines, and decentralized robotics. Let me scroll down to his projects showcase.",
       navigationTarget: 'projects',
@@ -193,7 +201,14 @@ function generateLocalPortfolioResponse(
   }
 
   // 4. Skills & Technologies
-  if (query.includes('skill') || query.includes('tech') || query.includes('stack') || query.includes('language') || query.includes('tools') || query.includes('python')) {
+  if (
+    query.includes('skill') ||
+    query.includes('tech') ||
+    query.includes('stack') ||
+    query.includes('language') ||
+    query.includes('tools') ||
+    query.includes('python')
+  ) {
     return {
       text: "Jithendra specializes in PyTorch, convex mathematical optimization with CVXPY, Multi-Agent DAG architectures, Next.js with TypeScript, and embedded robotics. Let's examine his technical skills matrix.",
       navigationTarget: 'skills',
@@ -201,17 +216,29 @@ function generateLocalPortfolioResponse(
   }
 
   // 5. Certificates & Credentials
-  if (query.includes('certificate') || query.includes('credential') || query.includes('gate') || query.includes('somaiya')) {
+  if (
+    query.includes('certificate') ||
+    query.includes('credential') ||
+    query.includes('gate') ||
+    query.includes('somaiya')
+  ) {
     return {
-      text: "Jithendra qualified GATE 2024 in Data Science and AI, and holds verified credentials in Deep Learning and Cloud Architecture. Here are his verified certificates.",
+      text: 'Jithendra qualified GATE 2024 in Data Science and AI, and holds verified credentials in Deep Learning and Cloud Architecture. Here are his verified certificates.',
       navigationTarget: 'certificates',
     };
   }
 
   // 6. Experience & Education
-  if (query.includes('experience') || query.includes('education') || query.includes('college') || query.includes('degree') || query.includes('mtech') || query.includes('btech')) {
+  if (
+    query.includes('experience') ||
+    query.includes('education') ||
+    query.includes('college') ||
+    query.includes('degree') ||
+    query.includes('mtech') ||
+    query.includes('btech')
+  ) {
     return {
-      text: "Jithendra is completing his M.Tech in AI and Data Science at K J Somaiya College of Engineering in Mumbai with an 8.06 CGPA, having earned his B.Tech at Presidency University. Here is his academic and professional journey.",
+      text: 'Jithendra is completing his M.Tech in AI and Data Science at K J Somaiya College of Engineering in Mumbai with an 8.06 CGPA, having earned his B.Tech at Presidency University. Here is his academic and professional journey.',
       navigationTarget: 'experience',
     };
   }
@@ -225,17 +252,30 @@ function generateLocalPortfolioResponse(
   }
 
   // 8. Contact & Hiring
-  if (query.includes('contact') || query.includes('hire') || query.includes('email') || query.includes('phone') || query.includes('meet') || query.includes('call') || query.includes('reach')) {
+  if (
+    query.includes('contact') ||
+    query.includes('hire') ||
+    query.includes('email') ||
+    query.includes('phone') ||
+    query.includes('meet') ||
+    query.includes('call') ||
+    query.includes('reach')
+  ) {
     return {
-      text: "You can reach Jithendra at kandulajithendrasubramanyam@gmail.com, call +91-9704400336, or book an appointment directly through this modal. Opening the contact section now.",
+      text: 'You can reach Jithendra at kandulajithendrasubramanyam@gmail.com, call +91-9704400336, or book an appointment directly through this modal. Opening the contact section now.',
       navigationTarget: 'contact',
     };
   }
 
   // 9. About / Who is Jithendra
-  if (query.includes('who') || query.includes('about') || query.includes('tell me') || query.includes('jithendra')) {
+  if (
+    query.includes('who') ||
+    query.includes('about') ||
+    query.includes('tell me') ||
+    query.includes('jithendra')
+  ) {
     return {
-      text: "Kandula Jithendra Subramanyam is an AI systems engineer and quantitative researcher bridging autonomous agentic swarms with convex mathematical optimization. Here is his background summary.",
+      text: 'Kandula Jithendra Subramanyam is an AI systems engineer and quantitative researcher bridging autonomous agentic swarms with convex mathematical optimization. Here is his background summary.',
       navigationTarget: 'about',
     };
   }
@@ -250,7 +290,7 @@ function generateLocalPortfolioResponse(
 // Attempts Gemini LLM call with supported models
 async function callGemini(
   apiKey: string,
-  contents: any[],
+  contents: { role: string; parts: { text: string }[] }[],
   currentPage: string = '/'
 ): Promise<{ text: string; navigationTarget?: string } | null> {
   const models = ['gemini-2.5-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
