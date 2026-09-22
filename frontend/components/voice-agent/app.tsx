@@ -9,7 +9,7 @@ import { AgentSessionProvider } from '@/components/agents-ui/agent-session-provi
 import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
 import { ViewController } from '@/components/voice-agent/view-controller';
 import { useDebugMode } from '@/hooks/useDebug';
-import { getMultiUserTokenSource, getSandboxTokenSource } from '@/lib/utils';
+import { getMultiUserTokenSource, getSandboxTokenSource, getDevelopmentTokenSource, LIVEKIT_TOKEN_SERVER_ID } from '@/lib/utils';
 
 // Guard against duplicate topic stream handler crashes in React StrictMode & Turbopack
 interface PatchedRoom extends Room {
@@ -94,6 +94,10 @@ interface AppProps {
 export function App({ appConfig, children }: AppProps) {
   const pathname = usePathname();
   const tokenSource = useMemo(() => {
+    // Priority: 1. Development Token Server, 2. Sandbox, 3. Multi-user (fallback)
+    if (LIVEKIT_TOKEN_SERVER_ID) {
+      return getDevelopmentTokenSource(appConfig.agentName);
+    }
     return typeof process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT === 'string'
       ? getSandboxTokenSource(appConfig)
       : getMultiUserTokenSource();
