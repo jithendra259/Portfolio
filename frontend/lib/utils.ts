@@ -154,8 +154,10 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
  */
 export function getMultiUserTokenSource() {
   return TokenSource.custom(async () => {
-    // Generate room UUID client-side
-    const roomName = crypto.randomUUID();
+    // Generate room UUID client-side with fallback
+    const roomName = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `room_${Math.random().toString(36).substring(2, 15)}`;
 
     // Step 2: Get a token for that specific room
     const tokenResp = await fetch(`/api/token?room=${encodeURIComponent(roomName)}`, {
