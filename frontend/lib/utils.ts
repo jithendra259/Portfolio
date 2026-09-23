@@ -7,9 +7,6 @@ export { cn } from '@/lib/shadcn/utils';
 
 export const CONFIG_ENDPOINT = process.env.NEXT_PUBLIC_APP_CONFIG_ENDPOINT;
 export const SANDBOX_ID = process.env.SANDBOX_ID;
-export const BACKEND_URL =
-  process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
-
 export const LIVEKIT_TOKEN_SERVER_ID = process.env.NEXT_PUBLIC_LIVEKIT_TOKEN_SERVER_ID;
 
 export interface SandboxConfig {
@@ -157,30 +154,8 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
  */
 export function getMultiUserTokenSource() {
   return TokenSource.custom(async () => {
-    let roomName: string;
-
-    // Step 1: Try to create a room on the backend
-    try {
-      const createRoomResp = await fetch(`${BACKEND_URL}/create_room`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Short timeout to fail fast if backend is unreachable
-        signal: AbortSignal.timeout(5000),
-      });
-      if (createRoomResp.ok) {
-        const data = await createRoomResp.json();
-        roomName = data.room;
-      } else {
-        throw new Error('Backend returned non-ok status');
-      }
-    } catch (backendError) {
-      console.warn(
-        'Backend /create_room unavailable, generating room UUID client-side:',
-        backendError
-      );
-      // Fallback: generate UUID client-side
-      roomName = crypto.randomUUID();
-    }
+    // Generate room UUID client-side
+    const roomName = crypto.randomUUID();
 
     // Step 2: Get a token for that specific room
     const tokenResp = await fetch(`/api/token?room=${encodeURIComponent(roomName)}`, {

@@ -17,7 +17,7 @@ export const voiceAgentPortfolioArchitecture: Project = {
     'Designed an asynchronous decoupled architecture separating client-side WebRTC media capture from cloud AI inference: (1) Client browser handles WebRTC audio pre-processing (echo cancellation, noise suppression, AGC, and DTX/RED packet loss resilience); (2) LiveKit Cloud handles real-time SFU media routing and v1 turn detection with adaptive backchannel filtering; (3) Asynchronous Python backend on Render coordinates Groq LPU (<100ms TTFT) with Google Gemini 2.5 Flash fallback; (4) Bi-directional LiveKit data channels drive real-time frontend route transitions and contextual HUD displays.',
   status: 'Live Production System',
   githubUrl: 'https://github.com/jithendra259/Portfolio',
-  liveUrl: 'https://portfolio-backend-ljlv.onrender.com',
+  liveUrl: '',
   featured: true,
   highlights: [
     'Sub-500ms End-to-End Voice Roundtrip: Groq LPU (<100ms TTFT) paired with Cartesia Sonic-3 (<100ms TTS) and Deepgram Nova-3 streaming transcription',

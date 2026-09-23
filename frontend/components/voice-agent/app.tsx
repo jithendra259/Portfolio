@@ -140,16 +140,7 @@ export function App({ appConfig, children }: AppProps) {
     appConfig.agentName ? { agentName: appConfig.agentName, room } : { room }
   );
 
-  // Best-effort wake-up for a sleeping Render instance. LiveKit remains the
-  // connection path, so this must never block the visitor from starting a room.
-  useEffect(() => {
-    const backendUrl =
-      process.env.NEXT_PUBLIC_RENDER_BACKEND_URL || 'https://portfolio-backend-fx8o.onrender.com';
 
-    void fetch(backendUrl, { mode: 'cors', cache: 'no-store' }).catch((error) => {
-      console.warn('--> [Render Backend Warmup]', error?.message || error);
-    });
-  }, []);
 
   useEffect(() => {
     if (!session.isConnected || !room?.localParticipant) return;
