@@ -59,23 +59,8 @@ export const getAppConfig = cache(async (headers?: Headers): Promise<AppConfig> 
           ) {
             // @ts-expect-error I'm not sure quite how to appease TypeScript, but we've thoroughly checked types above
             config[key as keyof AppConfig] = entry.value as AppConfig[keyof AppConfig];
-}
-}
-
-/**
- * Get a token source using LiveKit's Development Token Server
- * Uses TokenSource.developmentTokenServer() with the token server ID from env
- * @param agentName - Optional agent name to dispatch
- * @returns A token source for LiveKit development sessions
- */
-export function getDevelopmentTokenSource(agentName?: string) {
-  if (!LIVEKIT_TOKEN_SERVER_ID) {
-    throw new Error('NEXT_PUBLIC_LIVEKIT_TOKEN_SERVER_ID is not configured');
-  }
-  return TokenSource.developmentTokenServer(LIVEKIT_TOKEN_SERVER_ID, {
-    agentName,
-  });
-}
+          }
+        }
 
         return config;
       } else {
@@ -109,6 +94,21 @@ export function getStyles(appConfig: AppConfig) {
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+/**
+ * Get a token source using LiveKit's Development Token Server
+ * Uses TokenSource.developmentTokenServer() with the token server ID from env
+ * @param agentName - Optional agent name to dispatch
+ * @returns A token source for LiveKit development sessions
+ */
+export function getDevelopmentTokenSource(agentName?: string) {
+  if (!LIVEKIT_TOKEN_SERVER_ID) {
+    throw new Error('NEXT_PUBLIC_LIVEKIT_TOKEN_SERVER_ID is not configured');
+  }
+  return TokenSource.developmentTokenServer(LIVEKIT_TOKEN_SERVER_ID, {
+    agentName,
+  });
 }
 
 /**
