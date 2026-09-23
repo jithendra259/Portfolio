@@ -1,5 +1,6 @@
-﻿import { type Room } from 'livekit-client';
+import { type Room } from 'livekit-client';
 import {
+  RoomContext,
   RoomAudioRenderer,
   type RoomAudioRendererProps,
   SessionProvider,
@@ -49,13 +50,25 @@ export type AgentSessionProviderProps = SessionProviderProps &
  */
 export function AgentSessionProvider({
   session,
+  room,
   children,
   ...roomAudioRendererProps
 }: AgentSessionProviderProps) {
+  const currentRoom = room || session?.room;
+
   return (
     <SessionProvider session={session}>
-      {children}
-      <RoomAudioRenderer {...roomAudioRendererProps} />
+      {currentRoom ? (
+        <RoomContext.Provider value={currentRoom}>
+          {children}
+          <RoomAudioRenderer {...roomAudioRendererProps} />
+        </RoomContext.Provider>
+      ) : (
+        <>
+          {children}
+          <RoomAudioRenderer {...roomAudioRendererProps} />
+        </>
+      )}
     </SessionProvider>
   );
 }

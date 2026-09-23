@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { usePathname, useRouter } from 'next/navigation';
 import { RoomEvent } from 'livekit-client';
-import { useRoomContext } from '@livekit/components-react';
+import { useMaybeRoomContext } from '@livekit/components-react';
 import { toast } from '@/components/ui/widgets/notification-card';
 
 export type NavigationTarget = string;
@@ -258,11 +258,21 @@ export function resolveNavigationTarget(rawTarget: string): NavigationTargetMeta
  */
 function scrollToElementWithHighlight(el: HTMLElement): void {
   const headerOffset = 80;
+  const currentScroll =
+    window.scrollY ||
+    window.pageYOffset ||
+    document.documentElement.scrollTop ||
+    document.body.scrollTop ||
+    0;
   const elementPosition = el.getBoundingClientRect().top;
-  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  const offsetPosition = Math.max(0, elementPosition + currentScroll - headerOffset);
 
   window.scrollTo({
-    top: Math.max(0, offsetPosition),
+    top: offsetPosition,
+    behavior: 'smooth',
+  });
+  document.documentElement.scrollTo({
+    top: offsetPosition,
     behavior: 'smooth',
   });
 
@@ -282,7 +292,8 @@ function scrollToElementWithHighlight(el: HTMLElement): void {
 export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
   const router = useRouter();
   const pathname = usePathname();
-  const room = useRoomContext();
+  const maybeRoom = useMaybeRoomContext();
+  const room = session?.room || maybeRoom;
   const { setTheme } = useTheme();
   const [activeTarget, setActiveTarget] = useState<string | null>(null);
   const [lastNavigatedAt, setLastNavigatedAt] = useState<number | null>(null);
@@ -367,6 +378,130 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
     [pathname, router, activeTarget]
   );
 
+  // ── Speech Intent Detection Fallback (Zero-Latency Voice Command Triggers) ──
+  useEffect(() => {
+    if (!messages || messages.length === 0) return;
+    const latest = messages[messages.length - 1];
+    const text = (latest?.message || latest?.text || '').toLowerCase().trim();
+    if (!text) return;
+
+    // 1. Direct utterance match: If agent says "Navigating to <target>"
+    const agentNavMatch = text.match(/\bnavigating\s+(?:to|you to|screen to)\s+(?:the\s+)?([a-z0-9_-]+)/i);
+    if (agentNavMatch && agentNavMatch[1]) {
+      const extracted = agentNavMatch[1].toLowerCase();
+      console.log(`[AutoNav Agent Speech] Detected navigation announcement: "${extracted}"`);
+      navigateTo(extracted, 'speech_intent');
+      return;
+    }
+
+    const navPatterns: Array<{ target: string; matchers: RegExp[] }> = [
+      {
+        target: 'research',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(research|recent|papers|publications)\b/i,
+          /\b(research|recent)\s+(section|papers|bento)\b/i,
+          /\b(show me|explore)\s+(research|recent)\b/i,
+        ],
+      },
+      {
+        target: 'projects',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(projects|featured projects|works)\b/i,
+          /\bprojects\s+(section|bento)\b/i,
+          /\b(show me|explore)\s+projects\b/i,
+        ],
+      },
+      {
+        target: 'skills',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(skills|tech stack|technologies)\b/i,
+          /\bskills\s+section\b/i,
+          /\b(show me|explore)\s+skills\b/i,
+        ],
+      },
+      {
+        target: 'experience',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(experience|timeline|career|education)\b/i,
+          /\bexperience\s+section\b/i,
+          /\b(show me|explore)\s+experience\b/i,
+        ],
+      },
+      {
+        target: 'certificates',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(certificates|certifications|awards)\b/i,
+          /\bcertificates\s+section\b/i,
+        ],
+      },
+      {
+        target: 'resume',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|download|take me to)\s+(the\s+)?(resume|cv)\b/i,
+          /\bresume\s+section\b/i,
+        ],
+      },
+      {
+        target: 'contact',
+        matchers: [
+          /\b(go to|show|view|navigate to|open|see|take me to)\s+(the\s+)?(contact|get in touch|email)\b/i,
+          /\bcontact(\s+section)?\b/i,
+        ],
+      },
+      {
+        target: 'book_appointment',
+        matchers: [
+          /\b(book|schedule)\s+(a\s+)?(appointment|meeting|call|interview)\b/i,
+          /\bcalendar\b/i,
+        ],
+      },
+      {
+        target: 'home',
+        matchers: [
+          /\b(go to|back to|navigate to|show|take me to)\s+(the\s+)?(home|top|hero)\b/i,
+        ],
+      },
+      {
+        target: 'case_study_adaptive_governance',
+        matchers: [
+          /\b(adaptive governance|eaai|g-cvar|cvar)\b/i,
+        ],
+      },
+      {
+        target: 'case_study_regime_supervisory',
+        matchers: [
+          /\b(regime adaptive|supervisory governance|lncs|ijcaci)\b/i,
+        ],
+      },
+      {
+        target: 'case_study_supervisory_xai',
+        matchers: [
+          /\b(supervisory xai|cor paper|explainable ai)\b/i,
+        ],
+      },
+      {
+        target: 'case_study_aqi',
+        matchers: [
+          /\b(aqi|air quality)\b/i,
+        ],
+      },
+      {
+        target: 'case_study_swarm_robotics',
+        matchers: [
+          /\b(swarm|swarm robotics|agriculture robots)\b/i,
+        ],
+      },
+    ];
+
+    for (const { target, matchers } of navPatterns) {
+      if (matchers.some((m) => m.test(text))) {
+        console.log(`[AutoNav Speech Intent] Detected target '${target}' in: "${text}"`);
+        navigateTo(target, 'speech_intent');
+        break;
+      }
+    }
+  }, [messages, navigateTo]);
+
   // ── LiveKit Data Channel Listener ──────────────────────────────────────
   useEffect(() => {
     if (!room) return;
@@ -377,10 +512,22 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
       kind: any,
       topic?: string
     ) => {
+      let text = '';
+      try {
+        text = new TextDecoder().decode(payload);
+      } catch {}
+
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch {}
+
+      console.log('[AutoNav Data Channel] Packet received:', { topic, parsed, textLength: text.length });
+
       // 1. Assistant Action Channel (Downloads, Themes, Bookings)
-      if (topic === 'assistant_action') {
+      if (topic === 'assistant_action' || parsed?.type === 'download' || parsed?.type === 'theme' || parsed?.type === 'booking_confirmed') {
         try {
-          const data = JSON.parse(new TextDecoder().decode(payload));
+          const data = parsed || JSON.parse(text);
           if (data?.type === 'download' && typeof data.url === 'string') {
             const link = document.createElement('a');
             link.href = data.url;
@@ -408,22 +555,18 @@ export function useVoiceAutoNavigation(session?: any, messages?: any[]) {
       }
 
       // 2. Navigation Channel (Zero-Latency Screen Routing & Subsection Anchors)
-      if (topic === 'navigation' || topic === 'lk-navigation') {
+      if (topic === 'navigation' || topic === 'lk-navigation' || parsed?.type === 'navigate') {
         try {
-          const text = new TextDecoder().decode(payload);
-          let targetStr = text.trim();
-
-          // If payload is JSON formatted: {"type": "navigate", "target": "..."}
-          try {
-            const parsed = JSON.parse(text);
-            if (parsed && typeof parsed === 'object') {
-              targetStr = parsed.target || parsed.destination || targetStr;
-            }
-          } catch {
-            // Raw string payload
+          let targetStr = '';
+          if (parsed && typeof parsed === 'object') {
+            targetStr = parsed.target || parsed.destination || '';
+          }
+          if (!targetStr) {
+            targetStr = text.trim();
           }
 
-          if (targetStr) {
+          if (targetStr && targetStr !== '[object Object]') {
+            console.log(`[AutoNav Data Channel] Triggering navigateTo('${targetStr}')`);
             navigateTo(targetStr, 'data_channel');
           }
         } catch (e) {

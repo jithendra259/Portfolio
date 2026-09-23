@@ -209,7 +209,7 @@ export function App({ appConfig, children }: AppProps) {
   }, [pathname, room, session.isConnected]);
 
   return (
-    <AgentSessionProvider session={session}>
+    <AgentSessionProvider session={session} room={room}>
       <AppSetup />
       {children}
       <ViewController appConfig={appConfig} showWelcome={pathname === '/'} />

@@ -107,10 +107,11 @@ export function getDevelopmentTokenSource(agentName?: string) {
     throw new Error('NEXT_PUBLIC_LIVEKIT_TOKEN_SERVER_ID is not configured');
   }
   // Development token server URL format: https://<token-server-id>.sandbox.livekit.io/token
-  const url = `https://${LIVEKIT_TOKEN_SERVER_ID}.sandbox.livekit.io/token`;
-  return TokenSource.endpoint(url, {
-    agentName,
-  });
+  const url = new URL(`https://${LIVEKIT_TOKEN_SERVER_ID}.sandbox.livekit.io/token`);
+  if (agentName) {
+    url.searchParams.set('agentName', agentName);
+  }
+  return TokenSource.endpoint(url.toString());
 }
 
 /**
