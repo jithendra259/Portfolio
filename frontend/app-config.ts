@@ -30,6 +30,9 @@ export interface AppConfig {
 
   // LiveKit Cloud Sandbox configuration
   sandboxId?: string;
+
+  // LiveKit connection mode: "cloud" | "local"
+  livekitMode?: 'cloud' | 'local';
 }
 
 export const APP_CONFIG_DEFAULTS: AppConfig = {
@@ -69,4 +72,7 @@ export const APP_CONFIG_DEFAULTS: AppConfig = {
 
   // LiveKit Cloud Sandbox configuration
   sandboxId: undefined,
+
+  // LiveKit connection mode
+  livekitMode: (process.env.NEXT_PUBLIC_LIVEKIT_MODE as 'cloud' | 'local') || 'cloud',
 };

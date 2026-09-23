@@ -3,10 +3,19 @@ import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-s
 import { RoomAgentDispatch, RoomConfiguration } from '@livekit/protocol';
 
 // Default LiveKit Cloud credentials for Jithendra's Portfolio
-const DEFAULT_LIVEKIT_URL = 'wss://portfolio-jezy7ize.livekit.cloud';
-const DEFAULT_API_KEY = 'APIbRAUawrxisqw';
-const DEFAULT_API_SECRET = 'a01GgmepPJPK0jCRgArGfJGQ8gNf6kExPCKyfvE4GlUC';
+const DEFAULT_LIVEKIT_URL_CLOUD = 'wss://finalportfolio-oupyq216.livekit.cloud';
+const DEFAULT_LIVEKIT_URL_LOCAL = 'ws://localhost:7880';
+const DEFAULT_API_KEY = 'APIpNgBX9wyBxtW';
+const DEFAULT_API_SECRET = 'G2fDHl43npR55gH7lgXofuzqYb3XOtzeAZK0wvRZtLVA';
 const DEFAULT_AGENT_NAME = 'my-agent';
+
+// LiveKit mode from environment: "cloud" (default) or "local"
+const LIVEKIT_MODE = process.env.NEXT_PUBLIC_LIVEKIT_MODE || 'cloud';
+
+// Select LiveKit URL based on mode
+const DEFAULT_LIVEKIT_URL = LIVEKIT_MODE === 'local' 
+  ? DEFAULT_LIVEKIT_URL_LOCAL 
+  : DEFAULT_LIVEKIT_URL_CLOUD;
 
 // LiveKit credentials from environment or fallbacks
 const API_KEY = process.env.LIVEKIT_API_KEY || DEFAULT_API_KEY;
