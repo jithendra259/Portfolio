@@ -98,7 +98,7 @@ export function getStyles(appConfig: AppConfig) {
 
 /**
  * Get a token source using LiveKit's Development Token Server
- * Uses TokenSource.developmentTokenServer() with the token server ID from env
+ * Uses TokenSource.endpoint() with the development token server URL
  * @param agentName - Optional agent name to dispatch
  * @returns A token source for LiveKit development sessions
  */
@@ -106,7 +106,9 @@ export function getDevelopmentTokenSource(agentName?: string) {
   if (!LIVEKIT_TOKEN_SERVER_ID) {
     throw new Error('NEXT_PUBLIC_LIVEKIT_TOKEN_SERVER_ID is not configured');
   }
-  return TokenSource.developmentTokenServer(LIVEKIT_TOKEN_SERVER_ID, {
+  // Development token server URL format: https://<token-server-id>.sandbox.livekit.io/token
+  const url = `https://${LIVEKIT_TOKEN_SERVER_ID}.sandbox.livekit.io/token`;
+  return TokenSource.endpoint(url, {
     agentName,
   });
 }
