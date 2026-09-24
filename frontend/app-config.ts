@@ -36,9 +36,9 @@ export interface AppConfig {
 }
 
 export const APP_CONFIG_DEFAULTS: AppConfig = {
-  companyName: 'LiveKit',
-  pageTitle: 'LiveKit Voice Agent',
-  pageDescription: 'A voice agent built with LiveKit',
+  companyName: 'Jithendra Subramanyam',
+  pageTitle: 'Kandula Jithendra Subramanyam | Agentic AI Developer',
+  pageDescription: 'Agentic AI & Multi-Agent Systems Developer — M.Tech AI & Data Science researcher. Builder of LangGraph swarms, CVXPY solvers, and real-time WebRTC voice pipelines. Author of 3 research papers (Elsevier EAAI, Springer LNCS).',
 
   supportsChatInput: true,
   supportsVideoInput: true,

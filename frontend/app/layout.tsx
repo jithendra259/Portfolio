@@ -14,8 +14,25 @@ import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'https://jithendra-portfolio.vercel.app'
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://portfolio-rose-beta-11.vercel.app'
   ),
+  title: 'Kandula Jithendra Subramanyam | Agentic AI Developer',
+  description:
+    'Agentic AI & Multi-Agent Systems Developer — M.Tech AI & Data Science researcher. Builder of LangGraph swarms, CVXPY solvers, and real-time WebRTC voice pipelines. Author of 3 research papers (Elsevier EAAI, Springer LNCS).',
+  openGraph: {
+    title: 'Kandula Jithendra Subramanyam | Agentic AI Developer',
+    description:
+      'Agentic AI & Multi-Agent Systems Developer — LangGraph swarms, CVXPY solvers, real-time voice pipelines. 3 research papers (Elsevier EAAI, Springer LNCS).',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://portfolio-rose-beta-11.vercel.app',
+    siteName: 'Jithendra Subramanyam Portfolio',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kandula Jithendra Subramanyam | Agentic AI Developer',
+    description:
+      'Agentic AI & Multi-Agent Systems Developer — LangGraph swarms, CVXPY solvers, real-time voice pipelines.',
+  },
 };
 
 const publicSans = Public_Sans({
