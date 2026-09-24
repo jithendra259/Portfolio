@@ -74,7 +74,6 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   const appConfig = APP_CONFIG_DEFAULTS;
   const styles = getStyles(appConfig);
-  const { pageTitle, pageDescription } = appConfig;
 
   return (
     <html
@@ -88,8 +87,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <head>
         {styles && <style>{styles}</style>}
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
       </head>
       <body suppressHydrationWarning className="overflow-x-hidden">
         <ThemeProvider
