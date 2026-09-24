@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ChevronDown, X } from 'lucide-react';
@@ -158,17 +158,20 @@ export function CinematicHero({
   const entranceTimelineRef = useRef<gsap.core.Timeline | null>(null);
 
   // Instant skip button / Escape key
-  const handleSkip = () => {
+  const handleSkip = useCallback(() => {
     if (entranceTimelineRef.current) {
       entranceTimelineRef.current.kill();
+      entranceTimelineRef.current = null;
     }
     if (scrollTriggerInstanceRef.current) {
       scrollTriggerInstanceRef.current.kill();
+      scrollTriggerInstanceRef.current = null;
     }
+    cancelAnimationFrame(requestRef.current);
     if (scrollerRef.current) {
       gsap.to(scrollerRef.current, {
         opacity: 0,
-        duration: 0.45,
+        duration: 0.35,
         ease: 'power2.inOut',
         onComplete: () => {
           onComplete?.();
@@ -177,7 +180,7 @@ export function CinematicHero({
     } else {
       onComplete?.();
     }
-  };
+  }, [onComplete]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -187,7 +190,7 @@ export function CinematicHero({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [handleSkip]);
 
   // 1. Mouse tilt interaction on the iPhone mockup
   useEffect(() => {
@@ -355,7 +358,8 @@ export function CinematicHero({
           end: 'bottom bottom',
           scrub: 1.2,
           onLeave: () => {
-            handleSkip();
+            // Use a short timeout so scrub completes before we kill
+            setTimeout(() => handleSkip(), 100);
           },
         },
       });
@@ -551,7 +555,7 @@ export function CinematicHero({
     }, scrollerRef);
 
     return () => ctx.revert();
-  }, [metricValue, onComplete]);
+  }, [metricValue, handleSkip]);
 
   return (
     <div
