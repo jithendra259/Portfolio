@@ -667,24 +667,10 @@ export function LandingPage({
         className="relative mx-auto max-w-7xl px-6 py-20 sm:px-12 sm:py-28 md:px-16 lg:px-20"
         id="about"
       >
-        {/* Section Header */}
-        <div className="mb-12 flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-neutral-500">
-            <Bot className="size-3.5" />
-            <span>About Me</span>
-          </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-            Kandula Jithendra Subramanyam
-          </h2>
-          <p className="max-w-2xl text-base text-slate-500 dark:text-neutral-400">
-            {PORTFOLIO_DATA.developer.subheadline}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Left Column: Image + Quick Info */}
-          <div className="flex flex-col items-center gap-6 lg:col-span-4 lg:items-start">
-            <div className="group relative w-full max-w-[280px] overflow-hidden rounded-3xl border border-slate-200 shadow-2xl sm:max-w-xs dark:border-white/10">
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-14">
+          {/* One Side: Image */}
+          <div className="flex justify-center lg:col-span-4 lg:justify-start">
+            <div className="group relative w-full max-w-[280px] overflow-hidden rounded-3xl border border-slate-200 shadow-xl sm:max-w-xs md:max-w-sm dark:border-white/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/avatar.png"
@@ -692,92 +678,50 @@ export function LandingPage({
                 className="aspect-[4/5] h-auto w-full rounded-3xl object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
                 loading="lazy"
               />
-              {/* Overlay badge */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-emerald-400/30 bg-emerald-950/80 px-4 py-1.5 font-mono text-[11px] font-bold tracking-wider text-emerald-300 shadow-lg backdrop-blur-sm">
-                ✦ {PORTFOLIO_DATA.developer.status}
-              </div>
-            </div>
-
-            {/* Contact quick links */}
-            <div className="flex w-full max-w-[280px] flex-col gap-2 sm:max-w-xs">
-              <a
-                href={`mailto:${PORTFOLIO_DATA.developer.email}`}
-                className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/80 px-4 py-2.5 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm transition-all hover:border-slate-400 hover:shadow-md dark:border-white/10 dark:bg-neutral-900/60 dark:text-neutral-300 dark:hover:border-white/20"
-              >
-                <Mail className="size-3.5 shrink-0 text-slate-500 dark:text-neutral-400" />
-                <span className="truncate">{PORTFOLIO_DATA.developer.email}</span>
-              </a>
-              <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/80 px-4 py-2.5 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/60 dark:text-neutral-300">
-                <MapPin className="size-3.5 shrink-0 text-slate-500 dark:text-neutral-400" />
-                <span>{PORTFOLIO_DATA.developer.location}</span>
-              </div>
             </div>
           </div>
 
-          {/* Right Column: Bio + Stats */}
-          <div className="relative flex flex-col items-start justify-center gap-8 lg:col-span-8">
+          {/* Other Side: Matter */}
+          <div className="relative flex flex-col items-start justify-center overflow-hidden rounded-3xl px-4 py-6 text-left sm:px-6 lg:col-span-8">
+            {/* Dot Pattern only for the intro / about section matter UI */}
             <DotPattern className="[mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
-
             <div className="relative z-10 space-y-5">
-              <p className="text-base leading-[1.85] text-slate-700 sm:text-lg dark:text-neutral-200">
+              <div>
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+                  About Kandula Jithendra Subramanyam
+                </h2>
+              </div>
+              <p className="text-base leading-relaxed text-slate-800 sm:text-lg sm:leading-[1.8] dark:text-neutral-200">
                 I am an{' '}
                 <strong className="text-slate-950 dark:text-white">
-                  Agentic AI &amp; Multi-Agent Systems Engineer
+                  Agentic AI &amp; Multi-Agent Systems Developer
                 </strong>{' '}
                 pursuing M.Tech in Artificial Intelligence &amp; Data Science at{' '}
                 <strong className="text-slate-950 dark:text-white">
-                  K J Somaiya College of Engineering, Somaiya Vidyavihar University, Mumbai
+                  K J Somaiya College of Engineering (Somaiya Vidyavihar University, Mumbai)
                 </strong>
-                . I design and build modular LangGraph agent swarms, CVXPY convex solvers,
-                deterministic regime-switching engines, and real-time WebRTC voice pipelines for
-                production-grade agentic intelligence.
+                . My work focuses on building modular multi-agent AI systems, LangGraph swarms,
+                CVXPY convex solvers, and real-time WebRTC voice pipelines for production-grade
+                agentic intelligence.
               </p>
 
               <p className="text-sm leading-relaxed text-slate-600 sm:text-base dark:text-neutral-400">
-                As first and corresponding author of{' '}
-                <strong className="text-slate-800 dark:text-neutral-200">3 research papers</strong>{' '}
-                across{' '}
-                <strong className="text-slate-800 dark:text-neutral-200">Elsevier EAAI</strong>,{' '}
-                <strong className="text-slate-800 dark:text-neutral-200">
+                As first and corresponding author of three research manuscripts spanning{' '}
+                <strong className="text-slate-900 dark:text-neutral-200">Elsevier EAAI</strong>,{' '}
+                <strong className="text-slate-900 dark:text-neutral-200">
                   Elsevier Computers &amp; Operations Research
                 </strong>
                 , and{' '}
-                <strong className="text-slate-800 dark:text-neutral-200">Springer Nature LNCS</strong>
-                , I formulate systems where probabilistic language models collaborate with convex
-                solvers and bipartite institutional graphs — achieving{' '}
-                <strong className="text-emerald-600 dark:text-emerald-400">0% hallucination</strong>{' '}
-                over 20-year empirical universes.
+                <strong className="text-slate-900 dark:text-neutral-200">
+                  Springer Nature LNCS
+                </strong>
+                , I formulate systems where probabilistic language models do not hallucinate, but
+                instead collaborate with convex solvers (CVXPY/CLARABEL), bipartite institutional
+                co-holding graphs, and deterministic regime-switching engines over 20-year empirical
+                universes.
               </p>
             </div>
 
-            {/* Stats Grid */}
-            <div className="relative z-10 grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
-              {PORTFOLIO_DATA.developer.stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex flex-col gap-1 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/60"
-                >
-                  <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                    {stat.value.split(' ')[0]}
-                  </span>
-                  <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-neutral-500">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Tech Tags */}
-            <div className="relative z-10 flex flex-wrap gap-2">
-              {['LangGraph', 'CVXPY', 'Python', 'Next.js 15', 'LiveKit WebRTC', 'Mistral-7B', 'MongoDB', 'FastAPI'].map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 font-mono text-[11px] font-semibold text-slate-700 shadow-xs backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/60 dark:text-neutral-300"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </section>
