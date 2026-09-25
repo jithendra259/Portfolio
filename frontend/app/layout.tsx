@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
 import 'katex/dist/katex.min.css';
+import { Analytics } from '@vercel/analytics/next';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
@@ -102,6 +103,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <ThemeToggle className="translate-y-20 transition-transform delay-150 duration-300 group-hover:translate-y-0" />
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

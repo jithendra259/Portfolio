@@ -43,6 +43,7 @@
     "@shadcn/react": "^0.2.1",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
+    "@vercel/analytics": "^2.0.1",
     "@xyflow/react": "^12.10.0",
     "ai": "^5.0.105",
     "buffer-image-size": "^0.6.4",
