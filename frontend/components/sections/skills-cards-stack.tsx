@@ -1,7 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import { Bot, CheckCircle2, Code2, Cpu, Sparkles, Terminal, TrendingUp } from 'lucide-react';
+import { Bot, CheckCircle2, Code2, Cpu, Mic, Network, Sparkles, Terminal, TrendingUp } from 'lucide-react';
 import { CardSticky, ContainerScroll } from '@/components/ui/widgets/cards-stack';
 import { IconCloud } from '@/components/ui/widgets/icon-cloud';
 import { PORTFOLIO_DATA } from '@/lib/portfolio-data';
@@ -34,17 +33,23 @@ const techIcons = [
 ];
 
 const categoryIcons = [
-  <Bot key="bot" className="size-5 text-indigo-500 dark:text-white" />,
+  <Sparkles key="ai-research" className="size-5 text-indigo-500 dark:text-white" />,
   <TrendingUp key="finance" className="size-5 text-emerald-500 dark:text-white" />,
+  <Bot key="agentic-llm" className="size-5 text-purple-500 dark:text-white" />,
+  <Mic key="voice" className="size-5 text-rose-500 dark:text-white" />,
+  <Network key="graph" className="size-5 text-cyan-500 dark:text-white" />,
   <Terminal key="terminal" className="size-5 text-amber-500 dark:text-white" />,
   <Code2 key="code" className="size-5 text-sky-500 dark:text-white" />,
 ];
 
 const categoryDescriptions = [
-  'Architecting autonomous multi-agent swarms, verification guardrails, and deterministic tool-calling workflows for high-stakes decision domains.',
+  'Pioneering artificial intelligence, deep learning architectures, multi-agent reasoning systems, and verifiable retrieval pipelines.',
   'Formulating convex portfolio optimization, CVaR loss bounds, market regime classification, and quantitative risk modeling via CVXPY and CLARABEL.',
-  'Building high-throughput numerical pipelines, scientific computing routines, deep learning networks, and production database architectures.',
-  'Crafting responsive full-stack applications with Next.js 15, sub-500ms WebRTC voice streams, modern CSS architectures, and enterprise APIs.',
+  'Orchestrating autonomous agents with LangGraph, Groq LPU inference, local Mistral models, persistent memory, and audit logging.',
+  'Building sub-500ms conversational voice streaming pipelines over LiveKit WebRTC with Deepgram STT and ElevenLabs TTS.',
+  'Designing convex optimization solvers (CVXPY / CLARABEL), graph-regularized networks, and structural financial reasoning with NetworkX.',
+  'Developing robust numerical pipelines, scientific computing routines, and production database architectures.',
+  'Crafting responsive full-stack applications with Next.js, modern TypeScript, RESTful services, and enterprise APIs.',
 ];
 
 export function SkillsCardsStack() {
